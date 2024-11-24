@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import Navbar from "../../components/navbar";
 import { styles } from "../board/styles";
-import { ApiResponse, Maintenance, KanbanColumn } from "../../types";
+import { Maintenance, KanbanColumn } from "../../types";
 import Icon from "react-native-vector-icons/Feather"; // Biblioteca de ícones Feather
+import { getStatus } from "../../utils/getStatus";
+import { getMaintenancesBySyndicId } from "../../services/getMaintenancesBySyndicId";
+
 
 export const Board = () => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
@@ -20,40 +23,23 @@ export const Board = () => {
   const [selectedMaintenance, setSelectedMaintenance] =
     useState<Maintenance | null>(null);
 
-  const getColorByStatus = (status: string): string => {
-    switch (status) {
-      case "Vencidas":
-        return "red"; // Vermelho
-      case "expired":
-        return "red"; // Vermelho
-      case "Pendentes":
-        return "orange"; // Amarelo
-      case "Em execução":
-        return "blue"; // Azul
-      case "Concluídas":
-        return "green"; // Verde
-      default:
-        return "gray"; // Cor padrão (caso o status seja inesperado)
-    }
-  };
 
-  const fetchKanbanData = async () => {
-    try {
-      const response = await fetch(
-        "https://easyalert-production.herokuapp.com/api/client/syndic/t4FsR52sQ08Q?year=&month=&status=&categoryId="
-      );
-      const data: ApiResponse = await response.json();
-      setKanbanData(data?.kanban || []);
-    } catch (error) {
-      console.error("Erro ao buscar os dados:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchKanbanData();
-  }, []);
+    useEffect(() => {
+      const getKanbanData = async () => {
+        setLoading(true); // Define o estado de carregamento antes da chamada
+        const data = await getMaintenancesBySyndicId();
+    
+        if (data) {
+          setKanbanData(data.kanban || []);
+        }
+    
+        setLoading(false); // Finaliza o estado de carregamento
+      };
+    
+      getKanbanData();
+    }, []);
+    
 
   const openModal = (maintenance: Maintenance) => {
     setSelectedMaintenance(maintenance);
@@ -91,7 +77,7 @@ export const Board = () => {
                     style={[
                       styles.card,
                       {
-                        borderLeftColor: getColorByStatus(column.status),
+                        borderLeftColor: getStatus(column.status).color,
                         borderLeftWidth: 5,
                       }, // Cor da borda esquerda
                     ]}
@@ -101,10 +87,10 @@ export const Board = () => {
                     <View
                       style={[
                         styles.tag,
-                        { backgroundColor: getColorByStatus(column.status) },
+                        { backgroundColor: getStatus(maintenance.status).color },
                       ]}
                     >
-                      <Text style={styles.tagText}>{column.status}</Text>
+                      <Text style={styles.tagText}>{getStatus(maintenance.status).label}</Text>
                     </View>
 
                     {/* Elemento do card */}
@@ -119,7 +105,7 @@ export const Board = () => {
                     <Text
                       style={[
                         styles.cardFooter,
-                        { color: getColorByStatus(column.status) },
+                        { color: getStatus(maintenance.status).color },
                       ]}
                     >
                       {maintenance.label}
@@ -166,14 +152,14 @@ export const Board = () => {
                   style={[
                     styles.tag,
                     {
-                      backgroundColor: getColorByStatus(
+                      backgroundColor: getStatus(
                         selectedMaintenance.status
-                      ),
+                      ).color,
                     },
                   ]}
                 >
                   <Text style={styles.tagText}>
-                    {selectedMaintenance.status}
+                    {getStatus(selectedMaintenance.status).label}
                   </Text>
                 </View>
                 <View style={[styles.tag, { backgroundColor: "blue" }]}>
