@@ -8,6 +8,7 @@ export const getStatus = (status: string): { color: string; label: string } => {
     Concluídas: { color: "green", label: "Concluídas" },
     completed: { color: "green", label: "Concluída" },
     overdue: { color: "green", label: "Feita em atraso" },
+    common: { color: "blue", label: "Preventiva" },
   };
 
   return statusMap[status] || { color: "gray", label: "Desconhecido" };
