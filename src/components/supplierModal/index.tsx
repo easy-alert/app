@@ -13,6 +13,7 @@ import { styles } from "./styles";
 import { SuppliersByMaintenanceId } from "../../types";
 import { getSuppliersToSelectByMaintenanceId } from "../../services/getSuppliersToSelectByMaintenanceId";
 import { addSuppliersToMaintenance } from "../../services/addSuppliersToMaintenance";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface SupplierModalProps {
   visible: boolean;
@@ -28,6 +29,8 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
   const [suppliersData, setSuppliersData] = useState<
     SuppliersByMaintenanceId | undefined
   >(undefined);
+  const [syndicNanoId, setSyndicNanoId] = useState("");
+  const [buildingNanoId, setBuildingNanoId] = useState("");
 
   const addSupplier = async (syndicNanoId: string, supplierId: string) => {
     if (maintenanceId && syndicNanoId && supplierId) {
@@ -52,6 +55,13 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
+        const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
+
+        if (syndicNanoId && buildingNanoId) {
+          setSyndicNanoId(syndicNanoId);
+          setBuildingNanoId(buildingNanoId);
+        }
         const suppliersData = await getSuppliersToSelectByMaintenanceId(
           maintenanceId
         );
@@ -93,7 +103,7 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
               key={suppliers.id}
               style={styles.supplierOption}
               onPress={() => {
-                addSupplier("Fr8aLc-krzQn", suppliers.id);
+                addSupplier(syndicNanoId, suppliers.id);
               }}
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
@@ -111,7 +121,7 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
               key={suppliers.id}
               style={styles.supplierOption}
               onPress={() => {
-                addSupplier("Fr8aLc-krzQn", suppliers.id);
+                addSupplier(syndicNanoId, suppliers.id);
               }}
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>

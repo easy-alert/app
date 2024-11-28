@@ -13,7 +13,8 @@ export interface MaintenanceDetails {
   resolutionDate: string;
   daysInAdvance: number;
   canReport: boolean;
-  MaintenanceReport: MaintenanceReport;
+  MaintenanceReport: MaintenanceReport[];
+  MaintenanceReportProgress: MaintenanceReportProgress[];
   MaintenancesStatus: {
     name: string;
   };
@@ -29,6 +30,12 @@ export interface MaintenanceHistoryActivities {
   maintenanceHistoryActivities: MaintenanceHistory[];
 }
 
+export interface UploadedFile {
+  name?: string;
+  originalName: string | null;
+  url: string;
+}
+
 export interface MaintenanceHistory {
   id: string;
   maintenanceHistoryId: string;
@@ -37,7 +44,13 @@ export interface MaintenanceHistory {
   content: string;
   createdAt: string;
   updatedAt: string;
-  images: string[];
+  images: ImageHistory[];
+}
+
+export interface ImageHistory {
+  id: string;
+  name: string;
+  url: string;
 }
 
 export interface Supplier {
@@ -58,10 +71,18 @@ export interface SuppliersByMaintenanceId {
 
 export interface MaintenanceReport {
   id: string;
-  cost: number;
+  cost: number | undefined;
   observation: string;
   ReportAnnexes: ReportAnnexes[];
   ReportImages: ReportImages[];
+}
+
+export interface MaintenanceReportProgress {
+  id: string;
+  cost: number;
+  observation: string;
+  ReportAnnexesProgress: ReportAnnexes[];
+  ReportImagesProgress: ReportImages[];
 }
 
 export interface ReportAnnexes {
@@ -151,4 +172,9 @@ export interface Buildings {
 
 export interface BuildingsBySyndicId {
   buildings: Buildings[]; // Nome do edifício
+}
+
+export interface PasswordNeeded {
+  needPassword: boolean;
+  buildingName: string;
 }

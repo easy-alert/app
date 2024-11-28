@@ -1,14 +1,15 @@
 export const getStatus = (status: string): { color: string; label: string } => {
   const statusMap: Record<string, { color: string; label: string }> = {
-    Vencidas: { color: "red", label: "Vencidas" },
-    expired: { color: "red", label: "Vencida" },
-    Pendentes: { color: "orange", label: "Pendentes" },
-    pending: { color: "orange", label: "Pendente" },
-    "Em execução": { color: "blue", label: "Em execução" },
-    Concluídas: { color: "green", label: "Concluídas" },
-    completed: { color: "green", label: "Concluída" },
-    overdue: { color: "green", label: "Feita em atraso" },
-    common: { color: "blue", label: "Preventiva" },
+    Vencidas: { color: "#FD2C19", label: "Vencidas" },
+    expired: { color: "#FD2C19", label: "Vencida" },
+    Pendentes: { color: "#FEA628", label: "Pendentes" },
+    pending: { color: "#FEA628", label: "Pendente" },
+    "Em execução": { color: "#269EFB", label: "Em execução" },
+    Concluídas: { color: "#33AB3D", label: "Concluídas" },
+    completed: { color: "#33AB3D", label: "Concluída" },
+    overdue: { color: "#E15A5D", label: "Feita em atraso" },
+    common: { color: "#1074A8", label: "Preventiva" },
+    occasional: { color: "#7D29D5", label: "Avulsa" },
   };
 
   return statusMap[status] || { color: "gray", label: "Desconhecido" };
