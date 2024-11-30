@@ -8,45 +8,58 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Linking,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather"; // Biblioteca de ícones Feather
+import Icon from "react-native-vector-icons/Feather";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface NavbarProps {
   logoUrl: string;
+  syndicNanoId: string;
+  buildingNanoId: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ logoUrl }) => {
+type RootParamList = {
+  Login: undefined;
+  Board: undefined;
+};
+
+type NavigationProps = NavigationProp<RootParamList, "Board">;
+
+const Navbar: React.FC<NavbarProps> = ({
+  logoUrl,
+  syndicNanoId,
+  buildingNanoId,
+}) => {
+  const navigation = useNavigation<NavigationProps>();
+
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Lista de opções do modal
-  const options = [
-    { id: "1", label: "QRCode" },
-    { id: "2", label: "Chamados" },
-    { id: "3", label: "Checklists" },
-    { id: "4", label: "Configurações" },
-    { id: "5", label: "Fornecedores" },
-  ];
-
-  // Função para abrir e fechar o modal
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
+  const handleLogout = async () => {
+    await AsyncStorage.clear().then(() => {
+      toggleModal();
+      navigation.navigate("Login"); // Redireciona para a tela de login
+    });
   };
+
+  const toggleModal = () => setModalVisible(!modalVisible);
+
+  const options = [
+    { id: "1", label: "Acesso web" },
+    { id: "6", label: "Sair" },
+  ];
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        {/* Ícone de hambúrguer à esquerda */}
         <TouchableOpacity onPress={toggleModal} style={styles.hamburgerIcon}>
           <Icon name="menu" size={24} color="#000" />
         </TouchableOpacity>
-
-        {/* Logo centralizada */}
         <View style={styles.logoContainer}>
           <Image source={{ uri: logoUrl }} style={styles.logo} />
         </View>
       </View>
-
-      {/* Modal com a lista de opções */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -55,22 +68,28 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            {/* Título do modal e botão de fechar */}
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Opções</Text>
               <TouchableOpacity onPress={toggleModal} style={styles.closeIcon}>
                 <Icon name="x" size={24} color="#000" />
               </TouchableOpacity>
             </View>
-
-            {/* Lista de opções */}
             <FlatList
               data={options}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.optionItem}
-                  onPress={toggleModal}
+                  onPress={() => {
+                    if (item.id === "6") {
+                      handleLogout();
+                    }
+                    if (item.id === "1") {
+                      Linking.openURL(
+                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${syndicNanoId}`
+                      );
+                    }
+                  }}
                 >
                   <Text style={styles.optionText}>{item.label}</Text>
                 </TouchableOpacity>
@@ -93,18 +112,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Alinha itens horizontalmente no centro
+    justifyContent: "center",
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
   hamburgerIcon: {
     position: "absolute",
-    left: 16, // Posiciona o ícone na esquerda
+    left: 16,
   },
   logoContainer: {
-    flex: 1, // Garante que o container ocupe toda a largura
-    alignItems: "center", // Centraliza o conteúdo dentro do container
+    flex: 1,
+    alignItems: "center",
   },
   logo: {
     width: 120,

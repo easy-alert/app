@@ -16,12 +16,13 @@ import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
 import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const Board = () => {
+export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMaintenance, setSelectedMaintenance] =
     useState<MaintenanceDetails | null>(null);
+  const [buildingName, setBuildingName] = useState("");
   const [syndicNanoId, setSyndicNanoId] = useState("");
   const [buildingNanoId, setBuildingNanoId] = useState("");
 
@@ -30,8 +31,10 @@ export const Board = () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
     const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
     const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
+    const buildingName = await AsyncStorage.getItem("buildingName");
 
-    if (syndicNanoId && buildingNanoId) {
+    if (syndicNanoId && buildingNanoId && buildingName) {
+      setBuildingName(buildingName);
       setSyndicNanoId(syndicNanoId);
       setBuildingNanoId(buildingNanoId);
 
@@ -46,6 +49,7 @@ export const Board = () => {
       }
     } else {
       Alert.alert("Credenciais inválidas");
+      navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
     }
 
     setLoading(false); // Finaliza o estado de carregamento
@@ -67,7 +71,11 @@ export const Board = () => {
 
   return (
     <>
-      <Navbar logoUrl={logo} />
+      <Navbar
+        logoUrl={logo}
+        syndicNanoId={syndicNanoId}
+        buildingNanoId={buildingNanoId}
+      />
 
       {loading ? (
         <ActivityIndicator
@@ -87,7 +95,7 @@ export const Board = () => {
                 color: "#333",
               }}
             >
-              Serramares
+              {buildingName}
             </Text>
           </View>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>

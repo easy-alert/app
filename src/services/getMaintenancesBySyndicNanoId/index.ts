@@ -26,7 +26,7 @@ export const getMaintenancesBySyndicNanoId = async (
     return data; // Retorna os dados mais recentes
   } catch (error) {
     console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
+      "Erro ao buscar os dados ou sem internet, carregando do cache aa:",
       error
     );
 

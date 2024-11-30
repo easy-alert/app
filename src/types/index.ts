@@ -178,3 +178,9 @@ export interface PasswordNeeded {
   needPassword: boolean;
   buildingName: string;
 }
+
+export interface syndicBuildings {
+  buildingNanoId: string;
+  buildingName: string;
+  syndicNanoId: string;
+}
