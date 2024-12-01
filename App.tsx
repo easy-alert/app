@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Splash } from "./src/pages/splash";
 import { Login } from "./src/pages/login";
+import { Building } from "./src/pages/building";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,13 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Splash" component={Splash} />
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen
+            name="Building"
+            component={Building}
+            options={{
+              gestureEnabled: false,
+            }}
+          />
           <Stack.Screen
             name="Board"
             component={Board}

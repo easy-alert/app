@@ -65,8 +65,9 @@ export const Login = ({ navigation }: any) => {
         );
         await AsyncStorage.setItem("buildingName", buildings[0].buildingName);
         await AsyncStorage.setItem("phoneNumber", phoneNumber);
+        await AsyncStorage.setItem("buildingsList", JSON.stringify(buildings));
 
-        navigation.replace("Board");
+        navigation.replace("Building");
       } else {
         Alert.alert("Erro", "Número de telefone inválido ou não encontrado.");
       }
