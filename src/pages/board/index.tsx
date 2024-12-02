@@ -15,6 +15,7 @@ import { getMaintenancesBySyndicNanoId } from "../../services/getMaintenancesByS
 import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
 import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/Feather";
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
@@ -85,11 +86,16 @@ export const Board = ({ navigation }: any) => {
         />
       ) : kanbanData.length > 0 ? (
         <>
-          <View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 20,
+              paddingTop: 20,
+            }}
+          >
             <Text
               style={{
-                paddingHorizontal: 20,
-                paddingTop: 20,
                 fontSize: 20,
                 fontWeight: "bold",
                 color: "#333",
@@ -97,6 +103,16 @@ export const Board = ({ navigation }: any) => {
             >
               {buildingName}
             </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Building")}
+              style={{
+                marginLeft: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Icon name="repeat" size={24} color="#2b2b2c" />
+            </TouchableOpacity>
           </View>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {kanbanData.map((column) => (

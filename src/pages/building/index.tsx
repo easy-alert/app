@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -66,19 +67,21 @@ export const Building = ({ navigation }: any) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Escolha uma Edificação</Text>
-      <FlatList
-        data={buildings}
-        keyExtractor={(item) => item.buildingNanoId}
-        renderItem={renderBuilding}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            Nenhuma edificação encontrado para este número.
-          </Text>
-        }
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Escolha uma Edificação</Text>
+        <FlatList
+          data={buildings}
+          keyExtractor={(item) => item.buildingNanoId}
+          renderItem={renderBuilding}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              Nenhuma edificação encontrado para este número.
+            </Text>
+          }
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -100,10 +103,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     elevation: 3,
   },
   buildingName: {
