@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   Text,
   TextInput,
@@ -7,31 +8,40 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
-  ScrollView,
   Platform,
+  View,
 } from "react-native";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { checkSyndicAndBuildingExists } from "../../services/checkSyndicAndBuildingExists";
-import { syndicBuildings } from "../../types";
+
 import Logo from "../../assets/logo.png";
+
 import { styles } from "./styles";
 
 export const Login = ({ navigation }: any) => {
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
 
   const formatPhoneNumber = (value: string): string => {
     const onlyNumbers = value.replace(/\D/g, "");
+
     if (onlyNumbers.length > 10) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
         2,
         3
-      )} ${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7, 11)}`;
+      )} ${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7)}`;
     } else if (onlyNumbers.length > 6) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
         2,
         6
-      )}-${onlyNumbers.slice(6, 10)}`;
+      )}-${onlyNumbers.slice(6)}`;
     } else if (onlyNumbers.length > 2) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2)}`;
     } else {
@@ -41,6 +51,14 @@ export const Login = ({ navigation }: any) => {
 
   const handlePhoneNumberChange = (value: string) => {
     setPhoneNumber(formatPhoneNumber(value));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+  };
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleLogin = async () => {
@@ -53,23 +71,47 @@ export const Login = ({ navigation }: any) => {
 
     try {
       const cleanedPhone = phoneNumber.replace(/\D/g, "");
-      const buildings: syndicBuildings[] = await checkSyndicAndBuildingExists(
-        cleanedPhone
-      );
 
-      if (buildings) {
-        await AsyncStorage.setItem("syndicNanoId", buildings[0].syndicNanoId);
+      const response = await checkSyndicAndBuildingExists({
+        phoneNumber: cleanedPhone,
+        password: password,
+        createPassword: showCreatePassword,
+      });
+
+      if (response.canLogin && response.hasPassword) {
+        Alert.alert("Login", "Por favor insira a sua senha.");
+        return;
+      }
+
+      if (response.canLogin && !response.hasPassword) {
+        Alert.alert(
+          "Registro",
+          "Por favor, cadastre uma senha para sua conta."
+        );
+        setShowCreatePassword(true);
+        return;
+      }
+
+      if (response.buildings) {
+        await AsyncStorage.setItem(
+          "syndicNanoId",
+          response.buildings[0].syndicNanoId
+        );
         await AsyncStorage.setItem(
           "buildingNanoId",
-          buildings[0].buildingNanoId
+          response.buildings[0].buildingNanoId
         );
-        await AsyncStorage.setItem("buildingName", buildings[0].buildingName);
+        await AsyncStorage.setItem(
+          "buildingName",
+          response.buildings[0].buildingName
+        );
         await AsyncStorage.setItem("phoneNumber", phoneNumber);
-        await AsyncStorage.setItem("buildingsList", JSON.stringify(buildings));
+        await AsyncStorage.setItem(
+          "buildingsList",
+          JSON.stringify(response.buildings)
+        );
 
         navigation.replace("Building");
-      } else {
-        Alert.alert("Erro", "Número de telefone inválido ou não encontrado.");
       }
     } catch (error) {
       console.error("Erro ao autenticar:", error);
@@ -82,12 +124,9 @@ export const Login = ({ navigation }: any) => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View style={styles.container}>
         <Image source={Logo} style={styles.logo} resizeMode="contain" />
 
         <Text style={styles.title}>Login</Text>
@@ -99,8 +138,27 @@ export const Login = ({ navigation }: any) => {
           keyboardType="phone-pad"
           value={phoneNumber}
           onChangeText={handlePhoneNumberChange}
-          maxLength={15}
+          maxLength={16}
         />
+
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite sua senha caso possua"
+            placeholderTextColor="#aaa"
+            value={password}
+            onChangeText={handlePasswordChange}
+            secureTextEntry={!showPassword}
+          />
+
+          <MaterialCommunityIcons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="#aaa"
+            style={styles.icon}
+            onPress={handleShowPassword}
+          />
+        </View>
 
         {isLoggingIn ? (
           <ActivityIndicator size="large" color="#ffffff" />
@@ -109,7 +167,7 @@ export const Login = ({ navigation }: any) => {
             <Text style={styles.loginButtonText}>Entrar</Text>
           </TouchableOpacity>
         )}
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

@@ -8,6 +8,10 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
+  passwordContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
   logo: {
     width: 150,
     height: 34,
@@ -43,5 +47,10 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  icon: {
+    position: "absolute",
+    right: 15,
+    top: 15,
   },
 });
