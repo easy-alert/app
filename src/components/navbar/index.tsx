@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   FlatList,
   Linking,
+  StatusBar,
+  Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -105,6 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: "#fff",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   navbar: {
     width: "100%",

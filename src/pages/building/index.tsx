@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
-    elevation: 3,
   },
   buildingName: {
     fontSize: 18,
