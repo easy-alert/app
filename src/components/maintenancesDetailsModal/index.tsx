@@ -442,7 +442,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
             </TouchableOpacity>
           </View>
 
-          <ScrollView contentContainerStyle={styles.modalContent}>
+          <ScrollView contentContainerStyle={styles.modalContent} nestedScrollEnabled={true}>
             <Text style={styles.modalBuildingName}>
               {maintenanceDetailsData?.Building.name}
             </Text>
@@ -458,6 +458,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   {getStatus(maintenance.status).label}
                 </Text>
               </View>
+
               {maintenanceDetailsData?.Maintenance.MaintenanceType && (
                 <View
                   style={[
@@ -478,6 +479,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   </Text>
                 </View>
               )}
+
               {maintenanceDetailsData?.inProgress && (
                 <View
                   style={[
@@ -575,6 +577,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionHeaderText}>Fornecedores</Text>
+
               {suppliersData.length >= 1 && (
                 <TouchableOpacity
                   style={styles.unlinkButton}
@@ -600,6 +603,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   />
                 </TouchableOpacity>
               )}
+
               {!suppliersData.length && (
                 <TouchableOpacity
                   style={styles.unlinkButton}
@@ -615,6 +619,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 </TouchableOpacity>
               )}
             </View>
+
             {suppliersData.length >= 1 ? (
               suppliersData.map((suppliers) => (
                 <View style={styles.supplierContainer}>
@@ -646,6 +651,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 </View>
               </View>
             )}
+
             {/* Enviar Comentário */}
             <View style={styles.commentSection}>
               <Text style={styles.sectionHeaderText}>Enviar comentário</Text>
@@ -657,6 +663,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 multiline={true}
                 numberOfLines={4}
               />
+
               {/* Renderização dos arquivos enviados */}
               <View style={styles.uploadedFilesContainer}>
                 {uploadedFiles.map((file, index) => (
@@ -666,6 +673,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         {file.originalName}
                       </Text>
                     </View>
+
                     <TouchableOpacity
                       style={styles.deleteButton}
                       onPress={() => {
@@ -687,6 +695,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 >
                   <Icon name="upload" size={20} color="#fff" />
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   style={styles.commentButton}
                   onPress={() => {
@@ -732,6 +741,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   Comentários
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 style={[
                   styles.historyTabButton,
@@ -752,13 +762,14 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
             {/* Lista de históricos */}
             <View style={styles.historyList}>
-              <ScrollView style={{ maxHeight: 200 }}>
+              <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
                 {filteredData && filteredData?.length >= 1 ? (
                   filteredData.map((item) => (
                     <View key={item.id} style={styles.historyItem}>
                       <View style={styles.historyIconContainer}>
                         <Icon name="activity" size={20} color="#ffffff" />
                       </View>
+
                       <View style={styles.historyContent}>
                         <Text style={styles.historyTitle}>{item.title}</Text>
                         <Text style={styles.historyTimestamp}>

@@ -308,6 +308,7 @@ export const styles = StyleSheet.create({
   },
 
   historyItem: {
+    flex: 1,
     flexDirection: "row",
     paddingVertical: 6,
   },
