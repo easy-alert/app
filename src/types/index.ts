@@ -1,3 +1,28 @@
+export interface IResponse {
+  config: any;
+  headers: any;
+  request: any;
+  status: number;
+  statusText: string;
+}
+
+export interface ICategory {
+  id?: string;
+  ownerCompanyId?: string;
+  categoryTypeId?: string;
+
+  name?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
+
+  // OwnerCompany?: ICompany;
+  // Maintenances?: IMaintenance[];
+  // Buildings?: IBuildingCategory[];
+  // DefaultTemplateCategory: IDefaultTemplateCategory[];
+  // suppliers: ICategorySupplier[];
+}
+
 export interface MaintenanceDetails {
   id: string;
   element: string;
@@ -183,4 +208,38 @@ export interface syndicBuildings {
   buildingNanoId: string;
   buildingName: string;
   syndicNanoId: string;
+}
+
+export interface IAnnexesAndImages {
+  name: string;
+  originalName: string;
+  url: string;
+  type?: string;
+}
+
+export type IOccasionalMaintenanceType = "pending" | "finished" | "";
+
+export interface IOccasionalMaintenanceData {
+  buildingId: string;
+
+  element: string;
+  activity: string;
+  responsible: string;
+  executionDate: string;
+
+  inProgress: boolean;
+
+  priorityName: string;
+
+  categoryData: {
+    id: string;
+    name: string;
+  };
+
+  reportData: {
+    cost: string;
+    observation: string;
+    files: IAnnexesAndImages[];
+    images: IAnnexesAndImages[];
+  };
 }
