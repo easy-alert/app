@@ -24,6 +24,7 @@ import { formatDate } from "../../utils/formatDate";
 import { styles } from "../board/styles";
 
 import type { MaintenanceDetails, KanbanColumn } from "../../types";
+import ModalCreateOccasionalMaintenance from "../../components/ModalCreateOccasionalMaintenance";
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
@@ -35,12 +36,14 @@ export const Board = ({ navigation }: any) => {
   const [buildingNanoId, setBuildingNanoId] = useState("");
   const [logo, setLogo] = useState("");
 
+  const [maintenanceDetailsModal, setMaintenanceDetailsModal] = useState(false);
+  const [createMaintenanceModal, setCreateMaintenanceModal] = useState(false);
+
   const [loading, setLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const getKanbanData = async () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
-    
+
     const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
     const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
     const buildingName = await AsyncStorage.getItem("buildingName");
@@ -67,15 +70,19 @@ export const Board = ({ navigation }: any) => {
     setLoading(false); // Finaliza o estado de carregamento
   };
 
-  const openModal = (maintenance: MaintenanceDetails) => {
+  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
     setSelectedMaintenance(maintenance);
-    setModalVisible(true);
+    setMaintenanceDetailsModal(true);
   };
 
-  const closeModal = () => {
+  const closeMaintenanceDetailsModal = () => {
     getKanbanData();
-    setModalVisible(false);
+    setMaintenanceDetailsModal(false);
     setSelectedMaintenance(null);
+  };
+
+  const handleCreateMaintenanceModal = (modalState: boolean) => {
+    setCreateMaintenanceModal(modalState);
   };
 
   useEffect(() => {
@@ -88,6 +95,19 @@ export const Board = ({ navigation }: any) => {
         logoUrl={logo}
         syndicNanoId={syndicNanoId}
         buildingNanoId={buildingNanoId}
+      />
+
+      <MaintenanceDetailsModal
+        visible={maintenanceDetailsModal}
+        maintenance={selectedMaintenance}
+        onClose={closeMaintenanceDetailsModal}
+      />
+
+      <ModalCreateOccasionalMaintenance
+        visible={createMaintenanceModal}
+        buildingNanoId={buildingNanoId}
+        syndicNanoId={syndicNanoId}
+        handleCreateMaintenanceModal={handleCreateMaintenanceModal}
       />
 
       {loading ? (
@@ -103,8 +123,8 @@ export const Board = ({ navigation }: any) => {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
-              paddingHorizontal: 5,
-              paddingTop: 10,
+              marginHorizontal: 6,
+              marginVertical: 12,
             }}
           >
             <View
@@ -136,7 +156,7 @@ export const Board = ({ navigation }: any) => {
 
             <View>
               <TouchableOpacity
-                onPress={() => navigation.navigate("Report")}
+                onPress={() => handleCreateMaintenanceModal(true)}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -153,6 +173,7 @@ export const Board = ({ navigation }: any) => {
               </TouchableOpacity>
             </View>
           </View>
+
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {kanbanData.map((column) => (
               <View key={column.status} style={styles.statusContainer}>
@@ -173,7 +194,9 @@ export const Board = ({ navigation }: any) => {
                               borderLeftWidth: 9,
                             }, // Cor da borda esquerda
                           ]}
-                          onPress={() => openModal(maintenance)}
+                          onPress={() =>
+                            openMaintenanceDetailsModal(maintenance)
+                          }
                         >
                           <View
                             style={[
@@ -252,12 +275,6 @@ export const Board = ({ navigation }: any) => {
           Nenhum dado encontrado.
         </Text>
       )}
-
-      <MaintenanceDetailsModal
-        visible={modalVisible}
-        maintenance={selectedMaintenance}
-        onClose={closeModal}
-      />
     </>
   );
 };

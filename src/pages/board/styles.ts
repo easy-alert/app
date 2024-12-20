@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderRadius: 10,
     marginHorizontal: 6,
-    marginTop: 24,
     marginBottom: 30,
     justifyContent: "flex-start",
   },
