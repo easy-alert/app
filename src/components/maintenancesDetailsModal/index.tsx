@@ -432,6 +432,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         onClose={toogleSupplierModal}
         maintenanceId={maintenance.id}
       />
+
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -440,7 +441,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Enviar relato</Text>
             <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
-              <Icon name="x" size={32} color="#b21d1d" />
+              <Icon name="x" size={28} color="#b21d1d" />
             </TouchableOpacity>
           </View>
 
