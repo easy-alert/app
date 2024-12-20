@@ -21,33 +21,29 @@ export const styles = StyleSheet.create({
     maxHeight: "100%", // Limita a altura da área de cartões, ajuste conforme necessário
   },
   card: {
-    backgroundColor: "#ffffff",
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: "#FAFAFA",
+    paddingLeft: 23,
+    paddingRight: 16,
+    paddingVertical: 16,
+    borderRadius: 4,
     marginBottom: 10,
-    borderLeftWidth: 5, // Define a borda esquerda
-    borderLeftColor: "orange", // Cor inicial da borda
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.08)", // Sombra para o card
     elevation: 2, // Elevação para sombra no Android
   },
   tag: {
-    backgroundColor: "#007BFF", // Azul para a etiqueta
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
     borderRadius: 4,
     alignSelf: "flex-start", // Ajusta o tamanho ao conteúdo
     marginBottom: 8,
   },
   tagText: {
     color: "#ffffff", // Texto branco
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "bold",
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     marginBottom: 4,
     color: "#000", // Cor do texto principal
