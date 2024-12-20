@@ -1,35 +1,46 @@
 import React, { useState, useEffect } from "react";
+
 import {
+  Alert,
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from "react-native";
-import Navbar from "../../components/navbar";
-import { styles } from "../board/styles";
-import { MaintenanceDetails, KanbanColumn } from "../../types";
-import { getStatus } from "../../utils/getStatus";
-import { getMaintenancesBySyndicNanoId } from "../../services/getMaintenancesBySyndicNanoId";
-import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
-import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Feather";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { getMaintenancesBySyndicNanoId } from "../../services/getMaintenancesBySyndicNanoId";
+import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
+
+import Navbar from "../../components/navbar";
+import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
+
+import { getStatus } from "../../utils/getStatus";
+import { formatDate } from "../../utils/formatDate";
+
+import { styles } from "../board/styles";
+
+import type { MaintenanceDetails, KanbanColumn } from "../../types";
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
   const [selectedMaintenance, setSelectedMaintenance] =
     useState<MaintenanceDetails | null>(null);
+
   const [buildingName, setBuildingName] = useState("");
   const [syndicNanoId, setSyndicNanoId] = useState("");
   const [buildingNanoId, setBuildingNanoId] = useState("");
-
   const [logo, setLogo] = useState("");
+
+  const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+
   const getKanbanData = async () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
+    
     const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
     const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
     const buildingName = await AsyncStorage.getItem("buildingName");
@@ -55,9 +66,6 @@ export const Board = ({ navigation }: any) => {
 
     setLoading(false); // Finaliza o estado de carregamento
   };
-  useEffect(() => {
-    getKanbanData();
-  }, []);
 
   const openModal = (maintenance: MaintenanceDetails) => {
     setSelectedMaintenance(maintenance);
@@ -69,6 +77,10 @@ export const Board = ({ navigation }: any) => {
     setModalVisible(false);
     setSelectedMaintenance(null);
   };
+
+  useEffect(() => {
+    getKanbanData();
+  }, []);
 
   return (
     <>
@@ -89,30 +101,57 @@ export const Board = ({ navigation }: any) => {
           <View
             style={{
               flexDirection: "row",
+              justifyContent: "space-between",
               alignItems: "center",
-              paddingHorizontal: 20,
-              paddingTop: 20,
+              paddingHorizontal: 5,
+              paddingTop: 10,
             }}
           >
-            <Text
+            <View
               style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#333",
-              }}
-            >
-              {buildingName}
-            </Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Building")}
-              style={{
-                marginLeft: 10,
-                justifyContent: "center",
+                flexDirection: "row",
                 alignItems: "center",
               }}
             >
-              <Icon name="repeat" size={24} color="#2b2b2c" />
-            </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                }}
+              >
+                {buildingName}
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Building")}
+                style={{
+                  marginLeft: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Icon name="repeat" size={24} color="#b21d1d" />
+              </TouchableOpacity>
+            </View>
+
+            <View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Report")}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#333333",
+                  }}
+                >
+                  Avulsa
+                </Text>
+                <Icon name="plus" size={24} color="#b21d1d" />
+              </TouchableOpacity>
+            </View>
           </View>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {kanbanData.map((column) => (
@@ -131,7 +170,7 @@ export const Board = ({ navigation }: any) => {
                             styles.card,
                             {
                               borderLeftColor: getStatus(column.status).color,
-                              borderLeftWidth: 5,
+                              borderLeftWidth: 9,
                             }, // Cor da borda esquerda
                           ]}
                           onPress={() => openModal(maintenance)}
@@ -174,14 +213,32 @@ export const Board = ({ navigation }: any) => {
                             {maintenance.activity}
                           </Text>
 
-                          <Text
-                            style={[
-                              styles.cardFooter,
-                              { color: getStatus(maintenance.status).color },
-                            ]}
-                          >
-                            {maintenance.label}
-                          </Text>
+                          {(maintenance.status === "completed" ||
+                            maintenance.status === "overdue") && (
+                            <Text
+                              style={[
+                                styles.cardsContainer,
+                                {
+                                  color: "#34b53a",
+                                },
+                              ]}
+                            >
+                              {`Concluída em ${formatDate(maintenance.date)}`}
+                            </Text>
+                          )}
+
+                          {maintenance.label && (
+                            <Text
+                              style={[
+                                styles.cardFooter,
+                                {
+                                  color: getStatus(maintenance.status).color,
+                                },
+                              ]}
+                            >
+                              {maintenance.label}
+                            </Text>
+                          )}
                         </TouchableOpacity>
                       )
                   )}
