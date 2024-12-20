@@ -34,12 +34,10 @@ export const styles = StyleSheet.create({
     elevation: 2, // Elevação para sombra no Android
   },
   tag: {
-    backgroundColor: "#007BFF", // Azul para a etiqueta
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
     borderRadius: 4,
     alignSelf: "flex-start", // Ajusta o tamanho ao conteúdo
-    marginBottom: 8,
   },
   tagText: {
     color: "#ffffff", // Texto branco
@@ -94,8 +92,8 @@ export const styles = StyleSheet.create({
   modalFullContainer: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingVertical: 16, // Espaçamento no topo e na base
-    paddingHorizontal: 24, // Espaçamento nas laterais
+    paddingVertical: 18, // Espaçamento no topo e na base
+    paddingHorizontal: 8, // Espaçamento nas laterais
   },
   modalHeader: {
     flexDirection: "row",
@@ -129,8 +127,9 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 12,
-    backgroundColor: "#f9f9f9",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "#ededed",
     borderRadius: 8,
     marginBottom: 8,
   },
@@ -453,16 +452,26 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 20,
   },
-  actionButton: {
-    backgroundColor: "#c62828",
+  primaryActionButton: {
+    backgroundColor: "#b21d1d",
     padding: 10,
     borderRadius: 8,
   },
+  secondaryActionButton: {
+    padding: 10,
+    borderRadius: 8,
+  },
+
   actionButtonText: {
     color: "#fff",
+    fontWeight: "bold",
+  },
+  secondaryActionButtonText: {
+    color: "#75c5ff",
     fontWeight: "bold",
   },
 });
