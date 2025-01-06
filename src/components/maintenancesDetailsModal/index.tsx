@@ -12,6 +12,7 @@ import {
   Platform,
   Linking,
   Alert,
+  BackHandler,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -114,6 +115,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
       console.log("Erro", "Não foi possível processar o arquivo.");
     }
   };
+
   const handleImageUpload = async (): Promise<void> => {
     try {
       // Solicitar permissões para acessar a galeria
@@ -430,6 +432,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         onClose={toogleSupplierModal}
         maintenanceId={maintenance.id}
       />
+
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -438,11 +441,14 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Enviar relato</Text>
             <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
-              <Icon name="x" size={24} color="#000" />
+              <Icon name="x" size={28} color="#b21d1d" />
             </TouchableOpacity>
           </View>
 
-          <ScrollView contentContainerStyle={styles.modalContent} nestedScrollEnabled={true}>
+          <ScrollView
+            contentContainerStyle={styles.modalContent}
+            nestedScrollEnabled={true}
+          >
             <Text style={styles.modalBuildingName}>
               {maintenanceDetailsData?.Building.name}
             </Text>
@@ -576,7 +582,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
             )}
 
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionHeaderText}>Fornecedores</Text>
+              <Text style={styles.sectionHeaderText}>Fornecedor</Text>
 
               {suppliersData.length >= 1 && (
                 <TouchableOpacity
@@ -936,7 +942,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   "overdue" && (
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                      style={styles.actionButton}
+                      style={styles.secondaryActionButton}
                       onPress={() => {
                         startStopProgress(
                           syndicNanoId,
@@ -945,14 +951,15 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         );
                       }}
                     >
-                      <Text style={styles.actionButtonText}>
+                      <Text style={styles.secondaryActionButtonText}>
                         {maintenanceDetailsData?.inProgress
                           ? "Parar"
                           : "Iniciar"}
                       </Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
-                      style={styles.actionButton}
+                      style={styles.secondaryActionButton}
                       onPress={() => {
                         if (maintenanceDetailsData?.id) {
                           saveProgress(
@@ -965,10 +972,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         }
                       }}
                     >
-                      <Text style={styles.actionButtonText}>Salvar</Text>
+                      <Text style={styles.secondaryActionButtonText}>
+                        Salvar
+                      </Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
-                      style={styles.actionButton}
+                      style={styles.primaryActionButton}
                       onPress={() => {
                         if (maintenanceDetailsData?.id) {
                           Alert.alert(
@@ -996,7 +1006,9 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         }
                       }}
                     >
-                      <Text style={styles.actionButtonText}>Finalizar</Text>
+                      <Text style={styles.actionButtonText}>
+                        Finalizar manutenção
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 )}
