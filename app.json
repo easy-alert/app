@@ -14,7 +14,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.easyalert.app"
+      "bundleIdentifier": "com.easyalert.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to register a maintenance that was done.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select pictures of done maintenances."
+      }
     },
     "android": {
       "adaptiveIcon": {
