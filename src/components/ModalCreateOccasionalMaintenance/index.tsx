@@ -25,6 +25,7 @@ import type {
   IOccasionalMaintenanceData,
   IOccasionalMaintenanceType,
 } from "../../types";
+import { Dropdown } from "react-native-element-dropdown";
 
 interface IModalCreateOccasionalMaintenance {
   visible: boolean;
@@ -248,11 +249,17 @@ function ModalCreateOccasionalMaintenance({
               <Text style={styles.modalInputLabel}>Categoria *</Text>
 
               <View style={styles.modalPicker}>
-                <Picker
-                  enabled={!loading}
-                  dropdownIconColor="#b21d1d"
-                  selectedValue={occasionalMaintenance.categoryData.name}
-                  onValueChange={(value) => {
+                <Dropdown
+                  placeholder="Selecione a categoria"
+                  placeholderStyle={{ color: "gray" }}
+                  style={{ paddingHorizontal: 12 }}
+                  iconColor="#b21d1d"
+                  data={categories}
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="id"
+                  value={occasionalMaintenance.categoryData.name}
+                  onChange={(value) => {
                     const selectedCategory = categories.find(
                       (category) => category.name === value
                     );
@@ -271,17 +278,7 @@ function ModalCreateOccasionalMaintenance({
                       secondaryKey: "name",
                     });
                   }}
-                >
-                  <Picker.Item label="Selecione a categoria" value="" />
-
-                  {categories.map((category) => (
-                    <Picker.Item
-                      key={category.id}
-                      label={category.name}
-                      value={category.name}
-                    />
-                  ))}
-                </Picker>
+                />
               </View>
             </View>
 
@@ -289,6 +286,7 @@ function ModalCreateOccasionalMaintenance({
               <Text style={styles.modalInputLabel}>Elemento *</Text>
               <TextInput
                 placeholder="Informe o elemento"
+                placeholderTextColor="gray"
                 style={styles.modalInput}
                 value={occasionalMaintenance.element}
                 onChangeText={(text) =>
@@ -305,6 +303,7 @@ function ModalCreateOccasionalMaintenance({
 
               <TextInput
                 placeholder="Informe o elemento"
+                placeholderTextColor="gray"
                 style={styles.modalInput}
                 value={occasionalMaintenance.activity}
                 onChangeText={(text) =>
@@ -320,26 +319,23 @@ function ModalCreateOccasionalMaintenance({
               <Text style={styles.modalInputLabel}>Responsável *</Text>
 
               <View style={styles.modalPicker}>
-                <Picker
-                  dropdownIconColor="#b21d1d"
-                  selectedValue={occasionalMaintenance.responsible}
-                  onValueChange={(value) =>
+                <Dropdown
+                  placeholder="Selecione o responsável"
+                  style={{ paddingHorizontal: 12 }}
+                  placeholderStyle={{ color: "gray" }}
+                  iconColor="#b21d1d"
+                  data={responsibleArray}
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="name"
+                  value={occasionalMaintenance.responsible}
+                  onChange={(value) =>
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "responsible",
                       value: value as string,
                     })
                   }
-                >
-                  <Picker.Item label="Selecione o responsável" value="" />
-
-                  {responsibleArray.map((responsible) => (
-                    <Picker.Item
-                      key={responsible.id}
-                      label={responsible.name}
-                      value={responsible.name}
-                    />
-                  ))}
-                </Picker>
+                />
               </View>
             </View>
 
@@ -347,21 +343,36 @@ function ModalCreateOccasionalMaintenance({
               <Text style={styles.modalInputLabel}>Prioridade *</Text>
 
               <View style={styles.modalPicker}>
-                <Picker
-                  dropdownIconColor="#b21d1d"
-                  selectedValue={occasionalMaintenance.priorityName}
-                  onValueChange={(value) =>
+                <Dropdown
+                  placeholder="Selecione a prioridade"
+                  placeholderStyle={{ color: "gray" }}
+                  style={{ paddingHorizontal: 12 }}
+                  iconColor="#b21d1d"
+                  data={[
+                    {
+                      id: "low",
+                      name: "Baixa",
+                    },
+                    {
+                      id: "medium",
+                      name: "Média",
+                    },
+                    {
+                      id: "high",
+                      name: "Alta",
+                    },
+                  ]}
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="id"
+                  value={occasionalMaintenance.priorityName}
+                  onChange={(value) =>
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "priorityName",
                       value: value as string,
                     })
                   }
-                >
-                  <Picker.Item label="Selecione a prioridade" value="" />
-                  <Picker.Item label="Baixa" value="low" />
-                  <Picker.Item label="Média" value="medium" />
-                  <Picker.Item label="Alta" value="high" />
-                </Picker>
+                />
               </View>
             </View>
 
