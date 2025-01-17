@@ -119,10 +119,21 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   const handleImageUpload = async (): Promise<void> => {
     try {
       // Solicitar permissões para acessar a galeria
-      const permissionResult =
+      const permissionLibraryResult =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (!permissionResult.granted) {
+      if (!permissionLibraryResult.granted) {
+        console.log(
+          "Permissão necessária",
+          "Você precisa permitir o acesso à galeria."
+        );
+        return;
+      }
+
+      const permissionCameraResult =
+        await ImagePicker.getCameraPermissionsAsync();
+
+      if (!permissionCameraResult.granted) {
         console.log(
           "Permissão necessária",
           "Você precisa permitir o acesso à galeria."
