@@ -108,6 +108,7 @@ export const Board = ({ navigation }: any) => {
         buildingNanoId={buildingNanoId}
         syndicNanoId={syndicNanoId}
         handleCreateMaintenanceModal={handleCreateMaintenanceModal}
+        getKanbanData={getKanbanData}
       />
 
       {loading ? (
