@@ -12,10 +12,7 @@ import {
   Platform,
   Linking,
   Alert,
-  BackHandler,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import * as DocumentPicker from "expo-document-picker";
 import Icon from "react-native-vector-icons/Feather";
 import {
   MaintenanceDetails,
@@ -29,14 +26,16 @@ import { getMaintenanceDetailsByMaintenanceId } from "../../services/getMaintena
 import { getSuppliersByMaintenanceId } from "../../services/getSuppliersByMaintenanceId";
 import { formatDate } from "../../utils/formatDate";
 import SupplierModal from "../supplierModal";
-import { removeSuppliersFromMaintenance } from "../../services/removeSuppliersFromMaintenance";
 import { getHistoryActivitiesFromMaintenance } from "../../services/getHistoryActivitiesFromMaintenance";
 import { addMaintenanceHistoryActivity } from "../../services/addMaintenanceHistoryActivity";
-import { uploadFile } from "../../services/uploadFile";
 import { saveProgressInMaintenance } from "../../services/saveProgressInMaintenance";
-import { startStopMaintenanceProgress } from "../../services/startStopMaintenanceProgress";
 import { finishMaintenance } from "../../services/finishMaintenance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { convertCostToInteger } from "./utils/convertCostToInteger";
+import { removeItem } from "./utils/removeItem";
+import { handleUpload } from "./utils/handleUpload";
+import { handleProgressToggle } from "./utils/handleProgressToggle";
+import { handleRemoveSupplier } from "./utils/handleRemoveSupplier";
 
 interface MaintenanceDetailsModalProps {
   visible: boolean;
@@ -76,131 +75,6 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     { originalName: string; url: string; name: string }[]
   >([]); // Estado para as imagens
 
-  const handleFileUpload = async (): Promise<void> => {
-    try {
-      // Abrir o seletor de documentos para selecionar um arquivo
-      const fileResult = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // Permite todos os tipos de arquivo. Use 'image/*' para apenas imagens
-        copyToCacheDirectory: true,
-        multiple: false,
-      });
-
-      if (fileResult.canceled) {
-        console.log("Nenhum arquivo selecionado.");
-        return;
-      }
-
-      const { uri, name, mimeType } = fileResult.assets[0];
-
-      const file = {
-        uri,
-        name,
-        type: mimeType || "application/octet-stream", // Ajuste o tipo conforme necessário
-      };
-
-      // Fazer upload do arquivo
-      const fileUrl = await uploadFile(file);
-
-      if (fileUrl) {
-        setFiles((prev) => [
-          ...prev,
-          { originalName: file.name, url: fileUrl, name: file.name },
-        ]);
-        console.log("Upload Concluído", "Arquivo enviado com sucesso!");
-      } else {
-        console.error("Falha no upload do arquivo.");
-      }
-    } catch (error) {
-      console.error("Erro ao selecionar ou enviar o arquivo:", error);
-      console.log("Erro", "Não foi possível processar o arquivo.");
-    }
-  };
-
-  const handleImageUpload = async (): Promise<void> => {
-    try {
-      // Solicitar permissões para acessar a galeria
-      const permissionLibraryResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (!permissionLibraryResult.granted) {
-        console.log(
-          "Permissão necessária",
-          "Você precisa permitir o acesso à galeria."
-        );
-        return;
-      }
-
-      const permissionCameraResult =
-        await ImagePicker.getCameraPermissionsAsync();
-
-      if (!permissionCameraResult.granted) {
-        console.log(
-          "Permissão necessária",
-          "Você precisa permitir o acesso à galeria."
-        );
-        return;
-      }
-
-      // Abrir a galeria para selecionar uma imagem
-      const imageResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1, // Qualidade máxima da imagem
-      });
-
-      if (imageResult.canceled) {
-        console.log("Nenhuma imagem selecionada.");
-        return;
-      }
-
-      const image = {
-        uri: imageResult.assets[0].uri,
-        type: "image/jpeg", // Ajuste o tipo conforme necessário
-        name: `photo-${Date.now()}.jpg`, // Nome único para a imagem
-      };
-
-      // Fazer upload da imagem
-      const fileUrl = await uploadFile(image);
-
-      if (fileUrl) {
-        setImages((prev) => [
-          ...prev,
-          { originalName: image.name, url: fileUrl, name: image.name },
-        ]);
-        console.log("Upload Concluído", `Imagem enviada com sucesso!`);
-      } else {
-        console.error("Falha no upload da imagem.");
-      }
-    } catch (error) {
-      console.error("Erro ao selecionar ou enviar a imagem:", error);
-      console.log("Erro", "Não foi possível processar a imagem.");
-    }
-  };
-
-  const convertCostToInteger = (cost: string) => {
-    // Substitui a vírgula por ponto para lidar com decimais
-    let normalizedCost = cost.replace(",", ".");
-
-    // Converte a string em um número de ponto flutuante
-    let floatCost = parseFloat(normalizedCost);
-
-    // Verifica se a conversão foi bem-sucedida
-    if (isNaN(floatCost)) {
-      floatCost = 0;
-    }
-
-    // Multiplica por 100 para converter em centavos e arredonda
-    let integerCost = Math.round(floatCost * 100);
-
-    return integerCost;
-  };
-
-  const removeItem = (list: any[], setList: any, index: number) => {
-    const updatedList = [...list];
-    updatedList.splice(index, 1); // Remove o item pelo índice
-    setList(updatedList);
-  };
-
   const addHistoryActivity = async (
     syndicNanoId: string,
     maintenanceId: string,
@@ -217,56 +91,6 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
       setUploadedFiles([]);
       await fetchData();
     });
-  };
-
-  const handleUpload = async (): Promise<void> => {
-    try {
-      // Solicitar permissões para acessar a galeria
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (!permissionResult.granted) {
-        console.log(
-          "Permissão necessária",
-          "Você precisa permitir o acesso à galeria."
-        );
-        return;
-      }
-
-      // Abrir a galeria para selecionar uma imagem
-      const imageResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1, // Qualidade máxima da imagem
-      });
-
-      if (imageResult.canceled) {
-        console.log("Nenhuma imagem selecionada.");
-        return;
-      }
-
-      const image = {
-        uri: imageResult.assets[0].uri,
-        type: "image/jpeg", // Ajuste o tipo conforme necessário
-        name: `photo-${Date.now()}.jpg`, // Nome único para a imagem
-      };
-
-      // Fazer upload da imagem
-      const fileUrl = await uploadFile(image);
-
-      if (fileUrl) {
-        setUploadedFiles((prev) => [
-          ...prev,
-          { originalName: image.name, url: fileUrl },
-        ]);
-        console.log("Upload Concluído", `Imagem enviada com sucesso!`);
-      } else {
-        console.error("Falha no upload da imagem.");
-      }
-    } catch (error) {
-      console.error("Erro ao selecionar ou enviar a imagem:", error);
-      console.log("Erro", "Não foi possível processar a imagem.");
-    }
   };
 
   const toogleSupplierModal = async () => {
@@ -387,44 +211,22 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     }
   };
 
-  const removeSupplier = async (
-    syndicNanoId: string,
-    maintenanceId: string | undefined,
-    supplierId: string
-  ) => {
-    if (maintenanceId && syndicNanoId && supplierId) {
-      try {
-        await removeSuppliersFromMaintenance(
-          maintenanceId,
-          syndicNanoId,
-          supplierId
-        );
-        console.log("Fornecedor removido com sucesso");
-
-        // Recarregar os dados do modal
-        await fetchData();
-      } catch (error) {
-        console.error("Erro ao remover fornecedor:", error);
-      }
-    } else {
-      console.error("Maintenance ID ou Supplier ID está indefinido.");
-    }
+  const handleRemove = async (supplierId: string) => {
+    await handleRemoveSupplier(
+      syndicNanoId,
+      maintenanceDetailsData?.id,
+      supplierId,
+      fetchData // Callback para recarregar os dados
+    );
   };
 
-  const startStopProgress = async (
-    syndicNanoId: string,
-    maintenanceId: string | undefined,
-    inProgressChange: boolean
-  ) => {
-    if (maintenanceId) {
-      await startStopMaintenanceProgress(
-        maintenanceId,
-        inProgressChange,
-        syndicNanoId
-      ).then(async () => {
-        await fetchData();
-      });
-    }
+  const handleToggleProgress = async () => {
+    await handleProgressToggle(
+      syndicNanoId,
+      maintenanceDetailsData?.id,
+      !maintenanceDetailsData?.inProgress,
+      fetchData
+    );
   };
 
   useEffect(() => {
@@ -597,19 +399,8 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
               {suppliersData.length >= 1 && (
                 <TouchableOpacity
-                  style={styles.unlinkButton}
-                  onPress={() => {
-                    const maintenanceId = maintenanceDetailsData?.id;
-                    const supplierId = suppliersData[0]?.id;
-
-                    if (maintenanceId && supplierId) {
-                      removeSupplier(syndicNanoId, maintenanceId, supplierId);
-                    } else {
-                      console.error(
-                        "Maintenance ID ou Supplier ID está indefinido."
-                      );
-                    }
-                  }}
+                  onPress={() => handleRemove(suppliersData[0].id)}
+                  style={{ flexDirection: "row", alignItems: "center" }}
                 >
                   <Text style={styles.unlinkText}>Desvincular</Text>
                   <Icon
@@ -708,7 +499,18 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
               <View style={styles.commentButtons}>
                 <TouchableOpacity
                   style={styles.commentButton}
-                  onPress={handleUpload}
+                  onPress={async () => {
+                    const uploadedFile = await handleUpload("file");
+                    if (uploadedFile) {
+                      setUploadedFiles((prev) => [
+                        ...prev,
+                        {
+                          originalName: uploadedFile.name,
+                          url: uploadedFile.url,
+                        },
+                      ]);
+                    }
+                  }}
                 >
                   <Icon name="upload" size={20} color="#fff" />
                 </TouchableOpacity>
@@ -863,8 +665,12 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   maintenanceDetailsData?.MaintenancesStatus.name !==
                     "overdue" && (
                     <TouchableOpacity
-                      style={styles.uploadButton}
-                      onPress={handleFileUpload}
+                      onPress={async () => {
+                        const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
+                        if (uploadedFile) {
+                          setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
+                        }
+                      }}
                     >
                       <Icon name="paperclip" size={24} color="#c62828" />
                     </TouchableOpacity>
@@ -885,7 +691,10 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                           maintenanceDetailsData?.MaintenancesStatus.name !==
                             "overdue" && (
                             <TouchableOpacity
-                              onPress={() => removeItem(files, setFiles, index)}
+                              onPress={() => {
+                                const updatedFiles = removeItem(images, index);
+                                setFiles(updatedFiles);
+                              }}
                             >
                               <Icon
                                 name="x"
@@ -909,8 +718,12 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   maintenanceDetailsData?.MaintenancesStatus.name !==
                     "overdue" && (
                     <TouchableOpacity
-                      style={styles.uploadButton}
-                      onPress={handleImageUpload}
+                      onPress={async () => {
+                        const uploadedImage = await handleUpload("image");
+                        if (uploadedImage) {
+                          setImages((prev) => [...prev, uploadedImage]);
+                        }
+                      }}
                     >
                       <Icon name="image" size={24} color="#c62828" />
                     </TouchableOpacity>
@@ -931,7 +744,10 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         maintenanceDetailsData?.MaintenancesStatus.name !==
                           "overdue" && (
                           <TouchableOpacity
-                            onPress={() => removeItem(images, setImages, index)}
+                            onPress={() => {
+                              const updatedImages = removeItem(images, index);
+                              setImages(updatedImages);
+                            }}
                           >
                             <Icon
                               name="x"
@@ -954,13 +770,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
                       style={styles.secondaryActionButton}
-                      onPress={() => {
-                        startStopProgress(
-                          syndicNanoId,
-                          maintenanceDetailsData?.id,
-                          !maintenanceDetailsData?.inProgress
-                        );
-                      }}
+                      onPress={handleToggleProgress}
                     >
                       <Text style={styles.secondaryActionButtonText}>
                         {maintenanceDetailsData?.inProgress
