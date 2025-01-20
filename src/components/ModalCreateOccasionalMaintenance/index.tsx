@@ -31,6 +31,7 @@ interface IModalCreateOccasionalMaintenance {
   buildingNanoId: string;
   syndicNanoId: string;
   handleCreateMaintenanceModal: (modalState: boolean) => void;
+  getKanbanData: () => void;
 }
 
 interface IHandleSetOccasionalMaintenanceData {
@@ -49,6 +50,7 @@ function ModalCreateOccasionalMaintenance({
   buildingNanoId,
   syndicNanoId,
   handleCreateMaintenanceModal,
+  getKanbanData,
 }: IModalCreateOccasionalMaintenance) {
   const [occasionalMaintenance, setOccasionalMaintenance] =
     useState<IOccasionalMaintenanceData>({
@@ -194,6 +196,8 @@ function ModalCreateOccasionalMaintenance({
       });
 
       if (response?.ServerMessage.statusCode === 200) {
+        getKanbanData();
+        handleCloseModal();
       }
     } catch (error) {}
 
@@ -251,27 +255,26 @@ function ModalCreateOccasionalMaintenance({
                   placeholderStyle={{ color: "gray" }}
                   style={{ paddingHorizontal: 12 }}
                   iconColor="#b21d1d"
-                  data={categories}
+                  data={
+                    categories.map((category) => ({
+                      id: category.id,
+                      name: category.name,
+                    })) as any
+                  }
                   maxHeight={300}
                   labelField="name"
                   valueField="id"
-                  value={occasionalMaintenance.categoryData.name}
-                  onChange={(value) => {
-                    const selectedCategory = categories.find(
-                      (category) => category.name === value
-                    );
-
-                    if (!selectedCategory) return;
-
+                  value={occasionalMaintenance.categoryData.id}
+                  onChange={(item) => {
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "categoryData",
-                      value: selectedCategory.id || "",
+                      value: item.id || "",
                       secondaryKey: "id",
                     });
 
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "categoryData",
-                      value: selectedCategory.name || "",
+                      value: item.name || "",
                       secondaryKey: "name",
                     });
                   }}
@@ -329,7 +332,7 @@ function ModalCreateOccasionalMaintenance({
                   onChange={(value) =>
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "responsible",
-                      value: value as string,
+                      value: value.name as string,
                     })
                   }
                 />
@@ -366,7 +369,7 @@ function ModalCreateOccasionalMaintenance({
                   onChange={(value) =>
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "priorityName",
-                      value: value as string,
+                      value: value.id as string,
                     })
                   }
                 />
@@ -411,7 +414,12 @@ function ModalCreateOccasionalMaintenance({
 
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={handleCloseModal}
+              onPress={() => {
+                handleCreateOccasionalMaintenance({
+                  occasionalMaintenanceType: "pending",
+                  inProgress: true,
+                });
+              }}
             >
               <Text style={styles.modalSecondaryLabel}>Iniciar execução</Text>
             </TouchableOpacity>
