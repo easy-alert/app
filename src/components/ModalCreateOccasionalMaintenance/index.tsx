@@ -85,6 +85,12 @@ function ModalCreateOccasionalMaintenance({
     { id: "3", name: "Equipe Especializada" },
   ];
 
+  const priorityLevelsArray = [
+    { id: "low", name: "Baixa" },
+    { id: "medium", name: "Média" },
+    { id: "high", name: "Alta" },
+  ];
+
   const handleOccasionalMaintenanceDataChange = ({
     primaryKey,
     value,
@@ -185,6 +191,13 @@ function ModalCreateOccasionalMaintenance({
       inProgress,
     };
 
+    console.log({
+      origin: "Mobile",
+      syndicNanoId,
+      occasionalMaintenanceType,
+      occasionalMaintenanceBody,
+    });
+
     try {
       const response = await createOccasionalMaintenance({
         origin: "Mobile",
@@ -255,10 +268,10 @@ function ModalCreateOccasionalMaintenance({
                   maxHeight={300}
                   labelField="name"
                   valueField="id"
-                  value={occasionalMaintenance.categoryData.name}
+                  //value={occasionalMaintenance.categoryData.name}
                   onChange={(value) => {
                     const selectedCategory = categories.find(
-                      (category) => category.name === value
+                      (category) => category.name === value.name
                     );
 
                     if (!selectedCategory) return;
@@ -329,7 +342,7 @@ function ModalCreateOccasionalMaintenance({
                   onChange={(value) =>
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "responsible",
-                      value: value as string,
+                      value: value.name as string,
                     })
                   }
                 />
@@ -345,30 +358,17 @@ function ModalCreateOccasionalMaintenance({
                   placeholderStyle={{ color: "gray" }}
                   style={{ paddingHorizontal: 12 }}
                   iconColor="#b21d1d"
-                  data={[
-                    {
-                      id: "low",
-                      name: "Baixa",
-                    },
-                    {
-                      id: "medium",
-                      name: "Média",
-                    },
-                    {
-                      id: "high",
-                      name: "Alta",
-                    },
-                  ]}
+                  data={priorityLevelsArray}
                   maxHeight={300}
                   labelField="name"
                   valueField="id"
                   value={occasionalMaintenance.priorityName}
-                  onChange={(value) =>
+                  onChange={(value) => {
                     handleOccasionalMaintenanceDataChange({
                       primaryKey: "priorityName",
-                      value: value as string,
-                    })
-                  }
+                      value: value.id as string,
+                    });
+                  }}
                 />
               </View>
             </View>
@@ -399,17 +399,17 @@ function ModalCreateOccasionalMaintenance({
 
           <View style={styles.modalFooter}>
             <TouchableOpacity
-              style={styles.modalButton}
+              style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
               onPress={() => {
                 handleCreateOccasionalMaintenance({
                   occasionalMaintenanceType: "pending",
                 });
               }}
             >
-              <Text style={styles.modalSecondaryLabel}>Criar</Text>
+              <Text style={styles.modalButtonLabel}>Criar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.modalButton}
               onPress={handleCloseModal}
             >
@@ -421,7 +421,7 @@ function ModalCreateOccasionalMaintenance({
               onPress={handleCloseModal}
             >
               <Text style={styles.modalButtonLabel}>Criar finalizada</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </SafeAreaView>
       </KeyboardAvoidingView>

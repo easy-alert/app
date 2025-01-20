@@ -52,7 +52,7 @@ export const createOccasionalMaintenance = async ({
     occasionalMaintenanceType,
     buildingId: buildingId || null,
     executionDate:
-      new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
+      (new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0))).toISOString() || null,
     responsibleSyndicId: syndicNanoId,
     priorityName: priorityName || "low",
     categoryData: {
@@ -72,6 +72,9 @@ export const createOccasionalMaintenance = async ({
       images: reportData.images || null,
     },
   };
+
+  console.log('body', body);
+  
 
   try {
     const response: IResponseCreateOccasionalMaintenance = await baseApi.post(
