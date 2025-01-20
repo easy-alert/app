@@ -14,6 +14,7 @@ import {
 
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { getCategoriesByBuildingNanoId } from "../../services/getCategoriesByBuildingNanoId";
 import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
@@ -217,7 +218,7 @@ function ModalCreateOccasionalMaintenance({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <SafeAreaView style={styles.modalFullContainer}>
-          {showDatePicker && (
+          {/* {showDatePicker && (
             <DateTimePicker
               mode="date"
               locale="pt-BR"
@@ -231,7 +232,20 @@ function ModalCreateOccasionalMaintenance({
                 });
               }}
             />
-          )}
+          )} */}
+
+          <DateTimePickerModal
+            isVisible={showDatePicker}
+            mode="date"
+            onConfirm={(selectedDate) => {
+              handleDatePicker(false);
+              handleOccasionalMaintenanceDataChange({
+                primaryKey: "executionDate",
+                value: selectedDate?.toISOString() || "",
+              });
+            }}
+            onCancel={() => handleDatePicker(false)}
+          />
 
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Manutenção avulsa</Text>
