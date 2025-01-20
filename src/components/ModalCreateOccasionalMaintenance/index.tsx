@@ -12,8 +12,6 @@ import {
   View,
 } from "react-native";
 
-import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { getCategoriesByBuildingNanoId } from "../../services/getCategoriesByBuildingNanoId";
@@ -218,25 +216,10 @@ function ModalCreateOccasionalMaintenance({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <SafeAreaView style={styles.modalFullContainer}>
-          {/* {showDatePicker && (
-            <DateTimePicker
-              mode="date"
-              locale="pt-BR"
-              is24Hour={true}
-              value={new Date()}
-              onChange={(event, selectedDate) => {
-                handleDatePicker(false);
-                handleOccasionalMaintenanceDataChange({
-                  primaryKey: "executionDate",
-                  value: selectedDate?.toISOString() || "",
-                });
-              }}
-            />
-          )} */}
-
           <DateTimePickerModal
             isVisible={showDatePicker}
             mode="date"
+            display="inline"
             onConfirm={(selectedDate) => {
               handleDatePicker(false);
               handleOccasionalMaintenanceDataChange({
