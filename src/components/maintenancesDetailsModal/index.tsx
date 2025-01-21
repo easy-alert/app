@@ -152,6 +152,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         );
 
         const newEntry = {
+          type: "addHistoryActivity",
           syndicNanoId,
           maintenanceId,
           comment,
