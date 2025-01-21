@@ -234,6 +234,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
+        onClose();
         await fetchData();
       } else {
         // If offline, save data to a queue in AsyncStorage
@@ -280,6 +281,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
+        onClose();
       }
     } catch (error) {
       console.error("Error in saveProgress:", error);
@@ -346,6 +348,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
+        onClose();
         await fetchData();
       } else {
         // If offline, save data to a queue in AsyncStorage
@@ -392,6 +395,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
+        onClose();
       }
     } catch (error) {
       console.error("Error in handleFinishMaintenance:", error);
