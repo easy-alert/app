@@ -11,6 +11,7 @@ import {
 import Icon from "react-native-vector-icons/Feather";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 import { getMaintenancesBySyndicNanoId } from "../../services/getMaintenancesBySyndicNanoId";
 import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
@@ -25,6 +26,10 @@ import { styles } from "../board/styles";
 
 import type { MaintenanceDetails, KanbanColumn } from "../../types";
 import ModalCreateOccasionalMaintenance from "../../components/ModalCreateOccasionalMaintenance";
+import {
+  processOfflineQueue,
+  startPeriodicQueueProcessing,
+} from "../../utils/processOffilineQueue";
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
@@ -40,6 +45,10 @@ export const Board = ({ navigation }: any) => {
   const [createMaintenanceModal, setCreateMaintenanceModal] = useState(false);
 
   const [loading, setLoading] = useState(true);
+
+  const [offlineCount, setOfflineCount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [internetConnection, setInternetConnection] = useState(true);
 
   const getKanbanData = async () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
@@ -85,6 +94,39 @@ export const Board = ({ navigation }: any) => {
     setCreateMaintenanceModal(modalState);
   };
 
+  const getOfflineQueueCount = async () => {
+    const offlineQueueString = await AsyncStorage.getItem("offline_queue");
+    const offlineQueue = offlineQueueString
+      ? JSON.parse(offlineQueueString)
+      : [];
+    setOfflineCount(offlineQueue.length);
+  };
+
+  const processQueueOnReconnect = () => {
+    NetInfo.addEventListener(async (state) => {
+      if (state.isConnected) {
+        setInternetConnection(true);
+        setIsProcessing(true);
+        await processOfflineQueue(); // Processa a fila
+        setIsProcessing(false);
+        await getOfflineQueueCount(); // Atualiza o contador
+      } else {
+        setInternetConnection(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    const stopProcessing = startPeriodicQueueProcessing();
+
+    return () => stopProcessing(); // Limpa o intervalo ao desmontar o componente
+  }, []);
+
+  useEffect(() => {
+    getOfflineQueueCount(); // Atualiza o contador ao montar o componente
+    processQueueOnReconnect(); // Observa reconexões de internet
+  }, []);
+
   useEffect(() => {
     getKanbanData();
   }, []);
@@ -96,6 +138,28 @@ export const Board = ({ navigation }: any) => {
         syndicNanoId={syndicNanoId}
         buildingNanoId={buildingNanoId}
       />
+      {offlineCount > 0 && (
+        <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
+          <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>
+            {`Fila Offline: ${offlineCount} item(s)`}
+          </Text>
+          {isProcessing && (
+            <Text style={{ color: "green" }}>
+              Processando dados da fila, aguarde...
+            </Text>
+          )}
+        </View>
+      )}
+
+      {!internetConnection && (
+        <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
+          {!isProcessing && (
+            <Text style={{ color: "green" }}>
+              Você está offline, alguns serviços podem estar indisponíveis...
+            </Text>
+          )}
+        </View>
+      )}
 
       <MaintenanceDetailsModal
         visible={maintenanceDetailsModal}
@@ -114,8 +178,8 @@ export const Board = ({ navigation }: any) => {
       {loading ? (
         <ActivityIndicator
           size="large"
-          color="#007BFF"
-          style={{ marginTop: 250 }}
+          color="#ff3535"
+          style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
         />
       ) : kanbanData.length > 0 ? (
         <>

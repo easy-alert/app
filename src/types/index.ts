@@ -59,6 +59,7 @@ export interface UploadedFile {
   name?: string;
   originalName: string | null;
   url: string;
+  type?: string;
 }
 
 export interface MaintenanceHistory {

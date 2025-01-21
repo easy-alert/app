@@ -5,8 +5,8 @@ export const finishMaintenance = async (
   maintenanceId: string,
   cost: number,
   syndicNanoId: string,
-  files?: never[],
-  images?: never[]
+  files?: { originalName: string; url: string | null; name: string }[],
+  images?: { originalName: string; url: string | null; name: string }[]
 ): Promise<string | null> => {
   try {
     const response = await fetch(

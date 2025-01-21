@@ -2,6 +2,22 @@ import { StyleSheet, Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 
 export const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semitransparente
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Fundo escuro transparente
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   statusContainer: {
     width: Dimensions.get("window").width * 0.85, // Largura da coluna
     padding: 12,

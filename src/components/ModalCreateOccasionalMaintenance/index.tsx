@@ -232,6 +232,7 @@ function ModalCreateOccasionalMaintenance({
               });
             }}
             onCancel={() => handleDatePicker(false)}
+            themeVariant={"light"}
           />
 
           <View style={styles.modalHeader}>
@@ -383,7 +384,7 @@ function ModalCreateOccasionalMaintenance({
                 <TextInput
                   style={styles.modalInput}
                   value={new Date(
-                    occasionalMaintenance.executionDate
+                    occasionalMaintenance.executionDate || ""
                   ).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                   placeholder="dd/mm/aaaa"
                   editable={false}

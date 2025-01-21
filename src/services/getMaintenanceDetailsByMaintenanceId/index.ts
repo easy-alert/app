@@ -1,13 +1,12 @@
 import { MaintenanceDetails } from "../../types"; // Certifique-se de ajustar o caminho para o seu tipo ApiResponse
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Chave para armazenamento no AsyncStorage
-const CACHE_KEY = "maintenances/list/details";
-
 // Função para buscar os dados do Kanban
 export const getMaintenanceDetailsByMaintenanceId = async (
   maintenanceId: string
 ): Promise<MaintenanceDetails | null> => {
+  // Chave para armazenamento no AsyncStorage
+  const CACHE_KEY = `maintenances/list/details/${maintenanceId}`;
   try {
     // Tenta fazer a requisição à API
 

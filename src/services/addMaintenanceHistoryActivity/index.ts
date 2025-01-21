@@ -3,7 +3,7 @@ export const addMaintenanceHistoryActivity = async (
   maintenanceId: string,
   syndicNanoId: string,
   content: string,
-  uploadedFile?: never[]
+  uploadedFile?: { originalName: string; url: string | null; type: string }[]
 ): Promise<string | null> => {
   try {
     const response = await fetch(
