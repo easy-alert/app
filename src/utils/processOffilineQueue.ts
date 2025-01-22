@@ -9,18 +9,26 @@ const OFFLINE_QUEUE_KEY = "offline_queue";
 let isProcessing = false; // Global lock to prevent overlapping processes
 
 const processOfflineQueue = async () => {
-  const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-  const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+  if (isProcessing) {
+    console.log("Queue processing is already running. Skipping this cycle.");
+    return; // Exit if already processing
+  }
 
-  if (offlineQueue.length > 0) {
-    const updatedQueue = [];
+  isProcessing = true; // Set lock to prevent overlapping processes
 
-    for (const item of offlineQueue) {
+  try {
+    const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+    let offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+
+    while (offlineQueue.length > 0) {
+      // Get and remove the first item in the queue
+      const currentItem = offlineQueue.shift();
+
       try {
-        if (item.type === "addHistoryActivity") {
+        if (currentItem.type === "addHistoryActivity") {
           // Handle addHistoryActivity
           const filesUploaded = [];
-          for (const file of item.files) {
+          for (const file of currentItem.files) {
             const fileUrl = await uploadFile({
               uri: file.uri,
               type: file.type,
@@ -35,15 +43,15 @@ const processOfflineQueue = async () => {
           }
 
           await addMaintenanceHistoryActivity(
-            item.maintenanceId,
-            item.syndicNanoId,
-            item.comment,
+            currentItem.maintenanceId,
+            currentItem.syndicNanoId,
+            currentItem.comment,
             filesUploaded
           );
-        } else if (item.type === "saveProgress") {
+        } else if (currentItem.type === "saveProgress") {
           // Handle saveProgress
           const filesUploaded = [];
-          for (const file of item.files) {
+          for (const file of currentItem.files) {
             const fileUrl = await uploadFile({
               uri: file.uri,
               type: file.type,
@@ -58,7 +66,7 @@ const processOfflineQueue = async () => {
           }
 
           const imagesUploaded = [];
-          for (const image of item.images) {
+          for (const image of currentItem.images) {
             const fileUrl = await uploadFile({
               uri: image.uri,
               type: image.type,
@@ -73,16 +81,16 @@ const processOfflineQueue = async () => {
           }
 
           await saveProgressInMaintenance(
-            item.maintenanceId,
-            item.cost,
-            item.syndicNanoId,
+            currentItem.maintenanceId,
+            currentItem.cost,
+            currentItem.syndicNanoId,
             filesUploaded,
             imagesUploaded
           );
-        } else if (item.type === "finishMaintenance") {
+        } else if (currentItem.type === "finishMaintenance") {
           // Handle finishMaintenance
           const filesUploaded = [];
-          for (const file of item.files) {
+          for (const file of currentItem.files) {
             const fileUrl = await uploadFile({
               uri: file.uri,
               type: file.type,
@@ -97,7 +105,7 @@ const processOfflineQueue = async () => {
           }
 
           const imagesUploaded = [];
-          for (const image of item.images) {
+          for (const image of currentItem.images) {
             const fileUrl = await uploadFile({
               uri: image.uri,
               type: image.type,
@@ -112,21 +120,34 @@ const processOfflineQueue = async () => {
           }
 
           await finishMaintenance(
-            item.maintenanceId,
-            item.cost,
-            item.syndicNanoId,
+            currentItem.maintenanceId,
+            currentItem.cost,
+            currentItem.syndicNanoId,
             filesUploaded,
             imagesUploaded
           );
         }
+
+        // Save the updated queue after successful processing
+        await AsyncStorage.setItem(
+          OFFLINE_QUEUE_KEY,
+          JSON.stringify(offlineQueue)
+        );
       } catch (error) {
         console.error("Failed to process offline queue item:", error);
-        updatedQueue.push(item); // Re-add item to queue if processing fails
+        // Re-add the item to the queue if it fails
+        offlineQueue.push(currentItem);
+        await AsyncStorage.setItem(
+          OFFLINE_QUEUE_KEY,
+          JSON.stringify(offlineQueue)
+        );
+        break; // Exit the loop on failure to avoid endless retries
       }
     }
-
-    // Update the queue in AsyncStorage
-    await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(updatedQueue));
+  } catch (error) {
+    console.error("Error during offline queue processing:", error);
+  } finally {
+    isProcessing = false; // Release lock after processing
   }
 };
 
