@@ -7,7 +7,7 @@ export const getHistoryActivitiesFromMaintenance = async (
   syndicNanoId: string
 ): Promise<MaintenanceHistoryActivities | null> => {
   // Chave para armazenamento no AsyncStorage
-  const CACHE_KEY = `maintenance-history-activities/${maintenanceId}?syndicNanoId=${syndicNanoId}`;
+  const CACHE_KEY = `client/maintenance-history-activities/${maintenanceId}?syndicNanoId=${syndicNanoId}`;
   try {
     // Tenta fazer a requisição à API
 

@@ -6,7 +6,7 @@ export const getMaintenancesBySyndicNanoId = async (
   syndicNanoId: string
 ): Promise<MaintenancesBySyndicNanoId | null> => {
   // Chave para armazenamento no AsyncStorage
-  const CACHE_KEY = `api/client/syndic/${syndicNanoId}`;
+  const CACHE_KEY = `client/syndic/${syndicNanoId}`;
   try {
     // Tenta fazer a requisição à API
     const response = await fetch(

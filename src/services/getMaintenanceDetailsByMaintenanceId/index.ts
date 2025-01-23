@@ -6,7 +6,7 @@ export const getMaintenanceDetailsByMaintenanceId = async (
   maintenanceId: string
 ): Promise<MaintenanceDetails | null> => {
   // Chave para armazenamento no AsyncStorage
-  const CACHE_KEY = `maintenances/list/details/${maintenanceId}`;
+  const CACHE_KEY = `client/maintenances/list/details/${maintenanceId}`;
   try {
     // Tenta fazer a requisição à API
 

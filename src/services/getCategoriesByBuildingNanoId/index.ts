@@ -1,6 +1,3 @@
-// SERVICES
-import { baseApi } from "../baseApi";
-
 // GLOBAL TYPES
 import type { ICategory, IResponse } from "../../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,20 +12,27 @@ interface IResponseGetCategoriesByBuildingNanoId extends IResponse {
   };
 }
 
-// Chave para armazenamento no AsyncStorage
-const CACHE_KEY = "client/buildings/maintenances/occasional/auxiliarydata/";
-
 export const getCategoriesByBuildingNanoId = async ({
   buildingNanoId,
 }: IGetCategoriesByBuildingNanoId) => {
-  const uri = `/client/buildings/maintenances/occasional/auxiliarydata/${buildingNanoId}`;
+  const uri = `https://easyalert-production.herokuapp.com/api/client/buildings/maintenances/occasional/auxiliarydata/${buildingNanoId}`;
 
+  // Chave para armazenamento no AsyncStorage
+  const CACHE_KEY = `client/buildings/maintenances/occasional/auxiliarydata/${buildingNanoId}`;
   try {
-    const response: IResponseGetCategoriesByBuildingNanoId = await baseApi.get(
-      uri
-    );
+    const response = await fetch(uri, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    const { Categories: categories } = response.data;
+    if (!response.ok) {
+      throw new Error(`Erro na requisição: ${response.statusText}`);
+    }
+
+    const data: IResponseGetCategoriesByBuildingNanoId = await response.json();
+    const { Categories: categories } = data.data;
 
     await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(categories));
 
@@ -45,6 +49,6 @@ export const getCategoriesByBuildingNanoId = async ({
       return JSON.parse(cachedData) as ICategory[]; // Retorna os dados armazenados
     }
 
-    return [] as ICategory[]; // Retorna null se nenhum dado for encontrado
+    return [] as ICategory[]; // Retorna uma lista vazia se nenhum dado for encontrado
   }
 };

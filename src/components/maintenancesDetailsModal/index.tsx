@@ -422,6 +422,8 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
           ]);
 
         if (maintenanceData) {
+          console.log(maintenanceData.Maintenance);
+
           setMaintenanceDetailsData(maintenanceData);
 
           if (maintenanceData.MaintenanceReportProgress.length) {
@@ -636,9 +638,23 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
               <View style={styles.modalInfoRow}>
                 <Text style={styles.modalInfoLabel}>Periodicidade</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.period}
-                </Text>
+                {maintenanceDetailsData?.Maintenance.MaintenanceType.name ===
+                "common" ? (
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
+                    {maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1
+                      ? maintenanceDetailsData?.Maintenance
+                          .FrequencyTimeInterval.pluralLabel === "anos" &&
+                        maintenanceDetailsData?.Maintenance.frequency === 1
+                        ? "ano"
+                        : maintenanceDetailsData?.Maintenance
+                            .FrequencyTimeInterval.pluralLabel
+                      : maintenanceDetailsData?.Maintenance
+                          .FrequencyTimeInterval.singularLabel}
+                  </Text>
+                ) : (
+                  <Text style={styles.modalInfoValue}>-</Text>
+                )}
               </View>
 
               <View style={styles.modalInfoRow}>

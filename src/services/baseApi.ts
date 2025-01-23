@@ -4,5 +4,6 @@ export const baseApi = axios.create({
   baseURL: "https://easyalert-production.herokuapp.com/api",
   headers: {
     "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });

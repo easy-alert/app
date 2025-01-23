@@ -130,7 +130,7 @@ function ModalCreateOccasionalMaintenance({
       element: "",
       activity: "",
       responsible: "",
-      executionDate: "",
+      executionDate: new Date().toISOString(),
       inProgress: false,
       priorityName: "",
 
@@ -188,6 +188,8 @@ function ModalCreateOccasionalMaintenance({
     };
 
     try {
+      console.log(occasionalMaintenanceBody);
+
       const response = await createOccasionalMaintenance({
         origin: "Mobile",
         syndicNanoId,
@@ -383,9 +385,15 @@ function ModalCreateOccasionalMaintenance({
               <View>
                 <TextInput
                   style={styles.modalInput}
-                  value={new Date(
-                    occasionalMaintenance.executionDate || ""
-                  ).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                  value={
+                    occasionalMaintenance.executionDate
+                      ? new Date(
+                          occasionalMaintenance.executionDate
+                        ).toLocaleDateString("pt-BR", { timeZone: "UTC" })
+                      : new Date().toLocaleDateString("pt-BR", {
+                          timeZone: "UTC",
+                        })
+                  }
                   placeholder="dd/mm/aaaa"
                   editable={false}
                 />
@@ -402,7 +410,7 @@ function ModalCreateOccasionalMaintenance({
           </View>
 
           <View style={styles.modalFooter}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.modalButton}
               onPress={() => {
                 handleCreateOccasionalMaintenance({
@@ -411,7 +419,7 @@ function ModalCreateOccasionalMaintenance({
               }}
             >
               <Text style={styles.modalSecondaryLabel}>Criar</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               style={styles.modalButton}
@@ -422,14 +430,27 @@ function ModalCreateOccasionalMaintenance({
                 });
               }}
             >
-              <Text style={styles.modalSecondaryLabel}>Iniciar execução</Text>
+              <Text style={styles.modalSecondaryLabel}>Criar em execução</Text>
             </TouchableOpacity>
+
+            {
+              // <TouchableOpacity
+              //   style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
+              //   onPress={handleCloseModal}
+              // >
+              //   <Text style={styles.modalButtonLabel}>Criar finalizada</Text>
+              // </TouchableOpacity>
+            }
 
             <TouchableOpacity
               style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
-              onPress={handleCloseModal}
+              onPress={() => {
+                handleCreateOccasionalMaintenance({
+                  occasionalMaintenanceType: "pending",
+                });
+              }}
             >
-              <Text style={styles.modalButtonLabel}>Criar finalizada</Text>
+              <Text style={styles.modalButtonLabel}>Criar manutenção</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>

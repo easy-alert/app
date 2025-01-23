@@ -1,13 +1,12 @@
 import { BuildingsBySyndicId } from "../../types"; // Certifique-se de ajustar o caminho para o seu tipo ApiResponse
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Chave para armazenamento no AsyncStorage
-const CACHE_KEY = "api/client/find-buildings-by-syndic-nano-id";
-
 // Função para buscar os dados do Kanban
 export const getBuildingsBySyndicNanoId = async (
   syndicNanoId: string
 ): Promise<BuildingsBySyndicId | null> => {
+  // Chave para armazenamento no AsyncStorage
+  const CACHE_KEY = `client/find-buildings-by-syndic-nano-id/${syndicNanoId}`;
   try {
     // Tenta fazer a requisição à API
     const response = await fetch(
