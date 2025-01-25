@@ -6,12 +6,6 @@ interface IGetCategoriesByBuildingNanoId {
   buildingNanoId: string;
 }
 
-interface IResponseGetCategoriesByBuildingNanoId extends IResponse {
-  data: {
-    Categories: ICategory[];
-  };
-}
-
 export const getCategoriesByBuildingNanoId = async ({
   buildingNanoId,
 }: IGetCategoriesByBuildingNanoId) => {
@@ -19,7 +13,10 @@ export const getCategoriesByBuildingNanoId = async ({
 
   // Chave para armazenamento no AsyncStorage
   const CACHE_KEY = `client/buildings/maintenances/occasional/auxiliarydata/${buildingNanoId}`;
+
   try {
+    console.log("Iniciando requisição para:", uri);
+
     const response = await fetch(uri, {
       method: "GET",
       headers: {
@@ -27,14 +24,28 @@ export const getCategoriesByBuildingNanoId = async ({
       },
     });
 
+    console.log("Status da resposta:", response.status, response.statusText);
+
+    // Verifica se a resposta foi bem-sucedida
     if (!response.ok) {
-      throw new Error(`Erro na requisição: ${response.statusText}`);
+      const rawResponse = await response.text(); // Captura o conteúdo bruto
+      console.error("Erro na resposta da API:", rawResponse);
+      throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const data: IResponseGetCategoriesByBuildingNanoId = await response.json();
-    const { Categories: categories } = data.data;
+    const data = await response.json(); // Faz o parse do JSON
 
+    // Verifica se Categories existe e é uma lista
+    if (!Array.isArray(data?.Categories)) {
+      console.error("Formato inesperado da resposta:");
+      throw new Error("Categorias ausentes ou no formato errado na resposta");
+    }
+
+    const categories = data.Categories;
+
+    // Salva no cache
     await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(categories));
+    console.log("Categorias armazenadas no cache:");
 
     return categories;
   } catch (error: any) {
@@ -43,12 +54,18 @@ export const getCategoriesByBuildingNanoId = async ({
       error
     );
 
-    const cachedData = await AsyncStorage.getItem(CACHE_KEY);
-
-    if (cachedData) {
-      return JSON.parse(cachedData) as ICategory[]; // Retorna os dados armazenados
+    // Tenta carregar os dados do cache
+    try {
+      const cachedData = await AsyncStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        console.log("Carregando dados do cache");
+        return JSON.parse(cachedData) as ICategory[];
+      }
+    } catch (cacheError) {
+      console.error("Erro ao acessar o cache:", cacheError);
     }
 
-    return [] as ICategory[]; // Retorna uma lista vazia se nenhum dado for encontrado
+    // Retorna uma lista vazia em caso de erro
+    return [] as ICategory[];
   }
 };

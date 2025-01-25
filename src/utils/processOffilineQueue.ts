@@ -10,7 +10,7 @@ let isProcessing = false; // Global lock to prevent overlapping processes
 
 const processOfflineQueue = async () => {
   if (isProcessing) {
-    console.log("Queue processing is already running. Skipping this cycle.");
+    // console.log("Queue processing is already running. Skipping this cycle.");
     return; // Exit if already processing
   }
 
@@ -155,7 +155,7 @@ const startPeriodicQueueProcessing = () => {
   const interval = setInterval(async () => {
     const networkState = await NetInfo.fetch();
     if (networkState.isConnected) {
-      console.log("Internet is available. Processing offline queue...");
+      // console.log("Internet is available. Processing offline queue...");
       await processOfflineQueue();
     }
   }, 3000); // Check every 3 seconds

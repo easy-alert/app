@@ -207,8 +207,10 @@ function ModalCreateOccasionalMaintenance({
   };
 
   useEffect(() => {
-    handleGetCategoriesByBuildingNanoId();
-  }, []);
+    if (visible) {
+      handleGetCategoriesByBuildingNanoId();
+    }
+  }, [visible]);
 
   return (
     <Modal

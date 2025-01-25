@@ -422,15 +422,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
           ]);
 
         if (maintenanceData) {
-          console.log(maintenanceData.Maintenance);
-
           setMaintenanceDetailsData(maintenanceData);
 
           if (maintenanceData.MaintenanceReportProgress.length) {
             setCost(
-              String(
-                maintenanceData.MaintenanceReportProgress[0].cost / 100
-              ).replace(".", ",")
+              formatCurrency(
+                String(maintenanceData.MaintenanceReportProgress[0].cost)
+              )
             );
           }
 
@@ -494,6 +492,25 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
       !maintenanceDetailsData?.inProgress,
       fetchData
     );
+  };
+
+  const formatCurrency = (text: string) => {
+    // Remove todos os caracteres não numéricos
+    const numericValue = text.replace(/[^0-9]/g, "");
+
+    // Converte para um número
+    const value = parseFloat(numericValue) / 100;
+
+    // Formata no padrão brasileiro
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
+
+  const handleChangeCost = (text: string) => {
+    const formatted = formatCurrency(text);
+    setCost(formatted);
   };
 
   useEffect(() => {
@@ -930,7 +947,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         style={styles.input}
                         placeholder="R$ 0,00"
                         value={cost}
-                        onChangeText={(text) => setCost(text)} // Adiciona a máscara monetária
+                        onChangeText={(text) => handleChangeCost(text)}
                         keyboardType="numeric"
                       />
                     </>
