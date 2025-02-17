@@ -59,7 +59,7 @@ function ModalCreateOccasionalMaintenance({
       element: "",
       activity: "",
       responsible: "",
-      executionDate: "",
+      executionDate: new Date().toISOString(),
       inProgress: false,
       priorityName: "",
 
