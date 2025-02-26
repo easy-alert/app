@@ -20,6 +20,7 @@ import { checkSyndicAndBuildingExists } from "../../services/checkSyndicAndBuild
 import Logo from "../../assets/logo.png";
 
 import { styles } from "./styles";
+import { Keyboard } from "react-native";
 
 export const Login = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -62,6 +63,8 @@ export const Login = ({ navigation }: any) => {
   };
 
   const handleLogin = async () => {
+    Keyboard.dismiss(); // Fecha o teclado ao clicar no botão
+
     if (!phoneNumber || phoneNumber.length < 11) {
       Alert.alert("Erro", "Por favor, insira um número de telefone válido.");
       return;
