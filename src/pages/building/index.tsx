@@ -10,9 +10,10 @@ import {
   SafeAreaView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IUser } from '../../types/IUser';
 
 export const Building = ({ navigation }: any) => {
-  const [buildings, setBuildings] = useState<any[]>([]);
+  const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,9 +39,8 @@ export const Building = ({ navigation }: any) => {
 
   const handleBuildingSelect = async (building: any) => {
     try {
-      await AsyncStorage.setItem("buildingNanoId", building.buildingNanoId);
-      await AsyncStorage.setItem("syndicNanoId", building.syndicNanoId);
-      await AsyncStorage.setItem("buildingName", building.buildingName);
+      await AsyncStorage.setItem("buildingId", building.Building.id);
+      await AsyncStorage.setItem("buildingName", building.Building.name);
 
       navigation.replace("Board");
     } catch (error) {
@@ -54,7 +54,7 @@ export const Building = ({ navigation }: any) => {
       style={styles.buildingItem}
       onPress={() => handleBuildingSelect(item)}
     >
-      <Text style={styles.buildingName}>{item.buildingName}</Text>
+      <Text style={styles.buildingName}>{item.Building.name}</Text>
     </TouchableOpacity>
   );
 
@@ -72,7 +72,7 @@ export const Building = ({ navigation }: any) => {
         <Text style={styles.title}>Escolha uma Edificação</Text>
         <FlatList
           data={buildings}
-          keyExtractor={(item) => item.buildingNanoId}
+          keyExtractor={(building) => building?.Building?.id}
           renderItem={renderBuilding}
           ListEmptyComponent={
             <Text style={styles.emptyText}>

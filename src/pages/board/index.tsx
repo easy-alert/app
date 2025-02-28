@@ -13,9 +13,6 @@ import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
-import { getMaintenancesBySyndicNanoId } from "../../services/getMaintenancesBySyndicNanoId";
-import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
-
 import Navbar from "../../components/navbar";
 import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
 
@@ -30,6 +27,17 @@ import {
   processOfflineQueue,
   startPeriodicQueueProcessing,
 } from "../../utils/processOffilineQueue";
+import { getMaintenancesKanban } from '../../services/getMaintenancesKanban';
+
+export interface IMaintenanceFilter {
+  buildings: string[];
+  status: string[];
+  categories: string[];
+  users: string[];
+  priorityName: string;
+  startDate?: string;
+  endDate?: string;
+}
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
@@ -37,8 +45,8 @@ export const Board = ({ navigation }: any) => {
     useState<MaintenanceDetails | null>(null);
 
   const [buildingName, setBuildingName] = useState("");
-  const [syndicNanoId, setSyndicNanoId] = useState("");
-  const [buildingNanoId, setBuildingNanoId] = useState("");
+  const [userId, setUserId] = useState("");
+  const [buildingId, setBuildingId] = useState("");
   const [logo, setLogo] = useState("");
 
   const [maintenanceDetailsModal, setMaintenanceDetailsModal] = useState(false);
@@ -53,21 +61,31 @@ export const Board = ({ navigation }: any) => {
   const getKanbanData = async () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
 
-    const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
-    const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
+    const userId = await AsyncStorage.getItem("userId");
+    const buildingId = await AsyncStorage.getItem("buildingId");
     const buildingName = await AsyncStorage.getItem("buildingName");
 
-    if (syndicNanoId && buildingNanoId && buildingName) {
+    if (userId && buildingId && buildingName) {
+      setUserId(userId);
+      setBuildingId(buildingId);
       setBuildingName(buildingName);
-      setSyndicNanoId(syndicNanoId);
-      setBuildingNanoId(buildingNanoId);
 
-      const data = await getMaintenancesBySyndicNanoId(syndicNanoId);
-      const logo = await getCompanyLogoByBuildingNanoId(buildingNanoId);
+      const responseData = await getMaintenancesKanban({userId, filter: {
+        buildings: [buildingId],
+        status: [],
+        categories: [],
+        users: [],
+        priorityName: "",
+        endDate: "01/01/1900",
+        startDate: "01/01/2100",
+      }});
 
-      if (data) {
-        setKanbanData(data.kanban || []);
+      // const logo = await getCompanyLogoByBuildingNanoId(buildingNanoId);
+
+      if (responseData) {
+        setKanbanData(responseData.kanban || []);
       }
+      
       if (logo) {
         setLogo(logo);
       }
@@ -135,8 +153,8 @@ export const Board = ({ navigation }: any) => {
     <>
       <Navbar
         logoUrl={logo}
-        syndicNanoId={syndicNanoId}
-        buildingNanoId={buildingNanoId}
+        syndicNanoId={userId}
+        buildingNanoId={buildingId}
       />
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
@@ -169,8 +187,8 @@ export const Board = ({ navigation }: any) => {
 
       <ModalCreateOccasionalMaintenance
         visible={createMaintenanceModal}
-        buildingNanoId={buildingNanoId}
-        syndicNanoId={syndicNanoId}
+        buildingNanoId={buildingId}
+        syndicNanoId={userId}
         handleCreateMaintenanceModal={handleCreateMaintenanceModal}
         getKanbanData={getKanbanData}
       />
