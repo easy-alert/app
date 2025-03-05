@@ -76,8 +76,8 @@ export const Board = ({ navigation }: any) => {
         categories: [],
         users: [],
         priorityName: "",
-        endDate: "01/01/1900",
-        startDate: "01/01/2100",
+        endDate: "2100-01-01",
+        startDate: "1900-01-01",
       }});
 
       // const logo = await getCompanyLogoByBuildingNanoId(buildingNanoId);
