@@ -28,7 +28,6 @@ export const Login = ({ navigation }: any) => {
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showCreatePassword, setShowCreatePassword] = useState(false);
 
   const formatPhoneNumber = (value: string): string => {
     const onlyNumbers = value.replace(/\D/g, "");
@@ -75,43 +74,31 @@ export const Login = ({ navigation }: any) => {
     try {
       const cleanedPhone = phoneNumber.replace(/\D/g, "");
 
-      const response = await checkSyndicAndBuildingExists({
-        phoneNumber: cleanedPhone,
+      const responseData = await checkSyndicAndBuildingExists({
+        login: cleanedPhone,
         password: password,
-        createPassword: showCreatePassword,
       });
 
-      if (response.canLogin && response.hasPassword) {
-        Alert.alert("Login", "Por favor insira a sua senha.");
-        return;
-      }
+      if (responseData.user) {
+        await AsyncStorage.setItem(
+          "userId",
+          responseData.user.id
+        );
 
-      if (response.canLogin && !response.hasPassword) {
-        Alert.alert(
-          "Registro",
-          "Por favor, cadastre uma senha para sua conta."
-        );
-        setShowCreatePassword(true);
-        return;
-      }
+        // await AsyncStorage.setItem(
+        //   "buildingNanoId",
+        //   response.buildings[0].buildingNanoId
+        // );
 
-      if (response.buildings) {
-        await AsyncStorage.setItem(
-          "syndicNanoId",
-          response.buildings[0].syndicNanoId
-        );
-        await AsyncStorage.setItem(
-          "buildingNanoId",
-          response.buildings[0].buildingNanoId
-        );
-        await AsyncStorage.setItem(
-          "buildingName",
-          response.buildings[0].buildingName
-        );
+        // await AsyncStorage.setItem(
+        //   "buildingName",
+        //   response.buildings[0].buildingName
+        // );
+
         await AsyncStorage.setItem("phoneNumber", phoneNumber);
         await AsyncStorage.setItem(
           "buildingsList",
-          JSON.stringify(response.buildings)
+          JSON.stringify(responseData.user.UserBuildingsPermissions)
         );
 
         navigation.replace("Building");
