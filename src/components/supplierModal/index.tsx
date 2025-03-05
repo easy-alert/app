@@ -23,21 +23,21 @@ interface SupplierModalProps {
 
 const SupplierModal: React.FC<SupplierModalProps> = ({
   visible,
-  onClose,
   maintenanceId,
+  onClose,
 }) => {
   const [suppliersData, setSuppliersData] = useState<
     SuppliersByMaintenanceId | undefined
   >(undefined);
-  const [syndicNanoId, setSyndicNanoId] = useState("");
-  const [buildingNanoId, setBuildingNanoId] = useState("");
+  const [userId, setUserId] = useState("");
+  const [buildingId, setBuildingId] = useState("");
 
-  const addSupplier = async (syndicNanoId: string, supplierId: string) => {
-    if (maintenanceId && syndicNanoId && supplierId) {
+  const addSupplier = async (supplierId: string, userId: string, ) => {
+    if (maintenanceId && userId && supplierId) {
       try {
         await addSuppliersToMaintenance(
           maintenanceId,
-          syndicNanoId,
+          userId,
           supplierId
         );
         console.log("Fornecedor adicionado com sucesso");
@@ -55,13 +55,14 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
-        const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
+        const userId = await AsyncStorage.getItem("userId");
+        const buildingId = await AsyncStorage.getItem("buildingId");
 
-        if (syndicNanoId && buildingNanoId) {
-          setSyndicNanoId(syndicNanoId);
-          setBuildingNanoId(buildingNanoId);
+        if (userId && buildingId) {
+          setUserId(userId);
+          setBuildingId(buildingId);
         }
+
         const suppliersData = await getSuppliersToSelectByMaintenanceId(
           maintenanceId
         );
@@ -102,9 +103,7 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
             <TouchableOpacity
               key={suppliers.id}
               style={styles.supplierOption}
-              onPress={() => {
-                addSupplier(syndicNanoId, suppliers.id);
-              }}
+              onPress={() => addSupplier(suppliers.id, userId)}
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
             </TouchableOpacity>
@@ -121,7 +120,7 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
               key={suppliers.id}
               style={styles.supplierOption}
               onPress={() => {
-                addSupplier(syndicNanoId, suppliers.id);
+                addSupplier(suppliers.id, userId);
               }}
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>

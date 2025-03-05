@@ -40,21 +40,32 @@ import { handleRemoveSupplier } from "./utils/handleRemoveSupplier";
 import { uploadFile } from "../../services/uploadFile";
 import NetInfo from "@react-native-community/netinfo";
 
+import { getMaintenanceReportProgress } from '../../services/getMaintenanceReportProgress';
+import { getMaintenanceDetails } from '../../services/getMaintenanceDetails';
+import { getMaintenanceHistorySupplier } from '../../services/getMaintenanceHistorySupplier';
+import { updateMaintenanceSupplier } from '../../services/updateMaintenanceSupplier';
+import { getMaintenanceHistoryActivities } from '../../services/getMaintenanceHistoryActivities';
+
+import type { ISupplier } from '../../types/ISupplier';
+import type { IMaintenance } from '../../types/IMaintenance';
+
 interface MaintenanceDetailsModalProps {
+  maintenanceId: string;
   visible: boolean;
-  maintenance: MaintenanceDetails | null;
   onClose: () => void;
 }
 
 const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
+  maintenanceId,
   visible,
-  maintenance,
   onClose,
 }) => {
-  if (!maintenance) return null; // Evita renderizar o modal se nenhum dado for passado
+  if (!maintenanceId) return null; // Evita renderizar o modal se nenhum dado for passado
+
   const [maintenanceDetailsData, setMaintenanceDetailsData] =
-    useState<MaintenanceDetails>();
-  const [suppliersData, setSuppliersData] = useState<Supplier[]>([]);
+    useState<IMaintenance>();
+
+  const [supplierData, setSupplierData] = useState<ISupplier | null>();
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [comment, setComment] = useState(" ");
   const [activeTab, setActiveTab] = useState<"comment" | "notification">(
@@ -65,11 +76,11 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
 
   const filteredData =
-    historyActivitiesData?.maintenanceHistoryActivities.filter(
+    historyActivitiesData?.maintenanceHistoryActivities?.filter(
       (item) => item.type === activeTab
     );
-  const [syndicNanoId, setSyndicNanoId] = useState("");
-  const [buildingNanoId, setBuildingNanoId] = useState("");
+  const [userId, setUserId] = useState("");
+  const [buildingId, setBuildingId] = useState("");
   const [cost, setCost] = useState("0,00"); // Estado para o custo
   const [loading, setLoading] = useState(false);
 
@@ -92,7 +103,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   const OFFLINE_QUEUE_KEY = "offline_queue";
 
   const addHistoryActivity = async (
-    syndicNanoId: string,
+    userId: string,
     maintenanceId: string,
     comment: string,
     images?: any
@@ -124,7 +135,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         // If online, send data to the server
         await addMaintenanceHistoryActivity(
           maintenanceId,
-          syndicNanoId,
+          userId,
           comment,
           filesUploaded
         );
@@ -153,7 +164,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
         const newEntry = {
           type: "addHistoryActivity",
-          syndicNanoId,
+          userId,
           maintenanceId,
           comment,
           files: filesToQueue,
@@ -178,7 +189,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   };
 
   const saveProgress = async (
-    syndicNanoId: string,
+    userId: string,
     maintenanceId: string,
     cost: number,
     files: any,
@@ -227,7 +238,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         await saveProgressInMaintenance(
           maintenanceId,
           cost,
-          syndicNanoId,
+          userId,
           filesUploaded,
           imagesUploaded
         );
@@ -265,7 +276,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
         const newEntry = {
           type: "saveProgress",
-          syndicNanoId,
+          userId,
           maintenanceId,
           cost,
           files: filesToQueue,
@@ -292,7 +303,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   };
 
   const handleFinishMaintenance = async (
-    syndicNanoId: string,
+    userId: string,
     maintenanceId: string,
     cost: number,
     files: any,
@@ -341,7 +352,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         await finishMaintenance(
           maintenanceId,
           cost,
-          syndicNanoId,
+          userId,
           filesUploaded,
           imagesUploaded
         );
@@ -379,7 +390,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
         const newEntry = {
           type: "finishMaintenance",
-          syndicNanoId,
+          userId,
           maintenanceId,
           cost,
           files: filesToQueue,
@@ -407,63 +418,18 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
   const fetchData = async () => {
     try {
-      const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
-      const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
+      const userId = await AsyncStorage.getItem("userId");
+      const buildingId = await AsyncStorage.getItem("buildingId");
 
-      if (syndicNanoId && buildingNanoId) {
-        setSyndicNanoId(syndicNanoId);
-        setBuildingNanoId(buildingNanoId);
+      if (userId && buildingId) {
+        setUserId(userId);
+        setBuildingId(buildingId);
 
-        const [maintenanceData, suppliersData, historyActivitiesData] =
+        const [historyActivitiesData] =
           await Promise.all([
-            getMaintenanceDetailsByMaintenanceId(maintenance.id),
-            getSuppliersByMaintenanceId(maintenance.id),
-            getHistoryActivitiesFromMaintenance(maintenance.id, syndicNanoId),
+            getHistoryActivitiesFromMaintenance(maintenanceId),
           ]);
 
-        if (maintenanceData) {
-          setMaintenanceDetailsData(maintenanceData);
-
-          if (maintenanceData.MaintenanceReportProgress.length) {
-            setCost(
-              formatCurrency(
-                String(maintenanceData.MaintenanceReportProgress[0].cost)
-              )
-            );
-          }
-
-          if (maintenanceData.MaintenanceReport.length) {
-            setCost(
-              String(
-                maintenanceData.MaintenanceReport[0].cost || 0 / 100
-              ).replace(".", ",")
-            );
-          }
-
-          if (maintenanceData.MaintenanceReportProgress.length) {
-            setFiles(
-              maintenanceData.MaintenanceReportProgress[0].ReportAnnexesProgress
-            );
-          }
-
-          if (maintenanceData.MaintenanceReport.length) {
-            setFiles(maintenanceData.MaintenanceReport[0].ReportAnnexes);
-          }
-
-          if (maintenanceData.MaintenanceReportProgress.length) {
-            setImages(
-              maintenanceData.MaintenanceReportProgress[0].ReportImagesProgress
-            );
-          }
-
-          if (maintenanceData.MaintenanceReport.length) {
-            setImages(maintenanceData.MaintenanceReport[0].ReportImages);
-          }
-        }
-
-        if (suppliersData) {
-          setSuppliersData(suppliersData.suppliers || []);
-        }
 
         if (historyActivitiesData) {
           setHistoryActivitiesData(historyActivitiesData);
@@ -476,18 +442,9 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     }
   };
 
-  const handleRemove = async (supplierId: string) => {
-    await handleRemoveSupplier(
-      syndicNanoId,
-      maintenanceDetailsData?.id,
-      supplierId,
-      fetchData // Callback para recarregar os dados
-    );
-  };
-
   const handleToggleProgress = async () => {
     await handleProgressToggle(
-      syndicNanoId,
+      userId,
       maintenanceDetailsData?.id,
       !maintenanceDetailsData?.inProgress,
       fetchData
@@ -513,8 +470,73 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     setCost(formatted);
   };
 
+  const handleGetMaintenanceDetails = async () => {
+    const responseData = await getMaintenanceDetails({
+      maintenanceHistoryId: maintenanceId
+    });
+
+    setMaintenanceDetailsData(responseData);
+  };
+
+  const handleGetMaintenanceReportProgress = async () => {
+    const responseData = await getMaintenanceReportProgress({
+      maintenanceHistoryId: maintenanceId,
+    });
+
+    setCost(
+      String(responseData?.cost || 0 / 100).replace(".", ",")
+    );
+    setFiles(responseData?.ReportAnnexes || []);
+    setImages(responseData?.Report
+      ? responseData?.Report.ReportImages || []
+      : []
+    );
+  };
+
+  const handleGetMaintenanceHistoryActivities = async () => {
+    const responseData = await getMaintenanceHistoryActivities({
+      maintenanceHistoryId: maintenanceId,
+    })
+
+    setHistoryActivitiesData(responseData);
+  }
+
+  const handleGetMaintenanceSupplier = async () => {
+    const responseData = await getMaintenanceHistorySupplier({
+      maintenanceHistoryId: maintenanceId,
+    });
+
+    setSupplierData(responseData.suppliers[0] || null);
+  }
+
+  const handleUpdateMaintenanceSupplier = async (supplierId: string) => {
+    const userId = await  AsyncStorage.getItem("userId");
+
+    if (!userId) {
+      console.error("User ID está indefinido.");
+      return;
+    }
+
+    await updateMaintenanceSupplier({
+      maintenanceHistoryId: maintenanceId,
+      supplierId, 
+      userId,
+    });
+
+    await handleGetMaintenanceSupplier();
+  }
+
   useEffect(() => {
-    fetchData();
+    setLoading(true);
+
+    try {
+      handleGetMaintenanceReportProgress();
+      handleGetMaintenanceDetails();
+      handleGetMaintenanceSupplier();
+      handleGetMaintenanceHistoryActivities()
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   return (
@@ -527,7 +549,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
       <SupplierModal
         visible={showSupplierModal}
         onClose={toogleSupplierModal}
-        maintenanceId={maintenance.id}
+        maintenanceId={maintenanceId}
       />
       <View style={styles.modalOverlay}>
         <KeyboardAvoidingView
@@ -557,11 +579,11 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 <View
                   style={[
                     styles.tag,
-                    { backgroundColor: getStatus(maintenance.status).color },
+                    { backgroundColor: getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).color },
                   ]}
                 >
                   <Text style={styles.tagText}>
-                    {getStatus(maintenance.status).label}
+                    {getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).label}
                   </Text>
                 </View>
 
@@ -649,7 +671,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
               <View style={styles.modalInfoRow}>
                 <Text style={styles.modalInfoLabel}>Instruções</Text>
                 <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.instructions}
+                  {maintenanceDetailsData?.Maintenance?.instructions[0]?.name}
                 </Text>
               </View>
 
@@ -700,9 +722,9 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionHeaderText}>Fornecedor</Text>
 
-                {suppliersData.length >= 1 && (
+                {supplierData ? (
                   <TouchableOpacity
-                    onPress={() => handleRemove(suppliersData[0].id)}
+                    onPress={() => handleUpdateMaintenanceSupplier(supplierData.id)}
                     style={{ flexDirection: "row", alignItems: "center" }}
                   >
                     <Text style={styles.unlinkText}>Desvincular</Text>
@@ -713,9 +735,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                       style={styles.unlinkIcon}
                     />
                   </TouchableOpacity>
-                )}
-
-                {!suppliersData.length && (
+                ) : (
                   <TouchableOpacity
                     style={styles.unlinkButton}
                     onPress={toogleSupplierModal}
@@ -731,28 +751,26 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 )}
               </View>
 
-              {suppliersData.length >= 1 ? (
-                suppliersData.map((suppliers) => (
+              {supplierData ? (
                   <View style={styles.supplierContainer}>
                     <View style={styles.supplierAvatar}>
                       <Image
                         source={{
-                          uri: suppliers.image,
+                          uri: supplierData.image,
                         }}
                         style={styles.supplierAvatarImage}
                       />
                     </View>
                     <View style={styles.supplierDetails}>
-                      <Text style={styles.supplierName}>{suppliers.name}</Text>
+                      <Text style={styles.supplierName}>{supplierData.name}</Text>
                       <Text style={styles.supplierEmail}>
-                        <Icon name="mail" size={12} /> {suppliers.email || "-"}
+                        <Icon name="mail" size={12} /> {supplierData.email || "-"}
                       </Text>
                       <Text style={styles.supplierWebsite}>
-                        <Icon name="phone" size={12} /> {suppliers.phone || "-"}
+                        <Icon name="phone" size={12} /> {supplierData.phone || "-"}
                       </Text>
                     </View>
                   </View>
-                ))
               ) : (
                 <View style={styles.supplierContainer}>
                   <View style={styles.supplierDetails}>
@@ -826,7 +844,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
                       if (maintenanceId && comment) {
                         addHistoryActivity(
-                          syndicNanoId,
+                          userId,
                           maintenanceId,
                           comment,
                           uploadedFiles
@@ -1096,7 +1114,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         onPress={() => {
                           if (maintenanceDetailsData?.id) {
                             saveProgress(
-                              syndicNanoId,
+                              userId,
                               maintenanceDetailsData?.id,
                               convertCostToInteger(cost),
                               files,
@@ -1126,7 +1144,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                                   text: "Sim",
                                   onPress: () => {
                                     handleFinishMaintenance(
-                                      syndicNanoId,
+                                      userId,
                                       maintenanceDetailsData?.id,
                                       convertCostToInteger(cost),
                                       files,
