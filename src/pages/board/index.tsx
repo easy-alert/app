@@ -28,6 +28,7 @@ import {
   startPeriodicQueueProcessing,
 } from "../../utils/processOffilineQueue";
 import { getMaintenancesKanban } from '../../services/getMaintenancesKanban';
+import { getBuildingLogo } from '../../services/getBuildingLogo';
 
 export interface IMaintenanceFilter {
   buildings: string[];
@@ -41,8 +42,7 @@ export interface IMaintenanceFilter {
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [selectedMaintenance, setSelectedMaintenance] =
-    useState<MaintenanceDetails | null>(null);
+  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState<string>('');
 
   const [buildingName, setBuildingName] = useState("");
   const [userId, setUserId] = useState("");
@@ -58,7 +58,7 @@ export const Board = ({ navigation }: any) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [internetConnection, setInternetConnection] = useState(true);
 
-  const getKanbanData = async () => {
+  const handleGetKanbanData = async () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
 
     const userId = await AsyncStorage.getItem("userId");
@@ -80,32 +80,40 @@ export const Board = ({ navigation }: any) => {
         startDate: "1900-01-01",
       }});
 
-      // const logo = await getCompanyLogoByBuildingNanoId(buildingNanoId);
 
       if (responseData) {
         setKanbanData(responseData.kanban || []);
-      }
-      
-      if (logo) {
-        setLogo(logo);
       }
     } else {
       Alert.alert("Credenciais inválidas");
       navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
     }
-
-    setLoading(false); // Finaliza o estado de carregamento
   };
 
+  const handleGetBuildingLogo = async () => {
+    const buildingId = await AsyncStorage.getItem("buildingId");
+
+    if (!buildingId) {
+      return;
+    }
+
+    const responseData = await getBuildingLogo({ buildingId });
+
+    if (responseData) {
+      setLogo(responseData.buildingLogo);
+    }
+  }
+
   const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
-    setSelectedMaintenance(maintenance);
+    setSelectedMaintenanceId(maintenance.id);
     setMaintenanceDetailsModal(true);
   };
 
   const closeMaintenanceDetailsModal = () => {
-    getKanbanData();
+    handleGetKanbanData();
+    setSelectedMaintenanceId('');
     setMaintenanceDetailsModal(false);
-    setSelectedMaintenance(null);
+    setLoading(false);
   };
 
   const handleCreateMaintenanceModal = (modalState: boolean) => {
@@ -134,19 +142,28 @@ export const Board = ({ navigation }: any) => {
     });
   };
 
-  useEffect(() => {
-    const stopProcessing = startPeriodicQueueProcessing();
+  // useEffect(() => {
+  //   const stopProcessing = startPeriodicQueueProcessing();
 
-    return () => stopProcessing(); // Limpa o intervalo ao desmontar o componente
-  }, []);
+  //   return () => stopProcessing(); // Limpa o intervalo ao desmontar o componente
+  // }, []);
+
+  // useEffect(() => {
+  //   getOfflineQueueCount(); // Atualiza o contador ao montar o componente
+  //   processQueueOnReconnect(); // Observa reconexões de internet
+  // }, []);
 
   useEffect(() => {
-    getOfflineQueueCount(); // Atualiza o contador ao montar o componente
-    processQueueOnReconnect(); // Observa reconexões de internet
-  }, []);
-
-  useEffect(() => {
-    getKanbanData();
+    setLoading(true);
+    
+    try {
+      handleGetKanbanData()
+      handleGetBuildingLogo()
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   return (
@@ -156,11 +173,13 @@ export const Board = ({ navigation }: any) => {
         syndicNanoId={userId}
         buildingNanoId={buildingId}
       />
+
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
           <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>
             {`Fila Offline: ${offlineCount} item(s)`}
           </Text>
+
           {isProcessing && (
             <Text style={{ color: "green" }}>
               Processando dados da fila, aguarde...
@@ -180,8 +199,8 @@ export const Board = ({ navigation }: any) => {
       )}
 
       <MaintenanceDetailsModal
+        maintenanceId={selectedMaintenanceId}
         visible={maintenanceDetailsModal}
-        maintenance={selectedMaintenance}
         onClose={closeMaintenanceDetailsModal}
       />
 
@@ -190,7 +209,7 @@ export const Board = ({ navigation }: any) => {
         buildingNanoId={buildingId}
         syndicNanoId={userId}
         handleCreateMaintenanceModal={handleCreateMaintenanceModal}
-        getKanbanData={getKanbanData}
+        getKanbanData={handleGetKanbanData}
       />
 
       {loading ? (
