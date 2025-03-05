@@ -2,11 +2,11 @@
 export const startStopMaintenanceProgress = async (
   maintenanceId: string,
   inProgressChange: boolean,
-  syndicNanoId: string
+  userId: string
 ): Promise<string | null> => {
   try {
     const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/client/maintenances/set/in-progress?syndicNanoId=${syndicNanoId}`,
+      `https://easyalert-production.herokuapp.com/api/company/maintenances/set/in-progress`,
       {
         method: "POST",
         headers: {
@@ -15,6 +15,7 @@ export const startStopMaintenanceProgress = async (
         body: JSON.stringify({
           maintenanceHistoryId: maintenanceId,
           inProgressChange: inProgressChange,
+          userId
         }),
       }
     );

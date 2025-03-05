@@ -4,15 +4,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Função para buscar os dados do Kanban
 export const getHistoryActivitiesFromMaintenance = async (
   maintenanceId: string,
-  syndicNanoId: string
 ): Promise<MaintenanceHistoryActivities | null> => {
   // Chave para armazenamento no AsyncStorage
-  const CACHE_KEY = `client/maintenance-history-activities/${maintenanceId}?syndicNanoId=${syndicNanoId}`;
+  const CACHE_KEY = `company/maintenance-history-activities/${maintenanceId}`;
+
   try {
     // Tenta fazer a requisição à API
 
     const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/client/maintenance-history-activities/${maintenanceId}?syndicNanoId=${syndicNanoId}`
+      `https://easyalert-production.herokuapp.com/api/company/maintenance-history-activities/${maintenanceId}`
     );
 
     if (!response.ok) {

@@ -1,20 +1,21 @@
 // Função para remover fornecedor de uma manutenção
 export const removeSuppliersFromMaintenance = async (
+  supplierId: string,
   maintenanceId: string,
-  syndicNanoId: string,
-  supplierId: string
+  userId: string,
 ): Promise<string | null> => {
   try {
     const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/client/suppliers/unlink-to-maintenance-history?syndicNanoId=${syndicNanoId}`,
+      `https://easyalert-production.herokuapp.com/api/company/suppliers/unlink-to-maintenance-history`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          maintenanceHistoryId: maintenanceId,
           supplierId: supplierId,
+          maintenanceHistoryId: maintenanceId,
+          userId,
         }),
       }
     );

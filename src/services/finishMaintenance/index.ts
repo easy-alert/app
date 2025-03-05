@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 export const finishMaintenance = async (
   maintenanceId: string,
   cost: number,
-  syndicNanoId: string,
+  userId: string,
   files?: { originalName: string; url: string | null; name: string }[],
   images?: { originalName: string; url: string | null; name: string }[]
 ): Promise<string | null> => {
@@ -23,7 +23,7 @@ export const finishMaintenance = async (
           observation: null,
           ReportAnnexes: files,
           ReportImages: images,
-          responsibleSyndicId: syndicNanoId,
+          userId,
         }),
       }
     );

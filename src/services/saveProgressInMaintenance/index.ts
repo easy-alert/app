@@ -2,13 +2,13 @@
 export const saveProgressInMaintenance = async (
   maintenanceId: string,
   cost: number,
-  syndicNanoId: string,
+  userId: string,
   files?: { originalName: string; url: string | null; name: string }[],
   images?: { originalName: string; url: string | null; name: string }[]
 ): Promise<string | null> => {
   try {
     const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/client/maintenances/create/report/progress?syndicNanoId=${syndicNanoId}`,
+      `https://easyalert-production.herokuapp.com/api/client/maintenances/create/report/progress`,
       {
         method: "POST",
         headers: {
@@ -20,6 +20,7 @@ export const saveProgressInMaintenance = async (
           observation: null,
           ReportAnnexes: files,
           ReportImages: images,
+          userId,
         }),
       }
     );
