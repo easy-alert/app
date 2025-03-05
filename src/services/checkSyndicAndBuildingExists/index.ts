@@ -1,33 +1,27 @@
 import { baseApi } from "../baseApi";
 
-import type { syndicBuildings } from "../../types";
 import { Alert } from "react-native";
 
+import type { IUser } from '../../types/IUser';
+
 interface ICheckSyndicAndBuildingExists {
-  email?: string;
-  phoneNumber?: string;
+  login: string;
   password?: string;
   createPassword?: boolean;
 }
 
 // Função para buscar os dados do Kanban
 export const checkSyndicAndBuildingExists = async ({
-  email,
-  phoneNumber,
+  login,
   password,
-  createPassword,
 }: ICheckSyndicAndBuildingExists): Promise<{
-  canLogin: boolean;
-  hasPassword: boolean;
-  buildings: syndicBuildings[];
+  user: IUser;
 }> => {
   const url = `/mobile/auth`;
 
   const body = {
-    email,
-    phoneNumber,
+    login,
     password,
-    createPassword,
   };
 
   try {
@@ -35,15 +29,13 @@ export const checkSyndicAndBuildingExists = async ({
 
     if (response.data.error) {
       Alert.alert("Erro", response.data.error);
-      return { canLogin: false, hasPassword: false, buildings: [] };
+      return { user: {} as IUser };
     }
 
-    const { canLogin, hasPassword, buildings } = response.data;
-
-    return { canLogin, hasPassword, buildings };
+    return response.data
   } catch (error) {
     console.error("Erro ao buscar os dados ou sem internet:", error);
 
-    return { canLogin: false, hasPassword: false, buildings: [] };
+    return {user: {} as IUser};
   }
 };
