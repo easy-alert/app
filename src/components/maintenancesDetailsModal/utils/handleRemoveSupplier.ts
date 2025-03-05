@@ -1,21 +1,21 @@
 import { removeSuppliersFromMaintenance } from "../../../services/removeSuppliersFromMaintenance"; // Ajuste o caminho conforme necessário
 
 export const handleRemoveSupplier = async (
-  syndicNanoId: string,
-  maintenanceId: string | undefined,
   supplierId: string,
+  maintenanceId: string | undefined,
+  userId: string,
   onCompletion: () => Promise<void> // Callback executado após conclusão
 ): Promise<void> => {
-  if (!maintenanceId || !syndicNanoId || !supplierId) {
+  if (!maintenanceId || !userId || !supplierId) {
     console.error("Maintenance ID, Syndic ID ou Supplier ID está indefinido.");
     return;
   }
 
   try {
     await removeSuppliersFromMaintenance(
+      supplierId,
       maintenanceId,
-      syndicNanoId,
-      supplierId
+      userId,
     );
     console.log("Fornecedor removido com sucesso.");
     await onCompletion(); // Executa o callback para ações adicionais, como recarregar dados
