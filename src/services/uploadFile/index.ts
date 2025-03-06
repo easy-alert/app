@@ -14,7 +14,7 @@ export const uploadFile = async (file: {
     } as any);
 
     const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/client/upload/file`,
+      `https://easyalert-production.herokuapp.com/api/company/upload/file`,
       {
         method: "POST",
         headers: {
