@@ -1,9 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { uploadFile } from "../services/uploadFile";
-import { addMaintenanceHistoryActivity } from "../services/addMaintenanceHistoryActivity";
 import NetInfo from "@react-native-community/netinfo";
-import { saveProgressInMaintenance } from "../services/saveProgressInMaintenance";
-import { finishMaintenance } from "../services/finishMaintenance";
+
+import { uploadFile } from "../services/uploadFile";
+
+import { createMaintenanceHistoryActivity } from '../services/createMaintenanceHistoryActivity';
+import { updateMaintenanceProgress } from '../services/updateMaintenanceProgress';
+import { updateMaintenanceFinish } from '../services/updateMaintenanceFinish';
 
 const OFFLINE_QUEUE_KEY = "offline_queue";
 let isProcessing = false; // Global lock to prevent overlapping processes
@@ -42,12 +44,12 @@ const processOfflineQueue = async () => {
             });
           }
 
-          await addMaintenanceHistoryActivity(
-            currentItem.maintenanceId,
-            currentItem.syndicNanoId,
-            currentItem.comment,
-            filesUploaded
-          );
+          await createMaintenanceHistoryActivity({
+            maintenanceId: currentItem?.maintenanceId,
+            userId: currentItem?.userId,
+            content: currentItem?.comment,
+            uploadedFile: filesUploaded,
+          });
         } else if (currentItem.type === "saveProgress") {
           // Handle saveProgress
           const filesUploaded = [];
@@ -80,13 +82,13 @@ const processOfflineQueue = async () => {
             });
           }
 
-          await saveProgressInMaintenance(
-            currentItem.maintenanceId,
-            currentItem.cost,
-            currentItem.syndicNanoId,
-            filesUploaded,
-            imagesUploaded
-          );
+          await updateMaintenanceProgress({
+            syndicNanoId: currentItem?.syndicNanoId,
+            userId: currentItem?.userId,
+            maintenanceHistoryId: currentItem?.maintenanceHistoryId,
+            inProgressChange: currentItem?.inProgressChange,
+          });
+
         } else if (currentItem.type === "finishMaintenance") {
           // Handle finishMaintenance
           const filesUploaded = [];
@@ -119,13 +121,14 @@ const processOfflineQueue = async () => {
             });
           }
 
-          await finishMaintenance(
-            currentItem.maintenanceId,
-            currentItem.cost,
-            currentItem.syndicNanoId,
-            filesUploaded,
-            imagesUploaded
-          );
+          await updateMaintenanceFinish({
+            maintenanceHistoryId: currentItem?.maintenanceHistoryId,
+            userId: currentItem?.userId,
+            syndicNanoId: currentItem?.syndicNanoId,
+            maintenanceReport: currentItem?.maintenanceReport,
+            files: filesUploaded,
+            images: imagesUploaded,
+          });
         }
 
         // Save the updated queue after successful processing
