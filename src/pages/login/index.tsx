@@ -15,7 +15,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { checkSyndicAndBuildingExists } from "../../services/checkSyndicAndBuildingExists";
+import { userLogin } from "../../services/userLogin";
 
 import Logo from "../../assets/logo.png";
 
@@ -61,7 +61,7 @@ export const Login = ({ navigation }: any) => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = async () => {
+  const handleUserLogin = async () => {
     Keyboard.dismiss(); // Fecha o teclado ao clicar no botão
 
     if (!phoneNumber || phoneNumber.length < 11) {
@@ -74,26 +74,20 @@ export const Login = ({ navigation }: any) => {
     try {
       const cleanedPhone = phoneNumber.replace(/\D/g, "");
 
-      const responseData = await checkSyndicAndBuildingExists({
+      const responseData = await userLogin({
         login: cleanedPhone,
         password: password,
       });
-
-      if (responseData.user) {
+      
+      if (responseData.user && responseData.user.id) {
         await AsyncStorage.setItem(
           "userId",
           responseData.user.id
         );
-
-        // await AsyncStorage.setItem(
-        //   "buildingNanoId",
-        //   response.buildings[0].buildingNanoId
-        // );
-
-        // await AsyncStorage.setItem(
-        //   "buildingName",
-        //   response.buildings[0].buildingName
-        // );
+        await AsyncStorage.setItem(
+          "authToken",
+          responseData.authToken
+        );
 
         await AsyncStorage.setItem("phoneNumber", phoneNumber);
         await AsyncStorage.setItem(
@@ -153,7 +147,7 @@ export const Login = ({ navigation }: any) => {
         {isLoggingIn ? (
           <ActivityIndicator size="large" color="#ffffff" />
         ) : (
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleUserLogin}>
             <Text style={styles.loginButtonText}>Entrar</Text>
           </TouchableOpacity>
         )}

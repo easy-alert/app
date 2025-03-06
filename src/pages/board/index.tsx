@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import Icon from "react-native-vector-icons/Feather";
 import {
   Alert,
   View,
@@ -8,26 +9,33 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
+import { getMaintenancesKanban } from "../../services/getMaintenancesKanban";
+import { getBuildingLogo } from "../../services/getBuildingLogo";
+
 import Navbar from "../../components/navbar";
 import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
+import ModalCreateOccasionalMaintenance from "../../components/ModalCreateOccasionalMaintenance";
 
+import {
+  processOfflineQueue,
+  startPeriodicQueueProcessing,
+} from "../../utils/processOffilineQueue";
 import { getStatus } from "../../utils/getStatus";
 import { formatDate } from "../../utils/formatDate";
 
 import { styles } from "../board/styles";
 
-import type { MaintenanceDetails, KanbanColumn } from "../../types";
-import ModalCreateOccasionalMaintenance from "../../components/ModalCreateOccasionalMaintenance";
-import {
-  processOfflineQueue,
-  startPeriodicQueueProcessing,
-} from "../../utils/processOffilineQueue";
-import { getMaintenancesKanban } from '../../services/getMaintenancesKanban';
+import type {
+  MaintenanceDetails,
+  KanbanColumn,
+  IOccasionalMaintenanceType,
+  IOccasionalMaintenanceData,
+} from "../../types";
+import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
 
 export interface IMaintenanceFilter {
   buildings: string[];
@@ -39,13 +47,19 @@ export interface IMaintenanceFilter {
   endDate?: string;
 }
 
+export interface IHandleCreateOccasionalMaintenance {
+  occasionalMaintenance: IOccasionalMaintenanceData;
+  occasionalMaintenanceType: IOccasionalMaintenanceType;
+  inProgress?: boolean;
+}
+
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [selectedMaintenance, setSelectedMaintenance] =
-    useState<MaintenanceDetails | null>(null);
+  const [selectedMaintenanceId, setSelectedMaintenanceId] =
+    useState<string>("");
 
-  const [buildingName, setBuildingName] = useState("");
   const [userId, setUserId] = useState("");
+  const [buildingName, setBuildingName] = useState("");
   const [buildingId, setBuildingId] = useState("");
   const [logo, setLogo] = useState("");
 
@@ -53,12 +67,22 @@ export const Board = ({ navigation }: any) => {
   const [createMaintenanceModal, setCreateMaintenanceModal] = useState(false);
 
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
 
   const [offlineCount, setOfflineCount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [internetConnection, setInternetConnection] = useState(true);
 
-  const getKanbanData = async () => {
+  const handleCreateMaintenanceModal = (modalState: boolean) => {
+    setCreateMaintenanceModal(modalState);
+  };
+
+  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
+    setSelectedMaintenanceId(maintenance.id);
+    setMaintenanceDetailsModal(true);
+  };
+
+  const handleGetKanbanData = async () => {
     setLoading(true); // Define o estado de carregamento antes da chamada
 
     const userId = await AsyncStorage.getItem("userId");
@@ -70,46 +94,47 @@ export const Board = ({ navigation }: any) => {
       setBuildingId(buildingId);
       setBuildingName(buildingName);
 
-      const responseData = await getMaintenancesKanban({userId, filter: {
-        buildings: [buildingId],
-        status: [],
-        categories: [],
-        users: [],
-        priorityName: "",
-        endDate: "2100-01-01",
-        startDate: "1900-01-01",
-      }});
-
-      // const logo = await getCompanyLogoByBuildingNanoId(buildingNanoId);
+      const responseData = await getMaintenancesKanban({
+        userId,
+        filter: {
+          buildings: [buildingId],
+          status: [],
+          categories: [],
+          users: [],
+          priorityName: "",
+          endDate: "2100-01-01",
+          startDate: "1900-01-01",
+        },
+      });
 
       if (responseData) {
         setKanbanData(responseData.kanban || []);
-      }
-      
-      if (logo) {
-        setLogo(logo);
       }
     } else {
       Alert.alert("Credenciais inválidas");
       navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
     }
-
-    setLoading(false); // Finaliza o estado de carregamento
   };
 
-  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
-    setSelectedMaintenance(maintenance);
-    setMaintenanceDetailsModal(true);
+  const handleGetBuildingLogo = async () => {
+    const buildingId = await AsyncStorage.getItem("buildingId");
+
+    if (!buildingId) {
+      return;
+    }
+
+    const responseData = await getBuildingLogo({ buildingId });
+
+    if (responseData) {
+      setLogo(responseData.buildingLogo);
+    }
   };
 
   const closeMaintenanceDetailsModal = () => {
-    getKanbanData();
+    setSelectedMaintenanceId("");
+    setRefresh(!refresh);
     setMaintenanceDetailsModal(false);
-    setSelectedMaintenance(null);
-  };
-
-  const handleCreateMaintenanceModal = (modalState: boolean) => {
-    setCreateMaintenanceModal(modalState);
+    setLoading(false);
   };
 
   const getOfflineQueueCount = async () => {
@@ -134,6 +159,48 @@ export const Board = ({ navigation }: any) => {
     });
   };
 
+  const handleCreateOccasionalMaintenance = async ({
+    occasionalMaintenance,
+    occasionalMaintenanceType,
+    inProgress = false,
+  }: IHandleCreateOccasionalMaintenance) => {
+    setLoading(true);
+
+    const reportDataBody =
+      occasionalMaintenanceType === "finished"
+        ? occasionalMaintenance.reportData
+        : {
+            cost: "R$ 0,00",
+            observation: "",
+            files: [],
+            images: [],
+          };
+
+    const occasionalMaintenanceBody = {
+      ...occasionalMaintenance,
+      buildingId,
+      inProgress,
+      reportData: reportDataBody,
+    };
+
+    try {
+      const responseData = await createOccasionalMaintenance({
+        origin: "Mobile",
+        userId,
+        occasionalMaintenanceType,
+        occasionalMaintenanceBody,
+      });
+
+      if (responseData?.ServerMessage.statusCode === 200) {
+        setSelectedMaintenanceId(responseData.maintenance.id);
+        setCreateMaintenanceModal(false);
+        setMaintenanceDetailsModal(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const stopProcessing = startPeriodicQueueProcessing();
 
@@ -146,8 +213,15 @@ export const Board = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    getKanbanData();
-  }, []);
+    setLoading(true);
+
+    try {
+      handleGetKanbanData();
+      handleGetBuildingLogo();
+    } finally {
+      setLoading(false);
+    }
+  }, [refresh]);
 
   return (
     <>
@@ -156,11 +230,13 @@ export const Board = ({ navigation }: any) => {
         syndicNanoId={userId}
         buildingNanoId={buildingId}
       />
+
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
           <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>
             {`Fila Offline: ${offlineCount} item(s)`}
           </Text>
+
           {isProcessing && (
             <Text style={{ color: "green" }}>
               Processando dados da fila, aguarde...
@@ -180,17 +256,18 @@ export const Board = ({ navigation }: any) => {
       )}
 
       <MaintenanceDetailsModal
+        maintenanceId={selectedMaintenanceId}
+        userId={userId}
+        buildingId={buildingId}
         visible={maintenanceDetailsModal}
-        maintenance={selectedMaintenance}
         onClose={closeMaintenanceDetailsModal}
       />
 
       <ModalCreateOccasionalMaintenance
+        buildingId={buildingId}
         visible={createMaintenanceModal}
-        buildingNanoId={buildingId}
-        syndicNanoId={userId}
         handleCreateMaintenanceModal={handleCreateMaintenanceModal}
-        getKanbanData={getKanbanData}
+        handleCreateOccasionalMaintenance={handleCreateOccasionalMaintenance}
       />
 
       {loading ? (
