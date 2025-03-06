@@ -83,50 +83,56 @@ export const Board = ({ navigation }: any) => {
   };
 
   const handleGetKanbanData = async () => {
-    setLoading(true); // Define o estado de carregamento antes da chamada
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+      const buildingId = await AsyncStorage.getItem("buildingId");
+      const buildingName = await AsyncStorage.getItem("buildingName");
 
-    const userId = await AsyncStorage.getItem("userId");
-    const buildingId = await AsyncStorage.getItem("buildingId");
-    const buildingName = await AsyncStorage.getItem("buildingName");
+      if (userId && buildingId && buildingName) {
+        setUserId(userId);
+        setBuildingId(buildingId);
+        setBuildingName(buildingName);
 
-    if (userId && buildingId && buildingName) {
-      setUserId(userId);
-      setBuildingId(buildingId);
-      setBuildingName(buildingName);
+        const responseData = await getMaintenancesKanban({
+          userId,
+          filter: {
+            buildings: [buildingId],
+            status: [],
+            categories: [],
+            users: [],
+            priorityName: "",
+            endDate: "2100-01-01",
+            startDate: "1900-01-01",
+          },
+        });
 
-      const responseData = await getMaintenancesKanban({
-        userId,
-        filter: {
-          buildings: [buildingId],
-          status: [],
-          categories: [],
-          users: [],
-          priorityName: "",
-          endDate: "2100-01-01",
-          startDate: "1900-01-01",
-        },
-      });
-
-      if (responseData) {
-        setKanbanData(responseData.kanban || []);
+        if (responseData) {
+          setKanbanData(responseData.kanban || []);
+        }
+      } else {
+        Alert.alert("Credenciais inválidas");
+        navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
       }
-    } else {
-      Alert.alert("Credenciais inválidas");
-      navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+    } catch (error) {
+      console.error("🚀 ~ handleGetKanbanData ~ error:", error);
     }
   };
 
   const handleGetBuildingLogo = async () => {
-    const buildingId = await AsyncStorage.getItem("buildingId");
+    try {
+      const buildingId = await AsyncStorage.getItem("buildingId");
 
-    if (!buildingId) {
-      return;
-    }
+      if (!buildingId) {
+        return;
+      }
 
-    const responseData = await getBuildingLogo({ buildingId });
+      const responseData = await getBuildingLogo({ buildingId });
 
-    if (responseData) {
-      setLogo(responseData.buildingLogo);
+      if (responseData) {
+        setLogo(responseData.buildingLogo);
+      }
+    } catch (error) {
+      console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
     }
   };
 
@@ -219,7 +225,9 @@ export const Board = ({ navigation }: any) => {
       handleGetKanbanData();
       handleGetBuildingLogo();
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   }, [refresh]);
 
@@ -335,7 +343,7 @@ export const Board = ({ navigation }: any) => {
           </View>
 
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {kanbanData.map((column) => (
+            {kanbanData?.map((column) => (
               <View key={column.status} style={styles.statusContainer}>
                 <Text style={styles.statusTitle}>{column.status}</Text>
                 <ScrollView
@@ -430,8 +438,7 @@ export const Board = ({ navigation }: any) => {
             ))}
           </ScrollView>
         </>
-      ) : (
-        <Text style={{ marginTop: 20, textAlign: "center" }}>
+      ) : (        <Text style={{ marginTop: 20, textAlign: "center" }}>
           Nenhum dado encontrado.
         </Text>
       )}
