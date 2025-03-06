@@ -46,6 +46,7 @@ import { styles } from "./styles";
 import type { ISupplier } from "../../types/ISupplier";
 import type { IMaintenance } from "../../types/IMaintenance";
 import type { MaintenanceHistoryActivities, UploadedFile } from "../../types";
+import type { IAnnexesAndImages } from '../../types/IAnnexesAndImages';
 
 interface MaintenanceDetailsModalProps {
   maintenanceId: string;
@@ -142,11 +143,11 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         maintenanceHistoryId: maintenanceId,
       });
 
-      setCost(String(responseData?.cost || 0 / 100).replace(".", ","));
-      setFiles(responseData?.ReportAnnexes || []);
-      setImages(
-        responseData?.Report ? responseData?.Report.ReportImages || [] : []
+      setCost(
+        String(responseData?.progress?.cost || 0 / 100).replace(".", ",")
       );
+      setFiles(responseData?.progress?.ReportAnnexesProgress || []);
+      setImages(responseData?.progress?.ReportImagesProgress || []);
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
     }
@@ -229,12 +230,12 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         }
 
         // If online, send data to the server
-        await createMaintenanceHistoryActivity({
-          maintenanceId,
-          userId,
-          content: comment,
-          uploadedFile: filesUploaded,
-        });
+        // await createMaintenanceHistoryActivity({
+        //   maintenanceId,
+        //   userId,
+        //   content: comment,
+        //   uploadedFile: filesUploaded,
+        // });
 
         setComment("");
         setUploadedFiles([]);
@@ -313,38 +314,42 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    let filesUploaded = [];
-    let imagesUploaded = [];
+    let filesUploaded = [] as IAnnexesAndImages[];
+    let imagesUploaded = [] as IAnnexesAndImages[];
 
     try {
       if (isConnected) {
         // Handle file uploads when online
-        for (const file of files) {
-          const fileUrl = await uploadFile({
-            uri: file.url,
-            type: file.type,
-            name: file.originalName,
-          });
+        if (files?.length > 0) {
+          for (const file of files) {          
+            const fileUrl = file.type ? await uploadFile({
+              uri: file.url,
+              type: file.type,
+              name: file.originalName,
+            }) : file.url
 
-          filesUploaded.push({
-            originalName: file.originalName,
-            url: fileUrl,
-            name: file.originalName,
-          });
+            filesUploaded.push({
+              originalName: file.originalName,
+              url: fileUrl,
+              name: file.originalName,
+            });
+          }
         }
 
-        for (const image of images) {
-          const fileUrl = await uploadFile({
-            uri: image.url,
-            type: image.type,
-            name: image.originalName,
-          });
+        if (images?.length > 0) {
+          for (const image of images) {
+            const fileUrl = image.type ? await uploadFile({
+              uri: image.url,
+              type: image.type,
+              name: image.originalName,
+            }) : image.url
 
-          imagesUploaded.push({
-            originalName: image.originalName,
-            url: fileUrl,
-            name: image.originalName,
-          });
+            imagesUploaded.push({
+              originalName: image.originalName,
+              url: fileUrl,
+              name: image.originalName,
+            });
+          }
         }
 
         // If online, send data to the server
@@ -436,32 +441,36 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     try {
       if (isConnected) {
         // Handle file uploads when online
-        for (const file of files) {
-          const fileUrl = await uploadFile({
-            uri: file.url,
-            type: file.type,
-            name: file.originalName,
-          });
+        if (files?.length > 0) {
+          for (const file of files) {          
+            const fileUrl = file.type ? await uploadFile({
+              uri: file.url,
+              type: file.type,
+              name: file.originalName,
+            }) : file.url
 
-          filesUploaded.push({
-            originalName: file.originalName,
-            url: fileUrl,
-            name: file.originalName,
-          });
+            filesUploaded.push({
+              originalName: file.originalName,
+              url: fileUrl,
+              name: file.originalName,
+            });
+          }
         }
 
-        for (const image of images) {
-          const fileUrl = await uploadFile({
-            uri: image.url,
-            type: image.type,
-            name: image.originalName,
-          });
+        if (images?.length > 0) {
+          for (const image of images) {
+            const fileUrl = image.type ? await uploadFile({
+              uri: image.url,
+              type: image.type,
+              name: image.originalName,
+            }) : image.url
 
-          imagesUploaded.push({
-            originalName: image.originalName,
-            url: fileUrl,
-            name: image.originalName,
-          });
+            imagesUploaded.push({
+              originalName: image.originalName,
+              url: fileUrl,
+              name: image.originalName,
+            });
+          }
         }
 
         // If online, send data to the server
@@ -1032,6 +1041,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         <TouchableOpacity
                           onPress={async () => {
                             const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
+
                             if (uploadedFile) {
                               setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
                             }
@@ -1090,6 +1100,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         <TouchableOpacity
                           onPress={async () => {
                             const uploadedImage = await handleUpload("image");
+
                             if (uploadedImage) {
                               setImages((prev) => [...prev, uploadedImage]);
                             }
