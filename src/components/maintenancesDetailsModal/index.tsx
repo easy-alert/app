@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+
+import Icon from "react-native-vector-icons/Feather";
 import {
   View,
   Text,
@@ -14,49 +16,49 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import {
-  MaintenanceDetails,
-  MaintenanceHistoryActivities,
-  Supplier,
-  UploadedFile,
-} from "../../types"; // Certifique-se de ajustar o caminho para o tipo
-import { styles } from "./styles"; // Ajuste o caminho para os estilos
-import { getStatus } from "../../utils/getStatus"; // Ajuste o caminho para a função getStatus
-import { getMaintenanceDetailsByMaintenanceId } from "../../services/getMaintenanceDetailsByMaintenanceId";
-import { getSuppliersByMaintenanceId } from "../../services/getSuppliersByMaintenanceId";
-import { formatDate } from "../../utils/formatDate";
-import SupplierModal from "../supplierModal";
-import { getHistoryActivitiesFromMaintenance } from "../../services/getHistoryActivitiesFromMaintenance";
-import { addMaintenanceHistoryActivity } from "../../services/addMaintenanceHistoryActivity";
-import { saveProgressInMaintenance } from "../../services/saveProgressInMaintenance";
-import { finishMaintenance } from "../../services/finishMaintenance";
+
+import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import SupplierModal from "../supplierModal";
+
+import { getStatus } from "../../utils/getStatus"; // Ajuste o caminho para a função getStatus
+import { formatDate } from "../../utils/formatDate";
+
 import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { removeItem } from "./utils/removeItem";
 import { handleUpload } from "./utils/handleUpload";
-import { handleProgressToggle } from "./utils/handleProgressToggle";
-import { handleRemoveSupplier } from "./utils/handleRemoveSupplier";
+
 import { uploadFile } from "../../services/uploadFile";
-import NetInfo from "@react-native-community/netinfo";
 
-import { getMaintenanceReportProgress } from '../../services/getMaintenanceReportProgress';
-import { getMaintenanceDetails } from '../../services/getMaintenanceDetails';
-import { getMaintenanceHistorySupplier } from '../../services/getMaintenanceHistorySupplier';
-import { updateMaintenanceSupplier } from '../../services/updateMaintenanceSupplier';
-import { getMaintenanceHistoryActivities } from '../../services/getMaintenanceHistoryActivities';
+import { getMaintenanceDetails } from "../../services/getMaintenanceDetails";
+import { getMaintenanceReportProgress } from "../../services/getMaintenanceReportProgress";
+import { getMaintenanceHistorySupplier } from "../../services/getMaintenanceHistorySupplier";
+import { getMaintenanceHistoryActivities } from "../../services/getMaintenanceHistoryActivities";
+import { unlinkMaintenanceSupplier } from "../../services/unlinkMaintenanceSupplier";
+import { updateMaintenanceProgress } from "../../services/updateMaintenanceProgress";
+import { updateMaintenance } from "../../services/updateMaintenance";
+import { updateMaintenanceFinish } from "../../services/updateMaintenanceFinish";
+import { createMaintenanceHistoryActivity } from "../../services/createMaintenanceHistoryActivity";
 
-import type { ISupplier } from '../../types/ISupplier';
-import type { IMaintenance } from '../../types/IMaintenance';
+import { styles } from "./styles";
+
+import type { ISupplier } from "../../types/ISupplier";
+import type { IMaintenance } from "../../types/IMaintenance";
+import type { MaintenanceHistoryActivities, UploadedFile } from "../../types";
 
 interface MaintenanceDetailsModalProps {
   maintenanceId: string;
+  userId: string;
+  buildingId: string;
   visible: boolean;
   onClose: () => void;
 }
 
 const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   maintenanceId,
+  userId,
+  buildingId,
   visible,
   onClose,
 }) => {
@@ -64,45 +66,139 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
   const [maintenanceDetailsData, setMaintenanceDetailsData] =
     useState<IMaintenance>();
-
   const [supplierData, setSupplierData] = useState<ISupplier | null>();
-  const [showSupplierModal, setShowSupplierModal] = useState(false);
-  const [comment, setComment] = useState(" ");
-  const [activeTab, setActiveTab] = useState<"comment" | "notification">(
-    "comment"
-  );
   const [historyActivitiesData, setHistoryActivitiesData] =
     useState<MaintenanceHistoryActivities>();
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
 
-  const filteredData =
-    historyActivitiesData?.maintenanceHistoryActivities?.filter(
-      (item) => item.type === activeTab
-    );
-  const [userId, setUserId] = useState("");
-  const [buildingId, setBuildingId] = useState("");
   const [cost, setCost] = useState("0,00"); // Estado para o custo
-  const [loading, setLoading] = useState(false);
 
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
   const [files, setFiles] = useState<
     { originalName: string; url: string; name: string }[]
   >([]); // Estado para os arquivos ainda não upados
   const [images, setImages] = useState<
     { originalName: string; url: string; name: string }[]
   >([]); // Estado para as imagens ainda não upadas
-
   const [activityFiles, setActivityFiles] = useState<
     { originalName: string; url: string; name: string }[]
   >([]); // Estado para os arquivos de atividades
 
-  const toogleSupplierModal = async () => {
-    setShowSupplierModal((prev) => !prev);
-    await fetchData();
-  };
+  const [comment, setComment] = useState(" ");
+  const [activeTab, setActiveTab] = useState<"comment" | "notification">(
+    "comment"
+  );
+
+  const [showSupplierModal, setShowSupplierModal] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const OFFLINE_QUEUE_KEY = "offline_queue";
 
-  const addHistoryActivity = async (
+  const filteredData =
+    historyActivitiesData?.maintenanceHistoryActivities?.filter(
+      (item) => item.type === activeTab
+    );
+
+  const toggleSupplierModal = async () => {
+    handleGetMaintenanceSupplier();
+    setShowSupplierModal((prev) => !prev);
+  };
+
+  const formatCurrency = (text: string) => {
+    // Remove todos os caracteres não numéricos
+    const numericValue = text.replace(/[^0-9]/g, "");
+
+    // Converte para um número
+    const value = parseFloat(numericValue) / 100;
+
+    // Formata no padrão brasileiro
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
+
+  const handleChangeCost = (text: string) => {
+    const formatted = formatCurrency(text);
+    setCost(formatted);
+  };
+
+  const handleGetMaintenanceDetails = async () => {
+    try {
+      const responseData = await getMaintenanceDetails({
+        maintenanceHistoryId: maintenanceId,
+      });
+
+      setMaintenanceDetailsData(responseData);
+    } catch (error) {
+      console.error("🚀 ~ handleGetMaintenanceDetails ~ error:", error);
+    }
+  };
+
+  const handleGetMaintenanceReportProgress = async () => {
+    try {
+      const responseData = await getMaintenanceReportProgress({
+        maintenanceHistoryId: maintenanceId,
+      });
+
+      setCost(String(responseData?.cost || 0 / 100).replace(".", ","));
+      setFiles(responseData?.ReportAnnexes || []);
+      setImages(
+        responseData?.Report ? responseData?.Report.ReportImages || [] : []
+      );
+    } catch (error) {
+      console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
+    }
+  };
+
+  const handleGetMaintenanceHistoryActivities = async () => {
+    try {
+      const responseData = await getMaintenanceHistoryActivities({
+        maintenanceHistoryId: maintenanceId,
+      });
+
+      setHistoryActivitiesData(responseData);
+    } catch (error) {
+      console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
+    }
+  };
+
+  const handleGetMaintenanceSupplier = async () => {
+    try {
+      const responseData = await getMaintenanceHistorySupplier({
+        maintenanceHistoryId: maintenanceId,
+      });
+
+      if (responseData?.suppliers?.length === 0) {
+        setSupplierData(null);
+        return;
+      }
+
+      setSupplierData(responseData?.suppliers[0]);
+    } catch (error) {
+      console.error("🚀 ~ handleGetMaintenanceSupplier ~ error:", error);
+    }
+  };
+
+  const handleUnlinkMaintenanceSupplier = async (supplierId: string) => {
+    const userId = await AsyncStorage.getItem("userId");
+
+    if (!userId) {
+      console.error("User ID está indefinido.");
+      return;
+    }
+
+    await unlinkMaintenanceSupplier({
+      maintenanceHistoryId: maintenanceId,
+      supplierId,
+      userId,
+    });
+
+    await handleGetMaintenanceSupplier();
+  };
+
+  const handleCreateMaintenanceActivity = async (
     userId: string,
     maintenanceId: string,
     comment: string,
@@ -133,17 +229,18 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         }
 
         // If online, send data to the server
-        await addMaintenanceHistoryActivity(
+        await createMaintenanceHistoryActivity({
           maintenanceId,
           userId,
-          comment,
-          filesUploaded
-        );
+          content: comment,
+          uploadedFile: filesUploaded,
+        });
 
         setComment("");
         setUploadedFiles([]);
+        await handleGetMaintenanceHistoryActivities();
+
         setLoading(false);
-        await fetchData();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(
@@ -188,7 +285,23 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     }
   };
 
-  const saveProgress = async (
+  const handleChangeMaintenanceProgress = async () => {
+    setLoading(true);
+
+    try {
+      await updateMaintenanceProgress({
+        maintenanceHistoryId: maintenanceId,
+        inProgressChange: !maintenanceDetailsData?.inProgress,
+        syndicNanoId: "",
+        userId,
+      });
+    } finally {
+      onClose();
+      setLoading(false);
+    }
+  };
+
+  const handleSaveMaintenanceProgress = async (
     userId: string,
     maintenanceId: string,
     cost: number,
@@ -235,19 +348,22 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         }
 
         // If online, send data to the server
-        await saveProgressInMaintenance(
-          maintenanceId,
-          cost,
+        await updateMaintenance({
+          maintenanceHistoryId: maintenanceId,
+          syndicNanoId: "",
           userId,
-          filesUploaded,
-          imagesUploaded
-        );
+          maintenanceReport: {
+            cost: cost,
+            observation: "",
+          },
+          files: filesUploaded,
+          images: imagesUploaded,
+        });
 
         setFiles([]);
         setImages([]);
         setCost("");
         onClose();
-        await fetchData();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(
@@ -349,19 +465,22 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         }
 
         // If online, send data to the server
-        await finishMaintenance(
-          maintenanceId,
-          cost,
+        await updateMaintenanceFinish({
+          maintenanceHistoryId: maintenanceId,
+          syndicNanoId: "",
           userId,
-          filesUploaded,
-          imagesUploaded
-        );
+          maintenanceReport: {
+            cost: cost,
+            observation: "",
+          },
+          files: filesUploaded,
+          images: imagesUploaded,
+        });
 
         setFiles([]);
         setImages([]);
         setCost("");
         onClose();
-        await fetchData();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(
@@ -416,116 +535,6 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     }
   };
 
-  const fetchData = async () => {
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-      const buildingId = await AsyncStorage.getItem("buildingId");
-
-      if (userId && buildingId) {
-        setUserId(userId);
-        setBuildingId(buildingId);
-
-        const [historyActivitiesData] =
-          await Promise.all([
-            getHistoryActivitiesFromMaintenance(maintenanceId),
-          ]);
-
-
-        if (historyActivitiesData) {
-          setHistoryActivitiesData(historyActivitiesData);
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao carregar os dados:", error);
-    } finally {
-      // possível loading pode ser implementado
-    }
-  };
-
-  const handleToggleProgress = async () => {
-    await handleProgressToggle(
-      userId,
-      maintenanceDetailsData?.id,
-      !maintenanceDetailsData?.inProgress,
-      fetchData
-    );
-  };
-
-  const formatCurrency = (text: string) => {
-    // Remove todos os caracteres não numéricos
-    const numericValue = text.replace(/[^0-9]/g, "");
-
-    // Converte para um número
-    const value = parseFloat(numericValue) / 100;
-
-    // Formata no padrão brasileiro
-    return value.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  };
-
-  const handleChangeCost = (text: string) => {
-    const formatted = formatCurrency(text);
-    setCost(formatted);
-  };
-
-  const handleGetMaintenanceDetails = async () => {
-    const responseData = await getMaintenanceDetails({
-      maintenanceHistoryId: maintenanceId
-    });
-
-    setMaintenanceDetailsData(responseData);
-  };
-
-  const handleGetMaintenanceReportProgress = async () => {
-    const responseData = await getMaintenanceReportProgress({
-      maintenanceHistoryId: maintenanceId,
-    });
-
-    setCost(
-      String(responseData?.cost || 0 / 100).replace(".", ",")
-    );
-    setFiles(responseData?.ReportAnnexes || []);
-    setImages(responseData?.Report
-      ? responseData?.Report.ReportImages || []
-      : []
-    );
-  };
-
-  const handleGetMaintenanceHistoryActivities = async () => {
-    const responseData = await getMaintenanceHistoryActivities({
-      maintenanceHistoryId: maintenanceId,
-    })
-
-    setHistoryActivitiesData(responseData);
-  }
-
-  const handleGetMaintenanceSupplier = async () => {
-    const responseData = await getMaintenanceHistorySupplier({
-      maintenanceHistoryId: maintenanceId,
-    });
-
-    setSupplierData(responseData.suppliers[0] || null);
-  }
-
-  const handleUpdateMaintenanceSupplier = async (supplierId: string) => {
-    const userId = await  AsyncStorage.getItem("userId");
-
-    if (!userId) {
-      console.error("User ID está indefinido.");
-      return;
-    }
-
-    await updateMaintenanceSupplier({
-      maintenanceHistoryId: maintenanceId,
-      supplierId, 
-      userId,
-    });
-
-    await handleGetMaintenanceSupplier();
-  }
-
   useEffect(() => {
     setLoading(true);
 
@@ -533,11 +542,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
       handleGetMaintenanceReportProgress();
       handleGetMaintenanceDetails();
       handleGetMaintenanceSupplier();
-      handleGetMaintenanceHistoryActivities()
+      handleGetMaintenanceHistoryActivities();
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
-  }, []);
+  }, [refresh]);
 
   return (
     <Modal
@@ -547,54 +558,50 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
       onRequestClose={onClose}
     >
       <SupplierModal
-        visible={showSupplierModal}
-        onClose={toogleSupplierModal}
         maintenanceId={maintenanceId}
+        userId={userId}
+        visible={showSupplierModal}
+        onClose={toggleSupplierModal}
       />
-      <View style={styles.modalOverlay}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <SafeAreaView style={styles.modalFullContainer}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Enviar relato</Text>
-              <TouchableOpacity
-                onPress={onClose}
-                style={styles.modalCloseButton}
-              >
-                <Icon name="x" size={28} color="#b21d1d" />
-              </TouchableOpacity>
-            </View>
 
-            <ScrollView
-              contentContainerStyle={styles.modalContent}
-              nestedScrollEnabled={true}
-            >
-              <Text style={styles.modalBuildingName}>
-                {maintenanceDetailsData?.Building.name}
-              </Text>
-
-              <View style={styles.modalTags}>
-                <View
-                  style={[
-                    styles.tag,
-                    { backgroundColor: getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).color },
-                  ]}
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#ff3535"
+          style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
+        />
+      ) : (
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <SafeAreaView style={styles.modalFullContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Enviar relato</Text>
+                <TouchableOpacity
+                  onPress={onClose}
+                  style={styles.modalCloseButton}
                 >
-                  <Text style={styles.tagText}>
-                    {getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).label}
-                  </Text>
-                </View>
+                  <Icon name="x" size={28} color="#b21d1d" />
+                </TouchableOpacity>
+              </View>
 
-                {maintenanceDetailsData?.Maintenance.MaintenanceType && (
+              <ScrollView
+                contentContainerStyle={styles.modalContent}
+                nestedScrollEnabled={true}
+              >
+                <Text style={styles.modalBuildingName}>
+                  {maintenanceDetailsData?.Building.name}
+                </Text>
+
+                <View style={styles.modalTags}>
                   <View
                     style={[
                       styles.tag,
                       {
                         backgroundColor: getStatus(
-                          maintenanceDetailsData?.Maintenance.MaintenanceType
-                            .name
+                          maintenanceDetailsData?.MaintenancesStatus.name!
                         ).color,
                       },
                     ]}
@@ -602,156 +609,179 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                     <Text style={styles.tagText}>
                       {
                         getStatus(
-                          maintenanceDetailsData?.Maintenance.MaintenanceType
-                            .name
+                          maintenanceDetailsData?.MaintenancesStatus.name!
                         ).label
                       }
                     </Text>
                   </View>
-                )}
 
-                {maintenanceDetailsData?.inProgress && (
-                  <View
-                    style={[
-                      styles.tag,
-                      { backgroundColor: getStatus("Em execução").color },
-                    ]}
-                  >
-                    <Text style={styles.tagText}>
-                      {getStatus("Em execução").label}
+                  {maintenanceDetailsData?.Maintenance.MaintenanceType && (
+                    <View
+                      style={[
+                        styles.tag,
+                        {
+                          backgroundColor: getStatus(
+                            maintenanceDetailsData?.Maintenance.MaintenanceType
+                              .name
+                          ).color,
+                        },
+                      ]}
+                    >
+                      <Text style={styles.tagText}>
+                        {
+                          getStatus(
+                            maintenanceDetailsData?.Maintenance.MaintenanceType
+                              .name
+                          ).label
+                        }
+                      </Text>
+                    </View>
+                  )}
+
+                  {maintenanceDetailsData?.inProgress && (
+                    <View
+                      style={[
+                        styles.tag,
+                        { backgroundColor: getStatus("Em execução").color },
+                      ]}
+                    >
+                      <Text style={styles.tagText}>
+                        {getStatus("Em execução").label}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Categoria</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.Category.name}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Elemento</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.element}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Atividade</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.activity}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Responsável</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.responsible}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Fonte</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.source}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>
+                    Observação da manutenção
+                  </Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance.observation}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Instruções</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {maintenanceDetailsData?.Maintenance?.instructions[0]?.name}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Periodicidade</Text>
+                  {maintenanceDetailsData?.Maintenance.MaintenanceType.name ===
+                  "common" ? (
+                    <Text style={styles.modalInfoValue}>
+                      {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
+                      {maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1
+                        ? maintenanceDetailsData?.Maintenance
+                            .FrequencyTimeInterval.pluralLabel === "anos" &&
+                          maintenanceDetailsData?.Maintenance.frequency === 1
+                          ? "ano"
+                          : maintenanceDetailsData?.Maintenance
+                              .FrequencyTimeInterval.pluralLabel
+                        : maintenanceDetailsData?.Maintenance
+                            .FrequencyTimeInterval.singularLabel}
+                    </Text>
+                  ) : (
+                    <Text style={styles.modalInfoValue}>-</Text>
+                  )}
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Data de notificação</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {formatDate(maintenanceDetailsData?.notificationDate || "")}
+                  </Text>
+                </View>
+
+                <View style={styles.modalInfoRow}>
+                  <Text style={styles.modalInfoLabel}>Data de vencimento</Text>
+                  <Text style={styles.modalInfoValue}>
+                    {formatDate(maintenanceDetailsData?.dueDate || "")}
+                  </Text>
+                </View>
+
+                {maintenanceDetailsData?.resolutionDate && (
+                  <View style={styles.modalInfoRow}>
+                    <Text style={styles.modalInfoLabel}>Data de conclusão</Text>
+                    <Text style={styles.modalInfoValue}>
+                      {formatDate(maintenanceDetailsData?.resolutionDate)}
                     </Text>
                   </View>
                 )}
-              </View>
 
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Categoria</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.Category.name}
-                </Text>
-              </View>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionHeaderText}>Fornecedor</Text>
 
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Elemento</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.element}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Atividade</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.activity}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Responsável</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.responsible}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Fonte</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.source}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>
-                  Observação da manutenção
-                </Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance.observation}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Instruções</Text>
-                <Text style={styles.modalInfoValue}>
-                  {maintenanceDetailsData?.Maintenance?.instructions[0]?.name}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Periodicidade</Text>
-                {maintenanceDetailsData?.Maintenance.MaintenanceType.name ===
-                "common" ? (
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
-                    {maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1
-                      ? maintenanceDetailsData?.Maintenance
-                          .FrequencyTimeInterval.pluralLabel === "anos" &&
-                        maintenanceDetailsData?.Maintenance.frequency === 1
-                        ? "ano"
-                        : maintenanceDetailsData?.Maintenance
-                            .FrequencyTimeInterval.pluralLabel
-                      : maintenanceDetailsData?.Maintenance
-                          .FrequencyTimeInterval.singularLabel}
-                  </Text>
-                ) : (
-                  <Text style={styles.modalInfoValue}>-</Text>
-                )}
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Data de notificação</Text>
-                <Text style={styles.modalInfoValue}>
-                  {formatDate(maintenanceDetailsData?.notificationDate || "")}
-                </Text>
-              </View>
-
-              <View style={styles.modalInfoRow}>
-                <Text style={styles.modalInfoLabel}>Data de vencimento</Text>
-                <Text style={styles.modalInfoValue}>
-                  {formatDate(maintenanceDetailsData?.dueDate || "")}
-                </Text>
-              </View>
-
-              {maintenanceDetailsData?.resolutionDate && (
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Data de conclusão</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {formatDate(maintenanceDetailsData?.resolutionDate)}
-                  </Text>
+                  {supplierData ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleUnlinkMaintenanceSupplier(supplierData.id)
+                      }
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Text style={styles.unlinkText}>Desvincular</Text>
+                      <Icon
+                        name="link"
+                        size={16}
+                        color="#fff"
+                        style={styles.unlinkIcon}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.unlinkButton}
+                      onPress={toggleSupplierModal}
+                    >
+                      <Text style={styles.unlinkText}>Vincular</Text>
+                      <Icon
+                        name="link"
+                        size={16}
+                        color="#fff"
+                        style={styles.unlinkIcon}
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
-              )}
-
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionHeaderText}>Fornecedor</Text>
 
                 {supplierData ? (
-                  <TouchableOpacity
-                    onPress={() => handleUpdateMaintenanceSupplier(supplierData.id)}
-                    style={{ flexDirection: "row", alignItems: "center" }}
-                  >
-                    <Text style={styles.unlinkText}>Desvincular</Text>
-                    <Icon
-                      name="link"
-                      size={16}
-                      color="#fff"
-                      style={styles.unlinkIcon}
-                    />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.unlinkButton}
-                    onPress={toogleSupplierModal}
-                  >
-                    <Text style={styles.unlinkText}>Vincular</Text>
-                    <Icon
-                      name="link"
-                      size={16}
-                      color="#fff"
-                      style={styles.unlinkIcon}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              {supplierData ? (
                   <View style={styles.supplierContainer}>
                     <View style={styles.supplierAvatar}>
                       <Image
@@ -762,268 +792,334 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                       />
                     </View>
                     <View style={styles.supplierDetails}>
-                      <Text style={styles.supplierName}>{supplierData.name}</Text>
+                      <Text style={styles.supplierName}>
+                        {supplierData.name}
+                      </Text>
                       <Text style={styles.supplierEmail}>
-                        <Icon name="mail" size={12} /> {supplierData.email || "-"}
+                        <Icon name="mail" size={12} />{" "}
+                        {supplierData.email || "-"}
                       </Text>
                       <Text style={styles.supplierWebsite}>
-                        <Icon name="phone" size={12} /> {supplierData.phone || "-"}
+                        <Icon name="phone" size={12} />{" "}
+                        {supplierData.phone || "-"}
                       </Text>
                     </View>
                   </View>
-              ) : (
-                <View style={styles.supplierContainer}>
-                  <View style={styles.supplierDetails}>
-                    <Text style={styles.supplierEmail}>
-                      Nenhum fornecedor encontrado.
-                    </Text>
+                ) : (
+                  <View style={styles.supplierContainer}>
+                    <View style={styles.supplierDetails}>
+                      <Text style={styles.supplierEmail}>
+                        Nenhum fornecedor encontrado.
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {/* Enviar Comentário */}
+                <View style={styles.commentSection}>
+                  <Text style={styles.sectionHeaderText}>
+                    Enviar comentário
+                  </Text>
+                  <TextInput
+                    style={styles.textArea}
+                    placeholder="Digite seu comentário"
+                    value={comment}
+                    onChangeText={setComment}
+                    multiline={true}
+                    numberOfLines={4}
+                  />
+
+                  {/* Renderização dos arquivos enviados */}
+                  <View style={styles.uploadedFilesContainer}>
+                    {uploadedFiles.map((file, index) => (
+                      <View key={index} style={styles.uploadedFileItem}>
+                        <View style={styles.uploadedFileDetails}>
+                          <Text style={styles.uploadedFileName}>
+                            {file.originalName}
+                          </Text>
+                        </View>
+
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() => {
+                            setUploadedFiles((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            );
+                          }}
+                        >
+                          <Icon name="trash" size={20} color="#fff" />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+
+                  <View style={styles.commentButtons}>
+                    <TouchableOpacity
+                      style={styles.commentButton}
+                      onPress={async () => {
+                        const uploadedFile = await handleUpload();
+                        if (uploadedFile) {
+                          setUploadedFiles((prev) => [
+                            ...prev,
+                            {
+                              originalName: uploadedFile.name,
+                              url: uploadedFile.url,
+                              type: uploadedFile.type,
+                            },
+                          ]);
+                        }
+                      }}
+                    >
+                      <Icon name="upload" size={20} color="#fff" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.commentButton}
+                      onPress={() => {
+                        const maintenanceId = maintenanceDetailsData?.id;
+
+                        if (maintenanceId && comment) {
+                          handleCreateMaintenanceActivity(
+                            userId,
+                            maintenanceId,
+                            comment,
+                            uploadedFiles
+                          );
+                        } else {
+                          console.error(
+                            "Maintenance ID ou Supplier ID está indefinido."
+                          );
+                        }
+                      }}
+                    >
+                      <Icon name="send" size={20} color="#fff" />
+                    </TouchableOpacity>
                   </View>
                 </View>
-              )}
 
-              {/* Enviar Comentário */}
-              <View style={styles.commentSection}>
-                <Text style={styles.sectionHeaderText}>Enviar comentário</Text>
-                <TextInput
-                  style={styles.textArea}
-                  placeholder="Digite seu comentário"
-                  value={comment}
-                  onChangeText={setComment}
-                  multiline={true}
-                  numberOfLines={4}
-                />
+                {/* Históricos */}
+                <Text style={styles.sectionHeaderText}>Históricos</Text>
 
-                {/* Renderização dos arquivos enviados */}
-                <View style={styles.uploadedFilesContainer}>
-                  {uploadedFiles.map((file, index) => (
-                    <View key={index} style={styles.uploadedFileItem}>
-                      <View style={styles.uploadedFileDetails}>
-                        <Text style={styles.uploadedFileName}>
-                          {file.originalName}
-                        </Text>
-                      </View>
-
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => {
-                          setUploadedFiles((prev) =>
-                            prev.filter((_, i) => i !== index)
-                          );
-                        }}
-                      >
-                        <Icon name="trash" size={20} color="#fff" />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-
-                <View style={styles.commentButtons}>
+                {/* Botões de filtro */}
+                <View style={styles.historyTabs}>
                   <TouchableOpacity
-                    style={styles.commentButton}
-                    onPress={async () => {
-                      const uploadedFile = await handleUpload();
-                      if (uploadedFile) {
-                        setUploadedFiles((prev) => [
-                          ...prev,
-                          {
-                            originalName: uploadedFile.name,
-                            url: uploadedFile.url,
-                            type: uploadedFile.type,
-                          },
-                        ]);
-                      }
-                    }}
+                    style={[
+                      styles.historyTabButton,
+                      activeTab === "comment" && styles.activeTabButton,
+                    ]}
+                    onPress={() => setActiveTab("comment")}
                   >
-                    <Icon name="upload" size={20} color="#fff" />
+                    <Text
+                      style={[
+                        styles.historyTabText,
+                        activeTab === "comment" && styles.activeTabText,
+                      ]}
+                    >
+                      Comentários
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.commentButton}
-                    onPress={() => {
-                      const maintenanceId = maintenanceDetailsData?.id;
-
-                      if (maintenanceId && comment) {
-                        addHistoryActivity(
-                          userId,
-                          maintenanceId,
-                          comment,
-                          uploadedFiles
-                        );
-                      } else {
-                        console.error(
-                          "Maintenance ID ou Supplier ID está indefinido."
-                        );
-                      }
-                    }}
+                    style={[
+                      styles.historyTabButton,
+                      activeTab === "notification" && styles.activeTabButton,
+                    ]}
+                    onPress={() => setActiveTab("notification")}
                   >
-                    <Icon name="send" size={20} color="#fff" />
+                    <Text
+                      style={[
+                        styles.historyTabText,
+                        activeTab === "notification" && styles.activeTabText,
+                      ]}
+                    >
+                      Notificações
+                    </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
 
-              {/* Históricos */}
-              <Text style={styles.sectionHeaderText}>Históricos</Text>
-
-              {/* Botões de filtro */}
-              <View style={styles.historyTabs}>
-                <TouchableOpacity
-                  style={[
-                    styles.historyTabButton,
-                    activeTab === "comment" && styles.activeTabButton,
-                  ]}
-                  onPress={() => setActiveTab("comment")}
-                >
-                  <Text
-                    style={[
-                      styles.historyTabText,
-                      activeTab === "comment" && styles.activeTabText,
-                    ]}
+                {/* Lista de históricos */}
+                <View style={styles.historyList}>
+                  <ScrollView
+                    style={{ maxHeight: 200 }}
+                    nestedScrollEnabled={true}
                   >
-                    Comentários
-                  </Text>
-                </TouchableOpacity>
+                    {filteredData && filteredData?.length >= 1 ? (
+                      filteredData.map((item) => (
+                        <View key={item.id} style={styles.historyItem}>
+                          <View style={styles.historyIconContainer}>
+                            <Icon name="activity" size={20} color="#ffffff" />
+                          </View>
 
-                <TouchableOpacity
-                  style={[
-                    styles.historyTabButton,
-                    activeTab === "notification" && styles.activeTabButton,
-                  ]}
-                  onPress={() => setActiveTab("notification")}
-                >
-                  <Text
-                    style={[
-                      styles.historyTabText,
-                      activeTab === "notification" && styles.activeTabText,
-                    ]}
-                  >
-                    Notificações
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                          <View style={styles.historyContent}>
+                            <Text style={styles.historyTitle}>
+                              {item.title}
+                            </Text>
+                            <Text style={styles.historyTimestamp}>
+                              {formatDate(item.createdAt)}
+                            </Text>
+                            <Text style={styles.historyDescription}>
+                              {item.content}
+                            </Text>
 
-              {/* Lista de históricos */}
-              <View style={styles.historyList}>
-                <ScrollView
-                  style={{ maxHeight: 200 }}
-                  nestedScrollEnabled={true}
-                >
-                  {filteredData && filteredData?.length >= 1 ? (
-                    filteredData.map((item) => (
-                      <View key={item.id} style={styles.historyItem}>
-                        <View style={styles.historyIconContainer}>
-                          <Icon name="activity" size={20} color="#ffffff" />
+                            {/* Renderizar imagens, se existirem */}
+                            {item.images && item.images.length > 0 && (
+                              <View style={styles.imagePreviewContainer}>
+                                {item.images.map((image) => (
+                                  <View key={image.id} style={styles.imageItem}>
+                                    <Image
+                                      source={{ uri: image.url }}
+                                      style={styles.previewImage}
+                                    />
+                                    <Text
+                                      style={styles.imageName}
+                                      numberOfLines={1} // Limita a uma linha
+                                      ellipsizeMode="tail"
+                                    >
+                                      {image.name}
+                                    </Text>
+                                  </View>
+                                ))}
+                              </View>
+                            )}
+                          </View>
                         </View>
+                      ))
+                    ) : (
+                      <Text>Não há registros no momento</Text>
+                    )}
+                  </ScrollView>
+                </View>
 
-                        <View style={styles.historyContent}>
-                          <Text style={styles.historyTitle}>{item.title}</Text>
-                          <Text style={styles.historyTimestamp}>
-                            {formatDate(item.createdAt)}
-                          </Text>
-                          <Text style={styles.historyDescription}>
-                            {item.content}
-                          </Text>
-
-                          {/* Renderizar imagens, se existirem */}
-                          {item.images && item.images.length > 0 && (
-                            <View style={styles.imagePreviewContainer}>
-                              {item.images.map((image) => (
-                                <View key={image.id} style={styles.imageItem}>
-                                  <Image
-                                    source={{ uri: image.url }}
-                                    style={styles.previewImage}
-                                  />
-                                  <Text
-                                    style={styles.imageName}
-                                    numberOfLines={1} // Limita a uma linha
-                                    ellipsizeMode="tail"
-                                  >
-                                    {image.name}
-                                  </Text>
-                                </View>
-                              ))}
-                            </View>
-                          )}
-                        </View>
+                {/* Relato */}
+                <View style={styles.container}>
+                  {/* Input de Custo */}
+                  {maintenanceDetailsData?.MaintenancesStatus.name !==
+                  "completed" ? (
+                    maintenanceDetailsData?.MaintenancesStatus.name !==
+                    "overdue" ? (
+                      <>
+                        <Text style={styles.sectionHeaderText}>Custo</Text>
+                        <TextInput
+                          style={styles.input}
+                          placeholder="R$ 0,00"
+                          value={cost}
+                          onChangeText={(text) => handleChangeCost(text)}
+                          keyboardType="numeric"
+                        />
+                      </>
+                    ) : (
+                      <View style={styles.modalInfoRow}>
+                        <Text style={styles.modalInfoLabel}>Custo</Text>
+                        <Text
+                          style={styles.modalInfoValue}
+                        >{`R$ ${cost}`}</Text>
                       </View>
-                    ))
-                  ) : (
-                    <Text>Não há registros no momento</Text>
-                  )}
-                </ScrollView>
-              </View>
-
-              {/* Relato */}
-              <View style={styles.container}>
-                {/* Input de Custo */}
-                {maintenanceDetailsData?.MaintenancesStatus.name !==
-                "completed" ? (
-                  maintenanceDetailsData?.MaintenancesStatus.name !==
-                  "overdue" ? (
-                    <>
-                      <Text style={styles.sectionHeaderText}>Custo</Text>
-                      <TextInput
-                        style={styles.input}
-                        placeholder="R$ 0,00"
-                        value={cost}
-                        onChangeText={(text) => handleChangeCost(text)}
-                        keyboardType="numeric"
-                      />
-                    </>
+                    )
                   ) : (
                     <View style={styles.modalInfoRow}>
                       <Text style={styles.modalInfoLabel}>Custo</Text>
                       <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
                     </View>
-                  )
-                ) : (
-                  <View style={styles.modalInfoRow}>
-                    <Text style={styles.modalInfoLabel}>Custo</Text>
-                    <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
-                  </View>
-                )}
+                  )}
 
-                {/* Botão de anexar arquivos */}
-                <Text style={styles.sectionHeaderText}>Anexos</Text>
-                <View style={styles.uploadContainer}>
-                  {maintenanceDetailsData?.MaintenancesStatus.name !==
-                    "completed" &&
-                    maintenanceDetailsData?.MaintenancesStatus.name !==
-                      "overdue" && (
-                      <TouchableOpacity
-                        onPress={async () => {
-                          const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
-                          if (uploadedFile) {
-                            setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
-                          }
-                        }}
-                      >
-                        <Icon name="paperclip" size={24} color="#c62828" />
-                      </TouchableOpacity>
-                    )}
-                  <View style={styles.fileList}>
-                    {files.map((file, index) => (
-                      <TouchableOpacity
-                        onPress={() => Linking.openURL(file.url)}
-                      >
+                  {/* Botão de anexar arquivos */}
+                  <Text style={styles.sectionHeaderText}>Anexos</Text>
+                  <View style={styles.uploadContainer}>
+                    {maintenanceDetailsData?.MaintenancesStatus.name !==
+                      "completed" &&
+                      maintenanceDetailsData?.MaintenancesStatus.name !==
+                        "overdue" && (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
+                            if (uploadedFile) {
+                              setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
+                            }
+                          }}
+                        >
+                          <Icon name="paperclip" size={24} color="#c62828" />
+                        </TouchableOpacity>
+                      )}
+                    <View style={styles.fileList}>
+                      {files.map((file, index) => (
+                        <TouchableOpacity
+                          onPress={() => Linking.openURL(file.url)}
+                        >
+                          <View key={index} style={styles.fileItem}>
+                            <Text
+                              style={styles.fileName}
+                              numberOfLines={1}
+                              ellipsizeMode="tail"
+                            >
+                              {file.originalName}
+                            </Text>
+                            {maintenanceDetailsData?.MaintenancesStatus.name !==
+                              "completed" &&
+                              maintenanceDetailsData?.MaintenancesStatus
+                                .name !== "overdue" && (
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    const updatedFiles = removeItem(
+                                      images,
+                                      index
+                                    );
+                                    setFiles(updatedFiles);
+                                  }}
+                                >
+                                  <Icon
+                                    name="x"
+                                    size={16}
+                                    color="#fff"
+                                    style={styles.deleteIcon}
+                                  />
+                                </TouchableOpacity>
+                              )}
+                          </View>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+
+                  {/* Botão de anexar imagens */}
+                  <Text style={styles.sectionHeaderText}>Imagens</Text>
+                  <View style={styles.uploadContainer}>
+                    {maintenanceDetailsData?.MaintenancesStatus.name !==
+                      "completed" &&
+                      maintenanceDetailsData?.MaintenancesStatus.name !==
+                        "overdue" && (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            const uploadedImage = await handleUpload("image");
+                            if (uploadedImage) {
+                              setImages((prev) => [...prev, uploadedImage]);
+                            }
+                          }}
+                        >
+                          <Icon name="image" size={24} color="#c62828" />
+                        </TouchableOpacity>
+                      )}
+                    <View style={styles.fileList}>
+                      {images.map((image, index) => (
                         <View key={index} style={styles.fileItem}>
-                          <Text
-                            style={styles.fileName}
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
+                          <TouchableOpacity
+                            onPress={() => Linking.openURL(image.url)}
                           >
-                            {file.originalName}
-                          </Text>
+                            <Image
+                              source={{ uri: image.url }}
+                              style={styles.previewImage}
+                            />
+                          </TouchableOpacity>
                           {maintenanceDetailsData?.MaintenancesStatus.name !==
                             "completed" &&
                             maintenanceDetailsData?.MaintenancesStatus.name !==
                               "overdue" && (
                               <TouchableOpacity
                                 onPress={() => {
-                                  const updatedFiles = removeItem(
+                                  const updatedImages = removeItem(
                                     images,
                                     index
                                   );
-                                  setFiles(updatedFiles);
+                                  setImages(updatedImages);
                                 }}
                               >
                                 <Icon
@@ -1035,146 +1131,94 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                               </TouchableOpacity>
                             )}
                         </View>
-                      </TouchableOpacity>
-                    ))}
+                      ))}
+                    </View>
                   </View>
-                </View>
 
-                {/* Botão de anexar imagens */}
-                <Text style={styles.sectionHeaderText}>Imagens</Text>
-                <View style={styles.uploadContainer}>
+                  {/* Botões de ação */}
                   {maintenanceDetailsData?.MaintenancesStatus.name !==
                     "completed" &&
                     maintenanceDetailsData?.MaintenancesStatus.name !==
                       "overdue" && (
-                      <TouchableOpacity
-                        onPress={async () => {
-                          const uploadedImage = await handleUpload("image");
-                          if (uploadedImage) {
-                            setImages((prev) => [...prev, uploadedImage]);
-                          }
-                        }}
-                      >
-                        <Icon name="image" size={24} color="#c62828" />
-                      </TouchableOpacity>
-                    )}
-                  <View style={styles.fileList}>
-                    {images.map((image, index) => (
-                      <View key={index} style={styles.fileItem}>
+                      <View style={styles.buttonContainer}>
                         <TouchableOpacity
-                          onPress={() => Linking.openURL(image.url)}
+                          style={styles.secondaryActionButton}
+                          onPress={handleChangeMaintenanceProgress}
                         >
-                          <Image
-                            source={{ uri: image.url }}
-                            style={styles.previewImage}
-                          />
+                          <Text style={styles.secondaryActionButtonText}>
+                            {maintenanceDetailsData?.inProgress
+                              ? "Parar"
+                              : "Iniciar"}
+                          </Text>
                         </TouchableOpacity>
-                        {maintenanceDetailsData?.MaintenancesStatus.name !==
-                          "completed" &&
-                          maintenanceDetailsData?.MaintenancesStatus.name !==
-                            "overdue" && (
-                            <TouchableOpacity
-                              onPress={() => {
-                                const updatedImages = removeItem(images, index);
-                                setImages(updatedImages);
-                              }}
-                            >
-                              <Icon
-                                name="x"
-                                size={16}
-                                color="#fff"
-                                style={styles.deleteIcon}
-                              />
-                            </TouchableOpacity>
-                          )}
-                      </View>
-                    ))}
-                  </View>
-                </View>
 
-                {/* Botões de ação */}
-                {maintenanceDetailsData?.MaintenancesStatus.name !==
-                  "completed" &&
-                  maintenanceDetailsData?.MaintenancesStatus.name !==
-                    "overdue" && (
-                    <View style={styles.buttonContainer}>
-                      <TouchableOpacity
-                        style={styles.secondaryActionButton}
-                        onPress={handleToggleProgress}
-                      >
-                        <Text style={styles.secondaryActionButtonText}>
-                          {maintenanceDetailsData?.inProgress
-                            ? "Parar"
-                            : "Iniciar"}
-                        </Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.secondaryActionButton}
+                          onPress={() => {
+                            if (maintenanceDetailsData?.id) {
+                              handleSaveMaintenanceProgress(
+                                userId,
+                                maintenanceDetailsData?.id,
+                                convertCostToInteger(cost),
+                                files,
+                                images
+                              );
+                            }
+                          }}
+                        >
+                          <Text style={styles.secondaryActionButtonText}>
+                            Salvar
+                          </Text>
+                        </TouchableOpacity>
 
-                      <TouchableOpacity
-                        style={styles.secondaryActionButton}
-                        onPress={() => {
-                          if (maintenanceDetailsData?.id) {
-                            saveProgress(
-                              userId,
-                              maintenanceDetailsData?.id,
-                              convertCostToInteger(cost),
-                              files,
-                              images
-                            );
-                          }
-                        }}
-                      >
-                        <Text style={styles.secondaryActionButtonText}>
-                          Salvar
-                        </Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        style={styles.primaryActionButton}
-                        onPress={() => {
-                          if (maintenanceDetailsData?.id) {
-                            Alert.alert(
-                              "Confirmar Ação",
-                              "Tem certeza de que deseja finalizar a manutenção?",
-                              [
-                                {
-                                  text: "Cancelar",
-                                  style: "cancel",
-                                },
-                                {
-                                  text: "Sim",
-                                  onPress: () => {
-                                    handleFinishMaintenance(
-                                      userId,
-                                      maintenanceDetailsData?.id,
-                                      convertCostToInteger(cost),
-                                      files,
-                                      images
-                                    );
+                        <TouchableOpacity
+                          style={styles.primaryActionButton}
+                          onPress={() => {
+                            if (maintenanceDetailsData?.id) {
+                              Alert.alert(
+                                "Confirmar Ação",
+                                "Tem certeza de que deseja finalizar a manutenção?",
+                                [
+                                  {
+                                    text: "Cancelar",
+                                    style: "cancel",
                                   },
-                                },
-                              ]
-                            );
-                          }
-                        }}
-                      >
-                        <Text style={styles.actionButtonText}>
-                          Finalizar manutenção
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-              </View>
-            </ScrollView>
-          </SafeAreaView>
-        </KeyboardAvoidingView>
-        {/* Película e indicador de carregamento */}
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#ff3535" />
-            <Text style={styles.loadingText}>Aguarde</Text>
-          </View>
-        )}
-      </View>
+                                  {
+                                    text: "Sim",
+                                    onPress: () => {
+                                      handleFinishMaintenance(
+                                        userId,
+                                        maintenanceDetailsData?.id,
+                                        convertCostToInteger(cost),
+                                        files,
+                                        images
+                                      );
+                                    },
+                                  },
+                                ]
+                              );
+                            }
+                          }}
+                        >
+                          <Text style={styles.actionButtonText}>
+                            Finalizar manutenção
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                </View>
+              </ScrollView>
+            </SafeAreaView>
+          </KeyboardAvoidingView>
+          {/* Película e indicador de carregamento */}
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#ff3535" />
+              <Text style={styles.loadingText}>Aguarde</Text>
+            </View>
+          )}
+        </View>
+      )}
     </Modal>
   );
 };
