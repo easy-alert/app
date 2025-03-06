@@ -18,7 +18,7 @@ export const requestMaintenanceDetails = async ({
 
     return response.data;
   } catch (error: any) {
-    console.log("🚀 ~ error:", error)
+    console.error("🚀 ~ error:", error)
     return { maintenanceDetails: {} as IMaintenance };
   }
 };
