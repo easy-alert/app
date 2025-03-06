@@ -66,8 +66,6 @@ export const createOccasionalMaintenance = async ({
   try {
     const response = await baseApi.post(uri, body);
 
-    console.log("🚀 ~ response:", response.data);
-
     alertMessage({
       type: "success",
       message: response?.data?.ServerMessage?.message,
