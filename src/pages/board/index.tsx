@@ -29,7 +29,13 @@ import { formatDate } from "../../utils/formatDate";
 
 import { styles } from "../board/styles";
 
-import type { MaintenanceDetails, KanbanColumn } from "../../types";
+import type {
+  MaintenanceDetails,
+  KanbanColumn,
+  IOccasionalMaintenanceType,
+  IOccasionalMaintenanceData,
+} from "../../types";
+import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
 
 export interface IMaintenanceFilter {
   buildings: string[];
@@ -39,6 +45,12 @@ export interface IMaintenanceFilter {
   priorityName: string;
   startDate?: string;
   endDate?: string;
+}
+
+export interface IHandleCreateOccasionalMaintenance {
+  occasionalMaintenance: IOccasionalMaintenanceData;
+  occasionalMaintenanceType: IOccasionalMaintenanceType;
+  inProgress?: boolean;
 }
 
 export const Board = ({ navigation }: any) => {
@@ -147,6 +159,48 @@ export const Board = ({ navigation }: any) => {
     });
   };
 
+  const handleCreateOccasionalMaintenance = async ({
+    occasionalMaintenance,
+    occasionalMaintenanceType,
+    inProgress = false,
+  }: IHandleCreateOccasionalMaintenance) => {
+    setLoading(true);
+
+    const reportDataBody =
+      occasionalMaintenanceType === "finished"
+        ? occasionalMaintenance.reportData
+        : {
+            cost: "R$ 0,00",
+            observation: "",
+            files: [],
+            images: [],
+          };
+
+    const occasionalMaintenanceBody = {
+      ...occasionalMaintenance,
+      buildingId,
+      inProgress,
+      reportData: reportDataBody,
+    };
+
+    try {
+      const responseData = await createOccasionalMaintenance({
+        origin: "Mobile",
+        userId,
+        occasionalMaintenanceType,
+        occasionalMaintenanceBody,
+      });
+
+      if (responseData?.ServerMessage.statusCode === 200) {
+        setSelectedMaintenanceId(responseData.maintenance.id);
+        setCreateMaintenanceModal(false);
+        setMaintenanceDetailsModal(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const stopProcessing = startPeriodicQueueProcessing();
 
@@ -210,11 +264,10 @@ export const Board = ({ navigation }: any) => {
       />
 
       <ModalCreateOccasionalMaintenance
+        buildingId={buildingId}
         visible={createMaintenanceModal}
-        buildingNanoId={buildingId}
-        syndicNanoId={userId}
         handleCreateMaintenanceModal={handleCreateMaintenanceModal}
-        getKanbanData={handleGetKanbanData}
+        handleCreateOccasionalMaintenance={handleCreateOccasionalMaintenance}
       />
 
       {loading ? (
