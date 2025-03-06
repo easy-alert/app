@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Icon from "react-native-vector-icons/Feather";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -13,8 +12,10 @@ import {
 } from "react-native";
 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Icon from "react-native-vector-icons/Feather";
+import { Dropdown } from "react-native-element-dropdown";
 
-import { getCategoriesByBuildingNanoId } from "../../services/getCategoriesByBuildingNanoId";
+import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
 import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
 
 import { styles } from "./styles";
@@ -22,16 +23,14 @@ import { styles } from "./styles";
 import type {
   ICategory,
   IOccasionalMaintenanceData,
-  IOccasionalMaintenanceType,
 } from "../../types";
-import { Dropdown } from "react-native-element-dropdown";
+import type { IHandleCreateOccasionalMaintenance } from '../../pages/board';
 
 interface IModalCreateOccasionalMaintenance {
+  buildingId: string;
   visible: boolean;
-  buildingNanoId: string;
-  syndicNanoId: string;
   handleCreateMaintenanceModal: (modalState: boolean) => void;
-  getKanbanData: () => void;
+  handleCreateOccasionalMaintenance: ({ occasionalMaintenance, occasionalMaintenanceType, inProgress}: IHandleCreateOccasionalMaintenance) => void;
 }
 
 interface IHandleSetOccasionalMaintenanceData {
@@ -40,21 +39,15 @@ interface IHandleSetOccasionalMaintenanceData {
   secondaryKey?: string;
 }
 
-interface IHandleCreateOccasionalMaintenance {
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  inProgress?: boolean;
-}
-
 function ModalCreateOccasionalMaintenance({
+  buildingId,
   visible,
-  buildingNanoId,
-  syndicNanoId,
+  handleCreateOccasionalMaintenance,
   handleCreateMaintenanceModal,
-  getKanbanData,
 }: IModalCreateOccasionalMaintenance) {
   const [occasionalMaintenance, setOccasionalMaintenance] =
     useState<IOccasionalMaintenanceData>({
-      buildingId: buildingNanoId,
+      buildingId: buildingId,
 
       element: "",
       activity: "",
@@ -124,8 +117,9 @@ function ModalCreateOccasionalMaintenance({
 
   const handleCloseModal = () => {
     handleCreateMaintenanceModal(false);
+
     setOccasionalMaintenance({
-      buildingId: buildingNanoId,
+      buildingId: buildingId,
 
       element: "",
       activity: "",
@@ -152,9 +146,7 @@ function ModalCreateOccasionalMaintenance({
     setLoading(true);
 
     try {
-      const categories = await getCategoriesByBuildingNanoId({
-        buildingNanoId,
-      });
+      const categories = await getCategoriesByBuildingId();
 
       setCategories(categories);
     } catch (error) {
@@ -162,48 +154,6 @@ function ModalCreateOccasionalMaintenance({
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCreateOccasionalMaintenance = async ({
-    occasionalMaintenanceType,
-    inProgress = false,
-  }: IHandleCreateOccasionalMaintenance) => {
-    setLoading(true);
-
-    const reportDataBody =
-      occasionalMaintenanceType === "finished"
-        ? occasionalMaintenance.reportData
-        : {
-            cost: "R$ 0,00",
-            observation: "",
-            files: [],
-            images: [],
-          };
-
-    const occasionalMaintenanceBody = {
-      ...occasionalMaintenance,
-      buildingId: buildingNanoId,
-      reportData: reportDataBody,
-      inProgress,
-    };
-
-    try {
-      console.log(occasionalMaintenanceBody);
-
-      const response = await createOccasionalMaintenance({
-        origin: "Mobile",
-        syndicNanoId,
-        occasionalMaintenanceType,
-        occasionalMaintenanceBody,
-      });
-
-      if (response?.ServerMessage.statusCode === 200) {
-        getKanbanData();
-        handleCloseModal();
-      }
-    } catch (error) {}
-
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -427,6 +377,7 @@ function ModalCreateOccasionalMaintenance({
               style={styles.modalButton}
               onPress={() => {
                 handleCreateOccasionalMaintenance({
+                  occasionalMaintenance,
                   occasionalMaintenanceType: "pending",
                   inProgress: true,
                 });
@@ -448,6 +399,7 @@ function ModalCreateOccasionalMaintenance({
               style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
               onPress={() => {
                 handleCreateOccasionalMaintenance({
+                  occasionalMaintenance,
                   occasionalMaintenanceType: "pending",
                 });
               }}
