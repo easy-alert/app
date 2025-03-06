@@ -2,13 +2,15 @@ import { baseApi } from "./baseApi";
 
 import { Alert } from "react-native";
 
+import { alertMessage, catchHandler } from '../utils/handleAlerts'; 
+
 import type { IUser } from '../types/IUser';
+import type { IError } from '../types/IError';
 
 interface IUserLogin {
   login: string;
   password?: string;
 }
-
 
 export const userLogin = async ({
   login,
@@ -17,6 +19,15 @@ export const userLogin = async ({
   user: IUser;
   authToken: string;
 }> => {
+   if (!login || !password) {
+    alertMessage({
+      type: "error",
+      message: "Por favor, insira um número de telefone e senha válidos.",
+    });
+    
+    return { user: {} as IUser, authToken: "" };
+  }
+
   const url = `/mobile/auth/login`;
 
   const body = {
@@ -33,8 +44,13 @@ export const userLogin = async ({
     }
 
     return response.data
-  } catch (error) {
-    console.error("Erro ao buscar os dados ou sem internet:", error);
+  } catch (error: any) {
+    const response = error.response as IError;
+
+    catchHandler({
+      message: response?.data?.ServerMessage?.message,
+      statusCode: response?.status,
+    });
 
     return { user: {} as IUser, authToken: "" };
   }
