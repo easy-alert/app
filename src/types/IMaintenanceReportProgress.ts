@@ -1,9 +1,9 @@
 import type { IAnnexesAndImages } from '.';
 
 export interface IMaintenanceReportProgress {
-  id: string;
+  id?: string;
   cost: number;
-  observation: string;
-  ReportAnnexes: IAnnexesAndImages[];
-  ReportImages: IAnnexesAndImages[];
+  observation?: string;
+  ReportAnnexes?: IAnnexesAndImages[];
+  ReportImages?: IAnnexesAndImages[];
 }
