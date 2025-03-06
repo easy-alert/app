@@ -16,25 +16,25 @@ export const Building = ({ navigation }: any) => {
   const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchBuildings = async () => {
-      try {
-        const storedBuildings = await AsyncStorage.getItem("buildingsList");
+  const handleGetBuildings = async () => {
+    try {
+      const storedBuildings = await AsyncStorage.getItem("buildingsList");
 
-        if (storedBuildings) {
-          setBuildings(JSON.parse(storedBuildings)); // Faz o parse da lista de prédios
-        } else {
-          Alert.alert("Erro", "Nenhum prédio encontrado.");
-        }
-      } catch (error) {
-        console.error("Erro ao carregar a lista de prédios:", error);
-        Alert.alert("Erro", "Não foi possível carregar os prédios.");
-      } finally {
-        setLoading(false);
+      if (storedBuildings) {
+        setBuildings(JSON.parse(storedBuildings));
+      } else {
+        Alert.alert("Erro", "Nenhum prédio encontrado.");
       }
-    };
+    } catch (error) {
+      console.error("Erro ao carregar a lista de prédios:", error);
+      Alert.alert("Erro", "Não foi possível carregar os prédios.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    fetchBuildings();
+  useEffect(() => {
+    handleGetBuildings();
   }, []);
 
   const handleBuildingSelect = async (building: any) => {

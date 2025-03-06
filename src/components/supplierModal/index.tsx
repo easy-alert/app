@@ -1,5 +1,6 @@
-// SupplierModal.tsx
 import React, { useEffect, useState } from "react";
+
+import Icon from "react-native-vector-icons/Feather";
 import {
   Modal,
   View,
@@ -8,73 +9,62 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+
+import { getSuppliersForMaintenance } from "../../services/getSuppliersForMaintenance";
+import { linkMaintenanceSupplier } from "../../services/linkMaintenanceSupplier";
+
 import { styles } from "./styles";
-import { SuppliersByMaintenanceId } from "../../types";
-import { getSuppliersToSelectByMaintenanceId } from "../../services/getSuppliersToSelectByMaintenanceId";
-import { addSuppliersToMaintenance } from "../../services/addSuppliersToMaintenance";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import type { SuppliersByMaintenanceId } from "../../types";
 
 interface SupplierModalProps {
+  maintenanceId: string;
+  userId: string;
   visible: boolean;
   onClose: () => void;
-  maintenanceId: string;
 }
 
 const SupplierModal: React.FC<SupplierModalProps> = ({
+  maintenanceId,
+  userId,
   visible,
   onClose,
-  maintenanceId,
 }) => {
   const [suppliersData, setSuppliersData] = useState<
     SuppliersByMaintenanceId | undefined
   >(undefined);
-  const [syndicNanoId, setSyndicNanoId] = useState("");
-  const [buildingNanoId, setBuildingNanoId] = useState("");
 
-  const addSupplier = async (syndicNanoId: string, supplierId: string) => {
-    if (maintenanceId && syndicNanoId && supplierId) {
-      try {
-        await addSuppliersToMaintenance(
-          maintenanceId,
-          syndicNanoId,
-          supplierId
-        );
-        console.log("Fornecedor adicionado com sucesso");
+  const handleGetSuppliersForMaintenance = async () => {
+    try {
+      const responseData = await getSuppliersForMaintenance({ maintenanceId });
 
-        // Recarregar os dados do modal
-        onClose();
-      } catch (error) {
-        console.error("Erro ao adicionar fornecedor:", error);
+      if (responseData) {
+        setSuppliersData(responseData);
       }
-    } else {
-      console.error("Maintenance ID ou Supplier ID está indefinido.");
+    } catch (error) {
+      console.error("Erro ao carregar os dados:", error);
+    }
+  };
+
+  const handleLinkMaintenanceSupplier = async (
+    supplierId: string,
+    userId: string
+  ) => {
+    try {
+      await linkMaintenanceSupplier({
+        maintenanceId,
+        supplierId,
+        userId,
+      });
+    } catch (error) {
+      console.error("Erro ao vincular o fornecedor:", error);
+    } finally {
+      onClose();
     }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
-        const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
-
-        if (syndicNanoId && buildingNanoId) {
-          setSyndicNanoId(syndicNanoId);
-          setBuildingNanoId(buildingNanoId);
-        }
-        const suppliersData = await getSuppliersToSelectByMaintenanceId(
-          maintenanceId
-        );
-
-        if (suppliersData) {
-          setSuppliersData(suppliersData);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar os dados:", error);
-      }
-    };
-
-    fetchData();
+    handleGetSuppliersForMaintenance();
   }, [maintenanceId]);
 
   return (
@@ -102,13 +92,14 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
             <TouchableOpacity
               key={suppliers.id}
               style={styles.supplierOption}
-              onPress={() => {
-                addSupplier(syndicNanoId, suppliers.id);
-              }}
+              onPress={() =>
+                handleLinkMaintenanceSupplier(suppliers.id, userId)
+              }
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
             </TouchableOpacity>
           ))}
+
           {suppliersData?.suggestedSuppliers.length || (
             <Text style={styles.noSuppliersText}>
               Nenhum fornecedor encontrado.
@@ -120,13 +111,14 @@ const SupplierModal: React.FC<SupplierModalProps> = ({
             <TouchableOpacity
               key={suppliers.id}
               style={styles.supplierOption}
-              onPress={() => {
-                addSupplier(syndicNanoId, suppliers.id);
-              }}
+              onPress={() =>
+                handleLinkMaintenanceSupplier(suppliers.id, userId)
+              }
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
             </TouchableOpacity>
           ))}
+
           {suppliersData?.remainingSuppliers.length || (
             <Text style={styles.noSuppliersText}>
               Nenhum fornecedor encontrado.
