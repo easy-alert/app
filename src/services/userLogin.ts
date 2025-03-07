@@ -2,10 +2,10 @@ import { baseApi } from "./baseApi";
 
 import { Alert } from "react-native";
 
-import { alertMessage, catchHandler } from '../utils/handleAlerts'; 
+import { alertMessage, catchHandler } from "../utils/handleAlerts";
 
-import type { IUser } from '../types/IUser';
-import type { IError } from '../types/IError';
+import type { IUser } from "../types/IUser";
+import type { IError } from "../types/IError";
 
 interface IUserLogin {
   login: string;
@@ -19,12 +19,12 @@ export const userLogin = async ({
   user: IUser;
   authToken: string;
 }> => {
-   if (!login || !password) {
+  if (!login || !password) {
     alertMessage({
       type: "error",
       message: "Por favor, insira um número de telefone e senha válidos.",
     });
-    
+
     return { user: {} as IUser, authToken: "" };
   }
 
@@ -43,7 +43,7 @@ export const userLogin = async ({
       return { user: {} as IUser, authToken: "" };
     }
 
-    return response.data
+    return response.data;
   } catch (error: any) {
     const response = error.response as IError;
 

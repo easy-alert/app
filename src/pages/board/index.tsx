@@ -83,6 +83,8 @@ export const Board = ({ navigation }: any) => {
   };
 
   const handleGetKanbanData = async () => {
+    setLoading(true);
+
     try {
       const userId = await AsyncStorage.getItem("userId");
       const buildingId = await AsyncStorage.getItem("buildingId");
@@ -107,13 +109,16 @@ export const Board = ({ navigation }: any) => {
         });
 
         if (responseData) {
+          setLoading(false);
           setKanbanData(responseData.kanban || []);
         }
       } else {
         Alert.alert("Credenciais inválidas");
         navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       console.error("🚀 ~ handleGetKanbanData ~ error:", error);
     }
   };
@@ -219,16 +224,8 @@ export const Board = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-
-    try {
-      handleGetKanbanData();
-      handleGetBuildingLogo();
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    }
+    handleGetKanbanData();
+    handleGetBuildingLogo();
   }, [refresh]);
 
   return (
@@ -438,7 +435,8 @@ export const Board = ({ navigation }: any) => {
             ))}
           </ScrollView>
         </>
-      ) : (        <Text style={{ marginTop: 20, textAlign: "center" }}>
+      ) : (
+        <Text style={{ marginTop: 20, textAlign: "center" }}>
           Nenhum dado encontrado.
         </Text>
       )}
