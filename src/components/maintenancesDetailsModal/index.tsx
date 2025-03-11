@@ -215,27 +215,29 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     try {
       if (isConnected) {
         // Handle file uploads when online
-        for (const file of images) {
-          const fileUrl = await uploadFile({
-            uri: file.url,
-            type: file.type,
-            name: file.originalName,
-          });
-
-          filesUploaded.push({
-            originalName: file.originalName,
-            url: fileUrl,
-            type: file.type,
-          });
+        if(images?.length > 0) {
+          for (const file of images) {
+            const fileUrl = await uploadFile({
+              uri: file.url,
+              type: file.type,
+              name: file.originalName,
+            });
+  
+            filesUploaded.push({
+              originalName: file.originalName,
+              url: fileUrl,
+              type: file.type,
+            });
+          }
         }
 
         // If online, send data to the server
-        // await createMaintenanceHistoryActivity({
-        //   maintenanceId,
-        //   userId,
-        //   content: comment,
-        //   uploadedFile: filesUploaded,
-        // });
+        await createMaintenanceHistoryActivity({
+          maintenanceId,
+          userId,
+          content: comment,
+          uploadedFile: filesUploaded,
+        });
 
         setComment("");
         setUploadedFiles([]);
