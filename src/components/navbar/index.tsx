@@ -12,9 +12,10 @@ import {
   StatusBar,
   Platform,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
 
 interface NavbarProps {
   logoUrl: string;
@@ -29,11 +30,7 @@ type RootParamList = {
 
 type NavigationProps = NavigationProp<RootParamList, "Board">;
 
-const Navbar: React.FC<NavbarProps> = ({
-  logoUrl,
-  syndicNanoId,
-  buildingNanoId,
-}) => {
+const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
   const navigation = useNavigation<NavigationProps>();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -62,12 +59,7 @@ const Navbar: React.FC<NavbarProps> = ({
           <Image source={{ uri: logoUrl }} style={styles.logo} />
         </View>
       </View>
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={toggleModal}
-      >
+      <Modal visible={modalVisible} animationType="slide" transparent={true} onRequestClose={toggleModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -88,7 +80,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     }
                     if (item.id === "1") {
                       Linking.openURL(
-                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${syndicNanoId}`
+                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${syndicNanoId}`,
                       );
                     }
                   }}

@@ -9,8 +9,10 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IUser } from '../../types/IUser';
+
+import type { IUser } from "src/types/IUser";
 
 export const Building = ({ navigation }: any) => {
   const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
@@ -31,7 +33,7 @@ export const Building = ({ navigation }: any) => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     handleGetBuildings();
@@ -50,10 +52,7 @@ export const Building = ({ navigation }: any) => {
   };
 
   const renderBuilding = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.buildingItem}
-      onPress={() => handleBuildingSelect(item)}
-    >
+    <TouchableOpacity style={styles.buildingItem} onPress={() => handleBuildingSelect(item)}>
       <Text style={styles.buildingName}>{item.Building.name}</Text>
     </TouchableOpacity>
   );
@@ -74,11 +73,7 @@ export const Building = ({ navigation }: any) => {
           data={buildings}
           keyExtractor={(building) => building?.Building?.id}
           renderItem={renderBuilding}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>
-              Nenhuma edificação encontrado para este número.
-            </Text>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
         />
       </View>
     </SafeAreaView>

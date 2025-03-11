@@ -1,41 +1,30 @@
-import React, { useState, useEffect } from "react";
-
-import Icon from "react-native-vector-icons/Feather";
-import {
-  Alert,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+import Icon from "react-native-vector-icons/Feather";
 
-import { getMaintenancesKanban } from "../../services/getMaintenancesKanban";
-import { getBuildingLogo } from "../../services/getBuildingLogo";
+import MaintenanceDetailsModal from "@components/maintenancesDetailsModal";
+import ModalCreateOccasionalMaintenance from "@components/ModalCreateOccasionalMaintenance";
+import Navbar from "@components/navbar";
 
-import Navbar from "../../components/navbar";
-import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
-import ModalCreateOccasionalMaintenance from "../../components/ModalCreateOccasionalMaintenance";
+import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
+import { getBuildingLogo } from "@services/getBuildingLogo";
+import { getMaintenancesKanban } from "@services/getMaintenancesKanban";
 
-import {
-  processOfflineQueue,
-  startPeriodicQueueProcessing,
-} from "../../utils/processOffilineQueue";
-import { getStatus } from "../../utils/getStatus";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "@utils/formatDate";
+import { getStatus } from "@utils/getStatus";
+import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOffilineQueue";
 
 import { styles } from "../board/styles";
 
 import type {
-  MaintenanceDetails,
-  KanbanColumn,
-  IOccasionalMaintenanceType,
   IOccasionalMaintenanceData,
-} from "../../types";
-import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
+  IOccasionalMaintenanceType,
+  KanbanColumn,
+  MaintenanceDetails,
+} from "src/types/index";
 
 export interface IMaintenanceFilter {
   buildings: string[];
@@ -55,8 +44,7 @@ export interface IHandleCreateOccasionalMaintenance {
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [selectedMaintenanceId, setSelectedMaintenanceId] =
-    useState<string>("");
+  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState<string>("");
 
   const [userId, setUserId] = useState("");
   const [buildingName, setBuildingName] = useState("");
@@ -150,9 +138,7 @@ export const Board = ({ navigation }: any) => {
 
   const getOfflineQueueCount = async () => {
     const offlineQueueString = await AsyncStorage.getItem("offline_queue");
-    const offlineQueue = offlineQueueString
-      ? JSON.parse(offlineQueueString)
-      : [];
+    const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
     setOfflineCount(offlineQueue.length);
   };
 
@@ -230,11 +216,7 @@ export const Board = ({ navigation }: any) => {
 
   return (
     <>
-      <Navbar
-        logoUrl={logo}
-        syndicNanoId={userId}
-        buildingNanoId={buildingId}
-      />
+      <Navbar logoUrl={logo} syndicNanoId={userId} buildingNanoId={buildingId} />
 
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
@@ -242,20 +224,14 @@ export const Board = ({ navigation }: any) => {
             {`Fila Offline: ${offlineCount} item(s)`}
           </Text>
 
-          {isProcessing && (
-            <Text style={{ color: "green" }}>
-              Processando dados da fila, aguarde...
-            </Text>
-          )}
+          {isProcessing && <Text style={{ color: "green" }}>Processando dados da fila, aguarde...</Text>}
         </View>
       )}
 
       {!internetConnection && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
           {!isProcessing && (
-            <Text style={{ color: "green" }}>
-              Você está offline, alguns serviços podem estar indisponíveis...
-            </Text>
+            <Text style={{ color: "green" }}>Você está offline, alguns serviços podem estar indisponíveis...</Text>
           )}
         </View>
       )}
@@ -343,10 +319,7 @@ export const Board = ({ navigation }: any) => {
             {kanbanData?.map((column) => (
               <View key={column.status} style={styles.statusContainer}>
                 <Text style={styles.statusTitle}>{column.status}</Text>
-                <ScrollView
-                  style={styles.cardsContainer}
-                  nestedScrollEnabled={true}
-                >
+                <ScrollView style={styles.cardsContainer} nestedScrollEnabled={true}>
                   {column.maintenances.map(
                     (maintenance) =>
                       !maintenance.cantReportExpired && (
@@ -359,22 +332,17 @@ export const Board = ({ navigation }: any) => {
                               borderLeftWidth: 9,
                             }, // Cor da borda esquerda
                           ]}
-                          onPress={() =>
-                            openMaintenanceDetailsModal(maintenance)
-                          }
+                          onPress={() => openMaintenanceDetailsModal(maintenance)}
                         >
                           <View
                             style={[
                               styles.tag,
                               {
-                                backgroundColor: getStatus(maintenance.type)
-                                  .color,
+                                backgroundColor: getStatus(maintenance.type).color,
                               },
                             ]}
                           >
-                            <Text style={styles.tagText}>
-                              {getStatus(maintenance.type).label}
-                            </Text>
+                            <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
                           </View>
 
                           {maintenance.status === "overdue" && (
@@ -382,27 +350,19 @@ export const Board = ({ navigation }: any) => {
                               style={[
                                 styles.tag,
                                 {
-                                  backgroundColor: getStatus(maintenance.status)
-                                    .color,
+                                  backgroundColor: getStatus(maintenance.status).color,
                                 },
                               ]}
                             >
-                              <Text style={styles.tagText}>
-                                {getStatus(maintenance.status).label}
-                              </Text>
+                              <Text style={styles.tagText}>{getStatus(maintenance.status).label}</Text>
                             </View>
                           )}
 
-                          <Text style={styles.cardTitle}>
-                            {maintenance.element}
-                          </Text>
+                          <Text style={styles.cardTitle}>{maintenance.element}</Text>
 
-                          <Text style={styles.cardDescription}>
-                            {maintenance.activity}
-                          </Text>
+                          <Text style={styles.cardDescription}>{maintenance.activity}</Text>
 
-                          {(maintenance.status === "completed" ||
-                            maintenance.status === "overdue") && (
+                          {(maintenance.status === "completed" || maintenance.status === "overdue") && (
                             <Text
                               style={[
                                 styles.cardsContainer,
@@ -428,7 +388,7 @@ export const Board = ({ navigation }: any) => {
                             </Text>
                           )}
                         </TouchableOpacity>
-                      )
+                      ),
                   )}
                 </ScrollView>
               </View>
@@ -436,9 +396,7 @@ export const Board = ({ navigation }: any) => {
           </ScrollView>
         </>
       ) : (
-        <Text style={{ marginTop: 20, textAlign: "center" }}>
-          Nenhum dado encontrado.
-        </Text>
+        <Text style={{ marginTop: 20, textAlign: "center" }}>Nenhum dado encontrado.</Text>
       )}
     </>
   );

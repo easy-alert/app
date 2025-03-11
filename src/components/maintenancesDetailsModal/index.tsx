@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-
-import Icon from "react-native-vector-icons/Feather";
 import {
   View,
   Text,
@@ -16,37 +13,36 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
+import React, { useEffect, useState } from "react";
 
+import Icon from "react-native-vector-icons/Feather";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import SupplierModal from "../supplierModal";
-
-import { getStatus } from "../../utils/getStatus"; // Ajuste o caminho para a função getStatus
-import { formatDate } from "../../utils/formatDate";
-
-import { convertCostToInteger } from "./utils/convertCostToInteger";
-import { removeItem } from "./utils/removeItem";
-import { handleUpload } from "./utils/handleUpload";
-
-import { uploadFile } from "../../services/uploadFile";
-
-import { getMaintenanceDetails } from "../../services/getMaintenanceDetails";
-import { getMaintenanceReportProgress } from "../../services/getMaintenanceReportProgress";
-import { getMaintenanceHistorySupplier } from "../../services/getMaintenanceHistorySupplier";
-import { getMaintenanceHistoryActivities } from "../../services/getMaintenanceHistoryActivities";
-import { unlinkMaintenanceSupplier } from "../../services/unlinkMaintenanceSupplier";
-import { updateMaintenanceProgress } from "../../services/updateMaintenanceProgress";
-import { updateMaintenance } from "../../services/updateMaintenance";
-import { updateMaintenanceFinish } from "../../services/updateMaintenanceFinish";
-import { createMaintenanceHistoryActivity } from "../../services/createMaintenanceHistoryActivity";
+import { createMaintenanceHistoryActivity } from "@services/createMaintenanceHistoryActivity";
+import { getMaintenanceDetails } from "@services/getMaintenanceDetails";
+import { getMaintenanceHistoryActivities } from "@services/getMaintenanceHistoryActivities";
+import { getMaintenanceHistorySupplier } from "@services/getMaintenanceHistorySupplier";
+import { getMaintenanceReportProgress } from "@services/getMaintenanceReportProgress";
+import { unlinkMaintenanceSupplier } from "@services/unlinkMaintenanceSupplier";
+import { updateMaintenance } from "@services/updateMaintenance";
+import { updateMaintenanceFinish } from "@services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@services/updateMaintenanceProgress";
+import { uploadFile } from "@services/uploadFile";
+import { formatDate } from "@utils/formatDate";
+import { getStatus } from "@utils/getStatus"; // Ajuste o caminho para a função getStatus
 
 import { styles } from "./styles";
+import { convertCostToInteger } from "./utils/convertCostToInteger";
+import { handleUpload } from "./utils/handleUpload";
+import { removeItem } from "./utils/removeItem";
 
-import type { ISupplier } from "../../types/ISupplier";
-import type { IMaintenance } from "../../types/IMaintenance";
-import type { MaintenanceHistoryActivities, UploadedFile } from "../../types";
-import type { IAnnexesAndImages } from '../../types/IAnnexesAndImages';
+import SupplierModal from "../supplierModal";
+
+import type { IAnnexesAndImages } from "src/types/IAnnexesAndImages";
+import type { IMaintenance } from "src/types/IMaintenance";
+import type { MaintenanceHistoryActivities, UploadedFile } from "src/types/index";
+import type { ISupplier } from "src/types/ISupplier";
 
 interface MaintenanceDetailsModalProps {
   maintenanceId: string;
@@ -63,31 +59,19 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   visible,
   onClose,
 }) => {
-  if (!maintenanceId) return null; // Evita renderizar o modal se nenhum dado for passado
-
-  const [maintenanceDetailsData, setMaintenanceDetailsData] =
-    useState<IMaintenance>();
+  const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
   const [supplierData, setSupplierData] = useState<ISupplier | null>();
-  const [historyActivitiesData, setHistoryActivitiesData] =
-    useState<MaintenanceHistoryActivities>();
+  const [historyActivitiesData, setHistoryActivitiesData] = useState<MaintenanceHistoryActivities>();
 
   const [cost, setCost] = useState("0,00"); // Estado para o custo
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
-  const [files, setFiles] = useState<
-    { originalName: string; url: string; name: string }[]
-  >([]); // Estado para os arquivos ainda não upados
-  const [images, setImages] = useState<
-    { originalName: string; url: string; name: string }[]
-  >([]); // Estado para as imagens ainda não upadas
-  const [activityFiles, setActivityFiles] = useState<
-    { originalName: string; url: string; name: string }[]
-  >([]); // Estado para os arquivos de atividades
+  const [files, setFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos ainda não upados
+  const [images, setImages] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para as imagens ainda não upadas
+  const [activityFiles, setActivityFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos de atividades
 
   const [comment, setComment] = useState(" ");
-  const [activeTab, setActiveTab] = useState<"comment" | "notification">(
-    "comment"
-  );
+  const [activeTab, setActiveTab] = useState<"comment" | "notification">("comment");
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
@@ -96,10 +80,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
   const OFFLINE_QUEUE_KEY = "offline_queue";
 
-  const filteredData =
-    historyActivitiesData?.maintenanceHistoryActivities?.filter(
-      (item) => item.type === activeTab
-    );
+  const filteredData = historyActivitiesData?.maintenanceHistoryActivities?.filter((item) => item.type === activeTab);
 
   const toggleSupplierModal = async () => {
     handleGetMaintenanceSupplier();
@@ -143,9 +124,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         maintenanceHistoryId: maintenanceId,
       });
 
-      setCost(
-        String(responseData?.progress?.cost || 0 / 100).replace(".", ",")
-      );
+      setCost(String(responseData?.progress?.cost || 0 / 100).replace(".", ","));
       setFiles(responseData?.progress?.ReportAnnexesProgress || []);
       setImages(responseData?.progress?.ReportImagesProgress || []);
     } catch (error) {
@@ -203,26 +182,26 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     userId: string,
     maintenanceId: string,
     comment: string,
-    images?: any
+    images?: any,
   ) => {
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    let filesUploaded = [];
+    const filesUploaded = [];
 
     try {
       if (isConnected) {
         // Handle file uploads when online
-        if(images?.length > 0) {
+        if (images?.length > 0) {
           for (const file of images) {
             const fileUrl = await uploadFile({
               uri: file.url,
               type: file.type,
               name: file.originalName,
             });
-  
+
             filesUploaded.push({
               originalName: file.originalName,
               url: fileUrl,
@@ -246,21 +225,15 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setLoading(false);
       } else {
         // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(
-          OFFLINE_QUEUE_KEY
-        );
-        const offlineQueue = offlineQueueString
-          ? JSON.parse(offlineQueueString)
-          : [];
+        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
         // Include file metadata instead of uploading
-        const filesToQueue = images.map(
-          (file: { originalName: any; url: any; type: any }) => ({
-            originalName: file.originalName,
-            uri: file.url,
-            type: file.type,
-          })
-        );
+        const filesToQueue = images.map((file: { originalName: any; url: any; type: any }) => ({
+          originalName: file.originalName,
+          uri: file.url,
+          type: file.type,
+        }));
 
         const newEntry = {
           type: "addHistoryActivity",
@@ -272,10 +245,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         };
 
         offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(
-          OFFLINE_QUEUE_KEY,
-          JSON.stringify(offlineQueue)
-        );
+        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
         setComment("");
         setUploadedFiles([]);
         setLoading(false);
@@ -309,26 +279,28 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     maintenanceId: string,
     cost: number,
     files: any,
-    images: any
+    images: any,
   ) => {
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    let filesUploaded = [] as IAnnexesAndImages[];
-    let imagesUploaded = [] as IAnnexesAndImages[];
+    const filesUploaded = [] as IAnnexesAndImages[];
+    const imagesUploaded = [] as IAnnexesAndImages[];
 
     try {
       if (isConnected) {
         // Handle file uploads when online
         if (files?.length > 0) {
-          for (const file of files) {          
-            const fileUrl = file.type ? await uploadFile({
-              uri: file.url,
-              type: file.type,
-              name: file.originalName,
-            }) : file.url
+          for (const file of files) {
+            const fileUrl = file.type
+              ? await uploadFile({
+                  uri: file.url,
+                  type: file.type,
+                  name: file.originalName,
+                })
+              : file.url;
 
             filesUploaded.push({
               originalName: file.originalName,
@@ -340,11 +312,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
         if (images?.length > 0) {
           for (const image of images) {
-            const fileUrl = image.type ? await uploadFile({
-              uri: image.url,
-              type: image.type,
-              name: image.originalName,
-            }) : image.url
+            const fileUrl = image.type
+              ? await uploadFile({
+                  uri: image.url,
+                  type: image.type,
+                  name: image.originalName,
+                })
+              : image.url;
 
             imagesUploaded.push({
               originalName: image.originalName,
@@ -373,29 +347,21 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         onClose();
       } else {
         // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(
-          OFFLINE_QUEUE_KEY
-        );
-        const offlineQueue = offlineQueueString
-          ? JSON.parse(offlineQueueString)
-          : [];
+        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
         // Include file and image metadata instead of uploading
-        const filesToQueue = files.map(
-          (file: { originalName: any; url: any; type: any }) => ({
-            originalName: file.originalName,
-            uri: file.url,
-            type: file.type,
-          })
-        );
+        const filesToQueue = files.map((file: { originalName: any; url: any; type: any }) => ({
+          originalName: file.originalName,
+          uri: file.url,
+          type: file.type,
+        }));
 
-        const imagesToQueue = images.map(
-          (image: { originalName: any; url: any; type: any }) => ({
-            originalName: image.originalName,
-            uri: image.url,
-            type: image.type,
-          })
-        );
+        const imagesToQueue = images.map((image: { originalName: any; url: any; type: any }) => ({
+          originalName: image.originalName,
+          uri: image.url,
+          type: image.type,
+        }));
 
         const newEntry = {
           type: "saveProgress",
@@ -408,10 +374,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         };
 
         offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(
-          OFFLINE_QUEUE_KEY,
-          JSON.stringify(offlineQueue)
-        );
+        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 
         setFiles([]);
         setImages([]);
@@ -430,26 +393,28 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     maintenanceId: string,
     cost: number,
     files: any,
-    images: any
+    images: any,
   ) => {
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    let filesUploaded = [];
-    let imagesUploaded = [];
+    const filesUploaded = [];
+    const imagesUploaded = [];
 
     try {
       if (isConnected) {
         // Handle file uploads when online
         if (files?.length > 0) {
-          for (const file of files) {          
-            const fileUrl = file.type ? await uploadFile({
-              uri: file.url,
-              type: file.type,
-              name: file.originalName,
-            }) : file.url
+          for (const file of files) {
+            const fileUrl = file.type
+              ? await uploadFile({
+                  uri: file.url,
+                  type: file.type,
+                  name: file.originalName,
+                })
+              : file.url;
 
             filesUploaded.push({
               originalName: file.originalName,
@@ -461,11 +426,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
         if (images?.length > 0) {
           for (const image of images) {
-            const fileUrl = image.type ? await uploadFile({
-              uri: image.url,
-              type: image.type,
-              name: image.originalName,
-            }) : image.url
+            const fileUrl = image.type
+              ? await uploadFile({
+                  uri: image.url,
+                  type: image.type,
+                  name: image.originalName,
+                })
+              : image.url;
 
             imagesUploaded.push({
               originalName: image.originalName,
@@ -494,29 +461,21 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         onClose();
       } else {
         // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(
-          OFFLINE_QUEUE_KEY
-        );
-        const offlineQueue = offlineQueueString
-          ? JSON.parse(offlineQueueString)
-          : [];
+        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
         // Include file and image metadata instead of uploading
-        const filesToQueue = files.map(
-          (file: { originalName: any; url: any; type: any }) => ({
-            originalName: file.originalName,
-            uri: file.url,
-            type: file.type,
-          })
-        );
+        const filesToQueue = files.map((file: { originalName: any; url: any; type: any }) => ({
+          originalName: file.originalName,
+          uri: file.url,
+          type: file.type,
+        }));
 
-        const imagesToQueue = images.map(
-          (image: { originalName: any; url: any; type: any }) => ({
-            originalName: image.originalName,
-            uri: image.url,
-            type: image.type,
-          })
-        );
+        const imagesToQueue = images.map((image: { originalName: any; url: any; type: any }) => ({
+          originalName: image.originalName,
+          uri: image.url,
+          type: image.type,
+        }));
 
         const newEntry = {
           type: "finishMaintenance",
@@ -529,10 +488,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         };
 
         offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(
-          OFFLINE_QUEUE_KEY,
-          JSON.stringify(offlineQueue)
-        );
+        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 
         setFiles([]);
         setImages([]);
@@ -562,12 +518,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   }, [refresh]);
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={false}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
       <SupplierModal
         maintenanceId={maintenanceId}
         userId={userId}
@@ -583,46 +534,29 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         />
       ) : (
         <View style={styles.modalOverlay}>
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-          >
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <SafeAreaView style={styles.modalFullContainer}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Enviar relato</Text>
-                <TouchableOpacity
-                  onPress={onClose}
-                  style={styles.modalCloseButton}
-                >
+                <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
                   <Icon name="x" size={28} color="#b21d1d" />
                 </TouchableOpacity>
               </View>
 
-              <ScrollView
-                contentContainerStyle={styles.modalContent}
-                nestedScrollEnabled={true}
-              >
-                <Text style={styles.modalBuildingName}>
-                  {maintenanceDetailsData?.Building.name}
-                </Text>
+              <ScrollView contentContainerStyle={styles.modalContent} nestedScrollEnabled={true}>
+                <Text style={styles.modalBuildingName}>{maintenanceDetailsData?.Building.name}</Text>
 
                 <View style={styles.modalTags}>
                   <View
                     style={[
                       styles.tag,
                       {
-                        backgroundColor: getStatus(
-                          maintenanceDetailsData?.MaintenancesStatus.name!
-                        ).color,
+                        backgroundColor: getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).color,
                       },
                     ]}
                   >
                     <Text style={styles.tagText}>
-                      {
-                        getStatus(
-                          maintenanceDetailsData?.MaintenancesStatus.name!
-                        ).label
-                      }
+                      {getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).label}
                     </Text>
                   </View>
 
@@ -631,80 +565,51 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                       style={[
                         styles.tag,
                         {
-                          backgroundColor: getStatus(
-                            maintenanceDetailsData?.Maintenance.MaintenanceType
-                              .name
-                          ).color,
+                          backgroundColor: getStatus(maintenanceDetailsData?.Maintenance.MaintenanceType.name).color,
                         },
                       ]}
                     >
                       <Text style={styles.tagText}>
-                        {
-                          getStatus(
-                            maintenanceDetailsData?.Maintenance.MaintenanceType
-                              .name
-                          ).label
-                        }
+                        {getStatus(maintenanceDetailsData?.Maintenance.MaintenanceType.name).label}
                       </Text>
                     </View>
                   )}
 
                   {maintenanceDetailsData?.inProgress && (
-                    <View
-                      style={[
-                        styles.tag,
-                        { backgroundColor: getStatus("Em execução").color },
-                      ]}
-                    >
-                      <Text style={styles.tagText}>
-                        {getStatus("Em execução").label}
-                      </Text>
+                    <View style={[styles.tag, { backgroundColor: getStatus("Em execução").color }]}>
+                      <Text style={styles.tagText}>{getStatus("Em execução").label}</Text>
                     </View>
                   )}
                 </View>
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Categoria</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.Category.name}
-                  </Text>
+                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
                 </View>
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Elemento</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.element}
-                  </Text>
+                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
                 </View>
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Atividade</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.activity}
-                  </Text>
+                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
                 </View>
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Responsável</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.responsible}
-                  </Text>
+                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
                 </View>
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Fonte</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.source}
-                  </Text>
+                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
                 </View>
 
                 <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>
-                    Observação da manutenção
-                  </Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance.observation}
-                  </Text>
+                  <Text style={styles.modalInfoLabel}>Observação da manutenção</Text>
+                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
                 </View>
 
                 <View style={styles.modalInfoRow}>
@@ -716,19 +621,15 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Periodicidade</Text>
-                  {maintenanceDetailsData?.Maintenance.MaintenanceType.name ===
-                  "common" ? (
+                  {maintenanceDetailsData?.Maintenance.MaintenanceType.name === "common" ? (
                     <Text style={styles.modalInfoValue}>
                       {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
-                      {maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1
-                        ? maintenanceDetailsData?.Maintenance
-                            .FrequencyTimeInterval.pluralLabel === "anos" &&
+                      {(maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1)
+                        ? maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel === "anos" &&
                           maintenanceDetailsData?.Maintenance.frequency === 1
                           ? "ano"
-                          : maintenanceDetailsData?.Maintenance
-                              .FrequencyTimeInterval.pluralLabel
-                        : maintenanceDetailsData?.Maintenance
-                            .FrequencyTimeInterval.singularLabel}
+                          : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel
+                        : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.singularLabel}
                     </Text>
                   ) : (
                     <Text style={styles.modalInfoValue}>-</Text>
@@ -744,17 +645,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
                 <View style={styles.modalInfoRow}>
                   <Text style={styles.modalInfoLabel}>Data de vencimento</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {formatDate(maintenanceDetailsData?.dueDate || "")}
-                  </Text>
+                  <Text style={styles.modalInfoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
                 </View>
 
                 {maintenanceDetailsData?.resolutionDate && (
                   <View style={styles.modalInfoRow}>
                     <Text style={styles.modalInfoLabel}>Data de conclusão</Text>
-                    <Text style={styles.modalInfoValue}>
-                      {formatDate(maintenanceDetailsData?.resolutionDate)}
-                    </Text>
+                    <Text style={styles.modalInfoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
                   </View>
                 )}
 
@@ -763,31 +660,16 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
                   {supplierData ? (
                     <TouchableOpacity
-                      onPress={() =>
-                        handleUnlinkMaintenanceSupplier(supplierData.id)
-                      }
+                      onPress={() => handleUnlinkMaintenanceSupplier(supplierData.id)}
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
                       <Text style={styles.unlinkText}>Desvincular</Text>
-                      <Icon
-                        name="link"
-                        size={16}
-                        color="#fff"
-                        style={styles.unlinkIcon}
-                      />
+                      <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity
-                      style={styles.unlinkButton}
-                      onPress={toggleSupplierModal}
-                    >
+                    <TouchableOpacity style={styles.unlinkButton} onPress={toggleSupplierModal}>
                       <Text style={styles.unlinkText}>Vincular</Text>
-                      <Icon
-                        name="link"
-                        size={16}
-                        color="#fff"
-                        style={styles.unlinkIcon}
-                      />
+                      <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -803,34 +685,26 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                       />
                     </View>
                     <View style={styles.supplierDetails}>
-                      <Text style={styles.supplierName}>
-                        {supplierData.name}
-                      </Text>
+                      <Text style={styles.supplierName}>{supplierData.name}</Text>
                       <Text style={styles.supplierEmail}>
-                        <Icon name="mail" size={12} />{" "}
-                        {supplierData.email || "-"}
+                        <Icon name="mail" size={12} /> {supplierData.email || "-"}
                       </Text>
                       <Text style={styles.supplierWebsite}>
-                        <Icon name="phone" size={12} />{" "}
-                        {supplierData.phone || "-"}
+                        <Icon name="phone" size={12} /> {supplierData.phone || "-"}
                       </Text>
                     </View>
                   </View>
                 ) : (
                   <View style={styles.supplierContainer}>
                     <View style={styles.supplierDetails}>
-                      <Text style={styles.supplierEmail}>
-                        Nenhum fornecedor encontrado.
-                      </Text>
+                      <Text style={styles.supplierEmail}>Nenhum fornecedor encontrado.</Text>
                     </View>
                   </View>
                 )}
 
                 {/* Enviar Comentário */}
                 <View style={styles.commentSection}>
-                  <Text style={styles.sectionHeaderText}>
-                    Enviar comentário
-                  </Text>
+                  <Text style={styles.sectionHeaderText}>Enviar comentário</Text>
                   <TextInput
                     style={styles.textArea}
                     placeholder="Digite seu comentário"
@@ -845,17 +719,13 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                     {uploadedFiles.map((file, index) => (
                       <View key={index} style={styles.uploadedFileItem}>
                         <View style={styles.uploadedFileDetails}>
-                          <Text style={styles.uploadedFileName}>
-                            {file.originalName}
-                          </Text>
+                          <Text style={styles.uploadedFileName}>{file.originalName}</Text>
                         </View>
 
                         <TouchableOpacity
                           style={styles.deleteButton}
                           onPress={() => {
-                            setUploadedFiles((prev) =>
-                              prev.filter((_, i) => i !== index)
-                            );
+                            setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
                           }}
                         >
                           <Icon name="trash" size={20} color="#fff" />
@@ -890,16 +760,9 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         const maintenanceId = maintenanceDetailsData?.id;
 
                         if (maintenanceId && comment) {
-                          handleCreateMaintenanceActivity(
-                            userId,
-                            maintenanceId,
-                            comment,
-                            uploadedFiles
-                          );
+                          handleCreateMaintenanceActivity(userId, maintenanceId, comment, uploadedFiles);
                         } else {
-                          console.error(
-                            "Maintenance ID ou Supplier ID está indefinido."
-                          );
+                          console.error("Maintenance ID ou Supplier ID está indefinido.");
                         }
                       }}
                     >
@@ -914,35 +777,19 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 {/* Botões de filtro */}
                 <View style={styles.historyTabs}>
                   <TouchableOpacity
-                    style={[
-                      styles.historyTabButton,
-                      activeTab === "comment" && styles.activeTabButton,
-                    ]}
+                    style={[styles.historyTabButton, activeTab === "comment" && styles.activeTabButton]}
                     onPress={() => setActiveTab("comment")}
                   >
-                    <Text
-                      style={[
-                        styles.historyTabText,
-                        activeTab === "comment" && styles.activeTabText,
-                      ]}
-                    >
+                    <Text style={[styles.historyTabText, activeTab === "comment" && styles.activeTabText]}>
                       Comentários
                     </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[
-                      styles.historyTabButton,
-                      activeTab === "notification" && styles.activeTabButton,
-                    ]}
+                    style={[styles.historyTabButton, activeTab === "notification" && styles.activeTabButton]}
                     onPress={() => setActiveTab("notification")}
                   >
-                    <Text
-                      style={[
-                        styles.historyTabText,
-                        activeTab === "notification" && styles.activeTabText,
-                      ]}
-                    >
+                    <Text style={[styles.historyTabText, activeTab === "notification" && styles.activeTabText]}>
                       Notificações
                     </Text>
                   </TouchableOpacity>
@@ -950,10 +797,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
 
                 {/* Lista de históricos */}
                 <View style={styles.historyList}>
-                  <ScrollView
-                    style={{ maxHeight: 200 }}
-                    nestedScrollEnabled={true}
-                  >
+                  <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
                     {filteredData && filteredData?.length >= 1 ? (
                       filteredData.map((item) => (
                         <View key={item.id} style={styles.historyItem}>
@@ -962,25 +806,16 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                           </View>
 
                           <View style={styles.historyContent}>
-                            <Text style={styles.historyTitle}>
-                              {item.title}
-                            </Text>
-                            <Text style={styles.historyTimestamp}>
-                              {formatDate(item.createdAt)}
-                            </Text>
-                            <Text style={styles.historyDescription}>
-                              {item.content}
-                            </Text>
+                            <Text style={styles.historyTitle}>{item.title}</Text>
+                            <Text style={styles.historyTimestamp}>{formatDate(item.createdAt)}</Text>
+                            <Text style={styles.historyDescription}>{item.content}</Text>
 
                             {/* Renderizar imagens, se existirem */}
                             {item.images && item.images.length > 0 && (
                               <View style={styles.imagePreviewContainer}>
                                 {item.images.map((image) => (
                                   <View key={image.id} style={styles.imageItem}>
-                                    <Image
-                                      source={{ uri: image.url }}
-                                      style={styles.previewImage}
-                                    />
+                                    <Image source={{ uri: image.url }} style={styles.previewImage} />
                                     <Text
                                       style={styles.imageName}
                                       numberOfLines={1} // Limita a uma linha
@@ -1004,10 +839,8 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                 {/* Relato */}
                 <View style={styles.container}>
                   {/* Input de Custo */}
-                  {maintenanceDetailsData?.MaintenancesStatus.name !==
-                  "completed" ? (
-                    maintenanceDetailsData?.MaintenancesStatus.name !==
-                    "overdue" ? (
+                  {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" ? (
+                    maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" ? (
                       <>
                         <Text style={styles.sectionHeaderText}>Custo</Text>
                         <TextInput
@@ -1021,9 +854,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                     ) : (
                       <View style={styles.modalInfoRow}>
                         <Text style={styles.modalInfoLabel}>Custo</Text>
-                        <Text
-                          style={styles.modalInfoValue}
-                        >{`R$ ${cost}`}</Text>
+                        <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
                       </View>
                     )
                   ) : (
@@ -1036,10 +867,8 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   {/* Botão de anexar arquivos */}
                   <Text style={styles.sectionHeaderText}>Anexos</Text>
                   <View style={styles.uploadContainer}>
-                    {maintenanceDetailsData?.MaintenancesStatus.name !==
-                      "completed" &&
-                      maintenanceDetailsData?.MaintenancesStatus.name !==
-                        "overdue" && (
+                    {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                      maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
                         <TouchableOpacity
                           onPress={async () => {
                             const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
@@ -1054,36 +883,20 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                       )}
                     <View style={styles.fileList}>
                       {files.map((file, index) => (
-                        <TouchableOpacity
-                          onPress={() => Linking.openURL(file.url)}
-                        >
+                        <TouchableOpacity onPress={() => Linking.openURL(file.url)}>
                           <View key={index} style={styles.fileItem}>
-                            <Text
-                              style={styles.fileName}
-                              numberOfLines={1}
-                              ellipsizeMode="tail"
-                            >
+                            <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
                               {file.originalName}
                             </Text>
-                            {maintenanceDetailsData?.MaintenancesStatus.name !==
-                              "completed" &&
-                              maintenanceDetailsData?.MaintenancesStatus
-                                .name !== "overdue" && (
+                            {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                              maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
                                 <TouchableOpacity
                                   onPress={() => {
-                                    const updatedFiles = removeItem(
-                                      images,
-                                      index
-                                    );
+                                    const updatedFiles = removeItem(images, index);
                                     setFiles(updatedFiles);
                                   }}
                                 >
-                                  <Icon
-                                    name="x"
-                                    size={16}
-                                    color="#fff"
-                                    style={styles.deleteIcon}
-                                  />
+                                  <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                                 </TouchableOpacity>
                               )}
                           </View>
@@ -1095,10 +908,8 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   {/* Botão de anexar imagens */}
                   <Text style={styles.sectionHeaderText}>Imagens</Text>
                   <View style={styles.uploadContainer}>
-                    {maintenanceDetailsData?.MaintenancesStatus.name !==
-                      "completed" &&
-                      maintenanceDetailsData?.MaintenancesStatus.name !==
-                        "overdue" && (
+                    {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                      maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
                         <TouchableOpacity
                           onPress={async () => {
                             const uploadedImage = await handleUpload("image");
@@ -1114,33 +925,18 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                     <View style={styles.fileList}>
                       {images.map((image, index) => (
                         <View key={index} style={styles.fileItem}>
-                          <TouchableOpacity
-                            onPress={() => Linking.openURL(image.url)}
-                          >
-                            <Image
-                              source={{ uri: image.url }}
-                              style={styles.previewImage}
-                            />
+                          <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
+                            <Image source={{ uri: image.url }} style={styles.previewImage} />
                           </TouchableOpacity>
-                          {maintenanceDetailsData?.MaintenancesStatus.name !==
-                            "completed" &&
-                            maintenanceDetailsData?.MaintenancesStatus.name !==
-                              "overdue" && (
+                          {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                            maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
                               <TouchableOpacity
                                 onPress={() => {
-                                  const updatedImages = removeItem(
-                                    images,
-                                    index
-                                  );
+                                  const updatedImages = removeItem(images, index);
                                   setImages(updatedImages);
                                 }}
                               >
-                                <Icon
-                                  name="x"
-                                  size={16}
-                                  color="#fff"
-                                  style={styles.deleteIcon}
-                                />
+                                <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                               </TouchableOpacity>
                             )}
                         </View>
@@ -1149,19 +945,15 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   </View>
 
                   {/* Botões de ação */}
-                  {maintenanceDetailsData?.MaintenancesStatus.name !==
-                    "completed" &&
-                    maintenanceDetailsData?.MaintenancesStatus.name !==
-                      "overdue" && (
+                  {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                    maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
                       <View style={styles.buttonContainer}>
                         <TouchableOpacity
                           style={styles.secondaryActionButton}
                           onPress={handleChangeMaintenanceProgress}
                         >
                           <Text style={styles.secondaryActionButtonText}>
-                            {maintenanceDetailsData?.inProgress
-                              ? "Parar"
-                              : "Iniciar"}
+                            {maintenanceDetailsData?.inProgress ? "Parar" : "Iniciar"}
                           </Text>
                         </TouchableOpacity>
 
@@ -1174,48 +966,40 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                                 maintenanceDetailsData?.id,
                                 convertCostToInteger(cost),
                                 files,
-                                images
+                                images,
                               );
                             }
                           }}
                         >
-                          <Text style={styles.secondaryActionButtonText}>
-                            Salvar
-                          </Text>
+                          <Text style={styles.secondaryActionButtonText}>Salvar</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                           style={styles.primaryActionButton}
                           onPress={() => {
                             if (maintenanceDetailsData?.id) {
-                              Alert.alert(
-                                "Confirmar Ação",
-                                "Tem certeza de que deseja finalizar a manutenção?",
-                                [
-                                  {
-                                    text: "Cancelar",
-                                    style: "cancel",
+                              Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
+                                {
+                                  text: "Cancelar",
+                                  style: "cancel",
+                                },
+                                {
+                                  text: "Sim",
+                                  onPress: () => {
+                                    handleFinishMaintenance(
+                                      userId,
+                                      maintenanceDetailsData?.id,
+                                      convertCostToInteger(cost),
+                                      files,
+                                      images,
+                                    );
                                   },
-                                  {
-                                    text: "Sim",
-                                    onPress: () => {
-                                      handleFinishMaintenance(
-                                        userId,
-                                        maintenanceDetailsData?.id,
-                                        convertCostToInteger(cost),
-                                        files,
-                                        images
-                                      );
-                                    },
-                                  },
-                                ]
-                              );
+                                },
+                              ]);
                             }
                           }}
                         >
-                          <Text style={styles.actionButtonText}>
-                            Finalizar manutenção
-                          </Text>
+                          <Text style={styles.actionButtonText}>Finalizar manutenção</Text>
                         </TouchableOpacity>
                       </View>
                     )}

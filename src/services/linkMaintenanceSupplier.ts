@@ -10,11 +10,7 @@ interface ILinkMaintenanceSupplier {
   userId: string;
 }
 
-export async function linkMaintenanceSupplier({
-  maintenanceId,
-  supplierId,
-  userId,
-}: ILinkMaintenanceSupplier) {
+export async function linkMaintenanceSupplier({ maintenanceId, supplierId, userId }: ILinkMaintenanceSupplier) {
   const uri = `company/suppliers/link-to-maintenance-history`;
 
   const body = {

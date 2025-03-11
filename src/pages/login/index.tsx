@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   Text,
   TextInput,
@@ -11,16 +10,15 @@ import {
   Platform,
   View,
 } from "react-native";
+import { Keyboard } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { userLogin } from "../../services/userLogin";
-
-import Logo from "../../assets/logo.png";
+import Logo from "@assets/logo.png";
+import { userLogin } from "@services/userLogin";
 
 import { styles } from "./styles";
-import { Keyboard } from "react-native";
 
 export const Login = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -35,13 +33,10 @@ export const Login = ({ navigation }: any) => {
     if (onlyNumbers.length > 10) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
         2,
-        3
+        3,
       )} ${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7)}`;
     } else if (onlyNumbers.length > 6) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
-        2,
-        6
-      )}-${onlyNumbers.slice(6)}`;
+      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2, 6)}-${onlyNumbers.slice(6)}`;
     } else if (onlyNumbers.length > 2) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2)}`;
     } else {
@@ -78,22 +73,13 @@ export const Login = ({ navigation }: any) => {
         login: cleanedPhone,
         password: password,
       });
-      
+
       if (responseData.user && responseData.user.id) {
-        await AsyncStorage.setItem(
-          "userId",
-          responseData.user.id
-        );
-        await AsyncStorage.setItem(
-          "authToken",
-          responseData.authToken
-        );
+        await AsyncStorage.setItem("userId", responseData.user.id);
+        await AsyncStorage.setItem("authToken", responseData.authToken);
 
         await AsyncStorage.setItem("phoneNumber", phoneNumber);
-        await AsyncStorage.setItem(
-          "buildingsList",
-          JSON.stringify(responseData.user.UserBuildingsPermissions)
-        );
+        await AsyncStorage.setItem("buildingsList", JSON.stringify(responseData.user.UserBuildingsPermissions));
 
         navigation.replace("Building");
       }
@@ -106,10 +92,7 @@ export const Login = ({ navigation }: any) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <View style={styles.container}>
         <Image source={Logo} style={styles.logo} resizeMode="contain" />
 

@@ -1,4 +1,3 @@
-
 export interface MaintenancesStatus {
-  name: 'expired' | 'pending' | 'completed' | 'overdue';
+  name: "expired" | "pending" | "completed" | "overdue";
 }

@@ -6,9 +6,7 @@ export interface IGetMaintenanceReportProgress {
   maintenanceHistoryId: string;
 }
 
-export const getMaintenanceReportProgress = async ({
-  maintenanceHistoryId,
-}: IGetMaintenanceReportProgress) => {
+export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGetMaintenanceReportProgress) => {
   const uri = `company/maintenances/list/report/progress/${maintenanceHistoryId}`;
 
   try {
@@ -18,10 +16,7 @@ export const getMaintenanceReportProgress = async ({
 
     return response.data;
   } catch (error: any) {
-    console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
-      error
-    );
+    console.error("Erro ao buscar os dados ou sem internet, carregando do cache:", error);
 
     try {
       const cachedData = await AsyncStorage.getItem(uri);

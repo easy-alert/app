@@ -1,9 +1,9 @@
 // GLOBAL TYPES
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { baseApi } from '../baseApi';
+import { baseApi } from "../baseApi";
 
-import type { ICategory, } from "../../types";
+import type { ICategory } from "../../types";
 
 interface IGetCategoriesByBuildingNanoId {
   buildingNanoId: string;
@@ -29,10 +29,7 @@ export const getCategoriesByBuildingId = async () => {
 
     return categories;
   } catch (error: any) {
-    console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
-      error
-    );
+    console.error("Erro ao buscar os dados ou sem internet, carregando do cache:", error);
 
     // Tenta carregar os dados do cache
     try {
