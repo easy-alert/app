@@ -1,11 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 export const baseApi = axios.create({
-  baseURL:
-    process.env.EXPO_PUBLIC_API_URL ??
-    "https://easyalert-production.herokuapp.com/api",
+  baseURL: process.env.EXPO_PUBLIC_API_URL ?? "https://easyalert-sandbox.herokuapp.com/api",
 
   headers: {
     "Content-Type": "application/json",
@@ -26,10 +23,10 @@ baseApi.interceptors.request.use(
   (error) => {
     console.error("Request error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 baseApi.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );

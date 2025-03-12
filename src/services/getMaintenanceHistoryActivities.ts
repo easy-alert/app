@@ -6,9 +6,7 @@ interface IGetMaintenanceHistoryActivities {
   maintenanceHistoryId: string;
 }
 
-export async function getMaintenanceHistoryActivities({
-  maintenanceHistoryId,
-}: IGetMaintenanceHistoryActivities) {
+export async function getMaintenanceHistoryActivities({ maintenanceHistoryId }: IGetMaintenanceHistoryActivities) {
   const uri = `company/maintenance-history-activities/${maintenanceHistoryId}`;
 
   try {
@@ -19,8 +17,8 @@ export async function getMaintenanceHistoryActivities({
     return response.data;
   } catch (error) {
     console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
-      error
+      "Erro ao buscar os dados ou sem internet, carregando do cache(getMaintenanceHistoryActivities):",
+      error,
     );
 
     try {

@@ -6,8 +6,8 @@ export interface IError {
   data: {
     ServerMessage: {
       message: string;
-    }
-  }
+    };
+  };
 
   status: number;
   statusText: string;

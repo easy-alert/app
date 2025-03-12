@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import { View, Image } from "react-native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import Logo from "@assets/logo.png";
+
 import { styles } from "./styles";
-import Logo from "../../assets/logo.png";
 
 export const Splash = ({ navigation }: any) => {
   useEffect(() => {

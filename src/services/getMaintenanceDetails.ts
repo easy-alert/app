@@ -6,9 +6,7 @@ export interface IGetMaintenanceDetails {
   maintenanceHistoryId: string;
 }
 
-export const getMaintenanceDetails = async ({
-  maintenanceHistoryId,
-}: IGetMaintenanceDetails) => {
+export const getMaintenanceDetails = async ({ maintenanceHistoryId }: IGetMaintenanceDetails) => {
   const uri = `company/maintenances/list/details/${maintenanceHistoryId}`;
 
   try {
@@ -18,10 +16,7 @@ export const getMaintenanceDetails = async ({
 
     return response.data;
   } catch (error: any) {
-    console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
-      error
-    );
+    console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceDetails):", error);
 
     try {
       const cachedData = await AsyncStorage.getItem(uri);

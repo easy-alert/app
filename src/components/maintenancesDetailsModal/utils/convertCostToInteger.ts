@@ -1,5 +1,5 @@
 export const convertCostToInteger = (cost: string): number => {
-  let normalizedCost = cost
+  const normalizedCost = cost
     .replace(/[^\d,.-]/g, "")
     .replace(",", "")
     .replace(".", "");

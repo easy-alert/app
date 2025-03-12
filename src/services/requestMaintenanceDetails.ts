@@ -1,6 +1,6 @@
-import { baseApi } from './baseApi';
+import { baseApi } from "./baseApi";
 
-import type { IMaintenance } from '../types/IMaintenance';
+import type { IMaintenance } from "../types/IMaintenance";
 
 export interface IRequestMaintenanceDetails {
   maintenanceHistoryId: string;
@@ -18,7 +18,7 @@ export const requestMaintenanceDetails = async ({
 
     return response.data;
   } catch (error: any) {
-    console.error("🚀 ~ error:", error)
+    console.error("🚀 ~ error:", error);
     return { maintenanceDetails: {} as IMaintenance };
   }
 };

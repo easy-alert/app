@@ -7,7 +7,7 @@ interface IGetBuildingLogo {
 }
 
 export const getBuildingLogo = async ({
-  buildingId
+  buildingId,
 }: IGetBuildingLogo): Promise<{
   buildingLogo: string;
 }> => {
@@ -21,7 +21,7 @@ export const getBuildingLogo = async ({
       return { buildingLogo: "" };
     }
 
-    return response.data
+    return response.data;
   } catch (error) {
     console.error("Erro ao buscar os dados ou sem internet:", error);
 

@@ -1,9 +1,9 @@
-import type { MaintenanceReportProgress } from '.';
-import type { IBuilding } from './IBuilding';
-import type { ICategory } from './ICategory';
-import type { MaintenanceReport } from './IMaintenanceReport';
-import type { MaintenancesStatus } from './IMaintenanceStatus';
-import type { IUser } from './IUser';
+import type { MaintenanceReportProgress } from ".";
+import type { IBuilding } from "./IBuilding";
+import type { ICategory } from "./ICategory";
+import type { MaintenanceReport } from "./IMaintenanceReport";
+import type { MaintenancesStatus } from "./IMaintenanceStatus";
+import type { IUser } from "./IUser";
 
 export interface IMaintenance {
   id: string;
@@ -21,19 +21,19 @@ export interface IMaintenance {
     observation: string;
     responsible: string;
     source: string;
-  
+
     frequency: number;
     FrequencyTimeInterval: {
       pluralLabel: string;
       singularLabel: string;
     };
-  
+
     MaintenanceType: {
       name: string;
     };
-  
+
     instructions: { name: string; url: string }[];
-  }
+  };
   canReport: boolean;
   inProgress: boolean;
   daysInAdvance: number;

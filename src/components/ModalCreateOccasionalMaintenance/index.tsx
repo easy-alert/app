@@ -11,26 +11,27 @@ import {
   View,
 } from "react-native";
 
+import { Dropdown } from "react-native-element-dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Icon from "react-native-vector-icons/Feather";
-import { Dropdown } from "react-native-element-dropdown";
-
-import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
-import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
 
 import { styles } from "./styles";
 
-import type {
-  ICategory,
-  IOccasionalMaintenanceData,
-} from "../../types";
-import type { IHandleCreateOccasionalMaintenance } from '../../pages/board';
+import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
+import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
+
+import type { IHandleCreateOccasionalMaintenance } from "../../pages/board";
+import type { ICategory, IOccasionalMaintenanceData } from "../../types";
 
 interface IModalCreateOccasionalMaintenance {
   buildingId: string;
   visible: boolean;
   handleCreateMaintenanceModal: (modalState: boolean) => void;
-  handleCreateOccasionalMaintenance: ({ occasionalMaintenance, occasionalMaintenanceType, inProgress}: IHandleCreateOccasionalMaintenance) => void;
+  handleCreateOccasionalMaintenance: ({
+    occasionalMaintenance,
+    occasionalMaintenanceType,
+    inProgress,
+  }: IHandleCreateOccasionalMaintenance) => void;
 }
 
 interface IHandleSetOccasionalMaintenanceData {
@@ -45,29 +46,28 @@ function ModalCreateOccasionalMaintenance({
   handleCreateOccasionalMaintenance,
   handleCreateMaintenanceModal,
 }: IModalCreateOccasionalMaintenance) {
-  const [occasionalMaintenance, setOccasionalMaintenance] =
-    useState<IOccasionalMaintenanceData>({
-      buildingId: buildingId,
+  const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
+    buildingId: buildingId,
 
-      element: "",
-      activity: "",
-      responsible: "",
-      executionDate: new Date().toISOString(),
-      inProgress: false,
-      priorityName: "",
+    element: "",
+    activity: "",
+    responsible: "",
+    executionDate: new Date().toISOString(),
+    inProgress: false,
+    priorityName: "",
 
-      categoryData: {
-        id: "",
-        name: "",
-      },
+    categoryData: {
+      id: "",
+      name: "",
+    },
 
-      reportData: {
-        cost: "R$ 0,00",
-        observation: "",
-        files: [],
-        images: [],
-      },
-    });
+    reportData: {
+      cost: "R$ 0,00",
+      observation: "",
+      files: [],
+      images: [],
+    },
+  });
 
   const [categories, setCategories] = useState<ICategory[]>([]);
 
@@ -88,10 +88,7 @@ function ModalCreateOccasionalMaintenance({
     if (secondaryKey) {
       setOccasionalMaintenance((prevState) => {
         const primaryData =
-          typeof prevState[primaryKey] === "object" &&
-          prevState[primaryKey] !== null
-            ? prevState[primaryKey]
-            : {};
+          typeof prevState[primaryKey] === "object" && prevState[primaryKey] !== null ? prevState[primaryKey] : {};
 
         return {
           ...prevState,
@@ -163,16 +160,8 @@ function ModalCreateOccasionalMaintenance({
   }, [visible]);
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={handleCloseModal}
-    >
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
+    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={handleCloseModal}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <SafeAreaView style={styles.modalFullContainer}>
           <DateTimePickerModal
             isVisible={showDatePicker}
@@ -192,10 +181,7 @@ function ModalCreateOccasionalMaintenance({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Manutenção avulsa</Text>
 
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={handleCloseModal}
-            >
+            <TouchableOpacity style={styles.modalCloseButton} onPress={handleCloseModal}>
               <Icon name="x" size={28} color="#b21d1d" />
             </TouchableOpacity>
           </View>
@@ -339,9 +325,9 @@ function ModalCreateOccasionalMaintenance({
                   style={styles.modalInput}
                   value={
                     occasionalMaintenance.executionDate
-                      ? new Date(
-                          occasionalMaintenance.executionDate
-                        ).toLocaleDateString("pt-BR", { timeZone: "UTC" })
+                      ? new Date(occasionalMaintenance.executionDate).toLocaleDateString("pt-BR", {
+                          timeZone: "UTC",
+                        })
                       : new Date().toLocaleDateString("pt-BR", {
                           timeZone: "UTC",
                         })
