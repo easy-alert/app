@@ -503,6 +503,8 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   };
 
   useEffect(() => {
+    if (!maintenanceId) return;
+
     setLoading(true);
 
     try {
@@ -515,7 +517,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setLoading(false);
       }, 500);
     }
-  }, [refresh]);
+  }, [maintenanceId, refresh]);
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
