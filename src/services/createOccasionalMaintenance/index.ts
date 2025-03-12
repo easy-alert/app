@@ -1,37 +1,22 @@
+import { alertMessage, catchHandler } from "../../utils/handleAlerts";
+import { unMaskBRL } from "../../utils/unMaskBRL";
 import { baseApi } from "../baseApi";
 
-import { unMaskBRL } from "../../utils/unMaskBRL";
-
-import type {
-  IOccasionalMaintenanceData,
-  IOccasionalMaintenanceType,
-  IResponse,
-} from "../../types";
+import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType } from "../../types";
+import type { IError } from "../../types/IError";
 
 interface IRequestCreateOccasionalMaintenance {
   origin: string;
-  syndicNanoId: string;
+  userId: string;
   occasionalMaintenanceType: IOccasionalMaintenanceType;
   occasionalMaintenanceBody: IOccasionalMaintenanceData;
 
   ticketsIds?: string[];
 }
 
-interface IResponseCreateOccasionalMaintenance extends IResponse {
-  data: {
-    maintenance: {
-      id: string;
-    };
-    ServerMessage: {
-      statusCode: number;
-      message: string;
-    };
-  };
-}
-
 export const createOccasionalMaintenance = async ({
   origin,
-  syndicNanoId,
+  userId,
   occasionalMaintenanceType,
   occasionalMaintenanceBody: {
     buildingId,
@@ -45,15 +30,14 @@ export const createOccasionalMaintenance = async ({
     priorityName,
   },
 }: IRequestCreateOccasionalMaintenance) => {
-  const uri = "/client/building/reports/occasional/create";
+  const uri = "company/buildings/reports/occasional/create";
 
   const body = {
     origin,
     occasionalMaintenanceType,
     buildingId: buildingId || null,
-    executionDate:
-      new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
-    responsibleSyndicId: syndicNanoId,
+    executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
+    userId,
     priorityName: priorityName || "low",
     categoryData: {
       id: categoryData.id || null,
@@ -74,14 +58,20 @@ export const createOccasionalMaintenance = async ({
   };
 
   try {
-    const response: IResponseCreateOccasionalMaintenance = await baseApi.post(
-      uri,
-      body
-    );
+    const response = await baseApi.post(uri, body);
+
+    alertMessage({
+      type: "success",
+      message: response?.data?.ServerMessage?.message,
+    });
 
     return response.data;
   } catch (error: any) {
-    console.log("🚀 ~ error:", error);
-    return null;
+    const response = error.response as IError;
+
+    catchHandler({
+      message: response?.data?.ServerMessage?.message,
+      statusCode: response?.status,
+    });
   }
 };

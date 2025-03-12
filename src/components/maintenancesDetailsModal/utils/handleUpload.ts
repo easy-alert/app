@@ -1,10 +1,12 @@
-import * as ImagePicker from "expo-image-picker";
-import * as DocumentPicker from "expo-document-picker";
-import { uploadFile } from "../../../services/uploadFile"; // Ajuste o caminho conforme necessário
 import { Alert } from "react-native";
 
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
+
+import { uploadFile } from "../../../services/uploadFile"; // Ajuste o caminho conforme necessário
+
 export const handleUpload = async (
-  type?: "file" | "image" | null
+  type?: "file" | "image" | null,
 ): Promise<{
   originalName: string;
   url: string;
@@ -28,7 +30,7 @@ export const handleUpload = async (
               style: "cancel",
             },
           ],
-          { cancelable: true }
+          { cancelable: true },
         );
       });
 
@@ -67,7 +69,7 @@ export const handleUpload = async (
               style: "cancel",
             },
           ],
-          { cancelable: true }
+          { cancelable: true },
         );
       });
 
@@ -80,8 +82,7 @@ export const handleUpload = async (
 
       if (userChoice === "camera") {
         // Solicitar permissão para câmera
-        const permissionCameraResult =
-          await ImagePicker.requestCameraPermissionsAsync();
+        const permissionCameraResult = await ImagePicker.requestCameraPermissionsAsync();
 
         if (!permissionCameraResult.granted) {
           console.log("Permissão necessária para acessar a câmera.");
@@ -96,8 +97,7 @@ export const handleUpload = async (
         });
       } else if (userChoice === "gallery") {
         // Solicitar permissão para galeria
-        const permissionLibraryResult =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const permissionLibraryResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (!permissionLibraryResult.granted) {
           console.log("Permissão necessária para acessar a galeria.");
