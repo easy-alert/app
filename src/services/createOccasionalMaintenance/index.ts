@@ -1,13 +1,8 @@
+import { alertMessage, catchHandler } from "../../utils/handleAlerts";
+import { unMaskBRL } from "../../utils/unMaskBRL";
 import { baseApi } from "../baseApi";
 
-import { unMaskBRL } from "../../utils/unMaskBRL";
-
-import { alertMessage, catchHandler } from "../../utils/handleAlerts";
-
-import type {
-  IOccasionalMaintenanceData,
-  IOccasionalMaintenanceType,
-} from "../../types";
+import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType } from "../../types";
 import type { IError } from "../../types/IError";
 
 interface IRequestCreateOccasionalMaintenance {
@@ -41,8 +36,7 @@ export const createOccasionalMaintenance = async ({
     origin,
     occasionalMaintenanceType,
     buildingId: buildingId || null,
-    executionDate:
-      new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
+    executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
     userId,
     priorityName: priorityName || "low",
     categoryData: {

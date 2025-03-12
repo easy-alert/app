@@ -2,9 +2,9 @@ import { baseApi } from "./baseApi";
 
 import { alertMessage, catchHandler } from "../utils/handleAlerts";
 
-import type { IMaintenanceReportProgress } from "../types/IMaintenanceReportProgress";
 import type { IAnnexesAndImages } from "../types/IAnnexesAndImages";
-import type{ IError } from "../types/IError";
+import type { IError } from "../types/IError";
+import type { IMaintenanceReportProgress } from "../types/IMaintenanceReportProgress";
 
 interface IUpdateMaintenanceFinish {
   syndicNanoId: string;
@@ -30,10 +30,7 @@ export const updateMaintenanceFinish = async ({
     responsibleSyndicId: syndicNanoId,
     maintenanceHistoryId,
     cost: maintenanceReport.cost,
-    observation:
-      maintenanceReport.observation !== ""
-        ? maintenanceReport.observation
-        : null,
+    observation: maintenanceReport.observation !== "" ? maintenanceReport.observation : null,
     ReportAnnexes: files,
     ReportImages: images,
   };

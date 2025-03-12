@@ -1,4 +1,4 @@
-import type { IPermission } from './IPermission';
+import type { IPermission } from "./IPermission";
 
 export interface IUser {
   id: string;
@@ -19,13 +19,13 @@ export interface IUser {
     updatedAt: string;
   }[];
 
-  UserBuildingsPermissions: Array<{
+  UserBuildingsPermissions: {
     Building: {
       id: string;
       nanoId: string;
       name: string;
     };
-  }>;
+  }[];
 
   isBlocked: boolean;
 

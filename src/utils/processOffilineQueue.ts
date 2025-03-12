@@ -1,11 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
+import { createMaintenanceHistoryActivity } from "../services/createMaintenanceHistoryActivity";
+import { updateMaintenanceFinish } from "../services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "../services/updateMaintenanceProgress";
 import { uploadFile } from "../services/uploadFile";
-
-import { createMaintenanceHistoryActivity } from '../services/createMaintenanceHistoryActivity';
-import { updateMaintenanceProgress } from '../services/updateMaintenanceProgress';
-import { updateMaintenanceFinish } from '../services/updateMaintenanceFinish';
 
 const OFFLINE_QUEUE_KEY = "offline_queue";
 let isProcessing = false; // Global lock to prevent overlapping processes
@@ -20,7 +19,7 @@ const processOfflineQueue = async () => {
 
   try {
     const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-    let offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+    const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
     while (offlineQueue.length > 0) {
       // Get and remove the first item in the queue
@@ -88,7 +87,6 @@ const processOfflineQueue = async () => {
             maintenanceHistoryId: currentItem?.maintenanceHistoryId,
             inProgressChange: currentItem?.inProgressChange,
           });
-
         } else if (currentItem.type === "finishMaintenance") {
           // Handle finishMaintenance
           const filesUploaded = [];
@@ -132,18 +130,12 @@ const processOfflineQueue = async () => {
         }
 
         // Save the updated queue after successful processing
-        await AsyncStorage.setItem(
-          OFFLINE_QUEUE_KEY,
-          JSON.stringify(offlineQueue)
-        );
+        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
       } catch (error) {
         console.error("Failed to process offline queue item:", error);
         // Re-add the item to the queue if it fails
         offlineQueue.push(currentItem);
-        await AsyncStorage.setItem(
-          OFFLINE_QUEUE_KEY,
-          JSON.stringify(offlineQueue)
-        );
+        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
         break; // Exit the loop on failure to avoid endless retries
       }
     }

@@ -1,8 +1,4 @@
-export const uploadFile = async (file: {
-  uri: string;
-  type: string;
-  name: string;
-}): Promise<string | null> => {
+export const uploadFile = async (file: { uri: string; type: string; name: string }): Promise<string | null> => {
   try {
     const formData = new FormData();
 
@@ -13,16 +9,13 @@ export const uploadFile = async (file: {
       name: file.name,
     } as any);
 
-    const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/company/upload/file`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json", // Apenas Accept; FormData já lida com Content-Type
-        },
-        body: formData,
-      }
-    );
+    const response = await fetch(`https://easyalert-production.herokuapp.com/api/company/upload/file`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json", // Apenas Accept; FormData já lida com Content-Type
+      },
+      body: formData,
+    });
 
     if (!response.ok) {
       const responseBody = await response.text();

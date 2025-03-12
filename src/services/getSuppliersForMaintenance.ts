@@ -6,9 +6,7 @@ interface IGetSuppliersForMaintenance {
   maintenanceId: string;
 }
 
-export async function getSuppliersForMaintenance({
-  maintenanceId,
-}: IGetSuppliersForMaintenance) {
+export async function getSuppliersForMaintenance({ maintenanceId }: IGetSuppliersForMaintenance) {
   const uri = `company/suppliers/to-select/${maintenanceId}`;
 
   try {
@@ -18,10 +16,7 @@ export async function getSuppliersForMaintenance({
 
     return response.data; // Retorna os dados mais recentes
   } catch (error) {
-    console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
-      error
-    );
+    console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getSuppliersForMaintenance):", error);
 
     try {
       const cachedData = await AsyncStorage.getItem(uri);
@@ -33,6 +28,6 @@ export async function getSuppliersForMaintenance({
       console.error("Erro ao carregar dados do cache:", cacheError);
     }
 
-    return null
+    return null;
   }
 }

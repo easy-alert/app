@@ -6,9 +6,7 @@ interface IGetMaintenanceHistorySupplier {
   maintenanceHistoryId: string;
 }
 
-export async function getMaintenanceHistorySupplier({
-  maintenanceHistoryId,
-}: IGetMaintenanceHistorySupplier) {
+export async function getMaintenanceHistorySupplier({ maintenanceHistoryId }: IGetMaintenanceHistorySupplier) {
   const uri = `company/suppliers/selected/${maintenanceHistoryId}`;
 
   try {
@@ -19,8 +17,8 @@ export async function getMaintenanceHistorySupplier({
     return response.data;
   } catch (error) {
     console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache:",
-      error
+      "Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceHistorySupplier):",
+      error,
     );
 
     try {

@@ -5,13 +5,25 @@
     "baseUrl": ".",
     "strict": true,
 
+    "typeRoots": ["node_modules/@types", "src/types/*"],
+
     "paths": {
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
-      "@customTypes/*": ["src/types/*"]
+      "@types/*": ["src/types/*"]
     }
-  }
+  },
+
+  "include": [
+    "App.tsx",
+    "src/**/*",
+    ".eslintrc.js",
+    "babel.config.js",
+    "metro.config.js",
+    "gesture-handler.js",
+    "gesture-handler.native.js"
+  ]
 }
