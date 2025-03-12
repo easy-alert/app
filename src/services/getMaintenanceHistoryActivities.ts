@@ -16,7 +16,10 @@ export async function getMaintenanceHistoryActivities({ maintenanceHistoryId }: 
 
     return response.data;
   } catch (error) {
-    console.error("Erro ao buscar os dados ou sem internet, carregando do cache:", error);
+    console.error(
+      "Erro ao buscar os dados ou sem internet, carregando do cache(getMaintenanceHistoryActivities):",
+      error,
+    );
 
     try {
       const cachedData = await AsyncStorage.getItem(uri);

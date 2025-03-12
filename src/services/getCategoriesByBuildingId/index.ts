@@ -29,7 +29,7 @@ export const getCategoriesByBuildingId = async () => {
 
     return categories;
   } catch (error: any) {
-    console.error("Erro ao buscar os dados ou sem internet, carregando do cache:", error);
+    console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getCategoriesByBuildingId):", error);
 
     // Tenta carregar os dados do cache
     try {

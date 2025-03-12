@@ -16,7 +16,10 @@ export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGe
 
     return response.data;
   } catch (error: any) {
-    console.error("Erro ao buscar os dados ou sem internet, carregando do cache:", error);
+    console.error(
+      "Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceReportProgress):",
+      error,
+    );
 
     try {
       const cachedData = await AsyncStorage.getItem(uri);
