@@ -9,38 +9,40 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import type { IUser } from "src/types/IUser";
+
 export const Building = ({ navigation }: any) => {
-  const [buildings, setBuildings] = useState<any[]>([]);
+  const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchBuildings = async () => {
-      try {
-        const storedBuildings = await AsyncStorage.getItem("buildingsList");
+  const handleGetBuildings = async () => {
+    try {
+      const storedBuildings = await AsyncStorage.getItem("buildingsList");
 
-        if (storedBuildings) {
-          setBuildings(JSON.parse(storedBuildings)); // Faz o parse da lista de prédios
-        } else {
-          Alert.alert("Erro", "Nenhum prédio encontrado.");
-        }
-      } catch (error) {
-        console.error("Erro ao carregar a lista de prédios:", error);
-        Alert.alert("Erro", "Não foi possível carregar os prédios.");
-      } finally {
-        setLoading(false);
+      if (storedBuildings) {
+        setBuildings(JSON.parse(storedBuildings));
+      } else {
+        Alert.alert("Erro", "Nenhum prédio encontrado.");
       }
-    };
+    } catch (error) {
+      console.error("Erro ao carregar a lista de prédios:", error);
+      Alert.alert("Erro", "Não foi possível carregar os prédios.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchBuildings();
+  useEffect(() => {
+    handleGetBuildings();
   }, []);
 
   const handleBuildingSelect = async (building: any) => {
     try {
-      await AsyncStorage.setItem("buildingNanoId", building.buildingNanoId);
-      await AsyncStorage.setItem("syndicNanoId", building.syndicNanoId);
-      await AsyncStorage.setItem("buildingName", building.buildingName);
+      await AsyncStorage.setItem("buildingId", building.Building.id);
+      await AsyncStorage.setItem("buildingName", building.Building.name);
 
       navigation.replace("Board");
     } catch (error) {
@@ -50,11 +52,8 @@ export const Building = ({ navigation }: any) => {
   };
 
   const renderBuilding = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.buildingItem}
-      onPress={() => handleBuildingSelect(item)}
-    >
-      <Text style={styles.buildingName}>{item.buildingName}</Text>
+    <TouchableOpacity style={styles.buildingItem} onPress={() => handleBuildingSelect(item)}>
+      <Text style={styles.buildingName}>{item.Building.name}</Text>
     </TouchableOpacity>
   );
 
@@ -72,13 +71,9 @@ export const Building = ({ navigation }: any) => {
         <Text style={styles.title}>Escolha uma Edificação</Text>
         <FlatList
           data={buildings}
-          keyExtractor={(item) => item.buildingNanoId}
+          keyExtractor={(building) => building?.Building?.id}
           renderItem={renderBuilding}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>
-              Nenhuma edificação encontrado para este número.
-            </Text>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
         />
       </View>
     </SafeAreaView>

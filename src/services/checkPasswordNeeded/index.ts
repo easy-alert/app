@@ -1,13 +1,11 @@
 import { PasswordNeeded } from "../../types";
 
 // Função para buscar os dados do Kanban
-export const checkPasswordNeeded = async (
-  buildingNanoId: string
-): Promise<PasswordNeeded | null> => {
+export const checkPasswordNeeded = async (buildingNanoId: string): Promise<PasswordNeeded | null> => {
   try {
     // Tenta fazer a requisição à API
     const response = await fetch(
-      `https://easyalert-production.herokuapp.com/api/client/check-password-existence/${buildingNanoId}/responsible`
+      `https://easyalert-production.herokuapp.com/api/client/check-password-existence/${buildingNanoId}/responsible`,
     );
 
     if (!response.ok) {

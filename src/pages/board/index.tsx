@@ -1,104 +1,144 @@
-import React, { useState, useEffect } from "react";
-
-import {
-  Alert,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+import Icon from "react-native-vector-icons/Feather";
 
-import { getMaintenancesBySyndicNanoId } from "../../services/getMaintenancesBySyndicNanoId";
-import { getCompanyLogoByBuildingNanoId } from "../../services/getCompanyLogoByBuildingNanoId";
+import MaintenanceDetailsModal from "@components/maintenancesDetailsModal";
+import ModalCreateOccasionalMaintenance from "@components/ModalCreateOccasionalMaintenance";
+import Navbar from "@components/navbar";
 
-import Navbar from "../../components/navbar";
-import MaintenanceDetailsModal from "../../components/maintenancesDetailsModal";
+import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
+import { getBuildingLogo } from "@services/getBuildingLogo";
+import { getMaintenancesKanban } from "@services/getMaintenancesKanban";
 
-import { getStatus } from "../../utils/getStatus";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "@utils/formatDate";
+import { getStatus } from "@utils/getStatus";
+import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOffilineQueue";
 
 import { styles } from "../board/styles";
 
-import type { MaintenanceDetails, KanbanColumn } from "../../types";
-import ModalCreateOccasionalMaintenance from "../../components/ModalCreateOccasionalMaintenance";
-import {
-  processOfflineQueue,
-  startPeriodicQueueProcessing,
-} from "../../utils/processOffilineQueue";
+import type {
+  IOccasionalMaintenanceData,
+  IOccasionalMaintenanceType,
+  KanbanColumn,
+  MaintenanceDetails,
+} from "src/types/index";
+
+export interface IMaintenanceFilter {
+  buildings: string[];
+  status: string[];
+  categories: string[];
+  users: string[];
+  priorityName: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface IHandleCreateOccasionalMaintenance {
+  occasionalMaintenance: IOccasionalMaintenanceData;
+  occasionalMaintenanceType: IOccasionalMaintenanceType;
+  inProgress?: boolean;
+}
 
 export const Board = ({ navigation }: any) => {
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [selectedMaintenance, setSelectedMaintenance] =
-    useState<MaintenanceDetails | null>(null);
+  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState<string>("");
 
+  const [userId, setUserId] = useState("");
   const [buildingName, setBuildingName] = useState("");
-  const [syndicNanoId, setSyndicNanoId] = useState("");
-  const [buildingNanoId, setBuildingNanoId] = useState("");
+  const [buildingId, setBuildingId] = useState("");
   const [logo, setLogo] = useState("");
 
   const [maintenanceDetailsModal, setMaintenanceDetailsModal] = useState(false);
   const [createMaintenanceModal, setCreateMaintenanceModal] = useState(false);
 
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
 
   const [offlineCount, setOfflineCount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [internetConnection, setInternetConnection] = useState(true);
 
-  const getKanbanData = async () => {
-    setLoading(true); // Define o estado de carregamento antes da chamada
-
-    const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
-    const buildingNanoId = await AsyncStorage.getItem("buildingNanoId");
-    const buildingName = await AsyncStorage.getItem("buildingName");
-
-    if (syndicNanoId && buildingNanoId && buildingName) {
-      setBuildingName(buildingName);
-      setSyndicNanoId(syndicNanoId);
-      setBuildingNanoId(buildingNanoId);
-
-      const data = await getMaintenancesBySyndicNanoId(syndicNanoId);
-      const logo = await getCompanyLogoByBuildingNanoId(buildingNanoId);
-
-      if (data) {
-        setKanbanData(data.kanban || []);
-      }
-      if (logo) {
-        setLogo(logo);
-      }
-    } else {
-      Alert.alert("Credenciais inválidas");
-      navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
-    }
-
-    setLoading(false); // Finaliza o estado de carregamento
-  };
-
-  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
-    setSelectedMaintenance(maintenance);
-    setMaintenanceDetailsModal(true);
-  };
-
-  const closeMaintenanceDetailsModal = () => {
-    getKanbanData();
-    setMaintenanceDetailsModal(false);
-    setSelectedMaintenance(null);
-  };
-
   const handleCreateMaintenanceModal = (modalState: boolean) => {
     setCreateMaintenanceModal(modalState);
   };
 
+  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
+    setSelectedMaintenanceId(maintenance.id);
+    setMaintenanceDetailsModal(true);
+  };
+
+  const handleGetKanbanData = async () => {
+    setLoading(true);
+
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+      const buildingId = await AsyncStorage.getItem("buildingId");
+      const buildingName = await AsyncStorage.getItem("buildingName");
+
+      if (userId && buildingId && buildingName) {
+        setUserId(userId);
+        setBuildingId(buildingId);
+        setBuildingName(buildingName);
+
+        const responseData = await getMaintenancesKanban({
+          userId,
+          filter: {
+            buildings: [buildingId],
+            status: [],
+            categories: [],
+            users: [],
+            priorityName: "",
+            endDate: "2100-01-01",
+            startDate: "1900-01-01",
+          },
+        });
+
+        if (responseData) {
+          setLoading(false);
+          setKanbanData(responseData.kanban || []);
+        }
+      } else {
+        Alert.alert("Credenciais inválidas");
+        navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("🚀 ~ handleGetKanbanData ~ error:", error);
+    }
+  };
+
+  const handleGetBuildingLogo = async () => {
+    try {
+      const buildingId = await AsyncStorage.getItem("buildingId");
+
+      if (!buildingId) {
+        return;
+      }
+
+      const responseData = await getBuildingLogo({ buildingId });
+
+      if (responseData) {
+        setLogo(responseData.buildingLogo);
+      }
+    } catch (error) {
+      console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
+    }
+  };
+
+  const closeMaintenanceDetailsModal = () => {
+    setSelectedMaintenanceId("");
+    setRefresh(!refresh);
+    setMaintenanceDetailsModal(false);
+    setLoading(false);
+  };
+
   const getOfflineQueueCount = async () => {
     const offlineQueueString = await AsyncStorage.getItem("offline_queue");
-    const offlineQueue = offlineQueueString
-      ? JSON.parse(offlineQueueString)
-      : [];
+    const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
     setOfflineCount(offlineQueue.length);
   };
 
@@ -116,6 +156,48 @@ export const Board = ({ navigation }: any) => {
     });
   };
 
+  const handleCreateOccasionalMaintenance = async ({
+    occasionalMaintenance,
+    occasionalMaintenanceType,
+    inProgress = false,
+  }: IHandleCreateOccasionalMaintenance) => {
+    setLoading(true);
+
+    const reportDataBody =
+      occasionalMaintenanceType === "finished"
+        ? occasionalMaintenance.reportData
+        : {
+            cost: "R$ 0,00",
+            observation: "",
+            files: [],
+            images: [],
+          };
+
+    const occasionalMaintenanceBody = {
+      ...occasionalMaintenance,
+      buildingId,
+      inProgress,
+      reportData: reportDataBody,
+    };
+
+    try {
+      const responseData = await createOccasionalMaintenance({
+        origin: "Mobile",
+        userId,
+        occasionalMaintenanceType,
+        occasionalMaintenanceBody,
+      });
+
+      if (responseData?.ServerMessage.statusCode === 200) {
+        setSelectedMaintenanceId(responseData.maintenance.id);
+        setCreateMaintenanceModal(false);
+        setMaintenanceDetailsModal(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const stopProcessing = startPeriodicQueueProcessing();
 
@@ -128,51 +210,45 @@ export const Board = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    getKanbanData();
-  }, []);
+    handleGetKanbanData();
+    handleGetBuildingLogo();
+  }, [refresh]);
 
   return (
     <>
-      <Navbar
-        logoUrl={logo}
-        syndicNanoId={syndicNanoId}
-        buildingNanoId={buildingNanoId}
-      />
+      <Navbar logoUrl={logo} syndicNanoId={userId} buildingNanoId={buildingId} />
+
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
           <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>
             {`Fila Offline: ${offlineCount} item(s)`}
           </Text>
-          {isProcessing && (
-            <Text style={{ color: "green" }}>
-              Processando dados da fila, aguarde...
-            </Text>
-          )}
+
+          {isProcessing && <Text style={{ color: "green" }}>Processando dados da fila, aguarde...</Text>}
         </View>
       )}
 
       {!internetConnection && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
           {!isProcessing && (
-            <Text style={{ color: "green" }}>
-              Você está offline, alguns serviços podem estar indisponíveis...
-            </Text>
+            <Text style={{ color: "green" }}>Você está offline, alguns serviços podem estar indisponíveis...</Text>
           )}
         </View>
       )}
 
       <MaintenanceDetailsModal
+        maintenanceId={selectedMaintenanceId}
+        userId={userId}
+        buildingId={buildingId}
         visible={maintenanceDetailsModal}
-        maintenance={selectedMaintenance}
         onClose={closeMaintenanceDetailsModal}
       />
 
       <ModalCreateOccasionalMaintenance
+        buildingId={buildingId}
         visible={createMaintenanceModal}
-        buildingNanoId={buildingNanoId}
-        syndicNanoId={syndicNanoId}
         handleCreateMaintenanceModal={handleCreateMaintenanceModal}
-        getKanbanData={getKanbanData}
+        handleCreateOccasionalMaintenance={handleCreateOccasionalMaintenance}
       />
 
       {loading ? (
@@ -240,13 +316,10 @@ export const Board = ({ navigation }: any) => {
           </View>
 
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {kanbanData.map((column) => (
+            {kanbanData?.map((column) => (
               <View key={column.status} style={styles.statusContainer}>
                 <Text style={styles.statusTitle}>{column.status}</Text>
-                <ScrollView
-                  style={styles.cardsContainer}
-                  nestedScrollEnabled={true}
-                >
+                <ScrollView style={styles.cardsContainer} nestedScrollEnabled={true}>
                   {column.maintenances.map(
                     (maintenance) =>
                       !maintenance.cantReportExpired && (
@@ -259,22 +332,17 @@ export const Board = ({ navigation }: any) => {
                               borderLeftWidth: 9,
                             }, // Cor da borda esquerda
                           ]}
-                          onPress={() =>
-                            openMaintenanceDetailsModal(maintenance)
-                          }
+                          onPress={() => openMaintenanceDetailsModal(maintenance)}
                         >
                           <View
                             style={[
                               styles.tag,
                               {
-                                backgroundColor: getStatus(maintenance.type)
-                                  .color,
+                                backgroundColor: getStatus(maintenance.type).color,
                               },
                             ]}
                           >
-                            <Text style={styles.tagText}>
-                              {getStatus(maintenance.type).label}
-                            </Text>
+                            <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
                           </View>
 
                           {maintenance.status === "overdue" && (
@@ -282,27 +350,19 @@ export const Board = ({ navigation }: any) => {
                               style={[
                                 styles.tag,
                                 {
-                                  backgroundColor: getStatus(maintenance.status)
-                                    .color,
+                                  backgroundColor: getStatus(maintenance.status).color,
                                 },
                               ]}
                             >
-                              <Text style={styles.tagText}>
-                                {getStatus(maintenance.status).label}
-                              </Text>
+                              <Text style={styles.tagText}>{getStatus(maintenance.status).label}</Text>
                             </View>
                           )}
 
-                          <Text style={styles.cardTitle}>
-                            {maintenance.element}
-                          </Text>
+                          <Text style={styles.cardTitle}>{maintenance.element}</Text>
 
-                          <Text style={styles.cardDescription}>
-                            {maintenance.activity}
-                          </Text>
+                          <Text style={styles.cardDescription}>{maintenance.activity}</Text>
 
-                          {(maintenance.status === "completed" ||
-                            maintenance.status === "overdue") && (
+                          {(maintenance.status === "completed" || maintenance.status === "overdue") && (
                             <Text
                               style={[
                                 styles.cardsContainer,
@@ -328,7 +388,7 @@ export const Board = ({ navigation }: any) => {
                             </Text>
                           )}
                         </TouchableOpacity>
-                      )
+                      ),
                   )}
                 </ScrollView>
               </View>
@@ -336,9 +396,7 @@ export const Board = ({ navigation }: any) => {
           </ScrollView>
         </>
       ) : (
-        <Text style={{ marginTop: 20, textAlign: "center" }}>
-          Nenhum dado encontrado.
-        </Text>
+        <Text style={{ marginTop: 20, textAlign: "center" }}>Nenhum dado encontrado.</Text>
       )}
     </>
   );

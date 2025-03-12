@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   Text,
   TextInput,
@@ -11,16 +10,15 @@ import {
   Platform,
   View,
 } from "react-native";
+import { Keyboard } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { checkSyndicAndBuildingExists } from "../../services/checkSyndicAndBuildingExists";
-
-import Logo from "../../assets/logo.png";
+import Logo from "@assets/logo.png";
+import { userLogin } from "@services/userLogin";
 
 import { styles } from "./styles";
-import { Keyboard } from "react-native";
 
 export const Login = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -28,7 +26,6 @@ export const Login = ({ navigation }: any) => {
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showCreatePassword, setShowCreatePassword] = useState(false);
 
   const formatPhoneNumber = (value: string): string => {
     const onlyNumbers = value.replace(/\D/g, "");
@@ -36,13 +33,10 @@ export const Login = ({ navigation }: any) => {
     if (onlyNumbers.length > 10) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
         2,
-        3
+        3,
       )} ${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7)}`;
     } else if (onlyNumbers.length > 6) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
-        2,
-        6
-      )}-${onlyNumbers.slice(6)}`;
+      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2, 6)}-${onlyNumbers.slice(6)}`;
     } else if (onlyNumbers.length > 2) {
       return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2)}`;
     } else {
@@ -62,7 +56,7 @@ export const Login = ({ navigation }: any) => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = async () => {
+  const handleUserLogin = async () => {
     Keyboard.dismiss(); // Fecha o teclado ao clicar no botão
 
     if (!phoneNumber || phoneNumber.length < 11) {
@@ -75,44 +69,17 @@ export const Login = ({ navigation }: any) => {
     try {
       const cleanedPhone = phoneNumber.replace(/\D/g, "");
 
-      const response = await checkSyndicAndBuildingExists({
-        phoneNumber: cleanedPhone,
+      const responseData = await userLogin({
+        login: cleanedPhone,
         password: password,
-        createPassword: showCreatePassword,
       });
 
-      if (response.canLogin && response.hasPassword) {
-        Alert.alert("Login", "Por favor insira a sua senha.");
-        return;
-      }
+      if (responseData.user && responseData.user.id) {
+        await AsyncStorage.setItem("userId", responseData.user.id);
+        await AsyncStorage.setItem("authToken", responseData.authToken);
 
-      if (response.canLogin && !response.hasPassword) {
-        Alert.alert(
-          "Registro",
-          "Por favor, cadastre uma senha para sua conta."
-        );
-        setShowCreatePassword(true);
-        return;
-      }
-
-      if (response.buildings) {
-        await AsyncStorage.setItem(
-          "syndicNanoId",
-          response.buildings[0].syndicNanoId
-        );
-        await AsyncStorage.setItem(
-          "buildingNanoId",
-          response.buildings[0].buildingNanoId
-        );
-        await AsyncStorage.setItem(
-          "buildingName",
-          response.buildings[0].buildingName
-        );
         await AsyncStorage.setItem("phoneNumber", phoneNumber);
-        await AsyncStorage.setItem(
-          "buildingsList",
-          JSON.stringify(response.buildings)
-        );
+        await AsyncStorage.setItem("buildingsList", JSON.stringify(responseData.user.UserBuildingsPermissions));
 
         navigation.replace("Building");
       }
@@ -125,10 +92,7 @@ export const Login = ({ navigation }: any) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <View style={styles.container}>
         <Image source={Logo} style={styles.logo} resizeMode="contain" />
 
@@ -166,7 +130,7 @@ export const Login = ({ navigation }: any) => {
         {isLoggingIn ? (
           <ActivityIndicator size="large" color="#ffffff" />
         ) : (
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleUserLogin}>
             <Text style={styles.loginButtonText}>Entrar</Text>
           </TouchableOpacity>
         )}

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Icon from "react-native-vector-icons/Feather";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -12,26 +11,27 @@ import {
   View,
 } from "react-native";
 
+import { Dropdown } from "react-native-element-dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
-import { getCategoriesByBuildingNanoId } from "../../services/getCategoriesByBuildingNanoId";
-import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
+import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-import type {
-  ICategory,
-  IOccasionalMaintenanceData,
-  IOccasionalMaintenanceType,
-} from "../../types";
-import { Dropdown } from "react-native-element-dropdown";
+import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
+import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
+
+import type { IHandleCreateOccasionalMaintenance } from "../../pages/board";
+import type { ICategory, IOccasionalMaintenanceData } from "../../types";
 
 interface IModalCreateOccasionalMaintenance {
+  buildingId: string;
   visible: boolean;
-  buildingNanoId: string;
-  syndicNanoId: string;
   handleCreateMaintenanceModal: (modalState: boolean) => void;
-  getKanbanData: () => void;
+  handleCreateOccasionalMaintenance: ({
+    occasionalMaintenance,
+    occasionalMaintenanceType,
+    inProgress,
+  }: IHandleCreateOccasionalMaintenance) => void;
 }
 
 interface IHandleSetOccasionalMaintenanceData {
@@ -40,41 +40,34 @@ interface IHandleSetOccasionalMaintenanceData {
   secondaryKey?: string;
 }
 
-interface IHandleCreateOccasionalMaintenance {
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  inProgress?: boolean;
-}
-
 function ModalCreateOccasionalMaintenance({
+  buildingId,
   visible,
-  buildingNanoId,
-  syndicNanoId,
+  handleCreateOccasionalMaintenance,
   handleCreateMaintenanceModal,
-  getKanbanData,
 }: IModalCreateOccasionalMaintenance) {
-  const [occasionalMaintenance, setOccasionalMaintenance] =
-    useState<IOccasionalMaintenanceData>({
-      buildingId: buildingNanoId,
+  const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
+    buildingId: buildingId,
 
-      element: "",
-      activity: "",
-      responsible: "",
-      executionDate: new Date().toISOString(),
-      inProgress: false,
-      priorityName: "",
+    element: "",
+    activity: "",
+    responsible: "",
+    executionDate: new Date().toISOString(),
+    inProgress: false,
+    priorityName: "",
 
-      categoryData: {
-        id: "",
-        name: "",
-      },
+    categoryData: {
+      id: "",
+      name: "",
+    },
 
-      reportData: {
-        cost: "R$ 0,00",
-        observation: "",
-        files: [],
-        images: [],
-      },
-    });
+    reportData: {
+      cost: "R$ 0,00",
+      observation: "",
+      files: [],
+      images: [],
+    },
+  });
 
   const [categories, setCategories] = useState<ICategory[]>([]);
 
@@ -95,10 +88,7 @@ function ModalCreateOccasionalMaintenance({
     if (secondaryKey) {
       setOccasionalMaintenance((prevState) => {
         const primaryData =
-          typeof prevState[primaryKey] === "object" &&
-          prevState[primaryKey] !== null
-            ? prevState[primaryKey]
-            : {};
+          typeof prevState[primaryKey] === "object" && prevState[primaryKey] !== null ? prevState[primaryKey] : {};
 
         return {
           ...prevState,
@@ -124,8 +114,9 @@ function ModalCreateOccasionalMaintenance({
 
   const handleCloseModal = () => {
     handleCreateMaintenanceModal(false);
+
     setOccasionalMaintenance({
-      buildingId: buildingNanoId,
+      buildingId: buildingId,
 
       element: "",
       activity: "",
@@ -152,9 +143,7 @@ function ModalCreateOccasionalMaintenance({
     setLoading(true);
 
     try {
-      const categories = await getCategoriesByBuildingNanoId({
-        buildingNanoId,
-      });
+      const categories = await getCategoriesByBuildingId();
 
       setCategories(categories);
     } catch (error) {
@@ -164,48 +153,6 @@ function ModalCreateOccasionalMaintenance({
     }
   };
 
-  const handleCreateOccasionalMaintenance = async ({
-    occasionalMaintenanceType,
-    inProgress = false,
-  }: IHandleCreateOccasionalMaintenance) => {
-    setLoading(true);
-
-    const reportDataBody =
-      occasionalMaintenanceType === "finished"
-        ? occasionalMaintenance.reportData
-        : {
-            cost: "R$ 0,00",
-            observation: "",
-            files: [],
-            images: [],
-          };
-
-    const occasionalMaintenanceBody = {
-      ...occasionalMaintenance,
-      buildingId: buildingNanoId,
-      reportData: reportDataBody,
-      inProgress,
-    };
-
-    try {
-      console.log(occasionalMaintenanceBody);
-
-      const response = await createOccasionalMaintenance({
-        origin: "Mobile",
-        syndicNanoId,
-        occasionalMaintenanceType,
-        occasionalMaintenanceBody,
-      });
-
-      if (response?.ServerMessage.statusCode === 200) {
-        getKanbanData();
-        handleCloseModal();
-      }
-    } catch (error) {}
-
-    setLoading(false);
-  };
-
   useEffect(() => {
     if (visible) {
       handleGetCategoriesByBuildingNanoId();
@@ -213,16 +160,8 @@ function ModalCreateOccasionalMaintenance({
   }, [visible]);
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={handleCloseModal}
-    >
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
+    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={handleCloseModal}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <SafeAreaView style={styles.modalFullContainer}>
           <DateTimePickerModal
             isVisible={showDatePicker}
@@ -242,10 +181,7 @@ function ModalCreateOccasionalMaintenance({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Manutenção avulsa</Text>
 
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={handleCloseModal}
-            >
+            <TouchableOpacity style={styles.modalCloseButton} onPress={handleCloseModal}>
               <Icon name="x" size={28} color="#b21d1d" />
             </TouchableOpacity>
           </View>
@@ -389,9 +325,9 @@ function ModalCreateOccasionalMaintenance({
                   style={styles.modalInput}
                   value={
                     occasionalMaintenance.executionDate
-                      ? new Date(
-                          occasionalMaintenance.executionDate
-                        ).toLocaleDateString("pt-BR", { timeZone: "UTC" })
+                      ? new Date(occasionalMaintenance.executionDate).toLocaleDateString("pt-BR", {
+                          timeZone: "UTC",
+                        })
                       : new Date().toLocaleDateString("pt-BR", {
                           timeZone: "UTC",
                         })
@@ -427,6 +363,7 @@ function ModalCreateOccasionalMaintenance({
               style={styles.modalButton}
               onPress={() => {
                 handleCreateOccasionalMaintenance({
+                  occasionalMaintenance,
                   occasionalMaintenanceType: "pending",
                   inProgress: true,
                 });
@@ -448,6 +385,7 @@ function ModalCreateOccasionalMaintenance({
               style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
               onPress={() => {
                 handleCreateOccasionalMaintenance({
+                  occasionalMaintenance,
                   occasionalMaintenanceType: "pending",
                 });
               }}

@@ -1,15 +1,14 @@
 import React from "react";
-
 import { View, StyleSheet } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { Splash } from "./src/pages/splash";
-import { Board } from "./src/pages/board";
-import { Login } from "./src/pages/login";
-import { Building } from "./src/pages/building";
+import { Board } from "@pages/board";
+import { Building } from "@pages/building";
+import { Login } from "@pages/login";
+import { Splash } from "@pages/splash";
 
 const Stack = createNativeStackNavigator();
 
