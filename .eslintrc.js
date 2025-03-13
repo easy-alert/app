@@ -39,7 +39,7 @@ module.exports = {
           },
           {
             pattern:
-              "@(components|screens|hooks|utils|types|config|services|assets|styles|navigation|context|theme)/**",
+              "@(components|screens|pages|routes|hooks|utils|types|config|services|assets|styles|navigation|context|theme)/**",
             group: "internal",
           },
         ],
