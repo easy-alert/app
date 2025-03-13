@@ -6,7 +6,7 @@ import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
 
 import { MaintenanceDetailsModal } from "@components/maintenancesDetailsModal";
-import { ModalCreateOccasionalMaintenance } from "@components/ModalCreateOccasionalMaintenance";
+import { ModalCreateOccasionalMaintenance } from "@components/modalCreateOccasionalMaintenance";
 import { Navbar } from "@components/navbar";
 
 import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
