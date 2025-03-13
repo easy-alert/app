@@ -3,8 +3,6 @@ import { Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 
-import { uploadFile } from "../../../services/uploadFile"; // Ajuste o caminho conforme necessário
-
 export const handleUpload = async (
   type?: "file" | "image" | null,
 ): Promise<{

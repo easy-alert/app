@@ -37,7 +37,7 @@ import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { handleUpload } from "./utils/handleUpload";
 import { removeItem } from "./utils/removeItem";
 
-import SupplierModal from "../supplierModal";
+import { SupplierModal } from "../supplierModal";
 
 import type { IAnnexesAndImages } from "src/types/IAnnexesAndImages";
 import type { IMaintenance } from "src/types/IMaintenance";
@@ -52,7 +52,7 @@ interface MaintenanceDetailsModalProps {
   onClose: () => void;
 }
 
-const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
+export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   maintenanceId,
   userId,
   buildingId,
@@ -1021,5 +1021,3 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
     </Modal>
   );
 };
-
-export default MaintenanceDetailsModal;

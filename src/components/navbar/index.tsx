@@ -30,7 +30,7 @@ type RootParamList = {
 
 type NavigationProps = NavigationProp<RootParamList, "Board">;
 
-const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
+export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
   const navigation = useNavigation<NavigationProps>();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -159,5 +159,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default Navbar;

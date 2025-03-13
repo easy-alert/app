@@ -18,7 +18,7 @@ interface SupplierModalProps {
   onClose: () => void;
 }
 
-const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
+export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
   const [suppliersData, setSuppliersData] = useState<SuppliersByMaintenanceId | undefined>(undefined);
 
   const handleGetSuppliersForMaintenance = async () => {
@@ -105,5 +105,3 @@ const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, vi
     </Modal>
   );
 };
-
-export default SupplierModal;

@@ -17,7 +17,6 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-import { createOccasionalMaintenance } from "../../services/createOccasionalMaintenance";
 import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
 
 import type { IHandleCreateOccasionalMaintenance } from "../../pages/board";
@@ -40,12 +39,12 @@ interface IHandleSetOccasionalMaintenanceData {
   secondaryKey?: string;
 }
 
-function ModalCreateOccasionalMaintenance({
+export const ModalCreateOccasionalMaintenance: React.FC<IModalCreateOccasionalMaintenance> = ({
   buildingId,
   visible,
   handleCreateOccasionalMaintenance,
   handleCreateMaintenanceModal,
-}: IModalCreateOccasionalMaintenance) {
+}) => {
   const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
     buildingId: buildingId,
 
@@ -397,6 +396,4 @@ function ModalCreateOccasionalMaintenance({
       </KeyboardAvoidingView>
     </Modal>
   );
-}
-
-export default ModalCreateOccasionalMaintenance;
+};
