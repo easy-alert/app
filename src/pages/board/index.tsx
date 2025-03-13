@@ -207,11 +207,13 @@ export const Board = ({ navigation }: any) => {
   useEffect(() => {
     getOfflineQueueCount(); // Atualiza o contador ao montar o componente
     processQueueOnReconnect(); // Observa reconexões de internet
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     handleGetKanbanData();
     handleGetBuildingLogo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   return (
@@ -239,7 +241,6 @@ export const Board = ({ navigation }: any) => {
       <MaintenanceDetailsModal
         maintenanceId={selectedMaintenanceId}
         userId={userId}
-        buildingId={buildingId}
         visible={maintenanceDetailsModal}
         onClose={closeMaintenanceDetailsModal}
       />

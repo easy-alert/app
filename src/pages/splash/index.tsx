@@ -22,7 +22,7 @@ export const Splash = ({ navigation }: any) => {
     setTimeout(() => {
       getAsyncStorageVariable();
     }, 2000); // Exibe a splash screen por 2 segundos
-  }, []);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

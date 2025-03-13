@@ -10,11 +10,11 @@ interface IUnlinkMaintenanceSupplier {
   userId: string;
 }
 
-export async function unlinkMaintenanceSupplier({
+export const unlinkMaintenanceSupplier = async ({
   maintenanceHistoryId,
   supplierId,
   userId,
-}: IUnlinkMaintenanceSupplier) {
+}: IUnlinkMaintenanceSupplier) => {
   const uri = `company/suppliers/unlink-to-maintenance-history`;
 
   const body = {
@@ -38,4 +38,4 @@ export async function unlinkMaintenanceSupplier({
       statusCode: response?.status,
     });
   }
-}
+};

@@ -5,10 +5,6 @@ import { baseApi } from "../baseApi";
 
 import type { ICategory } from "../../types";
 
-interface IGetCategoriesByBuildingNanoId {
-  buildingNanoId: string;
-}
-
 export const getCategoriesByBuildingId = async () => {
   const uri = `company/buildings/maintenances/occasional/auxiliarydata/`;
 

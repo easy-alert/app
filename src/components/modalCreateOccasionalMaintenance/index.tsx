@@ -71,7 +71,6 @@ export const ModalCreateOccasionalMaintenance: React.FC<IModalCreateOccasionalMa
   const [categories, setCategories] = useState<ICategory[]>([]);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const responsibleArray = [
     { id: "1", name: "Equipe de manutenção local" },
@@ -139,16 +138,12 @@ export const ModalCreateOccasionalMaintenance: React.FC<IModalCreateOccasionalMa
   };
 
   const handleGetCategoriesByBuildingNanoId = async () => {
-    setLoading(true);
-
     try {
       const categories = await getCategoriesByBuildingId();
 
       setCategories(categories);
-    } catch (error) {
+    } catch {
       setCategories([]);
-    } finally {
-      setLoading(false);
     }
   };
 

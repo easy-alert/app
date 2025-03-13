@@ -47,7 +47,6 @@ import type { ISupplier } from "src/types/ISupplier";
 interface MaintenanceDetailsModalProps {
   maintenanceId: string;
   userId: string;
-  buildingId: string;
   visible: boolean;
   onClose: () => void;
 }
@@ -55,7 +54,6 @@ interface MaintenanceDetailsModalProps {
 export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   maintenanceId,
   userId,
-  buildingId,
   visible,
   onClose,
 }) => {
@@ -68,7 +66,6 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
   const [files, setFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos ainda não upados
   const [images, setImages] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para as imagens ainda não upadas
-  const [activityFiles, setActivityFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos de atividades
 
   const [comment, setComment] = useState(" ");
   const [activeTab, setActiveTab] = useState<"comment" | "notification">("comment");
@@ -76,7 +73,6 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [refresh, setRefresh] = useState(false);
 
   const OFFLINE_QUEUE_KEY = "offline_queue";
 
@@ -517,7 +513,8 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         setLoading(false);
       }, 500);
     }
-  }, [maintenanceId, refresh]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maintenanceId]);
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>

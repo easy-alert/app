@@ -11,12 +11,12 @@ interface ICreateMaintenanceHistoryActivity {
   uploadedFile?: { originalName: string; url: string | null; type: string }[];
 }
 
-export async function createMaintenanceHistoryActivity({
+export const createMaintenanceHistoryActivity = async ({
   maintenanceId,
   userId,
   content,
   uploadedFile,
-}: ICreateMaintenanceHistoryActivity) {
+}: ICreateMaintenanceHistoryActivity) => {
   const uri = `company/maintenance-history-activities`;
 
   const body = {
@@ -41,4 +41,4 @@ export async function createMaintenanceHistoryActivity({
       statusCode: response?.status,
     });
   }
-}
+};

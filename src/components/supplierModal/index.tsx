@@ -49,6 +49,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, use
 
   useEffect(() => {
     handleGetSuppliersForMaintenance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenanceId]);
 
   return (
