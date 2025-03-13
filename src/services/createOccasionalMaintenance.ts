@@ -1,9 +1,10 @@
-import { alertMessage, catchHandler } from "../../utils/handleAlerts";
-import { unMaskBRL } from "../../utils/unMaskBRL";
-import { baseApi } from "../baseApi";
+import { baseApi } from "./baseApi";
 
-import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType } from "../../types";
-import type { IError } from "../../types/IError";
+import { alertMessage, catchHandler } from "../utils/handleAlerts";
+import { unMaskBRL } from "../utils/unMaskBRL";
+
+import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType } from "../types";
+import type { IError } from "../types/IError";
 
 interface IRequestCreateOccasionalMaintenance {
   origin: string;

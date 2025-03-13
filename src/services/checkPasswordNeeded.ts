@@ -1,4 +1,4 @@
-import { PasswordNeeded } from "../../types";
+import { PasswordNeeded } from "../types";
 
 // Função para buscar os dados do Kanban
 export const checkPasswordNeeded = async (buildingNanoId: string): Promise<PasswordNeeded | null> => {
