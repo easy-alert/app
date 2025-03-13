@@ -15,7 +15,7 @@ import { getMaintenancesKanban } from "@services/getMaintenancesKanban";
 
 import { formatDate } from "@utils/formatDate";
 import { getStatus } from "@utils/getStatus";
-import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOffilineQueue";
+import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOfflineQueue";
 
 import { styles } from "../board/styles";
 
