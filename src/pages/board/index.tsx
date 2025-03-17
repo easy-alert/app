@@ -9,7 +9,6 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 
 import { Navbar } from "@components/navbar";
 
-import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
 import { getBuildingLogo } from "@services/getBuildingLogo";
 import { getMaintenancesKanban } from "@services/getMaintenancesKanban";
 
@@ -134,49 +133,6 @@ export const Board = () => {
     });
   };
 
-  const handleCreateOccasionalMaintenance = async ({
-    occasionalMaintenance,
-    occasionalMaintenanceType,
-    inProgress = false,
-  }: IHandleCreateOccasionalMaintenance) => {
-    setLoading(true);
-
-    const reportDataBody =
-      occasionalMaintenanceType === "finished"
-        ? occasionalMaintenance.reportData
-        : {
-            cost: "R$ 0,00",
-            observation: "",
-            files: [],
-            images: [],
-          };
-
-    const occasionalMaintenanceBody = {
-      ...occasionalMaintenance,
-      buildingId,
-      inProgress,
-      reportData: reportDataBody,
-    };
-
-    try {
-      const responseData = await createOccasionalMaintenance({
-        origin: "Mobile",
-        userId,
-        occasionalMaintenanceType,
-        occasionalMaintenanceBody,
-      });
-
-      if (responseData?.ServerMessage.statusCode === 200) {
-        navigation.navigate("MaintenanceDetails", {
-          maintenanceId: responseData.maintenance.id,
-          userId,
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const stopProcessing = startPeriodicQueueProcessing();
 
@@ -267,7 +223,7 @@ export const Board = () => {
                 onPress={() =>
                   navigation.navigate("CreateOccasionalMaintenance", {
                     buildingId,
-                    handleCreateOccasionalMaintenance,
+                    userId,
                   })
                 }
                 style={{

@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 
-import { KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -9,6 +18,10 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { CreateOccasionalMaintenanceProps } from "@routes/navigation";
+
+import { IHandleCreateOccasionalMaintenance } from "@pages/board";
+
+import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
 
 import { styles } from "./styles";
 
@@ -22,10 +35,12 @@ interface IHandleSetOccasionalMaintenanceData {
   secondaryKey?: string;
 }
 
+// TODO: substituir tudo que é modal
+
 export const CreateOccasionalMaintenance = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { buildingId, handleCreateOccasionalMaintenance } = route.params as CreateOccasionalMaintenanceProps;
+  const { buildingId, userId } = route.params as CreateOccasionalMaintenanceProps;
 
   const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
     buildingId: buildingId,
@@ -51,8 +66,8 @@ export const CreateOccasionalMaintenance = () => {
   });
 
   const [categories, setCategories] = useState<ICategory[]>([]);
-
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const responsibleArray = [
     { id: "1", name: "Equipe de manutenção local" },
@@ -92,31 +107,48 @@ export const CreateOccasionalMaintenance = () => {
     setShowDatePicker(modalState);
   };
 
-  const handleCloseModal = () => {
-    navigation.goBack();
+  const handleCreateOccasionalMaintenance = async ({
+    occasionalMaintenance,
+    occasionalMaintenanceType,
+    inProgress = false,
+  }: IHandleCreateOccasionalMaintenance) => {
+    setLoading(true);
 
-    setOccasionalMaintenance({
-      buildingId: buildingId,
+    const reportDataBody =
+      occasionalMaintenanceType === "finished"
+        ? occasionalMaintenance.reportData
+        : {
+            cost: "R$ 0,00",
+            observation: "",
+            files: [],
+            images: [],
+          };
 
-      element: "",
-      activity: "",
-      responsible: "",
-      executionDate: new Date().toISOString(),
-      inProgress: false,
-      priorityName: "",
+    const occasionalMaintenanceBody = {
+      ...occasionalMaintenance,
+      buildingId,
+      inProgress,
+      reportData: reportDataBody,
+    };
 
-      categoryData: {
-        id: "",
-        name: "",
-      },
+    try {
+      const responseData = await createOccasionalMaintenance({
+        origin: "Mobile",
+        userId,
+        occasionalMaintenanceType,
+        occasionalMaintenanceBody,
+      });
 
-      reportData: {
-        cost: "R$ 0,00",
-        observation: "",
-        files: [],
-        images: [],
-      },
-    });
+      if (responseData?.ServerMessage.statusCode === 200) {
+        // TODO: ao invés de navigate, dar um replace
+        navigation.navigate("MaintenanceDetails", {
+          maintenanceId: responseData.maintenance.id,
+          userId,
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGetCategoriesByBuildingNanoId = async () => {
@@ -132,6 +164,20 @@ export const CreateOccasionalMaintenance = () => {
   useEffect(() => {
     handleGetCategoriesByBuildingNanoId();
   }, []);
+
+  if (loading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#ff3535"
+        style={{
+          alignContent: "center",
+          justifyContent: "center",
+          flex: 1,
+        }}
+      />
+    );
+  }
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -154,7 +200,7 @@ export const CreateOccasionalMaintenance = () => {
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>Manutenção avulsa</Text>
 
-          <TouchableOpacity style={styles.modalCloseButton} onPress={handleCloseModal}>
+          <TouchableOpacity style={styles.modalCloseButton} onPress={() => navigation.goBack()}>
             <Icon name="x" size={28} color="#b21d1d" />
           </TouchableOpacity>
         </View>

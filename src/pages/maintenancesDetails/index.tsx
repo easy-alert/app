@@ -47,6 +47,8 @@ import type { IMaintenance } from "src/types/IMaintenance";
 import type { MaintenanceHistoryActivities, UploadedFile } from "src/types/index";
 import type { ISupplier } from "src/types/ISupplier";
 
+// TODO: substituir tudo que é modal
+
 export const MaintenanceDetails = () => {
   const navigation = useNavigation();
   const route = useRoute();

@@ -7,6 +7,7 @@ import Logo from "@assets/logo.png";
 
 import { styles } from "./styles";
 
+// TODO: substituir navigation por useNavigation
 export const Splash = ({ navigation }: any) => {
   useEffect(() => {
     const getAsyncStorageVariable = async () => {

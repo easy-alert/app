@@ -1,5 +1,3 @@
-import type { IHandleCreateOccasionalMaintenance } from "@pages/board";
-
 export interface MaintenanceDetailsProps {
   maintenanceId: string;
   userId: string;
@@ -7,11 +5,7 @@ export interface MaintenanceDetailsProps {
 
 export interface CreateOccasionalMaintenanceProps {
   buildingId: string;
-  handleCreateOccasionalMaintenance: ({
-    occasionalMaintenance,
-    occasionalMaintenanceType,
-    inProgress,
-  }: IHandleCreateOccasionalMaintenance) => void;
+  userId: string;
 }
 
 export declare global {

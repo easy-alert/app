@@ -20,6 +20,7 @@ import { userLogin } from "@services/userLogin";
 
 import { styles } from "./styles";
 
+// TODO: substituir navigation por useNavigation
 export const Login = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
