@@ -4,7 +4,6 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
   Image,
   TextInput,
   KeyboardAvoidingView,
@@ -32,31 +31,27 @@ import { uploadFile } from "@services/uploadFile";
 import { formatDate } from "@utils/formatDate";
 import { getStatus } from "@utils/getStatus"; // Ajuste o caminho para a função getStatus
 
+import { useNavigation, useRoute } from "@react-navigation/native";
+
+import { MaintenanceDetailsProps } from "@routes/navigation";
+
+import { SupplierModal } from "@components/supplierModal";
+
 import { styles } from "./styles";
 import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { handleUpload } from "./utils/handleUpload";
 import { removeItem } from "./utils/removeItem";
-
-import { SupplierModal } from "../supplierModal";
 
 import type { IAnnexesAndImages } from "src/types/IAnnexesAndImages";
 import type { IMaintenance } from "src/types/IMaintenance";
 import type { MaintenanceHistoryActivities, UploadedFile } from "src/types/index";
 import type { ISupplier } from "src/types/ISupplier";
 
-interface MaintenanceDetailsModalProps {
-  maintenanceId: string;
-  userId: string;
-  visible: boolean;
-  onClose: () => void;
-}
+export const MaintenanceDetails = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { maintenanceId, userId } = route.params as MaintenanceDetailsProps;
 
-export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
-  maintenanceId,
-  userId,
-  visible,
-  onClose,
-}) => {
   const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
   const [supplierData, setSupplierData] = useState<ISupplier | null>();
   const [historyActivitiesData, setHistoryActivitiesData] = useState<MaintenanceHistoryActivities>();
@@ -245,7 +240,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         setComment("");
         setUploadedFiles([]);
         setLoading(false);
-        onClose();
+        navigation.goBack();
       }
     } catch (error) {
       console.error("Error in addHistoryActivity:", error);
@@ -265,7 +260,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         userId,
       });
     } finally {
-      onClose();
+      navigation.goBack();
       setLoading(false);
     }
   };
@@ -340,7 +335,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -375,7 +370,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       }
     } catch (error) {
       console.error("Error in saveProgress:", error);
@@ -454,7 +449,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -489,7 +484,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       }
     } catch (error) {
       console.error("Error in handleFinishMaintenance:", error);
@@ -517,7 +512,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
   }, [maintenanceId]);
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
+    <>
       <SupplierModal
         maintenanceId={maintenanceId}
         userId={userId}
@@ -537,7 +532,7 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
             <SafeAreaView style={styles.modalFullContainer}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Enviar relato</Text>
-                <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.modalCloseButton}>
                   <Icon name="x" size={28} color="#b21d1d" />
                 </TouchableOpacity>
               </View>
@@ -1015,6 +1010,6 @@ export const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = (
           )}
         </View>
       )}
-    </Modal>
+    </>
   );
 };

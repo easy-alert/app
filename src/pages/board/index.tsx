@@ -5,8 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
 
-import { MaintenanceDetailsModal } from "@components/maintenancesDetailsModal";
-import { ModalCreateOccasionalMaintenance } from "@components/modalCreateOccasionalMaintenance";
+import { useNavigation, useNavigationState } from "@react-navigation/native";
+
 import { Navbar } from "@components/navbar";
 
 import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
@@ -19,12 +19,7 @@ import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/proces
 
 import { styles } from "../board/styles";
 
-import type {
-  IOccasionalMaintenanceData,
-  IOccasionalMaintenanceType,
-  KanbanColumn,
-  MaintenanceDetails,
-} from "src/types/index";
+import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType, KanbanColumn } from "src/types/index";
 
 export interface IMaintenanceFilter {
   buildings: string[];
@@ -42,33 +37,22 @@ export interface IHandleCreateOccasionalMaintenance {
   inProgress?: boolean;
 }
 
-export const Board = ({ navigation }: any) => {
+export const Board = () => {
+  const navigation = useNavigation();
+  const navigationState = useNavigationState((state) => state);
+
   const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState<string>("");
 
   const [userId, setUserId] = useState("");
   const [buildingName, setBuildingName] = useState("");
   const [buildingId, setBuildingId] = useState("");
   const [logo, setLogo] = useState("");
 
-  const [maintenanceDetailsModal, setMaintenanceDetailsModal] = useState(false);
-  const [createMaintenanceModal, setCreateMaintenanceModal] = useState(false);
-
   const [loading, setLoading] = useState(true);
-  const [refresh, setRefresh] = useState(false);
 
   const [offlineCount, setOfflineCount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [internetConnection, setInternetConnection] = useState(true);
-
-  const handleCreateMaintenanceModal = (modalState: boolean) => {
-    setCreateMaintenanceModal(modalState);
-  };
-
-  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
-    setSelectedMaintenanceId(maintenance.id);
-    setMaintenanceDetailsModal(true);
-  };
 
   const handleGetKanbanData = async () => {
     setLoading(true);
@@ -102,7 +86,8 @@ export const Board = ({ navigation }: any) => {
         }
       } else {
         Alert.alert("Credenciais inválidas");
-        navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+        // TODO: implementar pq o navigation nao tem o .replace
+        // navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
         setLoading(false);
       }
     } catch (error) {
@@ -127,13 +112,6 @@ export const Board = ({ navigation }: any) => {
     } catch (error) {
       console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
     }
-  };
-
-  const closeMaintenanceDetailsModal = () => {
-    setSelectedMaintenanceId("");
-    setRefresh(!refresh);
-    setMaintenanceDetailsModal(false);
-    setLoading(false);
   };
 
   const getOfflineQueueCount = async () => {
@@ -189,9 +167,10 @@ export const Board = ({ navigation }: any) => {
       });
 
       if (responseData?.ServerMessage.statusCode === 200) {
-        setSelectedMaintenanceId(responseData.maintenance.id);
-        setCreateMaintenanceModal(false);
-        setMaintenanceDetailsModal(true);
+        navigation.navigate("MaintenanceDetails", {
+          maintenanceId: responseData.maintenance.id,
+          userId,
+        });
       }
     } finally {
       setLoading(false);
@@ -211,10 +190,11 @@ export const Board = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    handleGetKanbanData();
-    handleGetBuildingLogo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refresh]);
+    if (navigationState.routes[navigationState.index].name === "Board") {
+      handleGetKanbanData();
+      handleGetBuildingLogo();
+    }
+  }, [navigationState.index, navigationState.routes]);
 
   return (
     <>
@@ -237,20 +217,6 @@ export const Board = ({ navigation }: any) => {
           )}
         </View>
       )}
-
-      <MaintenanceDetailsModal
-        maintenanceId={selectedMaintenanceId}
-        userId={userId}
-        visible={maintenanceDetailsModal}
-        onClose={closeMaintenanceDetailsModal}
-      />
-
-      <ModalCreateOccasionalMaintenance
-        buildingId={buildingId}
-        visible={createMaintenanceModal}
-        handleCreateMaintenanceModal={handleCreateMaintenanceModal}
-        handleCreateOccasionalMaintenance={handleCreateOccasionalMaintenance}
-      />
 
       {loading ? (
         <ActivityIndicator
@@ -298,7 +264,12 @@ export const Board = ({ navigation }: any) => {
 
             <View>
               <TouchableOpacity
-                onPress={() => handleCreateMaintenanceModal(true)}
+                onPress={() =>
+                  navigation.navigate("CreateOccasionalMaintenance", {
+                    buildingId,
+                    handleCreateOccasionalMaintenance,
+                  })
+                }
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -333,7 +304,12 @@ export const Board = ({ navigation }: any) => {
                               borderLeftWidth: 9,
                             }, // Cor da borda esquerda
                           ]}
-                          onPress={() => openMaintenanceDetailsModal(maintenance)}
+                          onPress={() =>
+                            navigation.navigate("MaintenanceDetails", {
+                              maintenanceId: maintenance.id,
+                              userId,
+                            })
+                          }
                         >
                           <View
                             style={[

@@ -6,6 +6,8 @@ import { Board } from "@pages/board";
 import { Building } from "@pages/building";
 import { Login } from "@pages/login";
 import { Splash } from "@pages/splash";
+import { CreateOccasionalMaintenance } from "@pages/createOccasionalMaintenance";
+import { MaintenanceDetails } from "@pages/maintenancesDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +31,9 @@ export const Routes = () => {
             gestureEnabled: false,
           }}
         />
+
+        <Stack.Screen name="CreateOccasionalMaintenance" component={CreateOccasionalMaintenance} />
+        <Stack.Screen name="MaintenanceDetails" component={MaintenanceDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );
