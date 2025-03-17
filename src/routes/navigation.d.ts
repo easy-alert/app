@@ -1,10 +1,10 @@
-export interface MaintenanceDetailsProps {
-  maintenanceId: string;
+export interface CreateOccasionalMaintenanceProps {
+  buildingId: string;
   userId: string;
 }
 
-export interface CreateOccasionalMaintenanceProps {
-  buildingId: string;
+export interface MaintenanceDetailsProps {
+  maintenanceId: string;
   userId: string;
 }
 

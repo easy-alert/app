@@ -47,8 +47,6 @@ import type { IMaintenance } from "src/types/IMaintenance";
 import type { MaintenanceHistoryActivities, UploadedFile } from "src/types/index";
 import type { ISupplier } from "src/types/ISupplier";
 
-// TODO: substituir tudo que é modal
-
 export const MaintenanceDetails = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -529,20 +527,20 @@ export const MaintenanceDetails = () => {
           style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
         />
       ) : (
-        <View style={styles.modalOverlay}>
+        <View style={styles.overlay}>
           <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <SafeAreaView style={styles.modalFullContainer}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Enviar relato</Text>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.modalCloseButton}>
+            <SafeAreaView style={styles.fullContainer}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Enviar relato</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
                   <Icon name="x" size={28} color="#b21d1d" />
                 </TouchableOpacity>
               </View>
 
-              <ScrollView contentContainerStyle={styles.modalContent} nestedScrollEnabled={true}>
-                <Text style={styles.modalBuildingName}>{maintenanceDetailsData?.Building.name}</Text>
+              <ScrollView contentContainerStyle={styles.content} nestedScrollEnabled={true}>
+                <Text style={styles.buildingName}>{maintenanceDetailsData?.Building.name}</Text>
 
-                <View style={styles.modalTags}>
+                <View style={styles.tags}>
                   <View
                     style={[
                       styles.tag,
@@ -578,47 +576,45 @@ export const MaintenanceDetails = () => {
                   )}
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Categoria</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Categoria</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Elemento</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Elemento</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Atividade</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Atividade</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Responsável</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Responsável</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Fonte</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Fonte</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Observação da manutenção</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Observação da manutenção</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Instruções</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance?.instructions[0]?.name}
-                  </Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Instruções</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance?.instructions[0]?.name}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Periodicidade</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Periodicidade</Text>
                   {maintenanceDetailsData?.Maintenance.MaintenanceType.name === "common" ? (
-                    <Text style={styles.modalInfoValue}>
+                    <Text style={styles.infoValue}>
                       {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
                       {(maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1)
                         ? maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel === "anos" &&
@@ -628,26 +624,24 @@ export const MaintenanceDetails = () => {
                         : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.singularLabel}
                     </Text>
                   ) : (
-                    <Text style={styles.modalInfoValue}>-</Text>
+                    <Text style={styles.infoValue}>-</Text>
                   )}
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Data de notificação</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {formatDate(maintenanceDetailsData?.notificationDate || "")}
-                  </Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Data de notificação</Text>
+                  <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.notificationDate || "")}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Data de vencimento</Text>
-                  <Text style={styles.modalInfoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Data de vencimento</Text>
+                  <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
                 </View>
 
                 {maintenanceDetailsData?.resolutionDate && (
-                  <View style={styles.modalInfoRow}>
-                    <Text style={styles.modalInfoLabel}>Data de conclusão</Text>
-                    <Text style={styles.modalInfoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Data de conclusão</Text>
+                    <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
                   </View>
                 )}
 
@@ -848,15 +842,15 @@ export const MaintenanceDetails = () => {
                         />
                       </>
                     ) : (
-                      <View style={styles.modalInfoRow}>
-                        <Text style={styles.modalInfoLabel}>Custo</Text>
-                        <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
+                      <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Custo</Text>
+                        <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
                       </View>
                     )
                   ) : (
-                    <View style={styles.modalInfoRow}>
-                      <Text style={styles.modalInfoLabel}>Custo</Text>
-                      <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoLabel}>Custo</Text>
+                      <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
                     </View>
                   )}
 

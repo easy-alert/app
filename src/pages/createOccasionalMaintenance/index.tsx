@@ -35,8 +35,6 @@ interface IHandleSetOccasionalMaintenanceData {
   secondaryKey?: string;
 }
 
-// TODO: substituir tudo que é modal
-
 export const CreateOccasionalMaintenance = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -101,10 +99,6 @@ export const CreateOccasionalMaintenance = () => {
       ...prevState,
       [primaryKey]: value,
     }));
-  };
-
-  const handleDatePicker = (modalState: boolean) => {
-    setShowDatePicker(modalState);
   };
 
   const handleCreateOccasionalMaintenance = async ({
@@ -181,35 +175,35 @@ export const CreateOccasionalMaintenance = () => {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <SafeAreaView style={styles.modalFullContainer}>
+      <SafeAreaView style={styles.fullContainer}>
         <DateTimePickerModal
           isVisible={showDatePicker}
           mode="date"
           display="inline"
           onConfirm={(selectedDate) => {
-            handleDatePicker(false);
+            setShowDatePicker(false);
             handleOccasionalMaintenanceDataChange({
               primaryKey: "executionDate",
               value: selectedDate?.toISOString() || "",
             });
           }}
-          onCancel={() => handleDatePicker(false)}
+          onCancel={() => setShowDatePicker(false)}
           themeVariant={"light"}
         />
 
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>Manutenção avulsa</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Manutenção avulsa</Text>
 
-          <TouchableOpacity style={styles.modalCloseButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
             <Icon name="x" size={28} color="#b21d1d" />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.modalForm}>
-          <View style={styles.modalInputContainer}>
-            <Text style={styles.modalInputLabel}>Categoria *</Text>
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Categoria *</Text>
 
-            <View style={styles.modalPicker}>
+            <View style={styles.picker}>
               <Dropdown
                 placeholder="Selecione a categoria"
                 placeholderStyle={{ color: "gray" }}
@@ -242,12 +236,12 @@ export const CreateOccasionalMaintenance = () => {
             </View>
           </View>
 
-          <View style={styles.modalInputContainer}>
-            <Text style={styles.modalInputLabel}>Elemento *</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Elemento *</Text>
             <TextInput
               placeholder="Informe o elemento"
               placeholderTextColor="gray"
-              style={styles.modalInput}
+              style={styles.input}
               value={occasionalMaintenance.element}
               onChangeText={(text) =>
                 handleOccasionalMaintenanceDataChange({
@@ -258,13 +252,13 @@ export const CreateOccasionalMaintenance = () => {
             />
           </View>
 
-          <View style={styles.modalInputContainer}>
-            <Text style={styles.modalInputLabel}>Atividade *</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Atividade *</Text>
 
             <TextInput
               placeholder="Informe o elemento"
               placeholderTextColor="gray"
-              style={styles.modalInput}
+              style={styles.input}
               value={occasionalMaintenance.activity}
               onChangeText={(text) =>
                 handleOccasionalMaintenanceDataChange({
@@ -275,10 +269,10 @@ export const CreateOccasionalMaintenance = () => {
             />
           </View>
 
-          <View style={styles.modalInputContainer}>
-            <Text style={styles.modalInputLabel}>Responsável *</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Responsável *</Text>
 
-            <View style={styles.modalPicker}>
+            <View style={styles.picker}>
               <Dropdown
                 placeholder="Selecione o responsável"
                 style={{ paddingHorizontal: 12 }}
@@ -299,10 +293,10 @@ export const CreateOccasionalMaintenance = () => {
             </View>
           </View>
 
-          <View style={styles.modalInputContainer}>
-            <Text style={styles.modalInputLabel}>Prioridade *</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Prioridade *</Text>
 
-            <View style={styles.modalPicker}>
+            <View style={styles.picker}>
               <Dropdown
                 placeholder="Selecione a prioridade"
                 placeholderStyle={{ color: "gray" }}
@@ -336,12 +330,12 @@ export const CreateOccasionalMaintenance = () => {
             </View>
           </View>
 
-          <View style={styles.modalInputContainer}>
-            <Text style={styles.modalInputLabel}>Data de execução *</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Data de execução *</Text>
 
             <View>
               <TextInput
-                style={styles.modalInput}
+                style={styles.input}
                 value={
                   occasionalMaintenance.executionDate
                     ? new Date(occasionalMaintenance.executionDate).toLocaleDateString("pt-BR", {
@@ -360,26 +354,15 @@ export const CreateOccasionalMaintenance = () => {
                 size={24}
                 color="#b21d1d"
                 style={{ position: "absolute", right: 16, top: 8 }}
-                onPress={() => handleDatePicker(true)}
+                onPress={() => setShowDatePicker(true)}
               />
             </View>
           </View>
         </View>
 
-        <View style={styles.modalFooter}>
-          {/* <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                handleCreateOccasionalMaintenance({
-                  occasionalMaintenanceType: "pending",
-                });
-              }}
-            >
-              <Text style={styles.modalSecondaryLabel}>Criar</Text>
-            </TouchableOpacity> */}
-
+        <View style={styles.footer}>
           <TouchableOpacity
-            style={styles.modalButton}
+            style={styles.button}
             onPress={() => {
               handleCreateOccasionalMaintenance({
                 occasionalMaintenance,
@@ -388,20 +371,20 @@ export const CreateOccasionalMaintenance = () => {
               });
             }}
           >
-            <Text style={styles.modalSecondaryLabel}>Criar em execução</Text>
+            <Text style={styles.secondaryLabel}>Criar em execução</Text>
           </TouchableOpacity>
 
           {
             // <TouchableOpacity
-            //   style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
-            //   onPress={handleCloseModal}
+            //   style={{ ...styles.button, backgroundColor: "#b21d1d" }}
+            //   onPress={() => navigation.goBack()}
             // >
-            //   <Text style={styles.modalButtonLabel}>Criar finalizada</Text>
+            //   <Text style={styles.buttonLabel}>Criar finalizada</Text>
             // </TouchableOpacity>
           }
 
           <TouchableOpacity
-            style={{ ...styles.modalButton, backgroundColor: "#b21d1d" }}
+            style={{ ...styles.button, backgroundColor: "#b21d1d" }}
             onPress={() => {
               handleCreateOccasionalMaintenance({
                 occasionalMaintenance,
@@ -409,7 +392,7 @@ export const CreateOccasionalMaintenance = () => {
               });
             }}
           >
-            <Text style={styles.modalButtonLabel}>Criar manutenção</Text>
+            <Text style={styles.buttonLabel}>Criar manutenção</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

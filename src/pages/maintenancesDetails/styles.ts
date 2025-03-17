@@ -1,7 +1,7 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  modalOverlay: {
+  overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semitransparente
   },
@@ -17,37 +17,6 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  statusContainer: {
-    width: Dimensions.get("window").width * 0.85, // Largura da coluna
-    padding: 12,
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    marginHorizontal: 6,
-    marginTop: 24,
-    marginBottom: 30,
-    justifyContent: "flex-start",
-  },
-  statusTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  cardsContainer: {
-    maxHeight: "100%", // Limita a altura da área de cartões, ajuste conforme necessário
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    borderLeftWidth: 5, // Define a borda esquerda
-    borderLeftColor: "orange", // Cor inicial da borda
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2, // Elevação para sombra no Android
-  },
   tag: {
     paddingVertical: 2,
     paddingHorizontal: 4,
@@ -59,86 +28,41 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
   },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 4,
-    color: "#000", // Cor do texto principal
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: "#666666", // Cinza para o texto secundário
-    marginBottom: 8,
-  },
-  cardFooter: {
-    fontSize: 14,
-    color: "#FFA500", // Laranja para o texto adicional
-    fontWeight: "bold",
-  },
-  cardBorder: {
-    borderLeftWidth: 5, // Define a borda na lateral esquerda
-    borderLeftColor: "red", // Cor da borda
-  },
-  modalContainer: {
-    position: "absolute",
-    top: "30%",
-    left: "10%",
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: "#007BFF",
-  },
-  closeButtonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  modalFullContainer: {
+  fullContainer: {
     flex: 1,
     backgroundColor: "#fff",
     paddingVertical: 18, // Espaçamento no topo e na base
     paddingHorizontal: 8, // Espaçamento nas laterais
   },
-  modalHeader: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
     marginBottom: 16,
   },
-  modalTitle: {
+  title: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  modalCloseButton: {
+  closeButton: {
     padding: 8,
   },
-  modalBuildingName: {
+  buildingName: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
   },
-  modalTags: {
+  tags: {
     flexDirection: "row",
     gap: 8,
     marginBottom: 16,
   },
-  modalContent: {
+  content: {
     paddingBottom: 32,
     paddingHorizontal: 16,
   },
-  modalInfoRow: {
+  infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -148,12 +72,12 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
   },
-  modalInfoLabel: {
+  infoLabel: {
     fontWeight: "bold",
     color: "#555",
     flex: 1, // Garante que o texto da label não fique espremido
   },
-  modalInfoValue: {
+  infoValue: {
     color: "#000",
     flex: 2, // Dá mais espaço ao valor
   },
@@ -193,11 +117,6 @@ export const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
   },
-  supplierAvatarText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   supplierDetails: {
     flex: 1,
   },
@@ -228,40 +147,9 @@ export const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "cover", // Mantém a proporção da imagem
   },
-  modalSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 16,
-  },
-  supplierOption: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  supplierOptionText: {
-    fontSize: 14,
-    color: "#000",
-  },
-  noSuppliersText: {
-    fontSize: 14,
-    color: "#666",
-    fontStyle: "italic",
-  },
-  linkToRegister: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 16,
-  },
-  linkText: {
-    color: "#D9534F",
-    fontWeight: "bold",
-    textDecorationLine: "underline",
-  },
   commentSection: {
     marginTop: 16,
   },
-
   textArea: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -273,13 +161,11 @@ export const styles = StyleSheet.create({
     minHeight: 100, // Altura mínima
     backgroundColor: "#fff",
   },
-
   commentButtons: {
     flexDirection: "row",
     justifyContent: "flex-end",
     marginTop: 10,
   },
-
   commentButton: {
     width: 40,
     height: 40,
@@ -294,7 +180,6 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingVertical: 12,
   },
-
   historyTabButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -302,31 +187,25 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
-
   activeTabButton: {
     backgroundColor: "#FFCCCC",
   },
-
   historyTabText: {
     fontSize: 16,
     color: "#333",
   },
-
   activeTabText: {
     color: "#B22222",
     fontWeight: "bold",
   },
-
   historyList: {
     marginTop: 0,
   },
-
   historyItem: {
     flex: 1,
     flexDirection: "row",
     paddingVertical: 6,
   },
-
   historyIconContainer: {
     marginRight: 12,
     width: 30,
@@ -336,23 +215,19 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#B22222", // Vermelho
   },
-
   historyContent: {
     flex: 1,
   },
-
   historyTitle: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 4,
   },
-
   historyTimestamp: {
     fontSize: 14,
     color: "#777",
     marginBottom: 4,
   },
-
   historyDescription: {
     fontSize: 14,
     color: "#333",
@@ -420,16 +295,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  uploadButton: {
-    width: 80,
-    height: 80,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-  },
   fileList: {
     flex: 1,
     flexDirection: "row",
@@ -440,15 +305,6 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 5,
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-    marginRight: 10,
-  },
-  imageFileItem: {
-    backgroundColor: "#ffcdd2",
-    borderRadius: 8,
-    padding: 5,
-    flexDirection: "column",
     alignItems: "center",
     marginBottom: 10,
     marginRight: 10,
@@ -480,7 +336,6 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
   },
-
   actionButtonText: {
     color: "#fff",
     fontWeight: "bold",
