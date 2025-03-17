@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 
 interface NavbarProps {
@@ -23,15 +23,8 @@ interface NavbarProps {
   buildingNanoId: string;
 }
 
-type RootParamList = {
-  Login: undefined;
-  Board: undefined;
-};
-
-type NavigationProps = NavigationProp<RootParamList, "Board">;
-
 export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
-  const navigation = useNavigation<NavigationProps>();
+  const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
 
