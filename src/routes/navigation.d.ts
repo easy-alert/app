@@ -11,7 +11,6 @@ export interface MaintenanceDetailsParams {
 }
 
 interface RoutesParams {
-  Splash: undefined;
   Login: undefined;
   Building: undefined;
   Board: undefined;
@@ -20,6 +19,8 @@ interface RoutesParams {
 }
 
 export type Navigation = NativeStackNavigationProp<RoutesParams>;
+
+export type RouteList = keyof RoutesParams;
 
 export declare global {
   namespace ReactNavigation {

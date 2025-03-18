@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingN
   const handleLogout = async () => {
     await AsyncStorage.clear().then(() => {
       toggleModal();
-      navigation.navigate("Login"); // Redireciona para a tela de login
+      navigation.replace("Login"); // Redireciona para a tela de login
     });
   };
 
