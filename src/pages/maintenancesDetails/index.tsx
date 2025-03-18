@@ -42,10 +42,11 @@ import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { handleUpload } from "./utils/handleUpload";
 import { removeItem } from "./utils/removeItem";
 
-import type { IAnnexesAndImages } from "src/types/IAnnexesAndImages";
-import type { IMaintenance } from "src/types/IMaintenance";
-import type { MaintenanceHistoryActivities, UploadedFile } from "src/types/index";
-import type { ISupplier } from "src/types/ISupplier";
+import type { IMaintenanceHistoryActivities } from "../../types/IMaintenanceHistoryActivities";
+import type { IAnnexesAndImages } from "../../types/IAnnexesAndImages";
+import type { IMaintenance } from "../../types/IMaintenance";
+import type { IUploadedFile } from "../../types/IUploadedFile";
+import type { ISupplier } from "../../types/ISupplier";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation();
@@ -54,11 +55,11 @@ export const MaintenanceDetails = () => {
 
   const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
   const [supplierData, setSupplierData] = useState<ISupplier | null>();
-  const [historyActivitiesData, setHistoryActivitiesData] = useState<MaintenanceHistoryActivities>();
+  const [historyActivitiesData, setHistoryActivitiesData] = useState<IMaintenanceHistoryActivities>();
 
   const [cost, setCost] = useState("0,00"); // Estado para o custo
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
+  const [uploadedFiles, setUploadedFiles] = useState<IUploadedFile[]>([]); // Arquivos já upados
   const [files, setFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos ainda não upados
   const [images, setImages] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para as imagens ainda não upadas
 

@@ -8,7 +8,11 @@ interface ICreateMaintenanceHistoryActivity {
   maintenanceId: string;
   userId: string;
   content: string;
-  uploadedFile?: { originalName: string; url: string | null; type: string }[];
+  uploadedFile?: {
+    originalName: string;
+    url: string | null;
+    type: string;
+  }[];
 }
 
 export const createMaintenanceHistoryActivity = async ({

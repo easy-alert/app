@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { baseApi } from "./baseApi";
 
-import type { ICategory } from "../types";
+import type { ICategory } from "../types/ICategory";
 
 export const getCategoriesByBuildingId = async () => {
   const uri = `company/buildings/maintenances/occasional/auxiliarydata/`;

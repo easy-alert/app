@@ -16,9 +16,11 @@ import { formatDate } from "@utils/formatDate";
 import { getStatus } from "@utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOfflineQueue";
 
-import { styles } from "../board/styles";
+import { styles } from "./styles";
 
-import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType, KanbanColumn } from "src/types/index";
+import type { IOccasionalMaintenanceType } from "../../types/IOccasionalMaintenanceType";
+import type { IOccasionalMaintenanceData } from "../../types/IOccasionalMaintenanceData";
+import type { KanbanColumn } from "../../types/IKanbanColumn";
 
 export interface IMaintenanceFilter {
   buildings: string[];

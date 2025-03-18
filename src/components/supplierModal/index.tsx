@@ -9,7 +9,7 @@ import { styles } from "./styles";
 import { getSuppliersForMaintenance } from "../../services/getSuppliersForMaintenance";
 import { linkMaintenanceSupplier } from "../../services/linkMaintenanceSupplier";
 
-import type { SuppliersByMaintenanceId } from "../../types";
+import type { IMaintenanceSuppliers } from "../../types/IMaintenanceSuppliers";
 
 interface SupplierModalProps {
   maintenanceId: string;
@@ -19,7 +19,7 @@ interface SupplierModalProps {
 }
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
-  const [suppliersData, setSuppliersData] = useState<SuppliersByMaintenanceId | undefined>(undefined);
+  const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers | undefined>(undefined);
 
   const handleGetSuppliersForMaintenance = async () => {
     try {

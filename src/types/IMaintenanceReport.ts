@@ -1,7 +1,6 @@
-import type { IAnnexesAndImages } from ".";
+import { IAnnexesAndImages } from "./IAnnexesAndImages";
 
-// TODO: alterar para IMaintenanceReport
-export interface MaintenanceReport {
+export interface IMaintenanceReport {
   id: string;
   cost: number;
   observation: string;

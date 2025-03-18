@@ -1,4 +1,4 @@
-import type { IAnnexesAndImages } from ".";
+import { IAnnexesAndImages } from "./IAnnexesAndImages";
 
 export interface IMaintenanceReportProgress {
   id?: string;

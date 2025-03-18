@@ -27,7 +27,8 @@ import { styles } from "./styles";
 
 import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
 
-import type { ICategory, IOccasionalMaintenanceData } from "../../types";
+import type { IOccasionalMaintenanceData } from "../../types/IOccasionalMaintenanceData";
+import type { ICategory } from "../../types/ICategory";
 
 interface IHandleSetOccasionalMaintenanceData {
   primaryKey: keyof IOccasionalMaintenanceData;
