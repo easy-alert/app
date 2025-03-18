@@ -1,38 +1,38 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  modalFullContainer: {
+  fullContainer: {
     flex: 1,
     backgroundColor: "#fff",
     paddingVertical: 18, // Espaçamento no topo e na base
     paddingHorizontal: 8, // Espaçamento nas laterais
   },
-  modalHeader: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
     marginBottom: 16,
   },
-  modalTitle: {
+  title: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  modalCloseButton: {
+  closeButton: {
     padding: 8,
   },
-  modalForm: {
+  form: {
     paddingHorizontal: 16,
   },
-  modalInputContainer: {
+  inputContainer: {
     marginBottom: 16,
   },
-  modalInputLabel: {
+  inputLabel: {
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 4,
   },
-  modalPicker: {
+  picker: {
     height: 40,
     display: "flex",
     justifyContent: "center",
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     borderColor: "#999999",
     borderRadius: 8,
   },
-  modalInput: {
+  input: {
     height: 40,
     backgroundColor: "#ffffff",
     borderWidth: 1,
@@ -49,24 +49,24 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
   },
-  modalFooter: {
+  footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 16,
     paddingHorizontal: 16,
   },
-  modalButton: {
+  button: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 4,
   },
-  modalButtonLabel: {
+  buttonLabel: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#ffffff",
   },
-  modalSecondaryLabel: {
+  secondaryLabel: {
     fontSize: 14,
     color: "#28a5ff",
   },

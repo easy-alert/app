@@ -3,8 +3,6 @@ import { Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 
-import { uploadFile } from "../../../services/uploadFile"; // Ajuste o caminho conforme necessário
-
 export const handleUpload = async (
   type?: "file" | "image" | null,
 ): Promise<{
@@ -129,8 +127,6 @@ export const handleUpload = async (
       return null;
     }
 
-    // const fileUrl = await uploadFile(file);
-
     // Fazer upload
     return {
       originalName: file.name,
@@ -138,19 +134,6 @@ export const handleUpload = async (
       name: file.name,
       type: file.type,
     };
-
-    // if (fileUrl) {
-    //   console.log(
-    //     "Upload Concluído",
-    //     `${type === "image" ? "Imagem" : "Arquivo"} enviado com sucesso!`
-    //   );
-    //   return { originalName: file.name, url: fileUrl, name: file.name };
-    // } else {
-    //   console.error(
-    //     `Falha no upload do ${type === "image" ? "imagem" : "arquivo"}.`
-    //   );
-    //   return null;
-    // }
   } catch (error) {
     console.error("Erro ao selecionar ou enviar:", error);
     return null;

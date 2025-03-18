@@ -6,10 +6,10 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-import { getSuppliersForMaintenance } from "../../services/getSuppliersForMaintenance";
-import { linkMaintenanceSupplier } from "../../services/linkMaintenanceSupplier";
+import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
 
-import type { SuppliersByMaintenanceId } from "../../types";
+import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
+import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
 
 interface SupplierModalProps {
   maintenanceId: string;
@@ -18,20 +18,8 @@ interface SupplierModalProps {
   onClose: () => void;
 }
 
-const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
-  const [suppliersData, setSuppliersData] = useState<SuppliersByMaintenanceId | undefined>(undefined);
-
-  const handleGetSuppliersForMaintenance = async () => {
-    try {
-      const responseData = await getSuppliersForMaintenance({ maintenanceId });
-
-      if (responseData) {
-        setSuppliersData(responseData);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar os dados:", error);
-    }
-  };
+export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
+  const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers | undefined>(undefined);
 
   const handleLinkMaintenanceSupplier = async (supplierId: string, userId: string) => {
     try {
@@ -48,6 +36,18 @@ const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, vi
   };
 
   useEffect(() => {
+    const handleGetSuppliersForMaintenance = async () => {
+      try {
+        const responseData = await getSuppliersForMaintenance({ maintenanceId });
+
+        if (responseData) {
+          setSuppliersData(responseData);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar os dados:", error);
+      }
+    };
+
     handleGetSuppliersForMaintenance();
   }, [maintenanceId]);
 
@@ -105,5 +105,3 @@ const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, vi
     </Modal>
   );
 };
-
-export default SupplierModal;

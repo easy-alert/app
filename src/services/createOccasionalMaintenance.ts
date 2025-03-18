@@ -1,17 +1,17 @@
-import { alertMessage, catchHandler } from "../../utils/handleAlerts";
-import { unMaskBRL } from "../../utils/unMaskBRL";
-import { baseApi } from "../baseApi";
+import { baseApi } from "./baseApi";
 
-import type { IOccasionalMaintenanceData, IOccasionalMaintenanceType } from "../../types";
-import type { IError } from "../../types/IError";
+import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
+import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
+import type { IError } from "@/types/IError";
 
-interface IRequestCreateOccasionalMaintenance {
+import { unMaskBRL } from "@/utils/unMaskBRL";
+import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+
+interface ICreateOccasionalMaintenance {
   origin: string;
   userId: string;
   occasionalMaintenanceType: IOccasionalMaintenanceType;
   occasionalMaintenanceBody: IOccasionalMaintenanceData;
-
-  ticketsIds?: string[];
 }
 
 export const createOccasionalMaintenance = async ({
@@ -29,7 +29,7 @@ export const createOccasionalMaintenance = async ({
     responsible,
     priorityName,
   },
-}: IRequestCreateOccasionalMaintenance) => {
+}: ICreateOccasionalMaintenance) => {
   const uri = "company/buildings/reports/occasional/create";
 
   const body = {

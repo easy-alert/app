@@ -1,22 +1,26 @@
 import { baseApi } from "./baseApi";
 
-import { alertMessage, catchHandler } from "../utils/handleAlerts";
+import type { IError } from "@/types/IError";
 
-import type { IError } from "../types/IError";
+import { alertMessage, catchHandler } from "@/utils/handleAlerts";
 
 interface ICreateMaintenanceHistoryActivity {
   maintenanceId: string;
   userId: string;
   content: string;
-  uploadedFile?: { originalName: string; url: string | null; type: string }[];
+  uploadedFile?: {
+    originalName: string;
+    url: string | null;
+    type: string;
+  }[];
 }
 
-export async function createMaintenanceHistoryActivity({
+export const createMaintenanceHistoryActivity = async ({
   maintenanceId,
   userId,
   content,
   uploadedFile,
-}: ICreateMaintenanceHistoryActivity) {
+}: ICreateMaintenanceHistoryActivity) => {
   const uri = `company/maintenance-history-activities`;
 
   const body = {
@@ -41,4 +45,4 @@ export async function createMaintenanceHistoryActivity({
       statusCode: response?.status,
     });
   }
-}
+};
