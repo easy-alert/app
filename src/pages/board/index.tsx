@@ -35,86 +35,6 @@ export const Board = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [internetConnection, setInternetConnection] = useState(true);
 
-  const handleGetKanbanData = async () => {
-    setLoading(true);
-
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-      const buildingId = await AsyncStorage.getItem("buildingId");
-      const buildingName = await AsyncStorage.getItem("buildingName");
-
-      if (userId && buildingId && buildingName) {
-        setUserId(userId);
-        setBuildingId(buildingId);
-        setBuildingName(buildingName);
-
-        const responseData = await getMaintenancesKanban({
-          userId,
-          filter: {
-            buildings: [buildingId],
-            status: [],
-            categories: [],
-            users: [],
-            priorityName: "",
-            endDate: "2100-01-01",
-            startDate: "1900-01-01",
-          },
-        });
-
-        if (responseData) {
-          setLoading(false);
-          setKanbanData(responseData.kanban || []);
-        }
-      } else {
-        Alert.alert("Credenciais inválidas");
-        // TODO: implementar pq o navigation nao tem o .replace
-        // navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
-        setLoading(false);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("🚀 ~ handleGetKanbanData ~ error:", error);
-    }
-  };
-
-  const handleGetBuildingLogo = async () => {
-    try {
-      const buildingId = await AsyncStorage.getItem("buildingId");
-
-      if (!buildingId) {
-        return;
-      }
-
-      const responseData = await getBuildingLogo({ buildingId });
-
-      if (responseData) {
-        setLogo(responseData.buildingLogo);
-      }
-    } catch (error) {
-      console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
-    }
-  };
-
-  const getOfflineQueueCount = async () => {
-    const offlineQueueString = await AsyncStorage.getItem("offline_queue");
-    const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-    setOfflineCount(offlineQueue.length);
-  };
-
-  const processQueueOnReconnect = () => {
-    NetInfo.addEventListener(async (state) => {
-      if (state.isConnected) {
-        setInternetConnection(true);
-        setIsProcessing(true);
-        await processOfflineQueue(); // Processa a fila
-        setIsProcessing(false);
-        await getOfflineQueueCount(); // Atualiza o contador
-      } else {
-        setInternetConnection(false);
-      }
-    });
-  };
-
   useEffect(() => {
     const stopProcessing = startPeriodicQueueProcessing();
 
@@ -122,12 +42,91 @@ export const Board = () => {
   }, []);
 
   useEffect(() => {
+    const getOfflineQueueCount = async () => {
+      const offlineQueueString = await AsyncStorage.getItem("offline_queue");
+      const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+      setOfflineCount(offlineQueue.length);
+    };
+
+    const processQueueOnReconnect = () => {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setInternetConnection(true);
+          setIsProcessing(true);
+          await processOfflineQueue(); // Processa a fila
+          setIsProcessing(false);
+          await getOfflineQueueCount(); // Atualiza o contador
+        } else {
+          setInternetConnection(false);
+        }
+      });
+    };
+
     getOfflineQueueCount(); // Atualiza o contador ao montar o componente
     processQueueOnReconnect(); // Observa reconexões de internet
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    const handleGetKanbanData = async () => {
+      setLoading(true);
+
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+        const buildingId = await AsyncStorage.getItem("buildingId");
+        const buildingName = await AsyncStorage.getItem("buildingName");
+
+        if (userId && buildingId && buildingName) {
+          setUserId(userId);
+          setBuildingId(buildingId);
+          setBuildingName(buildingName);
+
+          const responseData = await getMaintenancesKanban({
+            userId,
+            filter: {
+              buildings: [buildingId],
+              status: [],
+              categories: [],
+              users: [],
+              priorityName: "",
+              endDate: "2100-01-01",
+              startDate: "1900-01-01",
+            },
+          });
+
+          if (responseData) {
+            setLoading(false);
+            setKanbanData(responseData.kanban || []);
+          }
+        } else {
+          Alert.alert("Credenciais inválidas");
+          // TODO: implementar pq o navigation nao tem o .replace
+          // navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+          setLoading(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("🚀 ~ handleGetKanbanData ~ error:", error);
+      }
+    };
+
+    const handleGetBuildingLogo = async () => {
+      try {
+        const buildingId = await AsyncStorage.getItem("buildingId");
+
+        if (!buildingId) {
+          return;
+        }
+
+        const responseData = await getBuildingLogo({ buildingId });
+
+        if (responseData) {
+          setLogo(responseData.buildingLogo);
+        }
+      } catch (error) {
+        console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
+      }
+    };
+
     if (navigationState.routes[navigationState.index].name === "Board") {
       handleGetKanbanData();
       handleGetBuildingLogo();

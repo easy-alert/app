@@ -21,18 +21,6 @@ interface SupplierModalProps {
 export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
   const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers | undefined>(undefined);
 
-  const handleGetSuppliersForMaintenance = async () => {
-    try {
-      const responseData = await getSuppliersForMaintenance({ maintenanceId });
-
-      if (responseData) {
-        setSuppliersData(responseData);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar os dados:", error);
-    }
-  };
-
   const handleLinkMaintenanceSupplier = async (supplierId: string, userId: string) => {
     try {
       await linkMaintenanceSupplier({
@@ -48,8 +36,19 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, use
   };
 
   useEffect(() => {
+    const handleGetSuppliersForMaintenance = async () => {
+      try {
+        const responseData = await getSuppliersForMaintenance({ maintenanceId });
+
+        if (responseData) {
+          setSuppliersData(responseData);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar os dados:", error);
+      }
+    };
+
     handleGetSuppliersForMaintenance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenanceId]);
 
   return (
