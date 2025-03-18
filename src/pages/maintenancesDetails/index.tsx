@@ -31,7 +31,7 @@ import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { IUploadedFile } from "@/types/IUploadedFile";
 import type { ISupplier } from "@/types/ISupplier";
-import type { MaintenanceDetailsProps, Navigation } from "@/routes/navigation";
+import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
 
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
@@ -50,7 +50,7 @@ import { SupplierModal } from "@/components/supplierModal";
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
-  const { maintenanceId, userId } = route.params as MaintenanceDetailsProps;
+  const { maintenanceId, userId } = route.params as MaintenanceDetailsParams;
 
   const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
   const [supplierData, setSupplierData] = useState<ISupplier | null>();

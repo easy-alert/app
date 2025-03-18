@@ -22,7 +22,7 @@ import { styles } from "./styles";
 import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
 import type { ICategory } from "@/types/ICategory";
-import type { CreateOccasionalMaintenanceProps, Navigation } from "@/routes/navigation";
+import type { CreateOccasionalMaintenanceParams, Navigation } from "@/routes/navigation";
 
 import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
@@ -42,7 +42,7 @@ interface IHandleSetOccasionalMaintenanceData {
 export const CreateOccasionalMaintenance = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
-  const { buildingId, userId } = route.params as CreateOccasionalMaintenanceProps;
+  const { buildingId, userId } = route.params as CreateOccasionalMaintenanceParams;
 
   const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
     buildingId: buildingId,
