@@ -22,10 +22,10 @@ import { styles } from "./styles";
 import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
 import type { ICategory } from "@/types/ICategory";
+import type { CreateOccasionalMaintenanceProps, Navigation } from "@/routes/navigation";
 
 import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
-import { CreateOccasionalMaintenanceProps } from "@/routes/navigation";
 
 interface IHandleCreateOccasionalMaintenance {
   occasionalMaintenance: IOccasionalMaintenanceData;
@@ -40,7 +40,7 @@ interface IHandleSetOccasionalMaintenanceData {
 }
 
 export const CreateOccasionalMaintenance = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
   const route = useRoute();
   const { buildingId, userId } = route.params as CreateOccasionalMaintenanceProps;
 
@@ -138,8 +138,7 @@ export const CreateOccasionalMaintenance = () => {
       });
 
       if (responseData?.ServerMessage.statusCode === 200) {
-        // TODO: ao invés de navigate, dar um replace
-        navigation.navigate("MaintenanceDetails", {
+        navigation.replace("MaintenanceDetails", {
           maintenanceId: responseData.maintenance.id,
           userId,
         });

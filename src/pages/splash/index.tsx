@@ -3,12 +3,17 @@ import { View, Image } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { useNavigation } from "@react-navigation/native";
+
 import { styles } from "./styles";
+
+import type { Navigation } from "@/routes/navigation";
 
 import Logo from "@/assets/logo.png";
 
-// TODO: substituir navigation por useNavigation
-export const Splash = ({ navigation }: any) => {
+export const Splash = () => {
+  const navigation = useNavigation<Navigation>();
+
   useEffect(() => {
     const getAsyncStorageVariable = async () => {
       const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");

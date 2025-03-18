@@ -10,6 +10,7 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 import { styles } from "./styles";
 
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { Navigation } from "@/routes/navigation";
 
 import { Navbar } from "@/components/navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
@@ -19,7 +20,7 @@ import { getStatus } from "@/utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 
 export const Board = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
   const navigationState = useNavigationState((state) => state);
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
@@ -99,8 +100,7 @@ export const Board = () => {
           }
         } else {
           Alert.alert("Credenciais inválidas");
-          // TODO: implementar pq o navigation nao tem o .replace
-          // navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+          navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
           setLoading(false);
         }
       } catch (error) {
@@ -131,7 +131,7 @@ export const Board = () => {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }
-  }, [navigationState.index, navigationState.routes]);
+  }, [navigation, navigationState.index, navigationState.routes]);
 
   return (
     <>

@@ -7,6 +7,8 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
+import type { Navigation } from "@/routes/navigation";
+
 interface NavbarProps {
   logoUrl: string;
   syndicNanoId: string;
@@ -14,7 +16,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
 
   const [modalVisible, setModalVisible] = useState(false);
 

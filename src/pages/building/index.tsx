@@ -3,12 +3,16 @@ import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, SafeA
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { useNavigation } from "@react-navigation/native";
+
 import { styles } from "./styles";
 
 import type { IUser } from "@/types/IUser";
+import type { Navigation } from "@/routes/navigation";
 
-// TODO: substituir navigation por useNavigation
-export const Building = ({ navigation }: any) => {
+export const Building = () => {
+  const navigation = useNavigation<Navigation>();
+
   const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -31,6 +31,7 @@ import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { IUploadedFile } from "@/types/IUploadedFile";
 import type { ISupplier } from "@/types/ISupplier";
+import type { MaintenanceDetailsProps, Navigation } from "@/routes/navigation";
 
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
@@ -44,11 +45,10 @@ import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress"
 import { uploadFile } from "@/services/uploadFile";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
-import { MaintenanceDetailsProps } from "@/routes/navigation";
 import { SupplierModal } from "@/components/supplierModal";
 
 export const MaintenanceDetails = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
   const route = useRoute();
   const { maintenanceId, userId } = route.params as MaintenanceDetailsProps;
 
