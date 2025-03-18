@@ -18,6 +18,8 @@ import Icon from "react-native-vector-icons/Feather";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { createMaintenanceHistoryActivity } from "@services/createMaintenanceHistoryActivity";
 import { getMaintenanceDetails } from "@services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@services/getMaintenanceHistoryActivities";
@@ -30,8 +32,6 @@ import { updateMaintenanceProgress } from "@services/updateMaintenanceProgress";
 import { uploadFile } from "@services/uploadFile";
 import { formatDate } from "@utils/formatDate";
 import { getStatus } from "@utils/getStatus"; // Ajuste o caminho para a função getStatus
-
-import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { MaintenanceDetailsProps } from "@routes/navigation";
 
