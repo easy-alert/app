@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { Routes } from "@routes/index";
+import { Routes } from "@/routes";
 
 export default function App() {
   return (

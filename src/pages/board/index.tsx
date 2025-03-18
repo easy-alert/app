@@ -7,36 +7,16 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 
-import { Navbar } from "@components/navbar";
-
-import { getBuildingLogo } from "@services/getBuildingLogo";
-import { getMaintenancesKanban } from "@services/getMaintenancesKanban";
-
-import { formatDate } from "@utils/formatDate";
-import { getStatus } from "@utils/getStatus";
-import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOfflineQueue";
-
 import { styles } from "./styles";
 
-import type { IOccasionalMaintenanceType } from "../../types/IOccasionalMaintenanceType";
-import type { IOccasionalMaintenanceData } from "../../types/IOccasionalMaintenanceData";
-import type { KanbanColumn } from "../../types/IKanbanColumn";
+import type { KanbanColumn } from "@/types/IKanbanColumn";
 
-export interface IMaintenanceFilter {
-  buildings: string[];
-  status: string[];
-  categories: string[];
-  users: string[];
-  priorityName: string;
-  startDate?: string;
-  endDate?: string;
-}
-
-export interface IHandleCreateOccasionalMaintenance {
-  occasionalMaintenance: IOccasionalMaintenanceData;
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  inProgress?: boolean;
-}
+import { Navbar } from "@/components/navbar";
+import { getBuildingLogo } from "@/services/getBuildingLogo";
+import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
+import { formatDate } from "@/utils/formatDate";
+import { getStatus } from "@/utils/getStatus";
+import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 
 export const Board = () => {
   const navigation = useNavigation();

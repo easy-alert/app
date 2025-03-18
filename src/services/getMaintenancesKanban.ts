@@ -1,10 +1,16 @@
 import { baseApi } from "./baseApi";
 
-import type { IMaintenanceFilter } from "../pages/board";
-
 interface IGetMaintenancesKanban {
   userId: string;
-  filter: IMaintenanceFilter;
+  filter: {
+    buildings: string[];
+    status: string[];
+    categories: string[];
+    users: string[];
+    priorityName: string;
+    startDate?: string;
+    endDate?: string;
+  };
 }
 
 export const getMaintenancesKanban = async ({ userId, filter }: IGetMaintenancesKanban) => {

@@ -38,8 +38,7 @@ module.exports = {
             position: "before",
           },
           {
-            pattern:
-              "@(components|screens|pages|routes|hooks|utils|types|config|services|assets|styles|navigation|context|theme)/**",
+            pattern: "@/(components|pages|routes|hooks|utils|types|services|assets|styles|context|theme)/**",
             group: "internal",
           },
         ],

@@ -20,33 +20,32 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { createMaintenanceHistoryActivity } from "@services/createMaintenanceHistoryActivity";
-import { getMaintenanceDetails } from "@services/getMaintenanceDetails";
-import { getMaintenanceHistoryActivities } from "@services/getMaintenanceHistoryActivities";
-import { getMaintenanceHistorySupplier } from "@services/getMaintenanceHistorySupplier";
-import { getMaintenanceReportProgress } from "@services/getMaintenanceReportProgress";
-import { unlinkMaintenanceSupplier } from "@services/unlinkMaintenanceSupplier";
-import { updateMaintenance } from "@services/updateMaintenance";
-import { updateMaintenanceFinish } from "@services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "@services/updateMaintenanceProgress";
-import { uploadFile } from "@services/uploadFile";
-import { formatDate } from "@utils/formatDate";
-import { getStatus } from "@utils/getStatus"; // Ajuste o caminho para a função getStatus
-
-import { MaintenanceDetailsProps } from "@routes/navigation";
-
-import { SupplierModal } from "@components/supplierModal";
-
 import { styles } from "./styles";
+
 import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { handleUpload } from "./utils/handleUpload";
 import { removeItem } from "./utils/removeItem";
 
-import type { IMaintenanceHistoryActivities } from "../../types/IMaintenanceHistoryActivities";
-import type { IAnnexesAndImages } from "../../types/IAnnexesAndImages";
-import type { IMaintenance } from "../../types/IMaintenance";
-import type { IUploadedFile } from "../../types/IUploadedFile";
-import type { ISupplier } from "../../types/ISupplier";
+import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
+import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
+import type { IMaintenance } from "@/types/IMaintenance";
+import type { IUploadedFile } from "@/types/IUploadedFile";
+import type { ISupplier } from "@/types/ISupplier";
+
+import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
+import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
+import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
+import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
+import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
+import { unlinkMaintenanceSupplier } from "@/services/unlinkMaintenanceSupplier";
+import { updateMaintenance } from "@/services/updateMaintenance";
+import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
+import { uploadFile } from "@/services/uploadFile";
+import { formatDate } from "@/utils/formatDate";
+import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
+import { MaintenanceDetailsProps } from "@/routes/navigation";
+import { SupplierModal } from "@/components/supplierModal";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation();

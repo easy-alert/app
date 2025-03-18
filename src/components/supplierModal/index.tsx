@@ -6,10 +6,10 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-import { getSuppliersForMaintenance } from "../../services/getSuppliersForMaintenance";
-import { linkMaintenanceSupplier } from "../../services/linkMaintenanceSupplier";
+import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
 
-import type { IMaintenanceSuppliers } from "../../types/IMaintenanceSuppliers";
+import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
+import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
 
 interface SupplierModalProps {
   maintenanceId: string;

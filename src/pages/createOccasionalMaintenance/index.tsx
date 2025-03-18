@@ -17,18 +17,21 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { CreateOccasionalMaintenanceProps } from "@routes/navigation";
-
-import { IHandleCreateOccasionalMaintenance } from "@pages/board";
-
-import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
-
 import { styles } from "./styles";
 
-import { getCategoriesByBuildingId } from "../../services/getCategoriesByBuildingId";
+import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
+import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
+import type { ICategory } from "@/types/ICategory";
 
-import type { IOccasionalMaintenanceData } from "../../types/IOccasionalMaintenanceData";
-import type { ICategory } from "../../types/ICategory";
+import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
+import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
+import { CreateOccasionalMaintenanceProps } from "@/routes/navigation";
+
+interface IHandleCreateOccasionalMaintenance {
+  occasionalMaintenance: IOccasionalMaintenanceData;
+  occasionalMaintenanceType: IOccasionalMaintenanceType;
+  inProgress?: boolean;
+}
 
 interface IHandleSetOccasionalMaintenanceData {
   primaryKey: keyof IOccasionalMaintenanceData;

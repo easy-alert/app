@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { styles } from "./styles";
 
-import type { IUser } from "src/types/IUser";
+import type { IUser } from "@/types/IUser";
 
 // TODO: substituir navigation por useNavigation
 export const Building = ({ navigation }: any) => {

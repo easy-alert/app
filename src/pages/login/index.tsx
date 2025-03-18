@@ -15,10 +15,10 @@ import { Keyboard } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Logo from "@assets/logo.png";
-import { userLogin } from "@services/userLogin";
-
 import { styles } from "./styles";
+
+import Logo from "@/assets/logo.png";
+import { userLogin } from "@/services/userLogin";
 
 // TODO: substituir navigation por useNavigation
 export const Login = ({ navigation }: any) => {
