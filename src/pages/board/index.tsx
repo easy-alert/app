@@ -18,10 +18,13 @@ import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
+import { useAuth } from "@/contexts/authContext";
 
 export const Board = () => {
   const navigation = useNavigation<Navigation>();
   const navigationState = useNavigationState((state) => state);
+
+  const { logout } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
 
@@ -76,32 +79,32 @@ export const Board = () => {
         const buildingId = await AsyncStorage.getItem("buildingId");
         const buildingName = await AsyncStorage.getItem("buildingName");
 
-        if (userId && buildingId && buildingName) {
-          setUserId(userId);
-          setBuildingId(buildingId);
-          setBuildingName(buildingName);
-
-          const responseData = await getMaintenancesKanban({
-            userId,
-            filter: {
-              buildings: [buildingId],
-              status: [],
-              categories: [],
-              users: [],
-              priorityName: "",
-              endDate: "2100-01-01",
-              startDate: "1900-01-01",
-            },
-          });
-
-          if (responseData) {
-            setLoading(false);
-            setKanbanData(responseData.kanban || []);
-          }
-        } else {
+        if (!userId || !buildingId || !buildingName) {
           Alert.alert("Credenciais inválidas");
-          navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+          await logout();
+          return;
+        }
+
+        setUserId(userId);
+        setBuildingId(buildingId);
+        setBuildingName(buildingName);
+
+        const responseData = await getMaintenancesKanban({
+          userId,
+          filter: {
+            buildings: [buildingId],
+            status: [],
+            categories: [],
+            users: [],
+            priorityName: "",
+            endDate: "2100-01-01",
+            startDate: "1900-01-01",
+          },
+        });
+
+        if (responseData) {
           setLoading(false);
+          setKanbanData(responseData.kanban || []);
         }
       } catch (error) {
         setLoading(false);
@@ -131,7 +134,7 @@ export const Board = () => {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }
-  }, [navigation, navigationState.index, navigationState.routes]);
+  }, [logout, navigation, navigationState.index, navigationState.routes]);
 
   return (
     <>

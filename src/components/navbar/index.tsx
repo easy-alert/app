@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { View, Image, SafeAreaView, Modal, Text, TouchableOpacity, FlatList, Linking } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-import type { Navigation } from "@/routes/navigation";
+import { useAuth } from "@/contexts/authContext";
 
 interface NavbarProps {
   logoUrl: string;
@@ -16,15 +14,13 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
-  const navigation = useNavigation<Navigation>();
+  const { logout } = useAuth();
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleLogout = async () => {
-    await AsyncStorage.clear().then(() => {
-      toggleModal();
-      navigation.replace("Login"); // Redireciona para a tela de login
-    });
+    await logout();
+    toggleModal();
   };
 
   const toggleModal = () => setModalVisible(!modalVisible);

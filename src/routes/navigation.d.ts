@@ -11,7 +11,6 @@ export interface MaintenanceDetailsParams {
 }
 
 interface RoutesParams {
-  Login: undefined;
   Building: undefined;
   Board: undefined;
   CreateOccasionalMaintenance: CreateOccasionalMaintenanceParams;
