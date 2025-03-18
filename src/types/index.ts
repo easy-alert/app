@@ -1,11 +1,3 @@
-export interface IResponse {
-  config: any;
-  headers: any;
-  request: any;
-  status: number;
-  statusText: string;
-}
-
 export interface ICategory {
   id?: string;
   ownerCompanyId?: string;
@@ -15,15 +7,10 @@ export interface ICategory {
 
   createdAt?: string;
   updatedAt?: string;
-
-  // OwnerCompany?: ICompany;
-  // Maintenances?: IMaintenance[];
-  // Buildings?: IBuildingCategory[];
-  // DefaultTemplateCategory: IDefaultTemplateCategory[];
-  // suppliers: ICategorySupplier[];
 }
 
-export interface MaintenanceDetails {
+// TODO: alterar para IMaintenanceDetails
+interface MaintenanceDetails {
   id: string;
   element: string;
   activity: string;
@@ -47,10 +34,6 @@ export interface MaintenanceDetails {
   Maintenance: Maintenance;
 }
 
-export interface MaintenanceDetailsData {
-  MaintenanceDetails: MaintenanceDetails;
-}
-
 export interface MaintenanceHistoryActivities {
   maintenanceHistoryActivities: MaintenanceHistory[];
 }
@@ -62,7 +45,7 @@ export interface UploadedFile {
   type?: string;
 }
 
-export interface MaintenanceHistory {
+interface MaintenanceHistory {
   id: string;
   maintenanceHistoryId: string;
   type: string;
@@ -73,13 +56,13 @@ export interface MaintenanceHistory {
   images: ImageHistory[];
 }
 
-export interface ImageHistory {
+interface ImageHistory {
   id: string;
   name: string;
   url: string;
 }
 
-export interface Supplier {
+interface Supplier {
   suppliers: never[];
   image: string;
   id: string;
@@ -95,7 +78,7 @@ export interface SuppliersByMaintenanceId {
   suggestedSuppliers: Supplier[];
 }
 
-export interface MaintenanceReport {
+interface MaintenanceReport {
   id: string;
   cost: number | undefined;
   observation: string;
@@ -111,19 +94,19 @@ export interface MaintenanceReportProgress {
   ReportImagesProgress: ReportImages[];
 }
 
-export interface ReportAnnexes {
+interface ReportAnnexes {
   name: string;
   originalName: string;
   url: string;
 }
 
-export interface ReportImages {
+interface ReportImages {
   name: string;
   originalName: string;
   url: string;
 }
 
-export interface Maintenance {
+interface Maintenance {
   Category: {
     name: string;
   };
@@ -148,7 +131,7 @@ export interface Maintenance {
   instructions: any[];
 }
 
-export interface Building {
+interface Building {
   name: string;
   id: string;
   guestCanCompleteMaintenance: boolean;
@@ -157,58 +140,6 @@ export interface Building {
 export interface KanbanColumn {
   status: string; // Exemplo: 'Vencidas', 'Pendentes', etc.
   maintenances: MaintenanceDetails[];
-}
-
-export interface FilterCategory {
-  id: string;
-  name: string;
-}
-
-export interface FilterStatus {
-  name: string; // Exemplo: 'completed'
-  label: string; // Exemplo: 'concluídas'
-}
-
-export interface FilterMonth {
-  monthNumber: string; // Exemplo: '01'
-  label: string; // Exemplo: 'janeiro'
-}
-
-export interface Filters {
-  years: string[]; // Exemplo: ['2024', '2025']
-  months: FilterMonth[];
-  status: FilterStatus[];
-  categories: FilterCategory[];
-}
-
-export interface MaintenancesBySyndicNanoId {
-  buildingName: string; // Nome do edifício
-  kanban: KanbanColumn[]; // Colunas do Kanban
-  Filters: Filters; // Filtros disponíveis
-}
-
-export interface Buildings {
-  buildingNanoId: string;
-  buildingName: string;
-  syndicNanoId: string;
-  companyName: string;
-  syndicName: string;
-  label: string;
-}
-
-export interface BuildingsBySyndicId {
-  buildings: Buildings[]; // Nome do edifício
-}
-
-export interface PasswordNeeded {
-  needPassword: boolean;
-  buildingName: string;
-}
-
-export interface syndicBuildings {
-  buildingNanoId: string;
-  buildingName: string;
-  syndicNanoId: string;
 }
 
 export interface IAnnexesAndImages {

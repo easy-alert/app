@@ -25,17 +25,4 @@ export interface IBuilding {
 
   createdAt?: string;
   updatedAt?: string;
-
-  // BuildingType?: IBuildingType;
-  // Company?: ICompany;
-  // NotificationsConfigurations?: IBuildingNotificationConfiguration[];
-  // Categories?: IBuildingCategory[];
-  // Annexes?: IBuildingAnnexes[];
-  // Banners?: IBuildingBanners[];
-  // MaintenancesHistory?: IMaintenanceHistory[];
-  // oldBuildingIds?: IOldBuildingIds[];
-  // BuildingFolders?: IBuildingFolders[];
-  // BuildingsAccessHistory?: IBuildingAccessHistory[];
-  // checklists?: IChecklist[];
-  // tickets?: ITicket[];
 }

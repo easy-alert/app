@@ -374,15 +374,6 @@ export const CreateOccasionalMaintenance = () => {
             <Text style={styles.secondaryLabel}>Criar em execução</Text>
           </TouchableOpacity>
 
-          {
-            // <TouchableOpacity
-            //   style={{ ...styles.button, backgroundColor: "#b21d1d" }}
-            //   onPress={() => navigation.goBack()}
-            // >
-            //   <Text style={styles.buttonLabel}>Criar finalizada</Text>
-            // </TouchableOpacity>
-          }
-
           <TouchableOpacity
             style={{ ...styles.button, backgroundColor: "#b21d1d" }}
             onPress={() => {
