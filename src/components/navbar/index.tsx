@@ -40,9 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingN
         <TouchableOpacity onPress={toggleModal} style={styles.hamburgerIcon}>
           <Icon name="menu" size={24} color="#000" />
         </TouchableOpacity>
-        <View style={styles.logoContainer}>
-          <Image source={{ uri: logoUrl }} style={styles.logo} />
-        </View>
+        <View style={styles.logoContainer}>{logoUrl && <Image source={{ uri: logoUrl }} style={styles.logo} />}</View>
       </View>
       <Modal visible={modalVisible} animationType="slide" transparent={true} onRequestClose={toggleModal}>
         <View style={styles.modalContainer}>
