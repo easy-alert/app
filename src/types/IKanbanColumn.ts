@@ -1,36 +1,32 @@
-// TODO: reutilizar
-interface ReportAnnexes {
+interface IReportAnnexes {
   name: string;
   originalName: string;
   url: string;
 }
 
-// TODO: reutilizar
-interface ReportImages {
+interface IReportImages {
   name: string;
   originalName: string;
   url: string;
 }
 
-// TODO: reutilizar
-interface MaintenanceReport {
+interface IMaintenanceReport {
   id: string;
   cost: number | undefined;
   observation: string;
-  ReportAnnexes: ReportAnnexes[];
-  ReportImages: ReportImages[];
+  ReportAnnexes: IReportAnnexes[];
+  ReportImages: IReportImages[];
 }
 
-// TODO: reutilizar
-export interface MaintenanceReportProgress {
+interface IMaintenanceReportProgress {
   id: string;
   cost: number;
   observation: string;
-  ReportAnnexesProgress: ReportAnnexes[];
-  ReportImagesProgress: ReportImages[];
+  ReportAnnexesProgress: IReportAnnexes[];
+  ReportImagesProgress: IReportImages[];
 }
 
-interface Maintenance {
+interface IMaintenance {
   Category: {
     name: string;
   };
@@ -55,8 +51,7 @@ interface Maintenance {
   instructions: any[];
 }
 
-// TODO: reutilizar
-interface Building {
+interface IBuilding {
   name: string;
   id: string;
   guestCanCompleteMaintenance: boolean;
@@ -77,16 +72,16 @@ interface IMaintenanceDetails {
   resolutionDate: string;
   daysInAdvance: number;
   canReport: boolean;
-  MaintenanceReport: MaintenanceReport[];
-  MaintenanceReportProgress: MaintenanceReportProgress[];
+  MaintenanceReport: IMaintenanceReport[];
+  MaintenanceReportProgress: IMaintenanceReportProgress[];
   MaintenancesStatus: {
     name: string;
   };
-  Building: Building;
-  Maintenance: Maintenance;
+  Building: IBuilding;
+  Maintenance: IMaintenance;
 }
 
-export interface KanbanColumn {
+export interface IKanbanColumn {
   status: string; // Exemplo: 'Vencidas', 'Pendentes', etc.
   maintenances: IMaintenanceDetails[];
 }

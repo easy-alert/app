@@ -3,7 +3,6 @@ import type { ICategory } from "@/types/ICategory";
 import type { IMaintenanceReport } from "@/types/IMaintenanceReport";
 import type { IMaintenancesStatus } from "@/types/IMaintenanceStatus";
 import type { IUser } from "@/types/IUser";
-import type { MaintenanceReportProgress } from "@/types/IKanbanColumn";
 
 export interface IMaintenance {
   id: string;
@@ -11,7 +10,6 @@ export interface IMaintenance {
   resolutionDate: string;
   notificationDate: string;
   MaintenanceReport: IMaintenanceReport[];
-  MaintenanceReportProgress: MaintenanceReportProgress[];
   MaintenancesStatus: IMaintenancesStatus;
   Building: IBuilding;
   Maintenance: {

@@ -9,7 +9,7 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 
 import { styles } from "./styles";
 
-import type { KanbanColumn } from "@/types/IKanbanColumn";
+import type { IKanbanColumn } from "@/types/IKanbanColumn";
 
 import { Navbar } from "@/components/navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
@@ -22,7 +22,7 @@ export const Board = () => {
   const navigation = useNavigation();
   const navigationState = useNavigationState((state) => state);
 
-  const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
+  const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
 
   const [userId, setUserId] = useState("");
   const [buildingName, setBuildingName] = useState("");
