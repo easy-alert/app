@@ -6,7 +6,7 @@ import { Maintenances } from "@/pages/Maintenances";
 import { Buildings } from "@/pages/Buildings";
 import { Login } from "@/pages/login";
 import { CreateOccasionalMaintenance } from "@/pages/createOccasionalMaintenance";
-import { MaintenanceDetails } from "@/pages/maintenancesDetails";
+import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
 import { useAuth } from "@/contexts/authContext";
 import { Splash } from "@/components/splash";
 
