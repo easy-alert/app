@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
   useEffect(() => {
+    // TODO: token é válido por 8 horas, precisamos dar um refresh
     const verifyStorageAuth = async () => {
       try {
         const userId = await AsyncStorage.getItem("userId");
