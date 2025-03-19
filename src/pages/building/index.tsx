@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, SafeAreaView } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import type { IUser } from "src/types/IUser";
+import { useNavigation } from "@react-navigation/native";
 
-export const Building = ({ navigation }: any) => {
+import { styles } from "./styles";
+
+import type { IUser } from "@/types/IUser";
+import type { Navigation } from "@/routes/navigation";
+
+export const Building = () => {
+  const navigation = useNavigation<Navigation>();
+
   const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,40 +77,3 @@ export const Building = ({ navigation }: any) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  buildingItem: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  buildingName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  buildingDetails: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 5,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#999",
-    textAlign: "center",
-    marginTop: 20,
-  },
-});

@@ -5,198 +5,36 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
 
-import MaintenanceDetailsModal from "@components/maintenancesDetailsModal";
-import ModalCreateOccasionalMaintenance from "@components/ModalCreateOccasionalMaintenance";
-import Navbar from "@components/navbar";
+import { useNavigation, useNavigationState } from "@react-navigation/native";
 
-import { createOccasionalMaintenance } from "@services/createOccasionalMaintenance";
-import { getBuildingLogo } from "@services/getBuildingLogo";
-import { getMaintenancesKanban } from "@services/getMaintenancesKanban";
+import { styles } from "./styles";
 
-import { formatDate } from "@utils/formatDate";
-import { getStatus } from "@utils/getStatus";
-import { processOfflineQueue, startPeriodicQueueProcessing } from "@utils/processOffilineQueue";
+import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { Navigation } from "@/routes/navigation";
 
-import { styles } from "../board/styles";
+import { Navbar } from "@/components/navbar";
+import { getBuildingLogo } from "@/services/getBuildingLogo";
+import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
+import { formatDate } from "@/utils/formatDate";
+import { getStatus } from "@/utils/getStatus";
+import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 
-import type {
-  IOccasionalMaintenanceData,
-  IOccasionalMaintenanceType,
-  KanbanColumn,
-  MaintenanceDetails,
-} from "src/types/index";
+export const Board = () => {
+  const navigation = useNavigation<Navigation>();
+  const navigationState = useNavigationState((state) => state);
 
-export interface IMaintenanceFilter {
-  buildings: string[];
-  status: string[];
-  categories: string[];
-  users: string[];
-  priorityName: string;
-  startDate?: string;
-  endDate?: string;
-}
-
-export interface IHandleCreateOccasionalMaintenance {
-  occasionalMaintenance: IOccasionalMaintenanceData;
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  inProgress?: boolean;
-}
-
-export const Board = ({ navigation }: any) => {
-  const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]);
-  const [selectedMaintenanceId, setSelectedMaintenanceId] = useState<string>("");
+  const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
 
   const [userId, setUserId] = useState("");
   const [buildingName, setBuildingName] = useState("");
   const [buildingId, setBuildingId] = useState("");
   const [logo, setLogo] = useState("");
 
-  const [maintenanceDetailsModal, setMaintenanceDetailsModal] = useState(false);
-  const [createMaintenanceModal, setCreateMaintenanceModal] = useState(false);
-
   const [loading, setLoading] = useState(true);
-  const [refresh, setRefresh] = useState(false);
 
   const [offlineCount, setOfflineCount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [internetConnection, setInternetConnection] = useState(true);
-
-  const handleCreateMaintenanceModal = (modalState: boolean) => {
-    setCreateMaintenanceModal(modalState);
-  };
-
-  const openMaintenanceDetailsModal = (maintenance: MaintenanceDetails) => {
-    setSelectedMaintenanceId(maintenance.id);
-    setMaintenanceDetailsModal(true);
-  };
-
-  const handleGetKanbanData = async () => {
-    setLoading(true);
-
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-      const buildingId = await AsyncStorage.getItem("buildingId");
-      const buildingName = await AsyncStorage.getItem("buildingName");
-
-      if (userId && buildingId && buildingName) {
-        setUserId(userId);
-        setBuildingId(buildingId);
-        setBuildingName(buildingName);
-
-        const responseData = await getMaintenancesKanban({
-          userId,
-          filter: {
-            buildings: [buildingId],
-            status: [],
-            categories: [],
-            users: [],
-            priorityName: "",
-            endDate: "2100-01-01",
-            startDate: "1900-01-01",
-          },
-        });
-
-        if (responseData) {
-          setLoading(false);
-          setKanbanData(responseData.kanban || []);
-        }
-      } else {
-        Alert.alert("Credenciais inválidas");
-        navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
-        setLoading(false);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("🚀 ~ handleGetKanbanData ~ error:", error);
-    }
-  };
-
-  const handleGetBuildingLogo = async () => {
-    try {
-      const buildingId = await AsyncStorage.getItem("buildingId");
-
-      if (!buildingId) {
-        return;
-      }
-
-      const responseData = await getBuildingLogo({ buildingId });
-
-      if (responseData) {
-        setLogo(responseData.buildingLogo);
-      }
-    } catch (error) {
-      console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
-    }
-  };
-
-  const closeMaintenanceDetailsModal = () => {
-    setSelectedMaintenanceId("");
-    setRefresh(!refresh);
-    setMaintenanceDetailsModal(false);
-    setLoading(false);
-  };
-
-  const getOfflineQueueCount = async () => {
-    const offlineQueueString = await AsyncStorage.getItem("offline_queue");
-    const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-    setOfflineCount(offlineQueue.length);
-  };
-
-  const processQueueOnReconnect = () => {
-    NetInfo.addEventListener(async (state) => {
-      if (state.isConnected) {
-        setInternetConnection(true);
-        setIsProcessing(true);
-        await processOfflineQueue(); // Processa a fila
-        setIsProcessing(false);
-        await getOfflineQueueCount(); // Atualiza o contador
-      } else {
-        setInternetConnection(false);
-      }
-    });
-  };
-
-  const handleCreateOccasionalMaintenance = async ({
-    occasionalMaintenance,
-    occasionalMaintenanceType,
-    inProgress = false,
-  }: IHandleCreateOccasionalMaintenance) => {
-    setLoading(true);
-
-    const reportDataBody =
-      occasionalMaintenanceType === "finished"
-        ? occasionalMaintenance.reportData
-        : {
-            cost: "R$ 0,00",
-            observation: "",
-            files: [],
-            images: [],
-          };
-
-    const occasionalMaintenanceBody = {
-      ...occasionalMaintenance,
-      buildingId,
-      inProgress,
-      reportData: reportDataBody,
-    };
-
-    try {
-      const responseData = await createOccasionalMaintenance({
-        origin: "Mobile",
-        userId,
-        occasionalMaintenanceType,
-        occasionalMaintenanceBody,
-      });
-
-      if (responseData?.ServerMessage.statusCode === 200) {
-        setSelectedMaintenanceId(responseData.maintenance.id);
-        setCreateMaintenanceModal(false);
-        setMaintenanceDetailsModal(true);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const stopProcessing = startPeriodicQueueProcessing();
@@ -205,14 +43,95 @@ export const Board = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
+    const getOfflineQueueCount = async () => {
+      const offlineQueueString = await AsyncStorage.getItem("offline_queue");
+      const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+      setOfflineCount(offlineQueue.length);
+    };
+
+    const processQueueOnReconnect = () => {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setInternetConnection(true);
+          setIsProcessing(true);
+          await processOfflineQueue(); // Processa a fila
+          setIsProcessing(false);
+          await getOfflineQueueCount(); // Atualiza o contador
+        } else {
+          setInternetConnection(false);
+        }
+      });
+    };
+
     getOfflineQueueCount(); // Atualiza o contador ao montar o componente
     processQueueOnReconnect(); // Observa reconexões de internet
   }, []);
 
   useEffect(() => {
-    handleGetKanbanData();
-    handleGetBuildingLogo();
-  }, [refresh]);
+    const handleGetKanbanData = async () => {
+      setLoading(true);
+
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+        const buildingId = await AsyncStorage.getItem("buildingId");
+        const buildingName = await AsyncStorage.getItem("buildingName");
+
+        if (userId && buildingId && buildingName) {
+          setUserId(userId);
+          setBuildingId(buildingId);
+          setBuildingName(buildingName);
+
+          const responseData = await getMaintenancesKanban({
+            userId,
+            filter: {
+              buildings: [buildingId],
+              status: [],
+              categories: [],
+              users: [],
+              priorityName: "",
+              endDate: "2100-01-01",
+              startDate: "1900-01-01",
+            },
+          });
+
+          if (responseData) {
+            setLoading(false);
+            setKanbanData(responseData.kanban || []);
+          }
+        } else {
+          Alert.alert("Credenciais inválidas");
+          navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+          setLoading(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("🚀 ~ handleGetKanbanData ~ error:", error);
+      }
+    };
+
+    const handleGetBuildingLogo = async () => {
+      try {
+        const buildingId = await AsyncStorage.getItem("buildingId");
+
+        if (!buildingId) {
+          return;
+        }
+
+        const responseData = await getBuildingLogo({ buildingId });
+
+        if (responseData) {
+          setLogo(responseData.buildingLogo);
+        }
+      } catch (error) {
+        console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
+      }
+    };
+
+    if (navigationState.routes[navigationState.index].name === "Board") {
+      handleGetKanbanData();
+      handleGetBuildingLogo();
+    }
+  }, [navigation, navigationState.index, navigationState.routes]);
 
   return (
     <>
@@ -235,21 +154,6 @@ export const Board = ({ navigation }: any) => {
           )}
         </View>
       )}
-
-      <MaintenanceDetailsModal
-        maintenanceId={selectedMaintenanceId}
-        userId={userId}
-        buildingId={buildingId}
-        visible={maintenanceDetailsModal}
-        onClose={closeMaintenanceDetailsModal}
-      />
-
-      <ModalCreateOccasionalMaintenance
-        buildingId={buildingId}
-        visible={createMaintenanceModal}
-        handleCreateMaintenanceModal={handleCreateMaintenanceModal}
-        handleCreateOccasionalMaintenance={handleCreateOccasionalMaintenance}
-      />
 
       {loading ? (
         <ActivityIndicator
@@ -297,7 +201,12 @@ export const Board = ({ navigation }: any) => {
 
             <View>
               <TouchableOpacity
-                onPress={() => handleCreateMaintenanceModal(true)}
+                onPress={() =>
+                  navigation.navigate("CreateOccasionalMaintenance", {
+                    buildingId,
+                    userId,
+                  })
+                }
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -332,7 +241,12 @@ export const Board = ({ navigation }: any) => {
                               borderLeftWidth: 9,
                             }, // Cor da borda esquerda
                           ]}
-                          onPress={() => openMaintenanceDetailsModal(maintenance)}
+                          onPress={() =>
+                            navigation.navigate("MaintenanceDetails", {
+                              maintenanceId: maintenance.id,
+                              userId,
+                            })
+                          }
                         >
                           <View
                             style={[

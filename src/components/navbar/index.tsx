@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  SafeAreaView,
-  Modal,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Linking,
-  StatusBar,
-  Platform,
-} from "react-native";
+import { View, Image, SafeAreaView, Modal, Text, TouchableOpacity, FlatList, Linking } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
+
+import { styles } from "./styles";
+
+import type { Navigation } from "@/routes/navigation";
 
 interface NavbarProps {
   logoUrl: string;
@@ -23,15 +15,8 @@ interface NavbarProps {
   buildingNanoId: string;
 }
 
-type RootParamList = {
-  Login: undefined;
-  Board: undefined;
-};
-
-type NavigationProps = NavigationProp<RootParamList, "Board">;
-
-const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
-  const navigation = useNavigation<NavigationProps>();
+export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
+  const navigation = useNavigation<Navigation>();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -55,9 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }
         <TouchableOpacity onPress={toggleModal} style={styles.hamburgerIcon}>
           <Icon name="menu" size={24} color="#000" />
         </TouchableOpacity>
-        <View style={styles.logoContainer}>
-          <Image source={{ uri: logoUrl }} style={styles.logo} />
-        </View>
+        <View style={styles.logoContainer}>{logoUrl && <Image source={{ uri: logoUrl }} style={styles.logo} />}</View>
       </View>
       <Modal visible={modalVisible} animationType="slide" transparent={true} onRequestClose={toggleModal}>
         <View style={styles.modalContainer}>
@@ -95,69 +78,3 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    backgroundColor: "#fff",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  navbar: {
-    width: "100%",
-    height: 60,
-    backgroundColor: "#fff",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  hamburgerIcon: {
-    position: "absolute",
-    left: 16,
-  },
-  logoContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  logo: {
-    width: 120,
-    height: 40,
-    resizeMode: "contain",
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-  },
-  modalContent: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingTop: 20,
-    paddingHorizontal: 20,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  closeIcon: {
-    padding: 5,
-  },
-  optionItem: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  optionText: {
-    fontSize: 16,
-  },
-});
-
-export default Navbar;

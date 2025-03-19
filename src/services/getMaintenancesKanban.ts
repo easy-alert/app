@@ -1,13 +1,19 @@
 import { baseApi } from "./baseApi";
 
-import type { IMaintenanceFilter } from "../pages/board";
-
 interface IGetMaintenancesKanban {
   userId: string;
-  filter: IMaintenanceFilter;
+  filter: {
+    buildings: string[];
+    status: string[];
+    categories: string[];
+    users: string[];
+    priorityName: string;
+    startDate?: string;
+    endDate?: string;
+  };
 }
 
-export async function getMaintenancesKanban({ userId, filter }: IGetMaintenancesKanban) {
+export const getMaintenancesKanban = async ({ userId, filter }: IGetMaintenancesKanban) => {
   const params = {
     buildingId: filter?.buildings?.length === 0 ? "" : filter?.buildings?.join(","),
     status: filter?.status?.length === 0 ? "" : filter?.status?.join(","),
@@ -30,4 +36,4 @@ export async function getMaintenancesKanban({ userId, filter }: IGetMaintenances
 
     return {};
   }
-}
+};

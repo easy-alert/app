@@ -1,18 +1,16 @@
-import type { MaintenanceReportProgress } from ".";
-import type { IBuilding } from "./IBuilding";
-import type { ICategory } from "./ICategory";
-import type { MaintenanceReport } from "./IMaintenanceReport";
-import type { MaintenancesStatus } from "./IMaintenanceStatus";
-import type { IUser } from "./IUser";
+import type { IBuilding } from "@/types/IBuilding";
+import type { ICategory } from "@/types/ICategory";
+import type { IMaintenanceReport } from "@/types/IMaintenanceReport";
+import type { IMaintenancesStatus } from "@/types/IMaintenanceStatus";
+import type { IUser } from "@/types/IUser";
 
 export interface IMaintenance {
   id: string;
   dueDate: string;
   resolutionDate: string;
   notificationDate: string;
-  MaintenanceReport: MaintenanceReport[];
-  MaintenanceReportProgress: MaintenanceReportProgress[];
-  MaintenancesStatus: MaintenancesStatus;
+  MaintenanceReport: IMaintenanceReport[];
+  MaintenancesStatus: IMaintenancesStatus;
   Building: IBuilding;
   Maintenance: {
     Category: ICategory;

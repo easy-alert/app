@@ -4,7 +4,6 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
   Image,
   TextInput,
   KeyboardAvoidingView,
@@ -19,56 +18,49 @@ import Icon from "react-native-vector-icons/Feather";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { createMaintenanceHistoryActivity } from "@services/createMaintenanceHistoryActivity";
-import { getMaintenanceDetails } from "@services/getMaintenanceDetails";
-import { getMaintenanceHistoryActivities } from "@services/getMaintenanceHistoryActivities";
-import { getMaintenanceHistorySupplier } from "@services/getMaintenanceHistorySupplier";
-import { getMaintenanceReportProgress } from "@services/getMaintenanceReportProgress";
-import { unlinkMaintenanceSupplier } from "@services/unlinkMaintenanceSupplier";
-import { updateMaintenance } from "@services/updateMaintenance";
-import { updateMaintenanceFinish } from "@services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "@services/updateMaintenanceProgress";
-import { uploadFile } from "@services/uploadFile";
-import { formatDate } from "@utils/formatDate";
-import { getStatus } from "@utils/getStatus"; // Ajuste o caminho para a função getStatus
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { styles } from "./styles";
+
 import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { handleUpload } from "./utils/handleUpload";
 import { removeItem } from "./utils/removeItem";
 
-import SupplierModal from "../supplierModal";
+import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
+import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
+import type { IMaintenance } from "@/types/IMaintenance";
+import type { IUploadedFile } from "@/types/IUploadedFile";
+import type { ISupplier } from "@/types/ISupplier";
+import type { MaintenanceDetailsProps, Navigation } from "@/routes/navigation";
 
-import type { IAnnexesAndImages } from "src/types/IAnnexesAndImages";
-import type { IMaintenance } from "src/types/IMaintenance";
-import type { MaintenanceHistoryActivities, UploadedFile } from "src/types/index";
-import type { ISupplier } from "src/types/ISupplier";
+import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
+import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
+import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
+import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
+import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
+import { unlinkMaintenanceSupplier } from "@/services/unlinkMaintenanceSupplier";
+import { updateMaintenance } from "@/services/updateMaintenance";
+import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
+import { uploadFile } from "@/services/uploadFile";
+import { formatDate } from "@/utils/formatDate";
+import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
+import { SupplierModal } from "@/components/supplierModal";
 
-interface MaintenanceDetailsModalProps {
-  maintenanceId: string;
-  userId: string;
-  buildingId: string;
-  visible: boolean;
-  onClose: () => void;
-}
+export const MaintenanceDetails = () => {
+  const navigation = useNavigation<Navigation>();
+  const route = useRoute();
+  const { maintenanceId, userId } = route.params as MaintenanceDetailsProps;
 
-const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
-  maintenanceId,
-  userId,
-  buildingId,
-  visible,
-  onClose,
-}) => {
   const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
   const [supplierData, setSupplierData] = useState<ISupplier | null>();
-  const [historyActivitiesData, setHistoryActivitiesData] = useState<MaintenanceHistoryActivities>();
+  const [historyActivitiesData, setHistoryActivitiesData] = useState<IMaintenanceHistoryActivities>();
 
   const [cost, setCost] = useState("0,00"); // Estado para o custo
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // Arquivos já upados
+  const [uploadedFiles, setUploadedFiles] = useState<IUploadedFile[]>([]); // Arquivos já upados
   const [files, setFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos ainda não upados
   const [images, setImages] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para as imagens ainda não upadas
-  const [activityFiles, setActivityFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos de atividades
 
   const [comment, setComment] = useState(" ");
   const [activeTab, setActiveTab] = useState<"comment" | "notification">("comment");
@@ -76,7 +68,6 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [refresh, setRefresh] = useState(false);
 
   const OFFLINE_QUEUE_KEY = "offline_queue";
 
@@ -249,7 +240,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setComment("");
         setUploadedFiles([]);
         setLoading(false);
-        onClose();
+        navigation.goBack();
       }
     } catch (error) {
       console.error("Error in addHistoryActivity:", error);
@@ -269,7 +260,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         userId,
       });
     } finally {
-      onClose();
+      navigation.goBack();
       setLoading(false);
     }
   };
@@ -344,7 +335,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -379,7 +370,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       }
     } catch (error) {
       console.error("Error in saveProgress:", error);
@@ -458,7 +449,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       } else {
         // If offline, save data to a queue in AsyncStorage
         const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -493,7 +484,7 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setFiles([]);
         setImages([]);
         setCost("");
-        onClose();
+        navigation.goBack();
       }
     } catch (error) {
       console.error("Error in handleFinishMaintenance:", error);
@@ -517,10 +508,11 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
         setLoading(false);
       }, 500);
     }
-  }, [maintenanceId, refresh]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maintenanceId]);
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
+    <>
       <SupplierModal
         maintenanceId={maintenanceId}
         userId={userId}
@@ -535,20 +527,20 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
           style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
         />
       ) : (
-        <View style={styles.modalOverlay}>
+        <View style={styles.overlay}>
           <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <SafeAreaView style={styles.modalFullContainer}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Enviar relato</Text>
-                <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
+            <SafeAreaView style={styles.fullContainer}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Enviar relato</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
                   <Icon name="x" size={28} color="#b21d1d" />
                 </TouchableOpacity>
               </View>
 
-              <ScrollView contentContainerStyle={styles.modalContent} nestedScrollEnabled={true}>
-                <Text style={styles.modalBuildingName}>{maintenanceDetailsData?.Building.name}</Text>
+              <ScrollView contentContainerStyle={styles.content} nestedScrollEnabled={true}>
+                <Text style={styles.buildingName}>{maintenanceDetailsData?.Building.name}</Text>
 
-                <View style={styles.modalTags}>
+                <View style={styles.tags}>
                   <View
                     style={[
                       styles.tag,
@@ -584,47 +576,45 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                   )}
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Categoria</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Categoria</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Elemento</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Elemento</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Atividade</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Atividade</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Responsável</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Responsável</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Fonte</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Fonte</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Observação da manutenção</Text>
-                  <Text style={styles.modalInfoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Observação da manutenção</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Instruções</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {maintenanceDetailsData?.Maintenance?.instructions[0]?.name}
-                  </Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Instruções</Text>
+                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance?.instructions[0]?.name}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Periodicidade</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Periodicidade</Text>
                   {maintenanceDetailsData?.Maintenance.MaintenanceType.name === "common" ? (
-                    <Text style={styles.modalInfoValue}>
+                    <Text style={styles.infoValue}>
                       {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
                       {(maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1)
                         ? maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel === "anos" &&
@@ -634,26 +624,24 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.singularLabel}
                     </Text>
                   ) : (
-                    <Text style={styles.modalInfoValue}>-</Text>
+                    <Text style={styles.infoValue}>-</Text>
                   )}
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Data de notificação</Text>
-                  <Text style={styles.modalInfoValue}>
-                    {formatDate(maintenanceDetailsData?.notificationDate || "")}
-                  </Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Data de notificação</Text>
+                  <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.notificationDate || "")}</Text>
                 </View>
 
-                <View style={styles.modalInfoRow}>
-                  <Text style={styles.modalInfoLabel}>Data de vencimento</Text>
-                  <Text style={styles.modalInfoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Data de vencimento</Text>
+                  <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
                 </View>
 
                 {maintenanceDetailsData?.resolutionDate && (
-                  <View style={styles.modalInfoRow}>
-                    <Text style={styles.modalInfoLabel}>Data de conclusão</Text>
-                    <Text style={styles.modalInfoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Data de conclusão</Text>
+                    <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
                   </View>
                 )}
 
@@ -854,15 +842,15 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
                         />
                       </>
                     ) : (
-                      <View style={styles.modalInfoRow}>
-                        <Text style={styles.modalInfoLabel}>Custo</Text>
-                        <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
+                      <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Custo</Text>
+                        <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
                       </View>
                     )
                   ) : (
-                    <View style={styles.modalInfoRow}>
-                      <Text style={styles.modalInfoLabel}>Custo</Text>
-                      <Text style={styles.modalInfoValue}>{`R$ ${cost}`}</Text>
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoLabel}>Custo</Text>
+                      <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
                     </View>
                   )}
 
@@ -1018,8 +1006,6 @@ const MaintenanceDetailsModal: React.FC<MaintenanceDetailsModalProps> = ({
           )}
         </View>
       )}
-    </Modal>
+    </>
   );
 };
-
-export default MaintenanceDetailsModal;

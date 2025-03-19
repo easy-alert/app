@@ -1,17 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
-import { createMaintenanceHistoryActivity } from "../services/createMaintenanceHistoryActivity";
-import { updateMaintenanceFinish } from "../services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "../services/updateMaintenanceProgress";
-import { uploadFile } from "../services/uploadFile";
+import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
+import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
+import { uploadFile } from "@/services/uploadFile";
 
 const OFFLINE_QUEUE_KEY = "offline_queue";
 let isProcessing = false; // Global lock to prevent overlapping processes
 
-const processOfflineQueue = async () => {
+export const processOfflineQueue = async () => {
   if (isProcessing) {
-    // console.log("Queue processing is already running. Skipping this cycle.");
     return; // Exit if already processing
   }
 
@@ -146,16 +145,13 @@ const processOfflineQueue = async () => {
   }
 };
 
-const startPeriodicQueueProcessing = () => {
+export const startPeriodicQueueProcessing = () => {
   const interval = setInterval(async () => {
     const networkState = await NetInfo.fetch();
     if (networkState.isConnected) {
-      // console.log("Internet is available. Processing offline queue...");
       await processOfflineQueue();
     }
   }, 3000); // Check every 3 seconds
 
   return () => clearInterval(interval); // Return a cleanup function
 };
-
-export { processOfflineQueue, startPeriodicQueueProcessing };

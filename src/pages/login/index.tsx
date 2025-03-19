@@ -15,12 +15,18 @@ import { Keyboard } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Logo from "@assets/logo.png";
-import { userLogin } from "@services/userLogin";
+import { useNavigation } from "@react-navigation/native";
 
 import { styles } from "./styles";
 
-export const Login = ({ navigation }: any) => {
+import type { Navigation } from "@/routes/navigation";
+
+import Logo from "@/assets/logo.png";
+import { userLogin } from "@/services/userLogin";
+
+export const Login = () => {
+  const navigation = useNavigation<Navigation>();
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 

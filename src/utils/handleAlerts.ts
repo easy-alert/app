@@ -10,13 +10,16 @@ interface IAlertMessage {
   message: string;
 }
 
-export async function catchHandler({ message, statusCode }: ICatchHandler) {
+export const catchHandler = async ({
+  message,
+  statusCode, // remove if not needed
+}: ICatchHandler) => {
   const errorMessage = message || "Erro ao realizar a operação";
 
   Alert.alert("Erro", errorMessage);
-}
+};
 
-export async function alertMessage({ type, message }: IAlertMessage) {
+export const alertMessage = async ({ type, message }: IAlertMessage) => {
   switch (type) {
     case "error":
       Alert.alert("Erro", message);
@@ -38,4 +41,4 @@ export async function alertMessage({ type, message }: IAlertMessage) {
       Alert.alert("Erro", "Erro ao exibir mensagem");
       break;
   }
-}
+};

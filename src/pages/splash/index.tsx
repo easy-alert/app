@@ -3,11 +3,17 @@ import { View, Image } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Logo from "@assets/logo.png";
+import { useNavigation } from "@react-navigation/native";
 
 import { styles } from "./styles";
 
-export const Splash = ({ navigation }: any) => {
+import type { Navigation } from "@/routes/navigation";
+
+import Logo from "@/assets/logo.png";
+
+export const Splash = () => {
+  const navigation = useNavigation<Navigation>();
+
   useEffect(() => {
     const getAsyncStorageVariable = async () => {
       const syndicNanoId = await AsyncStorage.getItem("syndicNanoId");
@@ -22,7 +28,7 @@ export const Splash = ({ navigation }: any) => {
     setTimeout(() => {
       getAsyncStorageVariable();
     }, 2000); // Exibe a splash screen por 2 segundos
-  }, []);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

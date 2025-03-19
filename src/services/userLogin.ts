@@ -2,10 +2,10 @@ import { Alert } from "react-native";
 
 import { baseApi } from "./baseApi";
 
-import { alertMessage, catchHandler } from "../utils/handleAlerts";
+import type { IError } from "@/types/IError";
+import type { IUser } from "@/types/IUser";
 
-import type { IError } from "../types/IError";
-import type { IUser } from "../types/IUser";
+import { alertMessage, catchHandler } from "@/utils/handleAlerts";
 
 interface IUserLogin {
   login: string;
