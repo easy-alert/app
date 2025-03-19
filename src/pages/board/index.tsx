@@ -191,7 +191,7 @@ export const Board = () => {
               </Text>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate("Building")}
+                onPress={() => navigation.navigate("Buildings")}
                 style={{
                   marginLeft: 10,
                   justifyContent: "center",

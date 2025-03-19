@@ -10,7 +10,7 @@ import { styles } from "./styles";
 import type { IUser } from "@/types/IUser";
 import type { Navigation } from "@/routes/navigation";
 
-export const Building = () => {
+export const Buildings = () => {
   const navigation = useNavigation<Navigation>();
 
   const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
