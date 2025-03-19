@@ -7,6 +7,11 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 
+import { styles } from "./styles";
+
+import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { Navigation, RouteList } from "@/routes/navigation";
+
 import { Navbar } from "@/components/navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
@@ -15,12 +20,7 @@ import { getStatus } from "@/utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 import { useAuth } from "@/contexts/authContext";
 
-import { styles } from "./styles";
-
-import type { IKanbanColumn } from "@/types/IKanbanColumn";
-import type { Navigation } from "@/routes/navigation";
-
-export const Board = () => {
+export const Maintenances = () => {
   const navigation = useNavigation<Navigation>();
   const navigationState = useNavigationState((state) => state);
 
@@ -130,7 +130,7 @@ export const Board = () => {
       }
     };
 
-    if (navigationState.routes[navigationState.index].name === "Board") {
+    if ((navigationState.routes[navigationState.index].name as RouteList) === "Maintenances") {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }

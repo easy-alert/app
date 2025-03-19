@@ -12,7 +12,7 @@ export interface MaintenanceDetailsParams {
 
 interface RoutesParams {
   Buildings: undefined;
-  Board: undefined;
+  Maintenances: undefined;
   CreateOccasionalMaintenance: CreateOccasionalMaintenanceParams;
   MaintenanceDetails: MaintenanceDetailsParams;
 }

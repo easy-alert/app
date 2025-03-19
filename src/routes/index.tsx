@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { Board } from "@/pages/board";
+import { Maintenances } from "@/pages/Maintenances";
 import { Buildings } from "@/pages/Buildings";
 import { Login } from "@/pages/login";
 import { CreateOccasionalMaintenance } from "@/pages/createOccasionalMaintenance";
@@ -34,8 +34,8 @@ export const Routes = () => {
           }}
         />
         <Stack.Screen
-          name="Board"
-          component={Board}
+          name="Maintenances"
+          component={Maintenances}
           options={{
             gestureEnabled: false,
           }}

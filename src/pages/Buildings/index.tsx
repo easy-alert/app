@@ -42,7 +42,7 @@ export const Buildings = () => {
       await AsyncStorage.setItem("buildingId", building.Building.id);
       await AsyncStorage.setItem("buildingName", building.Building.name);
 
-      navigation.replace("Board");
+      navigation.replace("Maintenances");
     } catch (error) {
       console.error("Erro ao salvar dados no AsyncStorage:", error);
       Alert.alert("Erro", "Não foi possível selecionar o prédio.");
