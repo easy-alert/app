@@ -4,11 +4,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { Maintenances } from "@/pages/Maintenances";
 import { Buildings } from "@/pages/Buildings";
-import { Login } from "@/pages/login";
-import { CreateOccasionalMaintenance } from "@/pages/createOccasionalMaintenance";
+import { Login } from "@/pages/Login";
+import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
 import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
-import { useAuth } from "@/contexts/authContext";
-import { Splash } from "@/components/splash";
+import { useAuth } from "@/contexts/AuthContext";
+import { Splash } from "@/components/Splash";
 
 const Stack = createNativeStackNavigator();
 

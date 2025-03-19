@@ -17,15 +17,15 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
-import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
-
 import { styles } from "./styles";
 
 import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
 import type { ICategory } from "@/types/ICategory";
 import type { CreateOccasionalMaintenanceParams, Navigation } from "@/routes/navigation";
+
+import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
+import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
 
 interface IHandleCreateOccasionalMaintenance {
   occasionalMaintenance: IOccasionalMaintenanceData;

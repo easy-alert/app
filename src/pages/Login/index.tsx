@@ -15,7 +15,7 @@ import { Keyboard } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Logo from "@/assets/logo.png";
-import { useAuth } from "@/contexts/authContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";
 

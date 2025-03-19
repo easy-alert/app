@@ -45,7 +45,7 @@ import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress"
 import { uploadFile } from "@/services/uploadFile";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
-import { SupplierModal } from "@/components/supplierModal";
+import { SupplierModal } from "@/components/SupplierModal";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<Navigation>();

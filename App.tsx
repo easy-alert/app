@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Routes } from "@/routes";
-import { AuthProvider } from "@/contexts/authContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function App() {
   return (
