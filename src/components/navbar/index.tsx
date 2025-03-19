@@ -3,9 +3,9 @@ import { View, Image, SafeAreaView, Modal, Text, TouchableOpacity, FlatList, Lin
 
 import Icon from "react-native-vector-icons/Feather";
 
-import { styles } from "./styles";
-
 import { useAuth } from "@/contexts/authContext";
+
+import { styles } from "./styles";
 
 interface NavbarProps {
   logoUrl: string;

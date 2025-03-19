@@ -7,11 +7,6 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 
-import { styles } from "./styles";
-
-import type { IKanbanColumn } from "@/types/IKanbanColumn";
-import type { Navigation } from "@/routes/navigation";
-
 import { Navbar } from "@/components/navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
@@ -19,6 +14,11 @@ import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 import { useAuth } from "@/contexts/authContext";
+
+import { styles } from "./styles";
+
+import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { Navigation } from "@/routes/navigation";
 
 export const Board = () => {
   const navigation = useNavigation<Navigation>();

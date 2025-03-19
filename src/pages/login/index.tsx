@@ -14,10 +14,10 @@ import { Keyboard } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { styles } from "./styles";
-
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/authContext";
+
+import { styles } from "./styles";
 
 export const Login = () => {
   const { login } = useAuth();

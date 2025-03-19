@@ -4,12 +4,12 @@ import { Modal, View, Text, ScrollView, SafeAreaView, TouchableOpacity } from "r
 
 import Icon from "react-native-vector-icons/Feather";
 
+import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
+import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
+
 import { styles } from "./styles";
 
 import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
-
-import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
-import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
 
 interface SupplierModalProps {
   maintenanceId: string;

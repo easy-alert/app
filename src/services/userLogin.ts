@@ -1,11 +1,11 @@
 import { Alert } from "react-native";
 
+import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+
 import { baseApi } from "./baseApi";
 
 import type { IError } from "@/types/IError";
 import type { IUser } from "@/types/IUser";
-
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
 
 interface IUserLogin {
   login: string;
