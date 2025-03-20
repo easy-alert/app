@@ -2,6 +2,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { jwtDecode } from "jwt-decode";
+
 import { userLogin } from "@/services/userLogin";
 
 interface AuthContextData {
@@ -16,7 +18,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
   useEffect(() => {
-    // TODO: token é válido por 8 horas, precisamos dar um refresh
     const verifyStorageAuth = async () => {
       try {
         const userId = await AsyncStorage.getItem("userId");
@@ -24,7 +25,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const phoneNumber = await AsyncStorage.getItem("phoneNumber");
         const buildingsList = await AsyncStorage.getItem("buildingsList");
 
-        setIsAuthenticated(!!userId && !!authToken && !!phoneNumber && !!buildingsList);
+        if (!userId || !authToken || !phoneNumber || !buildingsList) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const { exp: jwtExpiration } = jwtDecode(authToken);
+
+        const isValidJwt = !!jwtExpiration && jwtExpiration * 1000 > Date.now();
+
+        if (!isValidJwt) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);
       }
