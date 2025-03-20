@@ -29,37 +29,4 @@ export const styles = StyleSheet.create({
     height: 40,
     resizeMode: "contain",
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-  },
-  modalContent: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingTop: 20,
-    paddingHorizontal: 20,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  closeIcon: {
-    padding: 5,
-  },
-  optionItem: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  optionText: {
-    fontSize: 16,
-  },
 });
