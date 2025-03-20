@@ -10,7 +10,7 @@ import { styles } from "./styles";
 import type { IUser } from "@/types/IUser";
 import type { Navigation } from "@/routes/navigation";
 
-export const Building = () => {
+export const Buildings = () => {
   const navigation = useNavigation<Navigation>();
 
   const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
@@ -42,7 +42,7 @@ export const Building = () => {
       await AsyncStorage.setItem("buildingId", building.Building.id);
       await AsyncStorage.setItem("buildingName", building.Building.name);
 
-      navigation.replace("Board");
+      navigation.replace("Maintenances");
     } catch (error) {
       console.error("Erro ao salvar dados no AsyncStorage:", error);
       Alert.alert("Erro", "Não foi possível selecionar o prédio.");

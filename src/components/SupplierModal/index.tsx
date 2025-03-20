@@ -4,24 +4,26 @@ import { Modal, View, Text, ScrollView, SafeAreaView, TouchableOpacity } from "r
 
 import Icon from "react-native-vector-icons/Feather";
 
+import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
+import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
+import { useAuth } from "@/contexts/AuthContext";
+
 import { styles } from "./styles";
 
 import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
 
-import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
-import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
-
 interface SupplierModalProps {
   maintenanceId: string;
-  userId: string;
   visible: boolean;
   onClose: () => void;
 }
 
-export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, userId, visible, onClose }) => {
+export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, visible, onClose }) => {
+  const { userId } = useAuth();
+
   const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers | undefined>(undefined);
 
-  const handleLinkMaintenanceSupplier = async (supplierId: string, userId: string) => {
+  const handleLinkMaintenanceSupplier = async (supplierId: string) => {
     try {
       await linkMaintenanceSupplier({
         maintenanceId,
@@ -69,7 +71,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, use
             <TouchableOpacity
               key={suppliers.id}
               style={styles.supplierOption}
-              onPress={() => handleLinkMaintenanceSupplier(suppliers.id, userId)}
+              onPress={() => handleLinkMaintenanceSupplier(suppliers.id)}
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
             </TouchableOpacity>
@@ -84,7 +86,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({ maintenanceId, use
             <TouchableOpacity
               key={suppliers.id}
               style={styles.supplierOption}
-              onPress={() => handleLinkMaintenanceSupplier(suppliers.id, userId)}
+              onPress={() => handleLinkMaintenanceSupplier(suppliers.id)}
             >
               <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
             </TouchableOpacity>
