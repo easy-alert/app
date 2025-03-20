@@ -3,18 +3,17 @@ import { View, Image, SafeAreaView, Modal, Text, TouchableOpacity, FlatList, Lin
 
 import Icon from "react-native-vector-icons/Feather";
 
-import { styles } from "./styles";
-
 import { useAuth } from "@/contexts/AuthContext";
+
+import { styles } from "./styles";
 
 interface NavbarProps {
   logoUrl: string;
-  syndicNanoId: string;
   buildingNanoId: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
-  const { logout } = useAuth();
+export const Navbar: React.FC<NavbarProps> = ({ logoUrl, buildingNanoId }) => {
+  const { logout, userId } = useAuth();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -59,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingN
                     }
                     if (item.id === "1") {
                       Linking.openURL(
-                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${syndicNanoId}`,
+                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${userId}`,
                       );
                     }
                   }}

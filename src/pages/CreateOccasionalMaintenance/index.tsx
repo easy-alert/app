@@ -17,15 +17,16 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
+import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
+import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
+import { useAuth } from "@/contexts/AuthContext";
+
 import { styles } from "./styles";
 
 import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
 import type { ICategory } from "@/types/ICategory";
 import type { CreateOccasionalMaintenanceParams, Navigation } from "@/routes/navigation";
-
-import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
-import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
 
 interface IHandleCreateOccasionalMaintenance {
   occasionalMaintenance: IOccasionalMaintenanceData;
@@ -42,7 +43,9 @@ interface IHandleSetOccasionalMaintenanceData {
 export const CreateOccasionalMaintenance = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
-  const { buildingId, userId } = route.params as CreateOccasionalMaintenanceParams;
+  const { buildingId } = route.params as CreateOccasionalMaintenanceParams;
+
+  const { userId } = useAuth();
 
   const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
     buildingId: buildingId,
@@ -140,7 +143,6 @@ export const CreateOccasionalMaintenance = () => {
       if (responseData?.ServerMessage.statusCode === 200) {
         navigation.replace("MaintenanceDetails", {
           maintenanceId: responseData.maintenance.id,
-          userId,
         });
       }
     } finally {

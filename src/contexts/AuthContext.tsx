@@ -8,6 +8,7 @@ import { userLogin } from "@/services/userLogin";
 
 interface AuthContextData {
   isAuthenticated: boolean | undefined;
+  userId: string;
   login: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -16,6 +17,7 @@ const AuthContext = createContext({} as AuthContextData);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
+  const [userId, setUserId] = useState<string>();
 
   useEffect(() => {
     const verifyStorageAuth = async () => {
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
 
+        setUserId(userId);
         setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);
@@ -81,6 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        userId: userId || "",
         login,
         logout,
       }}
