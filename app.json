@@ -12,9 +12,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme": "easyalert",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.easyalert.app",
+      "associatedDomains": ["applinks:company.easyalert.com.br"],
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to register a maintenance that was done.",
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select pictures of done maintenances."
@@ -25,7 +27,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.easyalert.app"
+      "package": "com.easyalert.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "company.easyalert.com.br"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

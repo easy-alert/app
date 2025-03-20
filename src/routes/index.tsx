@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -23,8 +23,23 @@ export const Routes = () => {
     return <Login />;
   }
 
+  const linking: LinkingOptions<ReactNavigation.RootParamList> = {
+    prefixes: __DEV__
+      ? ["exp://127.0.0.1:8081/--/"] //
+      : ["easyalert://", "https://company.easyalert.com.br/"],
+    config: {
+      screens: {
+        Buildings: "*",
+        Maintenances: "maintenances",
+        CreateOccasionalMaintenance: "buildings/:buildingId/maintenances/new",
+        MaintenanceDetails: "maintenances/:maintenanceId",
+      },
+      initialRouteName: "Buildings",
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="Buildings"
