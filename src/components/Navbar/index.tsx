@@ -1,30 +1,25 @@
 import React, { useState } from "react";
 import { View, Image, SafeAreaView, Modal, Text, TouchableOpacity, FlatList, Linking } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
+
+import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";
 
-import type { Navigation } from "@/routes/navigation";
-
 interface NavbarProps {
   logoUrl: string;
-  syndicNanoId: string;
   buildingNanoId: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingNanoId }) => {
-  const navigation = useNavigation<Navigation>();
+export const Navbar: React.FC<NavbarProps> = ({ logoUrl, buildingNanoId }) => {
+  const { logout, userId } = useAuth();
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleLogout = async () => {
-    await AsyncStorage.clear().then(() => {
-      toggleModal();
-      navigation.navigate("Login"); // Redireciona para a tela de login
-    });
+    await logout();
+    toggleModal();
   };
 
   const toggleModal = () => setModalVisible(!modalVisible);
@@ -63,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, syndicNanoId, buildingN
                     }
                     if (item.id === "1") {
                       Linking.openURL(
-                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${syndicNanoId}`,
+                        `https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${userId}`,
                       );
                     }
                   }}

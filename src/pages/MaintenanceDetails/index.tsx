@@ -20,19 +20,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { styles } from "./styles";
-
-import { convertCostToInteger } from "./utils/convertCostToInteger";
-import { handleUpload } from "./utils/handleUpload";
-import { removeItem } from "./utils/removeItem";
-
-import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IUploadedFile } from "@/types/IUploadedFile";
-import type { ISupplier } from "@/types/ISupplier";
-import type { MaintenanceDetailsProps, Navigation } from "@/routes/navigation";
-
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
@@ -45,12 +32,27 @@ import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress"
 import { uploadFile } from "@/services/uploadFile";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
-import { SupplierModal } from "@/components/supplierModal";
+import { SupplierModal } from "@/components/SupplierModal";
+import { useAuth } from "@/contexts/AuthContext";
+
+import { styles } from "./styles";
+import { handleUpload } from "./utils/handleUpload";
+import { convertCostToInteger } from "./utils/convertCostToInteger";
+import { removeItem } from "./utils/removeItem";
+
+import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
+import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
+import type { IMaintenance } from "@/types/IMaintenance";
+import type { ISupplier } from "@/types/ISupplier";
+import type { IUploadedFile } from "@/types/IUploadedFile";
+import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
-  const { maintenanceId, userId } = route.params as MaintenanceDetailsProps;
+  const { maintenanceId } = route.params as MaintenanceDetailsParams;
+
+  const { userId } = useAuth();
 
   const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
   const [supplierData, setSupplierData] = useState<ISupplier | null>();
@@ -153,13 +155,6 @@ export const MaintenanceDetails = () => {
   };
 
   const handleUnlinkMaintenanceSupplier = async (supplierId: string) => {
-    const userId = await AsyncStorage.getItem("userId");
-
-    if (!userId) {
-      console.error("User ID está indefinido.");
-      return;
-    }
-
     await unlinkMaintenanceSupplier({
       maintenanceHistoryId: maintenanceId,
       supplierId,
@@ -169,12 +164,7 @@ export const MaintenanceDetails = () => {
     await handleGetMaintenanceSupplier();
   };
 
-  const handleCreateMaintenanceActivity = async (
-    userId: string,
-    maintenanceId: string,
-    comment: string,
-    images?: any,
-  ) => {
+  const handleCreateMaintenanceActivity = async (maintenanceId: string, comment: string, images?: any) => {
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
@@ -265,13 +255,7 @@ export const MaintenanceDetails = () => {
     }
   };
 
-  const handleSaveMaintenanceProgress = async (
-    userId: string,
-    maintenanceId: string,
-    cost: number,
-    files: any,
-    images: any,
-  ) => {
+  const handleSaveMaintenanceProgress = async (maintenanceId: string, cost: number, files: any, images: any) => {
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
@@ -379,13 +363,7 @@ export const MaintenanceDetails = () => {
     }
   };
 
-  const handleFinishMaintenance = async (
-    userId: string,
-    maintenanceId: string,
-    cost: number,
-    files: any,
-    images: any,
-  ) => {
+  const handleFinishMaintenance = async (maintenanceId: string, cost: number, files: any, images: any) => {
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
@@ -513,12 +491,7 @@ export const MaintenanceDetails = () => {
 
   return (
     <>
-      <SupplierModal
-        maintenanceId={maintenanceId}
-        userId={userId}
-        visible={showSupplierModal}
-        onClose={toggleSupplierModal}
-      />
+      <SupplierModal maintenanceId={maintenanceId} visible={showSupplierModal} onClose={toggleSupplierModal} />
 
       {loading ? (
         <ActivityIndicator
@@ -750,7 +723,7 @@ export const MaintenanceDetails = () => {
                         const maintenanceId = maintenanceDetailsData?.id;
 
                         if (maintenanceId && comment) {
-                          handleCreateMaintenanceActivity(userId, maintenanceId, comment, uploadedFiles);
+                          handleCreateMaintenanceActivity(maintenanceId, comment, uploadedFiles);
                         } else {
                           console.error("Maintenance ID ou Supplier ID está indefinido.");
                         }
@@ -952,7 +925,6 @@ export const MaintenanceDetails = () => {
                           onPress={() => {
                             if (maintenanceDetailsData?.id) {
                               handleSaveMaintenanceProgress(
-                                userId,
                                 maintenanceDetailsData?.id,
                                 convertCostToInteger(cost),
                                 files,
@@ -977,7 +949,6 @@ export const MaintenanceDetails = () => {
                                   text: "Sim",
                                   onPress: () => {
                                     handleFinishMaintenance(
-                                      userId,
                                       maintenanceDetailsData?.id,
                                       convertCostToInteger(cost),
                                       files,

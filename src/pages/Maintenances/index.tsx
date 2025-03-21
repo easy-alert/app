@@ -7,25 +7,27 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 
-import { styles } from "./styles";
-
-import type { IKanbanColumn } from "@/types/IKanbanColumn";
-import type { Navigation } from "@/routes/navigation";
-
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/Navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
+import { useAuth } from "@/contexts/AuthContext";
 
-export const Board = () => {
+import { styles } from "./styles";
+
+import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { Navigation, RouteList } from "@/routes/navigation";
+
+export const Maintenances = () => {
   const navigation = useNavigation<Navigation>();
   const navigationState = useNavigationState((state) => state);
 
+  const { userId, logout } = useAuth();
+
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
 
-  const [userId, setUserId] = useState("");
   const [buildingName, setBuildingName] = useState("");
   const [buildingId, setBuildingId] = useState("");
   const [logo, setLogo] = useState("");
@@ -72,36 +74,34 @@ export const Board = () => {
       setLoading(true);
 
       try {
-        const userId = await AsyncStorage.getItem("userId");
         const buildingId = await AsyncStorage.getItem("buildingId");
         const buildingName = await AsyncStorage.getItem("buildingName");
 
-        if (userId && buildingId && buildingName) {
-          setUserId(userId);
-          setBuildingId(buildingId);
-          setBuildingName(buildingName);
-
-          const responseData = await getMaintenancesKanban({
-            userId,
-            filter: {
-              buildings: [buildingId],
-              status: [],
-              categories: [],
-              users: [],
-              priorityName: "",
-              endDate: "2100-01-01",
-              startDate: "1900-01-01",
-            },
-          });
-
-          if (responseData) {
-            setLoading(false);
-            setKanbanData(responseData.kanban || []);
-          }
-        } else {
+        if (!buildingId || !buildingName) {
           Alert.alert("Credenciais inválidas");
-          navigation.replace("Login"); // Após autenticar, redireciona para a tela principal
+          await logout();
+          return;
+        }
+
+        setBuildingId(buildingId);
+        setBuildingName(buildingName);
+
+        const responseData = await getMaintenancesKanban({
+          userId,
+          filter: {
+            buildings: [buildingId],
+            status: [],
+            categories: [],
+            users: [],
+            priorityName: "",
+            endDate: "2100-01-01",
+            startDate: "1900-01-01",
+          },
+        });
+
+        if (responseData) {
           setLoading(false);
+          setKanbanData(responseData.kanban || []);
         }
       } catch (error) {
         setLoading(false);
@@ -127,15 +127,15 @@ export const Board = () => {
       }
     };
 
-    if (navigationState.routes[navigationState.index].name === "Board") {
+    if ((navigationState.routes[navigationState.index].name as RouteList) === "Maintenances") {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }
-  }, [navigation, navigationState.index, navigationState.routes]);
+  }, [logout, navigation, navigationState.index, navigationState.routes, userId]);
 
   return (
     <>
-      <Navbar logoUrl={logo} syndicNanoId={userId} buildingNanoId={buildingId} />
+      <Navbar logoUrl={logo} buildingNanoId={buildingId} />
 
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
@@ -188,7 +188,7 @@ export const Board = () => {
               </Text>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate("Building")}
+                onPress={() => navigation.navigate("Buildings")}
                 style={{
                   marginLeft: 10,
                   justifyContent: "center",
@@ -204,7 +204,6 @@ export const Board = () => {
                 onPress={() =>
                   navigation.navigate("CreateOccasionalMaintenance", {
                     buildingId,
-                    userId,
                   })
                 }
                 style={{
@@ -244,7 +243,6 @@ export const Board = () => {
                           onPress={() =>
                             navigation.navigate("MaintenanceDetails", {
                               maintenanceId: maintenance.id,
-                              userId,
                             })
                           }
                         >

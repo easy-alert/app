@@ -13,19 +13,14 @@ import {
 import { Keyboard } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { useNavigation } from "@react-navigation/native";
+import Logo from "@/assets/logo.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";
 
-import type { Navigation } from "@/routes/navigation";
-
-import Logo from "@/assets/logo.png";
-import { userLogin } from "@/services/userLogin";
-
 export const Login = () => {
-  const navigation = useNavigation<Navigation>();
+  const { login } = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -74,21 +69,7 @@ export const Login = () => {
 
     try {
       const cleanedPhone = phoneNumber.replace(/\D/g, "");
-
-      const responseData = await userLogin({
-        login: cleanedPhone,
-        password: password,
-      });
-
-      if (responseData.user && responseData.user.id) {
-        await AsyncStorage.setItem("userId", responseData.user.id);
-        await AsyncStorage.setItem("authToken", responseData.authToken);
-
-        await AsyncStorage.setItem("phoneNumber", phoneNumber);
-        await AsyncStorage.setItem("buildingsList", JSON.stringify(responseData.user.UserBuildingsPermissions));
-
-        navigation.replace("Building");
-      }
+      await login(cleanedPhone, password);
     } catch (error) {
       console.error("Erro ao autenticar:", error);
       Alert.alert("Erro", "Número inválido ou não cadastrado");

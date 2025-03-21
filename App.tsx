@@ -4,12 +4,15 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Routes } from "@/routes";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function App() {
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
       <View style={styles.appContainer}>
-        <Routes />
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
       </View>
     </SafeAreaProvider>
   );
