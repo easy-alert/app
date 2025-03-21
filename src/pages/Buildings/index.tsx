@@ -12,10 +12,12 @@ import { styles } from "./styles";
 import type { IUser } from "@/types/IUser";
 import type { Navigation } from "@/routes/navigation";
 
+type IBuilding = IUser["UserBuildingsPermissions"][0];
+
 export const Buildings = () => {
   const navigation = useNavigation<Navigation>();
 
-  const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
+  const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [loading, setLoading] = useState(true);
 
   const handleGetBuildings = async () => {
@@ -39,7 +41,7 @@ export const Buildings = () => {
     handleGetBuildings();
   }, []);
 
-  const handleBuildingSelect = async (building: any) => {
+  const handleSelectBuilding = async (building: IBuilding) => {
     try {
       await AsyncStorage.setItem("buildingId", building.Building.id);
       await AsyncStorage.setItem("buildingName", building.Building.name);
@@ -51,8 +53,8 @@ export const Buildings = () => {
     }
   };
 
-  const renderBuilding = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.buildingItem} onPress={() => handleBuildingSelect(item)}>
+  const renderBuilding = ({ item }: { item: IBuilding }) => (
+    <TouchableOpacity style={styles.buildingItem} onPress={() => handleSelectBuilding(item)}>
       <Text style={styles.buildingName}>{item.Building.name}</Text>
     </TouchableOpacity>
   );
