@@ -49,15 +49,11 @@ export const Login = () => {
     setPhoneNumber(formatPhoneNumber(value));
   };
 
-  const handlePasswordChange = (value: string) => {
-    setPassword(value);
-  };
-
-  const handleShowPassword = () => {
+  const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleUserLogin = async () => {
+  const handleLogin = async () => {
     Keyboard.dismiss(); // Fecha o teclado ao clicar no botão
 
     if (!phoneNumber || phoneNumber.length < 11) {
@@ -101,7 +97,7 @@ export const Login = () => {
             placeholder="Digite sua senha caso possua"
             placeholderTextColor="#aaa"
             value={password}
-            onChangeText={handlePasswordChange}
+            onChangeText={setPassword}
             secureTextEntry={!showPassword}
           />
 
@@ -110,14 +106,14 @@ export const Login = () => {
             size={24}
             color="#aaa"
             style={styles.icon}
-            onPress={handleShowPassword}
+            onPress={toggleShowPassword}
           />
         </View>
 
         {isLoggingIn ? (
           <ActivityIndicator size="large" color="#ffffff" />
         ) : (
-          <TouchableOpacity style={styles.loginButton} onPress={handleUserLogin}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>Entrar</Text>
           </TouchableOpacity>
         )}
