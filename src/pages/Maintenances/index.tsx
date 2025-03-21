@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
@@ -13,12 +12,13 @@ import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
-import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { Navbar } from "./Navbar";
 
 import { styles } from "./styles";
+
+import { OfflineData } from "./OfflineData";
 
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
 import type { Navigation, RouteList } from "@/routes/navigation";
@@ -36,41 +36,6 @@ export const Maintenances = () => {
   const [logo, setLogo] = useState("");
 
   const [loading, setLoading] = useState(true);
-
-  const [offlineCount, setOfflineCount] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [internetConnection, setInternetConnection] = useState(true);
-
-  useEffect(() => {
-    const stopProcessing = startPeriodicQueueProcessing();
-
-    return () => stopProcessing(); // Limpa o intervalo ao desmontar o componente
-  }, []);
-
-  useEffect(() => {
-    const getOfflineQueueCount = async () => {
-      const offlineQueueString = await AsyncStorage.getItem("offline_queue");
-      const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-      setOfflineCount(offlineQueue.length);
-    };
-
-    const processQueueOnReconnect = () => {
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          setInternetConnection(true);
-          setIsProcessing(true);
-          await processOfflineQueue(); // Processa a fila
-          setIsProcessing(false);
-          await getOfflineQueueCount(); // Atualiza o contador
-        } else {
-          setInternetConnection(false);
-        }
-      });
-    };
-
-    getOfflineQueueCount(); // Atualiza o contador ao montar o componente
-    processQueueOnReconnect(); // Observa reconexões de internet
-  }, []);
 
   useEffect(() => {
     const handleGetKanbanData = async () => {
@@ -134,31 +99,15 @@ export const Maintenances = () => {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }
-  }, [logout, navigation, navigationState.index, navigationState.routes, userId]);
+  }, [logout, navigationState.index, navigationState.routes, userId]);
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      <SafeAreaView style={{ backgroundColor: "#fff" }} edges={["top"]}>
+      <SafeAreaView style={styles.navbarContainer} edges={["top"]}>
         <Navbar logoUrl={logo} buildingNanoId={buildingId} />
       </SafeAreaView>
 
-      {offlineCount > 0 && (
-        <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>
-            {`Fila Offline: ${offlineCount} item(s)`}
-          </Text>
-
-          {isProcessing && <Text style={{ color: "green" }}>Processando dados da fila, aguarde...</Text>}
-        </View>
-      )}
-
-      {!internetConnection && (
-        <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
-          {!isProcessing && (
-            <Text style={{ color: "green" }}>Você está offline, alguns serviços podem estar indisponíveis...</Text>
-          )}
-        </View>
-      )}
+      <OfflineData />
 
       {loading ? (
         <ActivityIndicator

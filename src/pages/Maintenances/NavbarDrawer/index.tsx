@@ -2,10 +2,10 @@ import { Modal, TouchableOpacity, Linking, Text, FlatList } from "react-native";
 
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+import { styles } from "./styles";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
-
-import { styles } from "./styles";
 
 interface NavbarDrawerProps {
   open: boolean;
@@ -23,7 +23,7 @@ export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerP
     toggleOpen();
   };
 
-  const options = [
+  const buttons = [
     {
       label: "Acesso web",
       action: openWeb,
@@ -42,7 +42,7 @@ export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerP
         <SafeAreaView style={{ flex: 1 }}>
           <ScreenWithCloseButton title="Opções" onClose={toggleOpen}>
             <FlatList
-              data={options}
+              data={buttons}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.optionItem} onPress={item.action}>

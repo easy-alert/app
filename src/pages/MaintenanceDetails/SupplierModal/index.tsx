@@ -22,7 +22,7 @@ interface SupplierModalProps {
 export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModalProps) => {
   const { userId } = useAuth();
 
-  const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers | undefined>(undefined);
+  const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers>();
 
   const handleLinkMaintenanceSupplier = async (supplierId: string) => {
     try {

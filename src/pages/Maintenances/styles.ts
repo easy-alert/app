@@ -1,6 +1,9 @@
 import { StyleSheet, Dimensions } from "react-native";
 
 export const styles = StyleSheet.create({
+  navbarContainer: {
+    backgroundColor: "#fff",
+  },
   statusContainer: {
     width: Dimensions.get("window").width * 0.85, // Largura da coluna
     padding: 12,
