@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -17,9 +16,12 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
 import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
 import { useAuth } from "@/contexts/AuthContext";
+import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
 
 import { styles } from "./styles";
 
@@ -179,8 +181,8 @@ export const CreateOccasionalMaintenance = () => {
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <SafeAreaView style={styles.fullContainer}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <DateTimePickerModal
           isVisible={showDatePicker}
           mode="date"
@@ -196,202 +198,196 @@ export const CreateOccasionalMaintenance = () => {
           themeVariant={"light"}
         />
 
-        <View style={styles.header}>
-          <Text style={styles.title}>Manutenção avulsa</Text>
+        <ScreenWithCloseButton title="Manutenção avulsa" onClose={() => navigation.goBack()}>
+          <View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Categoria *</Text>
 
-          <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
-            <Icon name="x" size={28} color="#b21d1d" />
-          </TouchableOpacity>
-        </View>
+              <View style={styles.picker}>
+                <Dropdown
+                  placeholder="Selecione a categoria"
+                  placeholderStyle={{ color: "gray" }}
+                  style={{ paddingHorizontal: 12 }}
+                  iconColor="#b21d1d"
+                  data={
+                    categories.map((category) => ({
+                      id: category.id,
+                      name: category.name,
+                    })) as any
+                  }
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="id"
+                  value={occasionalMaintenance.categoryData.id}
+                  onChange={(item) => {
+                    handleOccasionalMaintenanceDataChange({
+                      primaryKey: "categoryData",
+                      value: item.id || "",
+                      secondaryKey: "id",
+                    });
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Categoria *</Text>
-
-            <View style={styles.picker}>
-              <Dropdown
-                placeholder="Selecione a categoria"
-                placeholderStyle={{ color: "gray" }}
-                style={{ paddingHorizontal: 12 }}
-                iconColor="#b21d1d"
-                data={
-                  categories.map((category) => ({
-                    id: category.id,
-                    name: category.name,
-                  })) as any
-                }
-                maxHeight={300}
-                labelField="name"
-                valueField="id"
-                value={occasionalMaintenance.categoryData.id}
-                onChange={(item) => {
-                  handleOccasionalMaintenanceDataChange({
-                    primaryKey: "categoryData",
-                    value: item.id || "",
-                    secondaryKey: "id",
-                  });
-
-                  handleOccasionalMaintenanceDataChange({
-                    primaryKey: "categoryData",
-                    value: item.name || "",
-                    secondaryKey: "name",
-                  });
-                }}
-              />
+                    handleOccasionalMaintenanceDataChange({
+                      primaryKey: "categoryData",
+                      value: item.name || "",
+                      secondaryKey: "name",
+                    });
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Elemento *</Text>
-            <TextInput
-              placeholder="Informe o elemento"
-              placeholderTextColor="gray"
-              style={styles.input}
-              value={occasionalMaintenance.element}
-              onChangeText={(text) =>
-                handleOccasionalMaintenanceDataChange({
-                  primaryKey: "element",
-                  value: text,
-                })
-              }
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Atividade *</Text>
-
-            <TextInput
-              placeholder="Informe o elemento"
-              placeholderTextColor="gray"
-              style={styles.input}
-              value={occasionalMaintenance.activity}
-              onChangeText={(text) =>
-                handleOccasionalMaintenanceDataChange({
-                  primaryKey: "activity",
-                  value: text,
-                })
-              }
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Responsável *</Text>
-
-            <View style={styles.picker}>
-              <Dropdown
-                placeholder="Selecione o responsável"
-                style={{ paddingHorizontal: 12 }}
-                placeholderStyle={{ color: "gray" }}
-                iconColor="#b21d1d"
-                data={responsibleArray}
-                maxHeight={300}
-                labelField="name"
-                valueField="name"
-                value={occasionalMaintenance.responsible}
-                onChange={(value) =>
-                  handleOccasionalMaintenanceDataChange({
-                    primaryKey: "responsible",
-                    value: value.name as string,
-                  })
-                }
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Prioridade *</Text>
-
-            <View style={styles.picker}>
-              <Dropdown
-                placeholder="Selecione a prioridade"
-                placeholderStyle={{ color: "gray" }}
-                style={{ paddingHorizontal: 12 }}
-                iconColor="#b21d1d"
-                data={[
-                  {
-                    id: "low",
-                    name: "Baixa",
-                  },
-                  {
-                    id: "medium",
-                    name: "Média",
-                  },
-                  {
-                    id: "high",
-                    name: "Alta",
-                  },
-                ]}
-                maxHeight={300}
-                labelField="name"
-                valueField="id"
-                value={occasionalMaintenance.priorityName}
-                onChange={(value) =>
-                  handleOccasionalMaintenanceDataChange({
-                    primaryKey: "priorityName",
-                    value: value.id as string,
-                  })
-                }
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Data de execução *</Text>
-
-            <View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Elemento *</Text>
               <TextInput
+                placeholder="Informe o elemento"
+                placeholderTextColor="gray"
                 style={styles.input}
-                value={
-                  occasionalMaintenance.executionDate
-                    ? new Date(occasionalMaintenance.executionDate).toLocaleDateString("pt-BR", {
-                        timeZone: "UTC",
-                      })
-                    : new Date().toLocaleDateString("pt-BR", {
-                        timeZone: "UTC",
-                      })
+                value={occasionalMaintenance.element}
+                onChangeText={(text) =>
+                  handleOccasionalMaintenanceDataChange({
+                    primaryKey: "element",
+                    value: text,
+                  })
                 }
-                placeholder="dd/mm/aaaa"
-                editable={false}
-              />
-
-              <Icon
-                name="calendar"
-                size={24}
-                color="#b21d1d"
-                style={{ position: "absolute", right: 16, top: 8 }}
-                onPress={() => setShowDatePicker(true)}
               />
             </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Atividade *</Text>
+
+              <TextInput
+                placeholder="Informe o elemento"
+                placeholderTextColor="gray"
+                style={styles.input}
+                value={occasionalMaintenance.activity}
+                onChangeText={(text) =>
+                  handleOccasionalMaintenanceDataChange({
+                    primaryKey: "activity",
+                    value: text,
+                  })
+                }
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Responsável *</Text>
+
+              <View style={styles.picker}>
+                <Dropdown
+                  placeholder="Selecione o responsável"
+                  style={{ paddingHorizontal: 12 }}
+                  placeholderStyle={{ color: "gray" }}
+                  iconColor="#b21d1d"
+                  data={responsibleArray}
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="name"
+                  value={occasionalMaintenance.responsible}
+                  onChange={(value) =>
+                    handleOccasionalMaintenanceDataChange({
+                      primaryKey: "responsible",
+                      value: value.name as string,
+                    })
+                  }
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Prioridade *</Text>
+
+              <View style={styles.picker}>
+                <Dropdown
+                  placeholder="Selecione a prioridade"
+                  placeholderStyle={{ color: "gray" }}
+                  style={{ paddingHorizontal: 12 }}
+                  iconColor="#b21d1d"
+                  data={[
+                    {
+                      id: "low",
+                      name: "Baixa",
+                    },
+                    {
+                      id: "medium",
+                      name: "Média",
+                    },
+                    {
+                      id: "high",
+                      name: "Alta",
+                    },
+                  ]}
+                  maxHeight={300}
+                  labelField="name"
+                  valueField="id"
+                  value={occasionalMaintenance.priorityName}
+                  onChange={(value) =>
+                    handleOccasionalMaintenanceDataChange({
+                      primaryKey: "priorityName",
+                      value: value.id as string,
+                    })
+                  }
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Data de execução *</Text>
+
+              <View>
+                <TextInput
+                  style={styles.input}
+                  value={
+                    occasionalMaintenance.executionDate
+                      ? new Date(occasionalMaintenance.executionDate).toLocaleDateString("pt-BR", {
+                          timeZone: "UTC",
+                        })
+                      : new Date().toLocaleDateString("pt-BR", {
+                          timeZone: "UTC",
+                        })
+                  }
+                  placeholder="dd/mm/aaaa"
+                  editable={false}
+                />
+
+                <Icon
+                  name="calendar"
+                  size={24}
+                  color="#b21d1d"
+                  style={{ position: "absolute", right: 16, top: 8 }}
+                  onPress={() => setShowDatePicker(true)}
+                />
+              </View>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              handleCreateOccasionalMaintenance({
-                occasionalMaintenance,
-                occasionalMaintenanceType: "pending",
-                inProgress: true,
-              });
-            }}
-          >
-            <Text style={styles.secondaryLabel}>Criar em execução</Text>
-          </TouchableOpacity>
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                handleCreateOccasionalMaintenance({
+                  occasionalMaintenance,
+                  occasionalMaintenanceType: "pending",
+                  inProgress: true,
+                });
+              }}
+            >
+              <Text style={styles.secondaryLabel}>Criar em execução</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ ...styles.button, backgroundColor: "#b21d1d" }}
-            onPress={() => {
-              handleCreateOccasionalMaintenance({
-                occasionalMaintenance,
-                occasionalMaintenanceType: "pending",
-              });
-            }}
-          >
-            <Text style={styles.buttonLabel}>Criar manutenção</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+            <TouchableOpacity
+              style={{ ...styles.button, backgroundColor: "#b21d1d" }}
+              onPress={() => {
+                handleCreateOccasionalMaintenance({
+                  occasionalMaintenance,
+                  occasionalMaintenanceType: "pending",
+                });
+              }}
+            >
+              <Text style={styles.buttonLabel}>Criar manutenção</Text>
+            </TouchableOpacity>
+          </View>
+        </ScreenWithCloseButton>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };

@@ -1,29 +1,6 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  fullContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingVertical: 18, // Espaçamento no topo e na base
-    paddingHorizontal: 8, // Espaçamento nas laterais
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  closeButton: {
-    padding: 8,
-  },
-  form: {
-    paddingHorizontal: 16,
-  },
   inputContainer: {
     marginBottom: 16,
   },
@@ -54,7 +31,6 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 16,
-    paddingHorizontal: 16,
   },
   button: {
     paddingVertical: 8,

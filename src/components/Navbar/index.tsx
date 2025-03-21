@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Image, SafeAreaView, TouchableOpacity } from "react-native";
+import { View, Image, TouchableOpacity } from "react-native";
 
 import Icon from "react-native-vector-icons/Feather";
 
@@ -18,7 +18,7 @@ export const Navbar = ({ logoUrl, buildingNanoId }: NavbarProps) => {
   const toggleDrawerIsOpen = () => setDrawerIsOpen(!drawerIsOpen);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <>
       <View style={styles.navbar}>
         <TouchableOpacity onPress={toggleDrawerIsOpen} style={styles.hamburgerIcon}>
           <Icon name="menu" size={24} color="#000" />
@@ -32,6 +32,6 @@ export const Navbar = ({ logoUrl, buildingNanoId }: NavbarProps) => {
       </View>
 
       <NavbarDrawer open={drawerIsOpen} toggleOpen={toggleDrawerIsOpen} buildingNanoId={buildingNanoId} />
-    </SafeAreaView>
+    </>
   );
 };

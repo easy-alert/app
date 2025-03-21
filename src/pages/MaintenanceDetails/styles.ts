@@ -1,22 +1,6 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semitransparente
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.7)", // Fundo escuro transparente
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   tag: {
     paddingVertical: 2,
     paddingHorizontal: 4,
@@ -28,26 +12,6 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
   },
-  fullContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingVertical: 18, // Espaçamento no topo e na base
-    paddingHorizontal: 8, // Espaçamento nas laterais
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  closeButton: {
-    padding: 8,
-  },
   buildingName: {
     fontSize: 18,
     fontWeight: "bold",
@@ -57,10 +21,6 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     marginBottom: 16,
-  },
-  content: {
-    paddingBottom: 32,
-    paddingHorizontal: 16,
   },
   infoRow: {
     flexDirection: "row",

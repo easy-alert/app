@@ -7,6 +7,8 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { Navbar } from "@/components/Navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
@@ -134,8 +136,10 @@ export const Maintenances = () => {
   }, [logout, navigation, navigationState.index, navigationState.routes, userId]);
 
   return (
-    <>
-      <Navbar logoUrl={logo} buildingNanoId={buildingId} />
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <SafeAreaView style={{ backgroundColor: "#fff" }} edges={["top"]}>
+        <Navbar logoUrl={logo} buildingNanoId={buildingId} />
+      </SafeAreaView>
 
       {offlineCount > 0 && (
         <View style={{ padding: 10, backgroundColor: "#f8f9fa" }}>
@@ -162,7 +166,7 @@ export const Maintenances = () => {
           style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
         />
       ) : kanbanData.length > 0 ? (
-        <>
+        <View style={{ flex: 1 }}>
           <View
             style={{
               flexDirection: "row",
@@ -306,10 +310,10 @@ export const Maintenances = () => {
               </View>
             ))}
           </ScrollView>
-        </>
+        </View>
       ) : (
         <Text style={{ marginTop: 20, textAlign: "center" }}>Nenhum dado encontrado.</Text>
       )}
-    </>
+    </SafeAreaView>
   );
 };

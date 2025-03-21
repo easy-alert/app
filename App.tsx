@@ -8,7 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function App() {
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
+    <SafeAreaProvider>
       <View style={styles.appContainer}>
         <AuthProvider>
           <Routes />

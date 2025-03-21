@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, SafeAreaView } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation } from "@react-navigation/native";
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "./styles";
 
@@ -57,7 +59,7 @@ export const Buildings = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#c62828" />
       </View>
     );
@@ -65,15 +67,14 @@ export const Buildings = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Escolha uma Edificação</Text>
-        <FlatList
-          data={buildings}
-          keyExtractor={(building) => building?.Building?.id}
-          renderItem={renderBuilding}
-          ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
-        />
-      </View>
+      <Text style={styles.title}>Escolha uma Edificação</Text>
+
+      <FlatList
+        data={buildings}
+        keyExtractor={(building) => building?.Building?.id}
+        renderItem={renderBuilding}
+        ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
+      />
     </SafeAreaView>
   );
 };

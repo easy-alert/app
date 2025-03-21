@@ -2,7 +2,6 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   Image,
   TextInput,
@@ -20,6 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
@@ -34,6 +35,8 @@ import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
 import { SupplierModal } from "@/components/SupplierModal";
 import { useAuth } from "@/contexts/AuthContext";
+
+import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
 
 import { styles } from "./styles";
 import { handleUpload } from "./utils/handleUpload";
@@ -490,493 +493,470 @@ export const MaintenanceDetails = () => {
   }, [maintenanceId]);
 
   return (
-    <>
-      <SupplierModal maintenanceId={maintenanceId} visible={showSupplierModal} onClose={toggleSupplierModal} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <SupplierModal maintenanceId={maintenanceId} visible={showSupplierModal} onClose={toggleSupplierModal} />
 
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#ff3535"
-          style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
-        />
-      ) : (
-        <View style={styles.overlay}>
-          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <SafeAreaView style={styles.fullContainer}>
-              <View style={styles.header}>
-                <Text style={styles.title}>Enviar relato</Text>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
-                  <Icon name="x" size={28} color="#b21d1d" />
-                </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#ff3535"
+            style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
+          />
+        ) : (
+          <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
+            <Text style={styles.buildingName}>{maintenanceDetailsData?.Building.name}</Text>
+
+            <View style={styles.tags}>
+              <View
+                style={[
+                  styles.tag,
+                  {
+                    backgroundColor: getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).color,
+                  },
+                ]}
+              >
+                <Text style={styles.tagText}>{getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).label}</Text>
               </View>
 
-              <ScrollView contentContainerStyle={styles.content} nestedScrollEnabled={true}>
-                <Text style={styles.buildingName}>{maintenanceDetailsData?.Building.name}</Text>
-
-                <View style={styles.tags}>
-                  <View
-                    style={[
-                      styles.tag,
-                      {
-                        backgroundColor: getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).color,
-                      },
-                    ]}
-                  >
-                    <Text style={styles.tagText}>
-                      {getStatus(maintenanceDetailsData?.MaintenancesStatus.name!).label}
-                    </Text>
-                  </View>
-
-                  {maintenanceDetailsData?.Maintenance.MaintenanceType && (
-                    <View
-                      style={[
-                        styles.tag,
-                        {
-                          backgroundColor: getStatus(maintenanceDetailsData?.Maintenance.MaintenanceType.name).color,
-                        },
-                      ]}
-                    >
-                      <Text style={styles.tagText}>
-                        {getStatus(maintenanceDetailsData?.Maintenance.MaintenanceType.name).label}
-                      </Text>
-                    </View>
-                  )}
-
-                  {maintenanceDetailsData?.inProgress && (
-                    <View style={[styles.tag, { backgroundColor: getStatus("Em execução").color }]}>
-                      <Text style={styles.tagText}>{getStatus("Em execução").label}</Text>
-                    </View>
-                  )}
+              {maintenanceDetailsData?.Maintenance.MaintenanceType && (
+                <View
+                  style={[
+                    styles.tag,
+                    {
+                      backgroundColor: getStatus(maintenanceDetailsData?.Maintenance.MaintenanceType.name).color,
+                    },
+                  ]}
+                >
+                  <Text style={styles.tagText}>
+                    {getStatus(maintenanceDetailsData?.Maintenance.MaintenanceType.name).label}
+                  </Text>
                 </View>
+              )}
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Categoria</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
+              {maintenanceDetailsData?.inProgress && (
+                <View style={[styles.tag, { backgroundColor: getStatus("Em execução").color }]}>
+                  <Text style={styles.tagText}>{getStatus("Em execução").label}</Text>
                 </View>
+              )}
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Elemento</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Categoria</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.Category.name}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Atividade</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Elemento</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.element}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Responsável</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Atividade</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.activity}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Fonte</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Responsável</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.responsible}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Observação da manutenção</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Fonte</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.source}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Instruções</Text>
-                  <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance?.instructions[0]?.name}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Observação da manutenção</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance.observation}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Periodicidade</Text>
-                  {maintenanceDetailsData?.Maintenance.MaintenanceType.name === "common" ? (
-                    <Text style={styles.infoValue}>
-                      {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
-                      {(maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1)
-                        ? maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel === "anos" &&
-                          maintenanceDetailsData?.Maintenance.frequency === 1
-                          ? "ano"
-                          : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel
-                        : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.singularLabel}
-                    </Text>
-                  ) : (
-                    <Text style={styles.infoValue}>-</Text>
-                  )}
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Instruções</Text>
+              <Text style={styles.infoValue}>{maintenanceDetailsData?.Maintenance?.instructions[0]?.name}</Text>
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Data de notificação</Text>
-                  <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.notificationDate || "")}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Periodicidade</Text>
+              {maintenanceDetailsData?.Maintenance.MaintenanceType.name === "common" ? (
+                <Text style={styles.infoValue}>
+                  {maintenanceDetailsData?.Maintenance.frequency ?? ""}{" "}
+                  {(maintenanceDetailsData?.Maintenance.frequency ?? 0 > 1)
+                    ? maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel === "anos" &&
+                      maintenanceDetailsData?.Maintenance.frequency === 1
+                      ? "ano"
+                      : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.pluralLabel
+                    : maintenanceDetailsData?.Maintenance.FrequencyTimeInterval.singularLabel}
+                </Text>
+              ) : (
+                <Text style={styles.infoValue}>-</Text>
+              )}
+            </View>
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Data de vencimento</Text>
-                  <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
-                </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Data de notificação</Text>
+              <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.notificationDate || "")}</Text>
+            </View>
 
-                {maintenanceDetailsData?.resolutionDate && (
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Data de conclusão</Text>
-                    <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
-                  </View>
-                )}
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Data de vencimento</Text>
+              <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.dueDate || "")}</Text>
+            </View>
 
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionHeaderText}>Fornecedor</Text>
+            {maintenanceDetailsData?.resolutionDate && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Data de conclusão</Text>
+                <Text style={styles.infoValue}>{formatDate(maintenanceDetailsData?.resolutionDate)}</Text>
+              </View>
+            )}
 
-                  {supplierData ? (
-                    <TouchableOpacity
-                      onPress={() => handleUnlinkMaintenanceSupplier(supplierData.id)}
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <Text style={styles.unlinkText}>Desvincular</Text>
-                      <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity style={styles.unlinkButton} onPress={toggleSupplierModal}>
-                      <Text style={styles.unlinkText}>Vincular</Text>
-                      <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
-                    </TouchableOpacity>
-                  )}
-                </View>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionHeaderText}>Fornecedor</Text>
 
-                {supplierData ? (
-                  <View style={styles.supplierContainer}>
-                    <View style={styles.supplierAvatar}>
-                      <Image
-                        source={{
-                          uri: supplierData.image,
-                        }}
-                        style={styles.supplierAvatarImage}
-                      />
-                    </View>
-                    <View style={styles.supplierDetails}>
-                      <Text style={styles.supplierName}>{supplierData.name}</Text>
-                      <Text style={styles.supplierEmail}>
-                        <Icon name="mail" size={12} /> {supplierData.email || "-"}
-                      </Text>
-                      <Text style={styles.supplierWebsite}>
-                        <Icon name="phone" size={12} /> {supplierData.phone || "-"}
-                      </Text>
-                    </View>
-                  </View>
-                ) : (
-                  <View style={styles.supplierContainer}>
-                    <View style={styles.supplierDetails}>
-                      <Text style={styles.supplierEmail}>Nenhum fornecedor encontrado.</Text>
-                    </View>
-                  </View>
-                )}
+              {supplierData ? (
+                <TouchableOpacity
+                  onPress={() => handleUnlinkMaintenanceSupplier(supplierData.id)}
+                  style={{ flexDirection: "row", alignItems: "center" }}
+                >
+                  <Text style={styles.unlinkText}>Desvincular</Text>
+                  <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity style={styles.unlinkButton} onPress={toggleSupplierModal}>
+                  <Text style={styles.unlinkText}>Vincular</Text>
+                  <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
+                </TouchableOpacity>
+              )}
+            </View>
 
-                {/* Enviar Comentário */}
-                <View style={styles.commentSection}>
-                  <Text style={styles.sectionHeaderText}>Enviar comentário</Text>
-                  <TextInput
-                    style={styles.textArea}
-                    placeholder="Digite seu comentário"
-                    value={comment}
-                    onChangeText={setComment}
-                    multiline={true}
-                    numberOfLines={4}
+            {supplierData ? (
+              <View style={styles.supplierContainer}>
+                <View style={styles.supplierAvatar}>
+                  <Image
+                    source={{
+                      uri: supplierData.image,
+                    }}
+                    style={styles.supplierAvatarImage}
                   />
+                </View>
+                <View style={styles.supplierDetails}>
+                  <Text style={styles.supplierName}>{supplierData.name}</Text>
+                  <Text style={styles.supplierEmail}>
+                    <Icon name="mail" size={12} /> {supplierData.email || "-"}
+                  </Text>
+                  <Text style={styles.supplierWebsite}>
+                    <Icon name="phone" size={12} /> {supplierData.phone || "-"}
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View style={styles.supplierContainer}>
+                <View style={styles.supplierDetails}>
+                  <Text style={styles.supplierEmail}>Nenhum fornecedor encontrado.</Text>
+                </View>
+              </View>
+            )}
 
-                  {/* Renderização dos arquivos enviados */}
-                  <View style={styles.uploadedFilesContainer}>
-                    {uploadedFiles.map((file, index) => (
-                      <View key={index} style={styles.uploadedFileItem}>
-                        <View style={styles.uploadedFileDetails}>
-                          <Text style={styles.uploadedFileName}>{file.originalName}</Text>
-                        </View>
+            {/* Enviar Comentário */}
+            <View style={styles.commentSection}>
+              <Text style={styles.sectionHeaderText}>Enviar comentário</Text>
+              <TextInput
+                style={styles.textArea}
+                placeholder="Digite seu comentário"
+                value={comment}
+                onChangeText={setComment}
+                multiline={true}
+                numberOfLines={4}
+              />
 
-                        <TouchableOpacity
-                          style={styles.deleteButton}
-                          onPress={() => {
-                            setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
-                          }}
-                        >
-                          <Icon name="trash" size={20} color="#fff" />
-                        </TouchableOpacity>
-                      </View>
-                    ))}
-                  </View>
+              {/* Renderização dos arquivos enviados */}
+              <View style={styles.uploadedFilesContainer}>
+                {uploadedFiles.map((file, index) => (
+                  <View key={index} style={styles.uploadedFileItem}>
+                    <View style={styles.uploadedFileDetails}>
+                      <Text style={styles.uploadedFileName}>{file.originalName}</Text>
+                    </View>
 
-                  <View style={styles.commentButtons}>
                     <TouchableOpacity
-                      style={styles.commentButton}
+                      style={styles.deleteButton}
+                      onPress={() => {
+                        setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+                      }}
+                    >
+                      <Icon name="trash" size={20} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+
+              <View style={styles.commentButtons}>
+                <TouchableOpacity
+                  style={styles.commentButton}
+                  onPress={async () => {
+                    const uploadedFile = await handleUpload();
+                    if (uploadedFile) {
+                      setUploadedFiles((prev) => [
+                        ...prev,
+                        {
+                          originalName: uploadedFile.name,
+                          url: uploadedFile.url,
+                          type: uploadedFile.type,
+                        },
+                      ]);
+                    }
+                  }}
+                >
+                  <Icon name="upload" size={20} color="#fff" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.commentButton}
+                  onPress={() => {
+                    const maintenanceId = maintenanceDetailsData?.id;
+
+                    if (maintenanceId && comment) {
+                      handleCreateMaintenanceActivity(maintenanceId, comment, uploadedFiles);
+                    } else {
+                      console.error("Maintenance ID ou Supplier ID está indefinido.");
+                    }
+                  }}
+                >
+                  <Icon name="send" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Históricos */}
+            <Text style={styles.sectionHeaderText}>Históricos</Text>
+
+            {/* Botões de filtro */}
+            <View style={styles.historyTabs}>
+              <TouchableOpacity
+                style={[styles.historyTabButton, activeTab === "comment" && styles.activeTabButton]}
+                onPress={() => setActiveTab("comment")}
+              >
+                <Text style={[styles.historyTabText, activeTab === "comment" && styles.activeTabText]}>
+                  Comentários
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.historyTabButton, activeTab === "notification" && styles.activeTabButton]}
+                onPress={() => setActiveTab("notification")}
+              >
+                <Text style={[styles.historyTabText, activeTab === "notification" && styles.activeTabText]}>
+                  Notificações
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Lista de históricos */}
+            <View style={styles.historyList}>
+              <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
+                {filteredData && filteredData?.length >= 1 ? (
+                  filteredData.map((item) => (
+                    <View key={item.id} style={styles.historyItem}>
+                      <View style={styles.historyIconContainer}>
+                        <Icon name="activity" size={20} color="#ffffff" />
+                      </View>
+
+                      <View style={styles.historyContent}>
+                        <Text style={styles.historyTitle}>{item.title}</Text>
+                        <Text style={styles.historyTimestamp}>{formatDate(item.createdAt)}</Text>
+                        <Text style={styles.historyDescription}>{item.content}</Text>
+
+                        {/* Renderizar imagens, se existirem */}
+                        {item.images && item.images.length > 0 && (
+                          <View style={styles.imagePreviewContainer}>
+                            {item.images.map((image) => (
+                              <View key={image.id} style={styles.imageItem}>
+                                <Image source={{ uri: image.url }} style={styles.previewImage} />
+                                <Text
+                                  style={styles.imageName}
+                                  numberOfLines={1} // Limita a uma linha
+                                  ellipsizeMode="tail"
+                                >
+                                  {image.name}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  ))
+                ) : (
+                  <Text>Não há registros no momento</Text>
+                )}
+              </ScrollView>
+            </View>
+
+            {/* Relato */}
+            <View style={styles.container}>
+              {/* Input de Custo */}
+              {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" ? (
+                maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" ? (
+                  <>
+                    <Text style={styles.sectionHeaderText}>Custo</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="R$ 0,00"
+                      value={cost}
+                      onChangeText={(text) => handleChangeCost(text)}
+                      keyboardType="numeric"
+                    />
+                  </>
+                ) : (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Custo</Text>
+                    <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
+                  </View>
+                )
+              ) : (
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Custo</Text>
+                  <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
+                </View>
+              )}
+
+              {/* Botão de anexar arquivos */}
+              <Text style={styles.sectionHeaderText}>Anexos</Text>
+              <View style={styles.uploadContainer}>
+                {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                  maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+                    <TouchableOpacity
                       onPress={async () => {
-                        const uploadedFile = await handleUpload();
+                        const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
+
                         if (uploadedFile) {
-                          setUploadedFiles((prev) => [
-                            ...prev,
+                          setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
+                        }
+                      }}
+                    >
+                      <Icon name="paperclip" size={24} color="#c62828" />
+                    </TouchableOpacity>
+                  )}
+                <View style={styles.fileList}>
+                  {files.map((file, index) => (
+                    <TouchableOpacity onPress={() => Linking.openURL(file.url)}>
+                      <View key={index} style={styles.fileItem}>
+                        <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
+                          {file.originalName}
+                        </Text>
+                        {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                          maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+                            <TouchableOpacity
+                              onPress={() => {
+                                const updatedFiles = removeItem(images, index);
+                                setFiles(updatedFiles);
+                              }}
+                            >
+                              <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+                            </TouchableOpacity>
+                          )}
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Botão de anexar imagens */}
+              <Text style={styles.sectionHeaderText}>Imagens</Text>
+              <View style={styles.uploadContainer}>
+                {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                  maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        const uploadedImage = await handleUpload("image");
+
+                        if (uploadedImage) {
+                          setImages((prev) => [...prev, uploadedImage]);
+                        }
+                      }}
+                    >
+                      <Icon name="image" size={24} color="#c62828" />
+                    </TouchableOpacity>
+                  )}
+                <View style={styles.fileList}>
+                  {images.map((image, index) => (
+                    <View key={index} style={styles.fileItem}>
+                      <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
+                        <Image source={{ uri: image.url }} style={styles.previewImage} />
+                      </TouchableOpacity>
+                      {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                        maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+                          <TouchableOpacity
+                            onPress={() => {
+                              const updatedImages = removeItem(images, index);
+                              setImages(updatedImages);
+                            }}
+                          >
+                            <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+                          </TouchableOpacity>
+                        )}
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              {/* Botões de ação */}
+              {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
+                maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.secondaryActionButton} onPress={handleChangeMaintenanceProgress}>
+                      <Text style={styles.secondaryActionButtonText}>
+                        {maintenanceDetailsData?.inProgress ? "Parar" : "Iniciar"}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.secondaryActionButton}
+                      onPress={() => {
+                        if (maintenanceDetailsData?.id) {
+                          handleSaveMaintenanceProgress(
+                            maintenanceDetailsData?.id,
+                            convertCostToInteger(cost),
+                            files,
+                            images,
+                          );
+                        }
+                      }}
+                    >
+                      <Text style={styles.secondaryActionButtonText}>Salvar</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.primaryActionButton}
+                      onPress={() => {
+                        if (maintenanceDetailsData?.id) {
+                          Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
                             {
-                              originalName: uploadedFile.name,
-                              url: uploadedFile.url,
-                              type: uploadedFile.type,
+                              text: "Cancelar",
+                              style: "cancel",
+                            },
+                            {
+                              text: "Sim",
+                              onPress: () => {
+                                handleFinishMaintenance(
+                                  maintenanceDetailsData?.id,
+                                  convertCostToInteger(cost),
+                                  files,
+                                  images,
+                                );
+                              },
                             },
                           ]);
                         }
                       }}
                     >
-                      <Icon name="upload" size={20} color="#fff" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.commentButton}
-                      onPress={() => {
-                        const maintenanceId = maintenanceDetailsData?.id;
-
-                        if (maintenanceId && comment) {
-                          handleCreateMaintenanceActivity(maintenanceId, comment, uploadedFiles);
-                        } else {
-                          console.error("Maintenance ID ou Supplier ID está indefinido.");
-                        }
-                      }}
-                    >
-                      <Icon name="send" size={20} color="#fff" />
+                      <Text style={styles.actionButtonText}>Finalizar manutenção</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
-
-                {/* Históricos */}
-                <Text style={styles.sectionHeaderText}>Históricos</Text>
-
-                {/* Botões de filtro */}
-                <View style={styles.historyTabs}>
-                  <TouchableOpacity
-                    style={[styles.historyTabButton, activeTab === "comment" && styles.activeTabButton]}
-                    onPress={() => setActiveTab("comment")}
-                  >
-                    <Text style={[styles.historyTabText, activeTab === "comment" && styles.activeTabText]}>
-                      Comentários
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.historyTabButton, activeTab === "notification" && styles.activeTabButton]}
-                    onPress={() => setActiveTab("notification")}
-                  >
-                    <Text style={[styles.historyTabText, activeTab === "notification" && styles.activeTabText]}>
-                      Notificações
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Lista de históricos */}
-                <View style={styles.historyList}>
-                  <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
-                    {filteredData && filteredData?.length >= 1 ? (
-                      filteredData.map((item) => (
-                        <View key={item.id} style={styles.historyItem}>
-                          <View style={styles.historyIconContainer}>
-                            <Icon name="activity" size={20} color="#ffffff" />
-                          </View>
-
-                          <View style={styles.historyContent}>
-                            <Text style={styles.historyTitle}>{item.title}</Text>
-                            <Text style={styles.historyTimestamp}>{formatDate(item.createdAt)}</Text>
-                            <Text style={styles.historyDescription}>{item.content}</Text>
-
-                            {/* Renderizar imagens, se existirem */}
-                            {item.images && item.images.length > 0 && (
-                              <View style={styles.imagePreviewContainer}>
-                                {item.images.map((image) => (
-                                  <View key={image.id} style={styles.imageItem}>
-                                    <Image source={{ uri: image.url }} style={styles.previewImage} />
-                                    <Text
-                                      style={styles.imageName}
-                                      numberOfLines={1} // Limita a uma linha
-                                      ellipsizeMode="tail"
-                                    >
-                                      {image.name}
-                                    </Text>
-                                  </View>
-                                ))}
-                              </View>
-                            )}
-                          </View>
-                        </View>
-                      ))
-                    ) : (
-                      <Text>Não há registros no momento</Text>
-                    )}
-                  </ScrollView>
-                </View>
-
-                {/* Relato */}
-                <View style={styles.container}>
-                  {/* Input de Custo */}
-                  {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" ? (
-                    maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" ? (
-                      <>
-                        <Text style={styles.sectionHeaderText}>Custo</Text>
-                        <TextInput
-                          style={styles.input}
-                          placeholder="R$ 0,00"
-                          value={cost}
-                          onChangeText={(text) => handleChangeCost(text)}
-                          keyboardType="numeric"
-                        />
-                      </>
-                    ) : (
-                      <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>Custo</Text>
-                        <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
-                      </View>
-                    )
-                  ) : (
-                    <View style={styles.infoRow}>
-                      <Text style={styles.infoLabel}>Custo</Text>
-                      <Text style={styles.infoValue}>{`R$ ${cost}`}</Text>
-                    </View>
-                  )}
-
-                  {/* Botão de anexar arquivos */}
-                  <Text style={styles.sectionHeaderText}>Anexos</Text>
-                  <View style={styles.uploadContainer}>
-                    {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                      maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
-                        <TouchableOpacity
-                          onPress={async () => {
-                            const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
-
-                            if (uploadedFile) {
-                              setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
-                            }
-                          }}
-                        >
-                          <Icon name="paperclip" size={24} color="#c62828" />
-                        </TouchableOpacity>
-                      )}
-                    <View style={styles.fileList}>
-                      {files.map((file, index) => (
-                        <TouchableOpacity onPress={() => Linking.openURL(file.url)}>
-                          <View key={index} style={styles.fileItem}>
-                            <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
-                              {file.originalName}
-                            </Text>
-                            {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                              maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    const updatedFiles = removeItem(images, index);
-                                    setFiles(updatedFiles);
-                                  }}
-                                >
-                                  <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                                </TouchableOpacity>
-                              )}
-                          </View>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Botão de anexar imagens */}
-                  <Text style={styles.sectionHeaderText}>Imagens</Text>
-                  <View style={styles.uploadContainer}>
-                    {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                      maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
-                        <TouchableOpacity
-                          onPress={async () => {
-                            const uploadedImage = await handleUpload("image");
-
-                            if (uploadedImage) {
-                              setImages((prev) => [...prev, uploadedImage]);
-                            }
-                          }}
-                        >
-                          <Icon name="image" size={24} color="#c62828" />
-                        </TouchableOpacity>
-                      )}
-                    <View style={styles.fileList}>
-                      {images.map((image, index) => (
-                        <View key={index} style={styles.fileItem}>
-                          <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
-                            <Image source={{ uri: image.url }} style={styles.previewImage} />
-                          </TouchableOpacity>
-                          {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                            maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
-                              <TouchableOpacity
-                                onPress={() => {
-                                  const updatedImages = removeItem(images, index);
-                                  setImages(updatedImages);
-                                }}
-                              >
-                                <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                              </TouchableOpacity>
-                            )}
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Botões de ação */}
-                  {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                    maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
-                      <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                          style={styles.secondaryActionButton}
-                          onPress={handleChangeMaintenanceProgress}
-                        >
-                          <Text style={styles.secondaryActionButtonText}>
-                            {maintenanceDetailsData?.inProgress ? "Parar" : "Iniciar"}
-                          </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                          style={styles.secondaryActionButton}
-                          onPress={() => {
-                            if (maintenanceDetailsData?.id) {
-                              handleSaveMaintenanceProgress(
-                                maintenanceDetailsData?.id,
-                                convertCostToInteger(cost),
-                                files,
-                                images,
-                              );
-                            }
-                          }}
-                        >
-                          <Text style={styles.secondaryActionButtonText}>Salvar</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                          style={styles.primaryActionButton}
-                          onPress={() => {
-                            if (maintenanceDetailsData?.id) {
-                              Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
-                                {
-                                  text: "Cancelar",
-                                  style: "cancel",
-                                },
-                                {
-                                  text: "Sim",
-                                  onPress: () => {
-                                    handleFinishMaintenance(
-                                      maintenanceDetailsData?.id,
-                                      convertCostToInteger(cost),
-                                      files,
-                                      images,
-                                    );
-                                  },
-                                },
-                              ]);
-                            }
-                          }}
-                        >
-                          <Text style={styles.actionButtonText}>Finalizar manutenção</Text>
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                </View>
-              </ScrollView>
-            </SafeAreaView>
-          </KeyboardAvoidingView>
-          {/* Película e indicador de carregamento */}
-          {loading && (
-            <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color="#ff3535" />
-              <Text style={styles.loadingText}>Aguarde</Text>
+                )}
             </View>
-          )}
-        </View>
-      )}
-    </>
+          </ScreenWithCloseButton>
+        )}
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
