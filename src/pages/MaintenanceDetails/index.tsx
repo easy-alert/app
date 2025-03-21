@@ -32,13 +32,13 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 import { formatDate } from "@/utils/formatDate";
-import { getStatus } from "@/utils/getStatus"; // Ajuste o caminho para a função getStatus
-import { SupplierModal } from "@/components/SupplierModal";
+import { getStatus } from "@/utils/getStatus";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
 
 import { styles } from "./styles";
+import { SupplierModal } from "./SupplierModal";
 import { handleUpload } from "./utils/handleUpload";
 import { convertCostToInteger } from "./utils/convertCostToInteger";
 import { removeItem } from "./utils/removeItem";

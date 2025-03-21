@@ -9,13 +9,14 @@ import { useNavigation, useNavigationState } from "@react-navigation/native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Navbar } from "@/components/Navbar";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
 import { useAuth } from "@/contexts/AuthContext";
+
+import { Navbar } from "./Navbar";
 
 import { styles } from "./styles";
 
