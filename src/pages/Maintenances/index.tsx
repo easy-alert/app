@@ -1,30 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Text } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Icon from "react-native-vector-icons/Feather";
 
-import { useNavigation, useNavigationState } from "@react-navigation/native";
+import { useNavigationState } from "@react-navigation/native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
-import { formatDate } from "@/utils/formatDate";
-import { getStatus } from "@/utils/getStatus";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { Kanban } from "./Kanban";
 import { Navbar } from "./Navbar";
+import { OfflineData } from "./OfflineData";
 
 import { styles } from "./styles";
 
-import { OfflineData } from "./OfflineData";
-
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
-import type { Navigation, RouteList } from "@/routes/navigation";
+import type { RouteList } from "@/routes/navigation";
 
 export const Maintenances = () => {
-  const navigation = useNavigation<Navigation>();
   const navigationState = useNavigationState((state) => state);
 
   const { userId, logout } = useAuth();
@@ -95,7 +91,9 @@ export const Maintenances = () => {
       }
     };
 
-    if ((navigationState.routes[navigationState.index].name as RouteList) === "Maintenances") {
+    const toRefreshData = (navigationState.routes[navigationState.index].name as RouteList) === "Maintenances";
+
+    if (toRefreshData) {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }
@@ -109,160 +107,12 @@ export const Maintenances = () => {
 
       <OfflineData />
 
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#ff3535"
-          style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
-        />
-      ) : kanbanData.length > 0 ? (
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginHorizontal: 6,
-              marginVertical: 12,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                }}
-              >
-                {buildingName}
-              </Text>
+      {loading && <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />}
 
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Buildings")}
-                style={{
-                  marginLeft: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Icon name="repeat" size={24} color="#b21d1d" />
-              </TouchableOpacity>
-            </View>
+      {!loading && kanbanData.length === 0 && <Text style={styles.emptyDataLabel}>Nenhum dado encontrado.</Text>}
 
-            <View>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("CreateOccasionalMaintenance", {
-                    buildingId,
-                  })
-                }
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "#333333",
-                  }}
-                >
-                  Avulsa
-                </Text>
-                <Icon name="plus" size={24} color="#b21d1d" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {kanbanData?.map((column) => (
-              <View key={column.status} style={styles.statusContainer}>
-                <Text style={styles.statusTitle}>{column.status}</Text>
-                <ScrollView style={styles.cardsContainer} nestedScrollEnabled={true}>
-                  {column.maintenances.map(
-                    (maintenance) =>
-                      !maintenance.cantReportExpired && (
-                        <TouchableOpacity
-                          key={maintenance.id}
-                          style={[
-                            styles.card,
-                            {
-                              borderLeftColor: getStatus(column.status).color,
-                              borderLeftWidth: 9,
-                            }, // Cor da borda esquerda
-                          ]}
-                          onPress={() =>
-                            navigation.navigate("MaintenanceDetails", {
-                              maintenanceId: maintenance.id,
-                            })
-                          }
-                        >
-                          <View
-                            style={[
-                              styles.tag,
-                              {
-                                backgroundColor: getStatus(maintenance.type).color,
-                              },
-                            ]}
-                          >
-                            <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
-                          </View>
-
-                          {maintenance.status === "overdue" && (
-                            <View
-                              style={[
-                                styles.tag,
-                                {
-                                  backgroundColor: getStatus(maintenance.status).color,
-                                },
-                              ]}
-                            >
-                              <Text style={styles.tagText}>{getStatus(maintenance.status).label}</Text>
-                            </View>
-                          )}
-
-                          <Text style={styles.cardTitle}>{maintenance.element}</Text>
-
-                          <Text style={styles.cardDescription}>{maintenance.activity}</Text>
-
-                          {(maintenance.status === "completed" || maintenance.status === "overdue") && (
-                            <Text
-                              style={[
-                                styles.cardsContainer,
-                                {
-                                  color: "#34b53a",
-                                },
-                              ]}
-                            >
-                              {`Concluída em ${formatDate(maintenance.date)}`}
-                            </Text>
-                          )}
-
-                          {maintenance.label && (
-                            <Text
-                              style={[
-                                styles.cardFooter,
-                                {
-                                  color: getStatus(maintenance.status).color,
-                                },
-                              ]}
-                            >
-                              {maintenance.label}
-                            </Text>
-                          )}
-                        </TouchableOpacity>
-                      ),
-                  )}
-                </ScrollView>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
-      ) : (
-        <Text style={{ marginTop: 20, textAlign: "center" }}>Nenhum dado encontrado.</Text>
+      {!loading && kanbanData.length > 0 && (
+        <Kanban kanbanData={kanbanData} buildingName={buildingName} buildingId={buildingId} />
       )}
     </SafeAreaView>
   );
