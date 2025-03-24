@@ -13,6 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "scheme": "easyalert",
+    "androidStatusBar": {
+      "barStyle": "dark-content"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.easyalert.app",
