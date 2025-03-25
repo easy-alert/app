@@ -4,14 +4,14 @@ import { Modal, Text, TouchableOpacity } from "react-native";
 
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { styles } from "./styles";
-
-import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
-
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
 import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
 import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
 import { useAuth } from "@/contexts/AuthContext";
+
+import { styles } from "./styles";
+
+import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
 
 interface SupplierModalProps {
   maintenanceId: string;
@@ -55,7 +55,7 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
   }, [maintenanceId]);
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
           <ScreenWithCloseButton title="Vincular fornecedor" onClose={onClose} isScrollView>

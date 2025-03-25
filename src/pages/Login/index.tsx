@@ -13,6 +13,7 @@ import {
 import { Keyboard } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -75,49 +76,53 @@ export const Login = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <View style={styles.container}>
-        <Image source={Logo} style={styles.logo} resizeMode="contain" />
+    <>
+      <StatusBar translucent style="light" />
 
-        <Text style={styles.title}>Login</Text>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <View style={styles.container}>
+          <Image source={Logo} style={styles.logo} resizeMode="contain" />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu número de telefone"
-          placeholderTextColor="#aaa"
-          keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={handlePhoneNumberChange}
-          maxLength={16}
-        />
+          <Text style={styles.title}>Login</Text>
 
-        <View style={styles.passwordContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Digite sua senha caso possua"
+            placeholder="Digite seu número de telefone"
             placeholderTextColor="#aaa"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
+            keyboardType="phone-pad"
+            value={phoneNumber}
+            onChangeText={handlePhoneNumberChange}
+            maxLength={16}
           />
 
-          <MaterialCommunityIcons
-            name={showPassword ? "eye-off" : "eye"}
-            size={24}
-            color="#aaa"
-            style={styles.icon}
-            onPress={toggleShowPassword}
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite sua senha caso possua"
+              placeholderTextColor="#aaa"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+
+            <MaterialCommunityIcons
+              name={showPassword ? "eye-off" : "eye"}
+              size={24}
+              color="#aaa"
+              style={styles.icon}
+              onPress={toggleShowPassword}
+            />
+          </View>
+
+          {isLoggingIn ? (
+            <ActivityIndicator size="large" color="#ffffff" />
+          ) : (
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>Entrar</Text>
+            </TouchableOpacity>
+          )}
         </View>
-
-        {isLoggingIn ? (
-          <ActivityIndicator size="large" color="#ffffff" />
-        ) : (
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Entrar</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
