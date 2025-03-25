@@ -14,15 +14,8 @@ import { LabelInput } from "@/components/LabelInput";
 import { styles } from "./styles";
 
 import type { Navigation } from "@/routes/navigation";
-import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
 import type { ICategory } from "@/types/ICategory";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-
-interface IHandleSetOccasionalMaintenanceData {
-  primaryKey: keyof IOccasionalMaintenanceData;
-  value: string | number | boolean;
-  secondaryKey?: string;
-}
 
 interface IHandleCreateOccasionalMaintenance {
   occasionalMaintenanceType: IOccasionalMaintenanceType;
@@ -37,31 +30,37 @@ export const Form = ({ buildingId }: FormProps) => {
   const { userId } = useAuth();
   const navigation = useNavigation<Navigation>();
 
-  const [occasionalMaintenance, setOccasionalMaintenance] = useState<IOccasionalMaintenanceData>({
-    buildingId: buildingId,
+  const responsibles = [
+    { id: "1", name: "Equipe de manutenção local" },
+    { id: "2", name: "Equipe capacitada" },
+    { id: "3", name: "Equipe Especializada" },
+  ];
 
-    element: "",
-    activity: "",
-    responsible: "",
-    executionDate: new Date().toISOString(),
-    inProgress: false,
-    priorityName: "",
-
-    categoryData: {
-      id: "",
-      name: "",
+  const priorities = [
+    {
+      id: "low",
+      name: "Baixa",
     },
-
-    reportData: {
-      cost: "R$ 0,00",
-      observation: "",
-      files: [],
-      images: [],
+    {
+      id: "medium",
+      name: "Média",
     },
-  });
+    {
+      id: "high",
+      name: "Alta",
+    },
+  ];
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
+  const [element, setElement] = useState<string>("");
+  const [activity, setActivity] = useState<string>("");
+  const [selectedResponsible, setSelectedResponsible] = useState<string>("");
+  const [selectedPriority, setSelectedPriority] = useState<string>("");
+  const [executionDate, setExecutionDate] = useState<string>(new Date().toISOString());
 
   useEffect(() => {
     const handleGetCategoriesByBuildingNanoId = async () => {
@@ -77,55 +76,33 @@ export const Form = ({ buildingId }: FormProps) => {
     handleGetCategoriesByBuildingNanoId();
   }, []);
 
-  const handleOccasionalMaintenanceDataChange = ({
-    primaryKey,
-    value,
-    secondaryKey,
-  }: IHandleSetOccasionalMaintenanceData) => {
-    if (secondaryKey) {
-      setOccasionalMaintenance((prevState) => {
-        const primaryData =
-          typeof prevState[primaryKey] === "object" && prevState[primaryKey] !== null ? prevState[primaryKey] : {};
-
-        return {
-          ...prevState,
-          [primaryKey]: {
-            ...primaryData,
-            [secondaryKey]: value,
-          },
-        };
-      });
-
-      return;
-    }
-
-    setOccasionalMaintenance((prevState) => ({
-      ...prevState,
-      [primaryKey]: value,
-    }));
-  };
-
   const handleCreateOccasionalMaintenance = async ({
     occasionalMaintenanceType,
     inProgress = false,
   }: IHandleCreateOccasionalMaintenance) => {
     setLoading(true);
 
-    const reportDataBody =
-      occasionalMaintenanceType === "finished"
-        ? occasionalMaintenance.reportData
-        : {
-            cost: "R$ 0,00",
-            observation: "",
-            files: [],
-            images: [],
-          };
-
     const occasionalMaintenanceBody = {
-      ...occasionalMaintenance,
       buildingId,
+
+      element,
+      activity,
+      responsible: selectedResponsible,
+      executionDate,
       inProgress,
-      reportData: reportDataBody,
+      priorityName: selectedPriority,
+
+      categoryData: {
+        id: selectedCategoryId,
+        name: selectedCategoryName,
+      },
+
+      reportData: {
+        cost: "R$ 0,00",
+        observation: "",
+        files: [],
+        images: [],
+      },
     };
 
     try {
@@ -152,92 +129,37 @@ export const Form = ({ buildingId }: FormProps) => {
     return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
   }
 
-  const responsible = [
-    { id: "1", name: "Equipe de manutenção local" },
-    { id: "2", name: "Equipe capacitada" },
-    { id: "3", name: "Equipe Especializada" },
-  ];
-
-  const priorities = [
-    {
-      id: "low",
-      name: "Baixa",
-    },
-    {
-      id: "medium",
-      name: "Média",
-    },
-    {
-      id: "high",
-      name: "Alta",
-    },
-  ];
-
   return (
     <View style={styles.container}>
       <LabelInput label="Categoria *">
         <Dropdown
           placeholder="Selecione a categoria"
           data={categories.map((category) => ({
-            id: category.id,
-            name: category.name,
+            id: category.id!,
+            name: category.name!,
           }))}
           labelField="name"
           valueField="id"
-          value={occasionalMaintenance.categoryData.id}
+          value={selectedCategoryId}
           onChange={(item) => {
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: "categoryData",
-              value: item.id || "",
-              secondaryKey: "id",
-            });
-
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: "categoryData",
-              value: item.name || "",
-              secondaryKey: "name",
-            });
+            setSelectedCategoryId(item.id);
+            setSelectedCategoryName(item.name);
           }}
         />
       </LabelInput>
 
-      <LabelInput
-        label="Elemento *"
-        placeholder="Informe o elemento"
-        value={occasionalMaintenance.element}
-        onChangeText={(text) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: "element",
-            value: text,
-          })
-        }
-      />
+      <LabelInput label="Elemento *" placeholder="Informe o elemento" value={element} onChangeText={setElement} />
 
-      <LabelInput
-        label="Atividade *"
-        placeholder="Informe o elemento"
-        value={occasionalMaintenance.activity}
-        onChangeText={(text) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: "activity",
-            value: text,
-          })
-        }
-      />
+      <LabelInput label="Atividade *" placeholder="Informe a atividade" value={activity} onChangeText={setActivity} />
 
       <LabelInput label="Responsável *">
         <Dropdown
           placeholder="Selecione o responsável"
-          data={responsible}
+          data={responsibles}
           labelField="name"
           valueField="name"
-          value={occasionalMaintenance.responsible}
-          onChange={(value) =>
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: "responsible",
-              value: value.name as string,
-            })
-          }
+          value={selectedResponsible}
+          onChange={(value) => setSelectedResponsible(value.name)}
         />
       </LabelInput>
 
@@ -247,57 +169,41 @@ export const Form = ({ buildingId }: FormProps) => {
           data={priorities}
           labelField="name"
           valueField="id"
-          value={occasionalMaintenance.priorityName}
-          onChange={(value) =>
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: "priorityName",
-              value: value.id as string,
-            })
-          }
+          value={selectedPriority}
+          onChange={(value) => setSelectedPriority(value.id)}
         />
       </LabelInput>
 
       <LabelInput label="Data de execução *">
         <DateTimeInput
-          onSelectDate={(selectedDate) => {
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: "executionDate",
-              value: selectedDate?.toISOString() || "",
-            });
-          }}
+          onSelectDate={(selectedDate) => setExecutionDate(selectedDate.toISOString())}
           style={styles.dateTimeInput}
-          value={
-            occasionalMaintenance.executionDate
-              ? new Date(occasionalMaintenance.executionDate).toLocaleDateString("pt-BR", {
-                  timeZone: "UTC",
-                })
-              : new Date().toLocaleDateString("pt-BR", {
-                  timeZone: "UTC",
-                })
-          }
+          value={new Date(executionDate).toLocaleDateString("pt-BR", {
+            timeZone: "UTC",
+          })}
         />
       </LabelInput>
 
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={() => {
+          onPress={() =>
             handleCreateOccasionalMaintenance({
               occasionalMaintenanceType: "pending",
               inProgress: true,
-            });
-          }}
+            })
+          }
         >
           <Text style={styles.secondaryButtonLabel}>Criar em execução</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => {
+          onPress={() =>
             handleCreateOccasionalMaintenance({
               occasionalMaintenanceType: "pending",
-            });
-          }}
+            })
+          }
         >
           <Text style={styles.primaryButtonLabel}>Criar manutenção</Text>
         </TouchableOpacity>

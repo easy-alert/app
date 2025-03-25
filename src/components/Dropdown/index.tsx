@@ -3,7 +3,7 @@ import { DropdownProps } from "react-native-element-dropdown/lib/typescript/comp
 
 import { styles } from "./styles";
 
-export const Dropdown = (props: DropdownProps<any>) => {
+export function Dropdown<T>(props: DropdownProps<T>) {
   return (
     <DropdownElement
       placeholderStyle={[styles.labels, styles.placeholder]}
@@ -15,4 +15,4 @@ export const Dropdown = (props: DropdownProps<any>) => {
       {...props}
     />
   );
-};
+}
