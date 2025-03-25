@@ -1,24 +1,16 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 16,
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  picker: {
-    height: 40,
-    display: "flex",
+  loading: {
+    flex: 1,
+    alignContent: "center",
     justifyContent: "center",
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#999999",
-    borderRadius: 8,
   },
-  input: {
+  container: {
+    flex: 1,
+    gap: 16,
+  },
+  dateTimeInput: {
     height: 40,
     backgroundColor: "#ffffff",
     borderWidth: 1,
@@ -30,19 +22,24 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 16,
   },
-  button: {
+  primaryButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 4,
   },
-  buttonLabel: {
+  secondaryButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: "#b21d1d",
+  },
+  primaryButtonLabel: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#ffffff",
   },
-  secondaryLabel: {
+  secondaryButtonLabel: {
     fontSize: 14,
     color: "#28a5ff",
   },
