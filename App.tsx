@@ -11,7 +11,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 export default function App() {
   return (
     <>
-      <StatusBar translucent />
+      <StatusBar translucent style="dark" />
 
       <SafeAreaProvider>
         <View style={styles.appContainer}>
