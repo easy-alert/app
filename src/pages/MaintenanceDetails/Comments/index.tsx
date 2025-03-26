@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { styles } from "./styles";
 
 import { handleUpload } from "../utils/handleUpload";
+import { OFFLINE_QUEUE_KEY } from "../utils/constants";
 
 import type { IUploadedFile } from "@/types/IUploadedFile";
 import type { Navigation } from "@/routes/navigation";
@@ -21,16 +22,10 @@ import { useAuth } from "@/contexts/AuthContext";
 interface CommentsProps {
   maintenanceId: string;
   setLoading: (loading: boolean) => void;
-  OFFLINE_QUEUE_KEY: string;
-  onCreateMaintenanceActivity: () => Promise<void>;
+  getMaintenanceHistoryActivities: () => Promise<void>;
 }
 
-export const Comments = ({
-  maintenanceId,
-  setLoading,
-  OFFLINE_QUEUE_KEY,
-  onCreateMaintenanceActivity,
-}: CommentsProps) => {
+export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActivities }: CommentsProps) => {
   const navigation = useNavigation<Navigation>();
   const { userId } = useAuth();
 
@@ -79,7 +74,7 @@ export const Comments = ({
 
         setComment("");
         setUploadedFiles([]);
-        await onCreateMaintenanceActivity();
+        await getMaintenanceHistoryActivities();
 
         setLoading(false);
       } else {
@@ -155,14 +150,7 @@ export const Comments = ({
           onPress={async () => {
             const uploadedFile = await handleUpload();
             if (uploadedFile) {
-              setUploadedFiles((prev) => [
-                ...prev,
-                {
-                  originalName: uploadedFile.name,
-                  url: uploadedFile.url,
-                  type: uploadedFile.type,
-                },
-              ]);
+              setUploadedFiles((prev) => [...prev, uploadedFile]);
             }
           }}
         >

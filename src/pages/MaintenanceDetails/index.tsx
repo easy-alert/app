@@ -20,24 +20,25 @@ import { Attachments } from "./Attachments";
 import { Costs } from "./Costs";
 import { CallToActions } from "./CallToActions";
 
+import { styles } from "./styles";
+
 import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { ISupplier } from "@/types/ISupplier";
 import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
-
-const OFFLINE_QUEUE_KEY = "offline_queue";
+import type { IFile } from "@/types/IFile";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
   const { maintenanceId } = route.params as MaintenanceDetailsParams;
 
-  const [maintenanceDetailsData, setMaintenanceDetailsData] = useState<IMaintenance>();
-  const [supplierData, setSupplierData] = useState<ISupplier | null>();
-  const [historyActivitiesData, setHistoryActivitiesData] = useState<IMaintenanceHistoryActivities>();
-  const [cost, setCost] = useState("0,00"); // Estado para o custo
-  const [files, setFiles] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para os arquivos ainda não upados
-  const [images, setImages] = useState<{ originalName: string; url: string; name: string }[]>([]); // Estado para as imagens ainda não upadas
+  const [maintenanceDetails, setMaintenanceDetails] = useState<IMaintenance>();
+  const [supplier, setSupplier] = useState<ISupplier>();
+  const [historyActivities, setHistoryActivities] = useState<IMaintenanceHistoryActivities>();
+  const [cost, setCost] = useState("0,00");
+  const [files, setFiles] = useState<IFile[]>([]);
+  const [images, setImages] = useState<IFile[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleGetMaintenanceDetails = async () => {
@@ -46,7 +47,7 @@ export const MaintenanceDetails = () => {
         maintenanceHistoryId: maintenanceId,
       });
 
-      setMaintenanceDetailsData(responseData);
+      setMaintenanceDetails(responseData);
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceDetails ~ error:", error);
     }
@@ -72,7 +73,7 @@ export const MaintenanceDetails = () => {
         maintenanceHistoryId: maintenanceId,
       });
 
-      setHistoryActivitiesData(responseData);
+      setHistoryActivities(responseData);
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
     }
@@ -85,11 +86,11 @@ export const MaintenanceDetails = () => {
       });
 
       if (responseData?.suppliers?.length === 0) {
-        setSupplierData(null);
+        setSupplier(undefined);
         return;
       }
 
-      setSupplierData(responseData?.suppliers[0]);
+      setSupplier(responseData?.suppliers[0]);
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceSupplier ~ error:", error);
     }
@@ -97,10 +98,6 @@ export const MaintenanceDetails = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      if (!maintenanceId) {
-        return;
-      }
-
       setLoading(true);
 
       try {
@@ -119,45 +116,41 @@ export const MaintenanceDetails = () => {
   }, [maintenanceId]);
 
   if (loading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        color="#ff3535"
-        style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
-      />
-    );
+    return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
+  }
+
+  if (!maintenanceDetails) {
+    // TODO: adicionar tela de erro caso não encontre os dados
+    return null;
   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
-          <Header maintenanceDetailsData={maintenanceDetailsData!} />
-          <DataLabels maintenanceDetailsData={maintenanceDetailsData!} />
+          <Header maintenanceDetails={maintenanceDetails} />
+          <DataLabels maintenanceDetails={maintenanceDetails} />
           <Suppliers
-            supplierData={supplierData}
+            supplier={supplier}
             maintenanceId={maintenanceId}
-            handleGetMaintenanceSupplier={handleGetMaintenanceSupplier}
+            getMaintenanceSupplier={handleGetMaintenanceSupplier}
           />
           <Comments
             maintenanceId={maintenanceId}
             setLoading={setLoading}
-            OFFLINE_QUEUE_KEY={OFFLINE_QUEUE_KEY}
-            onCreateMaintenanceActivity={handleGetMaintenanceHistoryActivities}
+            getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
           />
-          <History historyActivitiesData={historyActivitiesData} />
-          <Costs maintenanceDetailsData={maintenanceDetailsData} cost={cost} setCost={setCost} />
+          <History historyActivities={historyActivities} />
+          <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
           <Attachments
-            maintenanceDetailsData={maintenanceDetailsData}
+            maintenanceDetails={maintenanceDetails}
             files={files}
             images={images}
             setFiles={setFiles}
             setImages={setImages}
           />
           <CallToActions
-            maintenanceId={maintenanceId}
-            maintenanceDetailsData={maintenanceDetailsData}
-            OFFLINE_QUEUE_KEY={OFFLINE_QUEUE_KEY}
+            maintenanceDetails={maintenanceDetails}
             files={files}
             images={images}
             cost={cost}

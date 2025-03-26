@@ -1,29 +1,19 @@
-interface IReportAnnexes {
-  name: string;
-  originalName: string;
-  url: string;
-}
-
-interface IReportImages {
-  name: string;
-  originalName: string;
-  url: string;
-}
+import type { IFile } from "./IFile";
 
 interface IMaintenanceReport {
   id: string;
   cost: number | undefined;
   observation: string;
-  ReportAnnexes: IReportAnnexes[];
-  ReportImages: IReportImages[];
+  ReportAnnexes: IFile[];
+  ReportImages: IFile[];
 }
 
 interface IMaintenanceReportProgress {
   id: string;
   cost: number;
   observation: string;
-  ReportAnnexesProgress: IReportAnnexes[];
-  ReportImagesProgress: IReportImages[];
+  ReportAnnexesProgress: IFile[];
+  ReportImagesProgress: IFile[];
 }
 
 interface IMaintenance {

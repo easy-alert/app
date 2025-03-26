@@ -6,12 +6,12 @@ import { styles } from "./styles";
 import type { IMaintenance } from "@/types/IMaintenance";
 
 interface CostsProps {
-  maintenanceDetailsData?: IMaintenance;
+  maintenanceDetails: IMaintenance;
   cost: string;
   setCost: (cost: string) => void;
 }
 
-export const Costs = ({ maintenanceDetailsData, cost, setCost }: CostsProps) => {
+export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
   const formatCurrency = (text: string) => {
     // Remove todos os caracteres não numéricos
     const numericValue = text.replace(/[^0-9]/g, "");
@@ -34,8 +34,8 @@ export const Costs = ({ maintenanceDetailsData, cost, setCost }: CostsProps) => 
   return (
     <View style={styles.container}>
       {/* Input de Custo */}
-      {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" ? (
-        maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" ? (
+      {maintenanceDetails.MaintenancesStatus.name !== "completed" ? (
+        maintenanceDetails.MaintenancesStatus.name !== "overdue" ? (
           <>
             <Text style={styles.sectionHeaderText}>Custo</Text>
             <TextInput

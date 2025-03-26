@@ -14,29 +14,33 @@ import { SupplierModal } from "../SupplierModal";
 import type { ISupplier } from "@/types/ISupplier";
 
 interface SuppliersProps {
-  supplierData?: ISupplier | null;
+  supplier?: ISupplier;
   maintenanceId: string;
-  handleGetMaintenanceSupplier: () => Promise<void>;
+  getMaintenanceSupplier: () => Promise<void>;
 }
 
-export const Suppliers = ({ supplierData, maintenanceId, handleGetMaintenanceSupplier }: SuppliersProps) => {
+export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: SuppliersProps) => {
   const { userId } = useAuth();
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
   const toggleSupplierModal = async () => {
-    handleGetMaintenanceSupplier();
+    getMaintenanceSupplier();
     setShowSupplierModal((prev) => !prev);
   };
 
-  const handleUnlinkMaintenanceSupplier = async (supplierId: string) => {
+  const handleUnlinkMaintenanceSupplier = async () => {
+    if (!supplier) {
+      return;
+    }
+
     await unlinkMaintenanceSupplier({
       maintenanceHistoryId: maintenanceId,
-      supplierId,
+      supplierId: supplier.id,
       userId,
     });
 
-    await handleGetMaintenanceSupplier();
+    await getMaintenanceSupplier();
   };
 
   return (
@@ -47,9 +51,9 @@ export const Suppliers = ({ supplierData, maintenanceId, handleGetMaintenanceSup
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionHeaderText}>Fornecedor</Text>
 
-          {supplierData ? (
+          {supplier ? (
             <TouchableOpacity
-              onPress={() => handleUnlinkMaintenanceSupplier(supplierData.id)}
+              onPress={handleUnlinkMaintenanceSupplier}
               style={{ flexDirection: "row", alignItems: "center" }}
             >
               <Text style={styles.unlinkText}>Desvincular</Text>
@@ -63,23 +67,23 @@ export const Suppliers = ({ supplierData, maintenanceId, handleGetMaintenanceSup
           )}
         </View>
 
-        {supplierData ? (
+        {supplier ? (
           <View style={styles.supplierContainer}>
             <View style={styles.supplierAvatar}>
               <Image
                 source={{
-                  uri: supplierData.image,
+                  uri: supplier.image,
                 }}
                 style={styles.supplierAvatarImage}
               />
             </View>
             <View style={styles.supplierDetails}>
-              <Text style={styles.supplierName}>{supplierData.name}</Text>
+              <Text style={styles.supplierName}>{supplier.name}</Text>
               <Text style={styles.supplierEmail}>
-                <Icon name="mail" size={12} /> {supplierData.email || "-"}
+                <Icon name="mail" size={12} /> {supplier.email || "-"}
               </Text>
               <Text style={styles.supplierWebsite}>
-                <Icon name="phone" size={12} /> {supplierData.phone || "-"}
+                <Icon name="phone" size={12} /> {supplier.phone || "-"}
               </Text>
             </View>
           </View>

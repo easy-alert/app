@@ -11,7 +11,7 @@ export const baseApi = axios.create({
 });
 
 baseApi.interceptors.request.use(
-  async (config: any) => {
+  async (config) => {
     const token = await AsyncStorage.getItem("authToken");
 
     if (token) {

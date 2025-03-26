@@ -63,13 +63,13 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
 
             <Text style={styles.sectionHeaderText}>Sugeridos</Text>
 
-            {suppliersData?.suggestedSuppliers.map((suppliers) => (
+            {suppliersData?.suggestedSuppliers.map((supplier) => (
               <TouchableOpacity
-                key={suppliers.id}
+                key={supplier.id}
                 style={styles.supplierOption}
-                onPress={() => handleLinkMaintenanceSupplier(suppliers.id)}
+                onPress={() => handleLinkMaintenanceSupplier(supplier.id)}
               >
-                <Text style={styles.supplierOptionText}>{suppliers.name}</Text>
+                <Text style={styles.supplierOptionText}>{supplier.name}</Text>
               </TouchableOpacity>
             ))}
 

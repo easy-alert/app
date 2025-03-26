@@ -7,10 +7,12 @@ import { useNavigation } from "@react-navigation/native";
 import { styles } from "./styles";
 
 import { convertCostToInteger } from "../utils/convertCostToInteger";
+import { OFFLINE_QUEUE_KEY } from "../utils/constants";
 
 import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { Navigation } from "@/routes/navigation";
+import type { IFile } from "@/types/IFile";
 
 import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
@@ -19,22 +21,18 @@ import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface CallToActionsProps {
-  maintenanceId: string;
-  maintenanceDetailsData?: IMaintenance;
-  OFFLINE_QUEUE_KEY: string;
-  files: { originalName: string; url: string; name: string }[];
-  images: { originalName: string; url: string; name: string }[];
+  maintenanceDetails: IMaintenance;
+  files: IFile[];
+  images: IFile[];
   cost: string;
-  setFiles: (files: { originalName: string; url: string; name: string }[]) => void;
-  setImages: (images: { originalName: string; url: string; name: string }[]) => void;
+  setFiles: (files: IFile[]) => void;
+  setImages: (images: IFile[]) => void;
   setCost: (cost: string) => void;
   setLoading: (loading: boolean) => void;
 }
 
 export const CallToActions = ({
-  maintenanceId,
-  maintenanceDetailsData,
-  OFFLINE_QUEUE_KEY,
+  maintenanceDetails,
   files,
   images,
   cost,
@@ -51,8 +49,8 @@ export const CallToActions = ({
 
     try {
       await updateMaintenanceProgress({
-        maintenanceHistoryId: maintenanceId,
-        inProgressChange: !maintenanceDetailsData?.inProgress,
+        maintenanceHistoryId: maintenanceDetails.id,
+        inProgressChange: !maintenanceDetails.inProgress,
         syndicNanoId: "",
         userId,
       });
@@ -62,8 +60,10 @@ export const CallToActions = ({
     }
   };
 
-  const handleSaveMaintenanceProgress = async (maintenanceId: string, cost: number, files: any, images: any) => {
+  const handleSaveMaintenanceProgress = async () => {
     setLoading(true);
+
+    const formatedCost = convertCostToInteger(cost);
 
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
@@ -112,11 +112,11 @@ export const CallToActions = ({
 
         // If online, send data to the server
         await updateMaintenance({
-          maintenanceHistoryId: maintenanceId,
+          maintenanceHistoryId: maintenanceDetails.id,
           syndicNanoId: "",
           userId,
           maintenanceReport: {
-            cost: cost,
+            cost: formatedCost,
             observation: "",
           },
           files: filesUploaded,
@@ -133,13 +133,13 @@ export const CallToActions = ({
         const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
         // Include file and image metadata instead of uploading
-        const filesToQueue = files.map((file: { originalName: any; url: any; type: any }) => ({
+        const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
           type: file.type,
         }));
 
-        const imagesToQueue = images.map((image: { originalName: any; url: any; type: any }) => ({
+        const imagesToQueue = images.map((image) => ({
           originalName: image.originalName,
           uri: image.url,
           type: image.type,
@@ -148,8 +148,8 @@ export const CallToActions = ({
         const newEntry = {
           type: "saveProgress",
           userId,
-          maintenanceId,
-          cost,
+          maintenanceId: maintenanceDetails.id,
+          cost: formatedCost,
           files: filesToQueue,
           images: imagesToQueue,
           timestamp: new Date().toISOString(),
@@ -170,8 +170,10 @@ export const CallToActions = ({
     }
   };
 
-  const handleFinishMaintenance = async (maintenanceId: string, cost: number, files: any, images: any) => {
+  const handleFinishMaintenance = async () => {
     setLoading(true);
+
+    const formatedCost = convertCostToInteger(cost);
 
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
@@ -220,11 +222,11 @@ export const CallToActions = ({
 
         // If online, send data to the server
         await updateMaintenanceFinish({
-          maintenanceHistoryId: maintenanceId,
+          maintenanceHistoryId: maintenanceDetails.id,
           syndicNanoId: "",
           userId,
           maintenanceReport: {
-            cost: cost,
+            cost: formatedCost,
             observation: "",
           },
           files: filesUploaded,
@@ -241,13 +243,13 @@ export const CallToActions = ({
         const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
         // Include file and image metadata instead of uploading
-        const filesToQueue = files.map((file: { originalName: any; url: any; type: any }) => ({
+        const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
           type: file.type,
         }));
 
-        const imagesToQueue = images.map((image: { originalName: any; url: any; type: any }) => ({
+        const imagesToQueue = images.map((image) => ({
           originalName: image.originalName,
           uri: image.url,
           type: image.type,
@@ -256,8 +258,8 @@ export const CallToActions = ({
         const newEntry = {
           type: "finishMaintenance",
           userId,
-          maintenanceId,
-          cost,
+          maintenanceId: maintenanceDetails.id,
+          cost: formatedCost,
           files: filesToQueue,
           images: imagesToQueue,
           timestamp: new Date().toISOString(),
@@ -280,30 +282,23 @@ export const CallToActions = ({
 
   return (
     <View>
-      {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-        maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+      {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+        maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.secondaryActionButton} onPress={handleChangeMaintenanceProgress}>
               <Text style={styles.secondaryActionButtonText}>
-                {maintenanceDetailsData?.inProgress ? "Parar" : "Iniciar"}
+                {maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.secondaryActionButton}
-              onPress={() => {
-                if (maintenanceDetailsData?.id) {
-                  handleSaveMaintenanceProgress(maintenanceDetailsData?.id, convertCostToInteger(cost), files, images);
-                }
-              }}
-            >
+            <TouchableOpacity style={styles.secondaryActionButton} onPress={handleSaveMaintenanceProgress}>
               <Text style={styles.secondaryActionButtonText}>Salvar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.primaryActionButton}
               onPress={() => {
-                if (maintenanceDetailsData?.id) {
+                if (maintenanceDetails.id) {
                   Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
                     {
                       text: "Cancelar",
@@ -311,9 +306,7 @@ export const CallToActions = ({
                     },
                     {
                       text: "Sim",
-                      onPress: () => {
-                        handleFinishMaintenance(maintenanceDetailsData?.id, convertCostToInteger(cost), files, images);
-                      },
+                      onPress: handleFinishMaintenance,
                     },
                   ]);
                 }

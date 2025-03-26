@@ -11,12 +11,12 @@ import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryA
 import { formatDate } from "@/utils/formatDate";
 
 interface HistoryProps {
-  historyActivitiesData?: IMaintenanceHistoryActivities;
+  historyActivities?: IMaintenanceHistoryActivities;
 }
 
-export const History = ({ historyActivitiesData }: HistoryProps) => {
+export const History = ({ historyActivities }: HistoryProps) => {
   const [activeTab, setActiveTab] = useState<"comment" | "notification">("comment");
-  const filteredData = historyActivitiesData?.maintenanceHistoryActivities?.filter((item) => item.type === activeTab);
+  const filteredData = historyActivities?.maintenanceHistoryActivities?.filter((item) => item.type === activeTab);
 
   return (
     <View>

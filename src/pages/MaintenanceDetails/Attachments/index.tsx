@@ -8,39 +8,24 @@ import { removeItem } from "../utils/removeItem";
 import { handleUpload } from "../utils/handleUpload";
 
 import type { IMaintenance } from "@/types/IMaintenance";
+import type { IFile } from "@/types/IFile";
 
 interface AttachmentsProps {
-  maintenanceDetailsData?: IMaintenance;
-  files: { originalName: string; url: string; name: string }[];
-  images: { originalName: string; url: string; name: string }[];
-  setFiles: React.Dispatch<
-    React.SetStateAction<
-      {
-        originalName: string;
-        url: string;
-        name: string;
-      }[]
-    >
-  >;
-  setImages: React.Dispatch<
-    React.SetStateAction<
-      {
-        originalName: string;
-        url: string;
-        name: string;
-      }[]
-    >
-  >;
+  maintenanceDetails: IMaintenance;
+  files: IFile[];
+  images: IFile[];
+  setFiles: React.Dispatch<React.SetStateAction<IFile[]>>;
+  setImages: React.Dispatch<React.SetStateAction<IFile[]>>;
 }
 
-export const Attachments = ({ maintenanceDetailsData, files, images, setFiles, setImages }: AttachmentsProps) => {
+export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {
   return (
     <View>
       {/* Botão de anexar arquivos */}
       <Text style={styles.sectionHeaderText}>Anexos</Text>
       <View style={styles.uploadContainer}>
-        {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-          maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+        {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+          maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
             <TouchableOpacity
               onPress={async () => {
                 const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
@@ -60,8 +45,8 @@ export const Attachments = ({ maintenanceDetailsData, files, images, setFiles, s
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
                   {file.originalName}
                 </Text>
-                {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                  maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+                {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+                  maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
                     <TouchableOpacity
                       onPress={() => {
                         const updatedFiles = removeItem(images, index);
@@ -80,8 +65,8 @@ export const Attachments = ({ maintenanceDetailsData, files, images, setFiles, s
       {/* Botão de anexar imagens */}
       <Text style={styles.sectionHeaderText}>Imagens</Text>
       <View style={styles.uploadContainer}>
-        {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-          maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+        {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+          maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
             <TouchableOpacity
               onPress={async () => {
                 const uploadedImage = await handleUpload("image");
@@ -100,8 +85,8 @@ export const Attachments = ({ maintenanceDetailsData, files, images, setFiles, s
               <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
                 <Image source={{ uri: image.url }} style={styles.previewImage} />
               </TouchableOpacity>
-              {maintenanceDetailsData?.MaintenancesStatus.name !== "completed" &&
-                maintenanceDetailsData?.MaintenancesStatus.name !== "overdue" && (
+              {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+                maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
                   <TouchableOpacity
                     onPress={() => {
                       const updatedImages = removeItem(images, index);
