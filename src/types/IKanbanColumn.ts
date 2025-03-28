@@ -1,19 +1,19 @@
-import type { IFile } from "./IFile";
+import type { IRemoteFile } from "./IRemoteFile";
 
 interface IMaintenanceReport {
   id: string;
   cost: number | undefined;
   observation: string;
-  ReportAnnexes: IFile[];
-  ReportImages: IFile[];
+  ReportAnnexes: IRemoteFile[];
+  ReportImages: IRemoteFile[];
 }
 
 interface IMaintenanceReportProgress {
   id: string;
   cost: number;
   observation: string;
-  ReportAnnexesProgress: IFile[];
-  ReportImagesProgress: IFile[];
+  ReportAnnexesProgress: IRemoteFile[];
+  ReportImagesProgress: IRemoteFile[];
 }
 
 interface IMaintenance {

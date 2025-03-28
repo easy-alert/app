@@ -26,7 +26,8 @@ import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryA
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { ISupplier } from "@/types/ISupplier";
 import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
-import type { IFile } from "@/types/IFile";
+import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { ILocalFile } from "@/types/ILocalFile";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<Navigation>();
@@ -37,8 +38,8 @@ export const MaintenanceDetails = () => {
   const [supplier, setSupplier] = useState<ISupplier>();
   const [historyActivities, setHistoryActivities] = useState<IMaintenanceHistoryActivities>();
   const [cost, setCost] = useState("0,00");
-  const [files, setFiles] = useState<IFile[]>([]);
-  const [images, setImages] = useState<IFile[]>([]);
+  const [files, setFiles] = useState<(IRemoteFile | ILocalFile)[]>([]);
+  const [images, setImages] = useState<(IRemoteFile | ILocalFile)[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleGetMaintenanceDetails = async () => {

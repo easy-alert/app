@@ -5,17 +5,18 @@ import Icon from "react-native-vector-icons/Feather";
 import { styles } from "./styles";
 
 import { removeItem } from "../utils/removeItem";
-import { handleUpload } from "../utils/handleUpload";
+import { openFilePicker } from "../utils/openFilePicker";
 
 import type { IMaintenance } from "@/types/IMaintenance";
-import type { IFile } from "@/types/IFile";
+import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { ILocalFile } from "@/types/ILocalFile";
 
 interface AttachmentsProps {
   maintenanceDetails: IMaintenance;
-  files: IFile[];
-  images: IFile[];
-  setFiles: React.Dispatch<React.SetStateAction<IFile[]>>;
-  setImages: React.Dispatch<React.SetStateAction<IFile[]>>;
+  files: (IRemoteFile | ILocalFile)[];
+  images: (IRemoteFile | ILocalFile)[];
+  setFiles: React.Dispatch<React.SetStateAction<(IRemoteFile | ILocalFile)[]>>;
+  setImages: React.Dispatch<React.SetStateAction<(IRemoteFile | ILocalFile)[]>>;
 }
 
 export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {
@@ -28,10 +29,10 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
           maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
             <TouchableOpacity
               onPress={async () => {
-                const uploadedFile = await handleUpload("file"); // Chama o método de upload para arquivos
+                const localFile = await openFilePicker("file");
 
-                if (uploadedFile) {
-                  setFiles((prev) => [...prev, uploadedFile]); // Atualiza o estado de arquivos
+                if (localFile) {
+                  setFiles((prev) => [...prev, localFile]);
                 }
               }}
             >
@@ -40,8 +41,8 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
           )}
         <View style={styles.fileList}>
           {files.map((file, index) => (
-            <TouchableOpacity onPress={() => Linking.openURL(file.url)}>
-              <View key={index} style={styles.fileItem}>
+            <TouchableOpacity key={index} onPress={() => Linking.openURL(file.url)}>
+              <View style={styles.fileItem}>
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
                   {file.originalName}
                 </Text>
@@ -69,10 +70,10 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
           maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
             <TouchableOpacity
               onPress={async () => {
-                const uploadedImage = await handleUpload("image");
+                const localFile = await openFilePicker("image");
 
-                if (uploadedImage) {
-                  setImages((prev) => [...prev, uploadedImage]);
+                if (localFile) {
+                  setImages((prev) => [...prev, localFile]);
                 }
               }}
             >

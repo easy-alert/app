@@ -7,17 +7,17 @@ import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
-import { styles } from "./styles";
-
-import { handleUpload } from "../utils/handleUpload";
-import { OFFLINE_QUEUE_KEY } from "../utils/constants";
-
-import type { IUploadedFile } from "@/types/IUploadedFile";
-import type { Navigation } from "@/routes/navigation";
-
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
+
+import { styles } from "./styles";
+
+import { openFilePicker } from "../utils/openFilePicker";
+import { OFFLINE_QUEUE_KEY } from "../utils/constants";
+
+import type { ILocalFile } from "@/types/ILocalFile";
+import type { Navigation } from "@/routes/navigation";
 
 interface CommentsProps {
   maintenanceId: string;
@@ -29,7 +29,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   const navigation = useNavigation<Navigation>();
   const { userId } = useAuth();
 
-  const [uploadedFiles, setUploadedFiles] = useState<IUploadedFile[]>([]);
+  const [localFiles, setLocalFiles] = useState<ILocalFile[]>([]);
   const [comment, setComment] = useState(" ");
 
   const handleCreateMaintenanceActivity = async () => {
@@ -43,20 +43,20 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded = [];
+    const uploadedFiles = [];
 
     try {
       if (isConnected) {
         // Handle file uploads when online
-        if (uploadedFiles?.length > 0) {
-          for (const file of uploadedFiles) {
+        if (localFiles?.length > 0) {
+          for (const file of localFiles) {
             const fileUrl = await uploadFile({
               uri: file.url,
               type: file.type!,
               name: file.originalName!,
             });
 
-            filesUploaded.push({
+            uploadedFiles.push({
               originalName: file.originalName!,
               url: fileUrl,
               type: file.type!,
@@ -69,11 +69,11 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           maintenanceId,
           userId,
           content: comment,
-          uploadedFile: filesUploaded,
+          uploadedFile: uploadedFiles,
         });
 
         setComment("");
-        setUploadedFiles([]);
+        setLocalFiles([]);
         await getMaintenanceHistoryActivities();
 
         setLoading(false);
@@ -83,7 +83,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
 
         // Include file metadata instead of uploading
-        const filesToQueue = uploadedFiles.map((file) => ({
+        const filesToQueue = localFiles.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
           type: file.type,
@@ -101,7 +101,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         offlineQueue.push(newEntry);
         await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
         setComment("");
-        setUploadedFiles([]);
+        setLocalFiles([]);
         setLoading(false);
         navigation.goBack();
       }
@@ -126,7 +126,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
 
       {/* Renderização dos arquivos enviados */}
       <View style={styles.uploadedFilesContainer}>
-        {uploadedFiles.map((file, index) => (
+        {localFiles.map((file, index) => (
           <View key={index} style={styles.uploadedFileItem}>
             <View style={styles.uploadedFileDetails}>
               <Text style={styles.uploadedFileName}>{file.originalName}</Text>
@@ -135,7 +135,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => {
-                setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+                setLocalFiles((prev) => prev.filter((_, i) => i !== index));
               }}
             >
               <Icon name="trash" size={20} color="#fff" />
@@ -148,9 +148,9 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         <TouchableOpacity
           style={styles.commentButton}
           onPress={async () => {
-            const uploadedFile = await handleUpload();
-            if (uploadedFile) {
-              setUploadedFiles((prev) => [...prev, uploadedFile]);
+            const localFile = await openFilePicker();
+            if (localFile) {
+              setLocalFiles((prev) => [...prev, localFile]);
             }
           }}
         >

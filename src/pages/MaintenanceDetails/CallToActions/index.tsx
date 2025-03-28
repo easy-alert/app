@@ -4,6 +4,12 @@ import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
+import { updateMaintenance } from "@/services/updateMaintenance";
+import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
+import { uploadFile } from "@/services/uploadFile";
+import { useAuth } from "@/contexts/AuthContext";
+
 import { styles } from "./styles";
 
 import { convertCostToInteger } from "../utils/convertCostToInteger";
@@ -12,21 +18,16 @@ import { OFFLINE_QUEUE_KEY } from "../utils/constants";
 import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { Navigation } from "@/routes/navigation";
-import type { IFile } from "@/types/IFile";
-
-import { updateMaintenance } from "@/services/updateMaintenance";
-import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
-import { uploadFile } from "@/services/uploadFile";
-import { useAuth } from "@/contexts/AuthContext";
+import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { ILocalFile } from "@/types/ILocalFile";
 
 interface CallToActionsProps {
   maintenanceDetails: IMaintenance;
-  files: IFile[];
-  images: IFile[];
+  files: (IRemoteFile | ILocalFile)[];
+  images: (IRemoteFile | ILocalFile)[];
   cost: string;
-  setFiles: (files: IFile[]) => void;
-  setImages: (images: IFile[]) => void;
+  setFiles: (files: (IRemoteFile | ILocalFile)[]) => void;
+  setImages: (images: (IRemoteFile | ILocalFile)[]) => void;
   setCost: (cost: string) => void;
   setLoading: (loading: boolean) => void;
 }
@@ -76,10 +77,10 @@ export const CallToActions = ({
         // Handle file uploads when online
         if (files?.length > 0) {
           for (const file of files) {
-            const fileUrl = file.type
+            const fileUrl = (file as ILocalFile).type
               ? await uploadFile({
                   uri: file.url,
-                  type: file.type,
+                  type: (file as ILocalFile).type,
                   name: file.originalName,
                 })
               : file.url;
@@ -94,10 +95,10 @@ export const CallToActions = ({
 
         if (images?.length > 0) {
           for (const image of images) {
-            const fileUrl = image.type
+            const fileUrl = (image as ILocalFile).type
               ? await uploadFile({
                   uri: image.url,
-                  type: image.type,
+                  type: (image as ILocalFile).type,
                   name: image.originalName,
                 })
               : image.url;
@@ -136,13 +137,13 @@ export const CallToActions = ({
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
-          type: file.type,
+          type: (file as ILocalFile).type,
         }));
 
         const imagesToQueue = images.map((image) => ({
           originalName: image.originalName,
           uri: image.url,
-          type: image.type,
+          type: (image as ILocalFile).type,
         }));
 
         const newEntry = {
@@ -186,10 +187,10 @@ export const CallToActions = ({
         // Handle file uploads when online
         if (files?.length > 0) {
           for (const file of files) {
-            const fileUrl = file.type
+            const fileUrl = (file as ILocalFile).type
               ? await uploadFile({
                   uri: file.url,
-                  type: file.type,
+                  type: (file as ILocalFile).type,
                   name: file.originalName,
                 })
               : file.url;
@@ -204,10 +205,10 @@ export const CallToActions = ({
 
         if (images?.length > 0) {
           for (const image of images) {
-            const fileUrl = image.type
+            const fileUrl = (image as ILocalFile).type
               ? await uploadFile({
                   uri: image.url,
-                  type: image.type,
+                  type: (image as ILocalFile).type,
                   name: image.originalName,
                 })
               : image.url;
@@ -246,13 +247,13 @@ export const CallToActions = ({
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
-          type: file.type,
+          type: (file as ILocalFile).type,
         }));
 
         const imagesToQueue = images.map((image) => ({
           originalName: image.originalName,
           uri: image.url,
-          type: image.type,
+          type: (image as ILocalFile).type,
         }));
 
         const newEntry = {

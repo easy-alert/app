@@ -1,6 +1,5 @@
-export interface IUploadedFile {
+export interface IRemoteFile {
   originalName: string;
   name: string;
   url: string;
-  type: string;
 }
