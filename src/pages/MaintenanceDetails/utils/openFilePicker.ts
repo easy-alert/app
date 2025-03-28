@@ -3,14 +3,9 @@ import { Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 
-export const handleUpload = async (
-  type?: "file" | "image" | null,
-): Promise<{
-  originalName: string;
-  url: string;
-  name: string;
-  type: string;
-} | null> => {
+import type { ILocalFile } from "@/types/ILocalFile";
+
+export const openFilePicker = async (type?: "file" | "image" | null): Promise<ILocalFile | null> => {
   try {
     let file: { uri: string; name: string; type: string } | null = null;
 
@@ -127,7 +122,6 @@ export const handleUpload = async (
       return null;
     }
 
-    // Fazer upload
     return {
       originalName: file.name,
       url: file.uri,

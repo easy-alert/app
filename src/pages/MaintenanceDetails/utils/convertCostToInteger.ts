@@ -5,8 +5,10 @@ export const convertCostToInteger = (cost: string): number => {
     .replace(".", "");
 
   let floatCost = parseFloat(normalizedCost);
+
   if (isNaN(floatCost)) {
     floatCost = 0;
   }
+
   return Math.round(floatCost);
 };

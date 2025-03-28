@@ -4,7 +4,13 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    padding: 20,
+    paddingHorizontal: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 24,
