@@ -281,42 +281,40 @@ export const CallToActions = ({
     }
   };
 
+  const openFinishMaintenanceAlert = () => {
+    Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Sim",
+        onPress: handleFinishMaintenance,
+      },
+    ]);
+  };
+
+  const canBeEdited =
+    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+    maintenanceDetails.MaintenancesStatus.name !== "overdue";
+
+  if (!canBeEdited) {
+    return null;
+  }
+
   return (
-    <View>
-      {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-        maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.secondaryActionButton} onPress={handleChangeMaintenanceProgress}>
-              <Text style={styles.secondaryActionButtonText}>
-                {maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
-              </Text>
-            </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.secondaryButton} onPress={handleChangeMaintenanceProgress}>
+        <Text style={styles.secondaryButtonLabel}>{maintenanceDetails.inProgress ? "Parar" : "Iniciar"}</Text>
+      </TouchableOpacity>
 
-            <TouchableOpacity style={styles.secondaryActionButton} onPress={handleSaveMaintenanceProgress}>
-              <Text style={styles.secondaryActionButtonText}>Salvar</Text>
-            </TouchableOpacity>
+      <TouchableOpacity style={styles.secondaryButton} onPress={handleSaveMaintenanceProgress}>
+        <Text style={styles.secondaryButtonLabel}>Salvar</Text>
+      </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.primaryActionButton}
-              onPress={() => {
-                if (maintenanceDetails.id) {
-                  Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
-                    {
-                      text: "Cancelar",
-                      style: "cancel",
-                    },
-                    {
-                      text: "Sim",
-                      onPress: handleFinishMaintenance,
-                    },
-                  ]);
-                }
-              }}
-            >
-              <Text style={styles.actionButtonText}>Finalizar manutenção</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+      <TouchableOpacity style={styles.primaryButton} onPress={openFinishMaintenanceAlert}>
+        <Text style={styles.primaryButtonLabel}>Finalizar manutenção</Text>
+      </TouchableOpacity>
     </View>
   );
 };

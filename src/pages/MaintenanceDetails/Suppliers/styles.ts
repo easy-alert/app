@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  sectionHeader: {
+  titleContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 12,
   },
-  sectionHeaderText: {
+  titleLabel: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#000",
@@ -15,16 +15,20 @@ export const styles = StyleSheet.create({
   unlinkButton: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
   },
-  unlinkText: {
+  buttonLabel: {
     fontSize: 14,
     color: "gray",
     marginRight: 4,
   },
-  unlinkIcon: {
+  buttonIcon: {
     marginLeft: 4,
     padding: 6,
     borderRadius: 16,
@@ -37,34 +41,34 @@ export const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
   },
-  supplierDetails: {
-    flex: 1,
-  },
-  supplierName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 4,
-  },
-  supplierEmail: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  supplierWebsite: {
-    fontSize: 14,
-    color: "#666",
-  },
-  supplierAvatar: {
+  avatarContainer: {
     width: 40,
     height: 40,
     borderRadius: 20, // Deixa a imagem redonda
     overflow: "hidden", // Garante que a borda redonda funcione corretamente
     marginRight: 12,
   },
-  supplierAvatarImage: {
+  avatarImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover", // Mantém a proporção da imagem
+  },
+  detailsContainer: {
+    flex: 1,
+  },
+  nameLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 4,
+  },
+  emailLabel: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
+  },
+  websiteLabel: {
+    fontSize: 14,
+    color: "#666",
   },
 });

@@ -116,13 +116,8 @@ export const MaintenanceDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenanceId]);
 
-  if (loading) {
+  if (loading || !maintenanceDetails) {
     return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
-  }
-
-  if (!maintenanceDetails) {
-    // TODO: adicionar tela de erro caso não encontre os dados
-    return null;
   }
 
   return (

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  infoRow: {
+  rowContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -11,12 +11,12 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
   },
-  infoLabel: {
+  titleLabel: {
     fontWeight: "bold",
     color: "#555",
     flex: 1, // Garante que o texto da label não fique espremido
   },
-  infoValue: {
+  valueLabel: {
     color: "#000",
     flex: 2, // Dá mais espaço ao valor
   },

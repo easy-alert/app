@@ -1,18 +1,12 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  previewImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  sectionHeaderText: {
+  titleLabel: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#000",
   },
-  uploadContainer: {
+  contentContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
@@ -42,5 +36,11 @@ export const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 2,
     marginLeft: 4,
+  },
+  previewImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 5,
+    marginBottom: 5,
   },
 });

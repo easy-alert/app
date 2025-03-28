@@ -123,8 +123,6 @@ export const Form = ({ buildingId }: FormProps) => {
     }
   };
 
-  // TODO: o loading é pra quando está criando, mas aqui ta usando de uma maneira que é pra quando está carregando
-  // alterar para aparecer um loading só no lugar do formulário
   if (loading) {
     return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
   }

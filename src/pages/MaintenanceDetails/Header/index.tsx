@@ -13,36 +13,43 @@ interface HeaderProps {
 export const Header = ({ maintenanceDetails }: HeaderProps) => {
   return (
     <View>
-      <Text style={styles.buildingName}>{maintenanceDetails.Building.name}</Text>
+      <Text style={styles.titleLabel}>{maintenanceDetails.Building.name}</Text>
 
-      <View style={styles.tags}>
+      <View style={styles.tagsContainer}>
         <View
           style={[
-            styles.tag,
+            styles.tagContainer,
             {
               backgroundColor: getStatus(maintenanceDetails.MaintenancesStatus.name).color,
             },
           ]}
         >
-          <Text style={styles.tagText}>{getStatus(maintenanceDetails.MaintenancesStatus.name).label}</Text>
+          <Text style={styles.tagLabel}>{getStatus(maintenanceDetails.MaintenancesStatus.name).label}</Text>
         </View>
 
         {maintenanceDetails.Maintenance.MaintenanceType && (
           <View
             style={[
-              styles.tag,
+              styles.tagContainer,
               {
                 backgroundColor: getStatus(maintenanceDetails.Maintenance.MaintenanceType.name).color,
               },
             ]}
           >
-            <Text style={styles.tagText}>{getStatus(maintenanceDetails.Maintenance.MaintenanceType.name).label}</Text>
+            <Text style={styles.tagLabel}>{getStatus(maintenanceDetails.Maintenance.MaintenanceType.name).label}</Text>
           </View>
         )}
 
         {maintenanceDetails.inProgress && (
-          <View style={[styles.tag, { backgroundColor: getStatus("Em execução").color }]}>
-            <Text style={styles.tagText}>{getStatus("Em execução").label}</Text>
+          <View
+            style={[
+              styles.tagContainer,
+              {
+                backgroundColor: getStatus("Em execução").color,
+              },
+            ]}
+          >
+            <Text style={styles.tagLabel}>{getStatus("Em execução").label}</Text>
           </View>
         )}
       </View>

@@ -20,25 +20,48 @@ interface AttachmentsProps {
 }
 
 export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {
+  const handleOpenFilePicker = async () => {
+    const localFile = await openFilePicker("file");
+
+    if (localFile) {
+      setFiles((prev) => [...prev, localFile]);
+    }
+  };
+
+  const handleOpenImagePicker = async () => {
+    const localFile = await openFilePicker("image");
+
+    if (localFile) {
+      setImages((prev) => [...prev, localFile]);
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    const newFiles = removeItem(files, index);
+    setFiles(newFiles);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = removeItem(images, index);
+    setImages(newImages);
+  };
+
+  const canBeEdited =
+    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+    maintenanceDetails.MaintenancesStatus.name !== "overdue";
+
   return (
     <View>
       {/* Botão de anexar arquivos */}
-      <Text style={styles.sectionHeaderText}>Anexos</Text>
-      <View style={styles.uploadContainer}>
-        {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-          maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
-            <TouchableOpacity
-              onPress={async () => {
-                const localFile = await openFilePicker("file");
+      <Text style={styles.titleLabel}>Anexos</Text>
 
-                if (localFile) {
-                  setFiles((prev) => [...prev, localFile]);
-                }
-              }}
-            >
-              <Icon name="paperclip" size={24} color="#c62828" />
-            </TouchableOpacity>
-          )}
+      <View style={styles.contentContainer}>
+        {canBeEdited && (
+          <TouchableOpacity onPress={handleOpenFilePicker}>
+            <Icon name="paperclip" size={24} color="#c62828" />
+          </TouchableOpacity>
+        )}
+
         <View style={styles.fileList}>
           {files.map((file, index) => (
             <TouchableOpacity key={index} onPress={() => Linking.openURL(file.url)}>
@@ -46,17 +69,12 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
                   {file.originalName}
                 </Text>
-                {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-                  maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        const updatedFiles = removeItem(images, index);
-                        setFiles(updatedFiles);
-                      }}
-                    >
-                      <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                    </TouchableOpacity>
-                  )}
+
+                {canBeEdited && (
+                  <TouchableOpacity onPress={() => handleRemoveFile(index)}>
+                    <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+                  </TouchableOpacity>
+                )}
               </View>
             </TouchableOpacity>
           ))}
@@ -64,39 +82,27 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
       </View>
 
       {/* Botão de anexar imagens */}
-      <Text style={styles.sectionHeaderText}>Imagens</Text>
-      <View style={styles.uploadContainer}>
-        {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-          maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
-            <TouchableOpacity
-              onPress={async () => {
-                const localFile = await openFilePicker("image");
+      <Text style={styles.titleLabel}>Imagens</Text>
 
-                if (localFile) {
-                  setImages((prev) => [...prev, localFile]);
-                }
-              }}
-            >
-              <Icon name="image" size={24} color="#c62828" />
-            </TouchableOpacity>
-          )}
+      <View style={styles.contentContainer}>
+        {canBeEdited && (
+          <TouchableOpacity onPress={handleOpenImagePicker}>
+            <Icon name="image" size={24} color="#c62828" />
+          </TouchableOpacity>
+        )}
+
         <View style={styles.fileList}>
           {images.map((image, index) => (
             <View key={index} style={styles.fileItem}>
               <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
                 <Image source={{ uri: image.url }} style={styles.previewImage} />
               </TouchableOpacity>
-              {maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-                maintenanceDetails.MaintenancesStatus.name !== "overdue" && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      const updatedImages = removeItem(images, index);
-                      setImages(updatedImages);
-                    }}
-                  >
-                    <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                  </TouchableOpacity>
-                )}
+
+              {canBeEdited && (
+                <TouchableOpacity onPress={() => handleRemoveImage(index)}>
+                  <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+                </TouchableOpacity>
+              )}
             </View>
           ))}
         </View>

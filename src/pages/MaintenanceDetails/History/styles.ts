@@ -1,17 +1,17 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  sectionHeaderText: {
+  titleLabel: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#000",
   },
-  historyTabs: {
+  tabsContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
     paddingVertical: 12,
   },
-  historyTabButton: {
+  tabButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -21,23 +21,23 @@ export const styles = StyleSheet.create({
   activeTabButton: {
     backgroundColor: "#FFCCCC",
   },
-  historyTabText: {
+  tabButtonLabel: {
     fontSize: 16,
     color: "#333",
   },
-  activeTabText: {
+  activeTabButtonLabel: {
     color: "#B22222",
     fontWeight: "bold",
   },
-  historyList: {
-    marginTop: 0,
+  listContainer: {
+    maxHeight: 200,
   },
-  historyItem: {
+  itemContainer: {
     flex: 1,
     flexDirection: "row",
     paddingVertical: 6,
   },
-  historyIconContainer: {
+  itemIconContainer: {
     marginRight: 12,
     width: 30,
     height: 30,
@@ -46,20 +46,20 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#B22222", // Vermelho
   },
-  historyContent: {
+  itemContentContainer: {
     flex: 1,
   },
-  historyTitle: {
+  itemTitleLabel: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 4,
   },
-  historyTimestamp: {
+  itemTimestampLabel: {
     fontSize: 14,
     color: "#777",
     marginBottom: 4,
   },
-  historyDescription: {
+  itemDescriptionLabel: {
     fontSize: 14,
     color: "#333",
   },
@@ -68,7 +68,7 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     marginTop: 10,
   },
-  imageItem: {
+  imageItemContainer: {
     width: 80,
     height: 100,
     marginRight: 10,
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 5,
   },
-  imageName: {
+  imageNameLabel: {
     fontSize: 10,
     color: "#333",
     textAlign: "center",

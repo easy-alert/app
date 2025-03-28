@@ -112,9 +112,22 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
     }
   };
 
+  const handleRemoveFile = (index: number) => {
+    setLocalFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleOpenFilePicker = async () => {
+    const localFile = await openFilePicker();
+
+    if (localFile) {
+      setLocalFiles((prev) => [...prev, localFile]);
+    }
+  };
+
   return (
-    <View style={styles.commentSection}>
-      <Text style={styles.sectionHeaderText}>Enviar comentário</Text>
+    <View style={styles.container}>
+      <Text style={styles.titleLabel}>Enviar comentário</Text>
+
       <TextInput
         style={styles.textArea}
         placeholder="Digite seu comentário"
@@ -125,39 +138,26 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
       />
 
       {/* Renderização dos arquivos enviados */}
-      <View style={styles.uploadedFilesContainer}>
+      <View style={styles.filesContainer}>
         {localFiles.map((file, index) => (
-          <View key={index} style={styles.uploadedFileItem}>
-            <View style={styles.uploadedFileDetails}>
-              <Text style={styles.uploadedFileName}>{file.originalName}</Text>
+          <View key={index} style={styles.fileItem}>
+            <View style={styles.fileDetailsContainer}>
+              <Text style={styles.fileNameLabel}>{file.originalName}</Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => {
-                setLocalFiles((prev) => prev.filter((_, i) => i !== index));
-              }}
-            >
+            <TouchableOpacity style={styles.deleteButton} onPress={() => handleRemoveFile(index)}>
               <Icon name="trash" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
         ))}
       </View>
 
-      <View style={styles.commentButtons}>
-        <TouchableOpacity
-          style={styles.commentButton}
-          onPress={async () => {
-            const localFile = await openFilePicker();
-            if (localFile) {
-              setLocalFiles((prev) => [...prev, localFile]);
-            }
-          }}
-        >
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleOpenFilePicker}>
           <Icon name="upload" size={20} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.commentButton} onPress={handleCreateMaintenanceActivity}>
+        <TouchableOpacity style={styles.button} onPress={handleCreateMaintenanceActivity}>
           <Icon name="send" size={20} color="#fff" />
         </TouchableOpacity>
       </View>

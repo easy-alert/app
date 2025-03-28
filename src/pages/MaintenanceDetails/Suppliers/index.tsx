@@ -48,49 +48,47 @@ export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: S
       <SupplierModal maintenanceId={maintenanceId} visible={showSupplierModal} onClose={toggleSupplierModal} />
 
       <View>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionHeaderText}>Fornecedor</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleLabel}>Fornecedor</Text>
 
           {supplier ? (
-            <TouchableOpacity
-              onPress={handleUnlinkMaintenanceSupplier}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <Text style={styles.unlinkText}>Desvincular</Text>
-              <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
+            <TouchableOpacity onPress={handleUnlinkMaintenanceSupplier} style={styles.unlinkButton}>
+              <Text style={styles.buttonLabel}>Desvincular</Text>
+              <Icon name="link" size={16} color="#fff" style={styles.buttonIcon} />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.unlinkButton} onPress={toggleSupplierModal}>
-              <Text style={styles.unlinkText}>Vincular</Text>
-              <Icon name="link" size={16} color="#fff" style={styles.unlinkIcon} />
+            <TouchableOpacity style={styles.addButton} onPress={toggleSupplierModal}>
+              <Text style={styles.buttonLabel}>Vincular</Text>
+              <Icon name="link" size={16} color="#fff" style={styles.buttonIcon} />
             </TouchableOpacity>
           )}
         </View>
 
         {supplier ? (
           <View style={styles.supplierContainer}>
-            <View style={styles.supplierAvatar}>
+            <View style={styles.avatarContainer}>
               <Image
                 source={{
                   uri: supplier.image,
                 }}
-                style={styles.supplierAvatarImage}
+                style={styles.avatarImage}
               />
             </View>
-            <View style={styles.supplierDetails}>
-              <Text style={styles.supplierName}>{supplier.name}</Text>
-              <Text style={styles.supplierEmail}>
+
+            <View style={styles.detailsContainer}>
+              <Text style={styles.nameLabel}>{supplier.name}</Text>
+              <Text style={styles.emailLabel}>
                 <Icon name="mail" size={12} /> {supplier.email || "-"}
               </Text>
-              <Text style={styles.supplierWebsite}>
+              <Text style={styles.websiteLabel}>
                 <Icon name="phone" size={12} /> {supplier.phone || "-"}
               </Text>
             </View>
           </View>
         ) : (
           <View style={styles.supplierContainer}>
-            <View style={styles.supplierDetails}>
-              <Text style={styles.supplierEmail}>Nenhum fornecedor encontrado.</Text>
+            <View style={styles.detailsContainer}>
+              <Text style={styles.emailLabel}>Nenhum fornecedor encontrado.</Text>
             </View>
           </View>
         )}

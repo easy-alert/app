@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  sectionHeaderText: {
+  container: {
+    marginTop: 16,
+  },
+  titleLabel: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#000",
-  },
-  commentSection: {
-    marginTop: 16,
   },
   textArea: {
     borderWidth: 1,
@@ -20,12 +20,12 @@ export const styles = StyleSheet.create({
     minHeight: 100, // Altura mínima
     backgroundColor: "#fff",
   },
-  commentButtons: {
+  buttonsContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     marginTop: 10,
   },
-  commentButton: {
+  button: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -34,10 +34,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 10,
   },
-  uploadedFilesContainer: {
+  filesContainer: {
     marginTop: 10,
   },
-  uploadedFileItem: {
+  fileItem: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
@@ -45,10 +45,10 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
   },
-  uploadedFileDetails: {
+  fileDetailsContainer: {
     flex: 1,
   },
-  uploadedFileName: {
+  fileNameLabel: {
     fontSize: 14,
     color: "#333",
   },
