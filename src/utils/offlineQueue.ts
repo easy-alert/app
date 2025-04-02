@@ -1,14 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 
-import { OFFLINE_QUEUE_KEY } from "./constants";
-
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+export const OFFLINE_QUEUE_KEY = "offline_queue";
 
 let isProcessing = false; // Global lock to prevent overlapping processes
 

@@ -6,8 +6,7 @@ import NetInfo from "@react-native-community/netinfo";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
-import { OFFLINE_QUEUE_KEY } from "@/utils/constants";
+import { processOfflineQueue, startPeriodicQueueProcessing, OFFLINE_QUEUE_KEY } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 

@@ -9,7 +9,7 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
-import { OFFLINE_QUEUE_KEY } from "@/utils/constants";
+import { OFFLINE_QUEUE_KEY } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 

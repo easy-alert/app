@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
-import { OFFLINE_QUEUE_KEY } from "@/utils/constants";
+import { OFFLINE_QUEUE_KEY } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
