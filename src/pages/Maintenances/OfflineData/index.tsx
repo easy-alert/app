@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 
 import NetInfo from "@react-native-community/netinfo";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import { processOfflineQueue, startPeriodicQueueProcessing, OFFLINE_QUEUE_KEY } from "@/utils/offlineQueue";
+import { processOfflineQueue, startPeriodicQueueProcessing, getOfflineQueue } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
@@ -23,8 +21,7 @@ export const OfflineData = () => {
 
   useEffect(() => {
     const getOfflineQueueCount = async () => {
-      const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-      const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+      const offlineQueue = await getOfflineQueue();
       setOfflineCount(offlineQueue.length);
     };
 

@@ -8,9 +8,20 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 
-export const OFFLINE_QUEUE_KEY = "offline_queue";
+const OFFLINE_QUEUE_KEY = "offline_queue";
 
 let isProcessing = false; // Global lock to prevent overlapping processes
+
+export const getOfflineQueue = async (): Promise<IOfflineQueueItem[]> => {
+  const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+  return offlineQueueString ? JSON.parse(offlineQueueString) : [];
+};
+
+export const addItemToOfflineQueue = async (item: IOfflineQueueItem) => {
+  const offlineQueue = await getOfflineQueue();
+  offlineQueue.push(item);
+  await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+};
 
 export const processOfflineQueue = async () => {
   if (isProcessing) {
@@ -20,12 +31,11 @@ export const processOfflineQueue = async () => {
   isProcessing = true; // Set lock to prevent overlapping processes
 
   try {
-    const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-    const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
+    const offlineQueue = await getOfflineQueue();
 
     while (offlineQueue.length > 0) {
       // Get and remove the first item in the queue
-      const currentItem: IOfflineQueueItem = offlineQueue.shift();
+      const currentItem = offlineQueue.shift()!;
 
       try {
         if (currentItem.type === "addHistoryActivity") {

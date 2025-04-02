@@ -4,13 +4,12 @@ import { useState } from "react";
 
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
-import { OFFLINE_QUEUE_KEY } from "@/utils/offlineQueue";
+import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
@@ -79,10 +78,6 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
 
         setLoading(false);
       } else {
-        // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-
         // Include file metadata instead of uploading
         const filesToQueue = localFiles.map((file) => ({
           originalName: file.originalName,
@@ -99,8 +94,8 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           timestamp: new Date().toISOString(),
         };
 
-        offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await addItemToOfflineQueue(newEntry);
+
         setComment("");
         setLocalFiles([]);
         setLoading(false);

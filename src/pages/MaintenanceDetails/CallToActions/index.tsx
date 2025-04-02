@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 
 import NetInfo from "@react-native-community/netinfo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { updateMaintenance } from "@/services/updateMaintenance";
@@ -9,7 +8,7 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
-import { OFFLINE_QUEUE_KEY } from "@/utils/offlineQueue";
+import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
@@ -130,10 +129,6 @@ export const CallToActions = ({
         setCost("");
         navigation.goBack();
       } else {
-        // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-
         // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
@@ -157,8 +152,7 @@ export const CallToActions = ({
           timestamp: new Date().toISOString(),
         };
 
-        offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await addItemToOfflineQueue(newEntry);
 
         setFiles([]);
         setImages([]);
@@ -240,10 +234,6 @@ export const CallToActions = ({
         setCost("");
         navigation.goBack();
       } else {
-        // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-
         // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
@@ -267,8 +257,7 @@ export const CallToActions = ({
           timestamp: new Date().toISOString(),
         };
 
-        offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await addItemToOfflineQueue(newEntry);
 
         setFiles([]);
         setImages([]);
