@@ -1,12 +1,11 @@
+import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
-
-import { useEffect, useState } from "react";
 
 import NetInfo from "@react-native-community/netinfo";
 
-import { processOfflineQueue, startPeriodicQueueProcessing, getOfflineQueue } from "@/utils/offlineQueue";
-
 import { styles } from "./styles";
+
+import { processOfflineQueue, startPeriodicQueueProcessing, getOfflineQueue } from "@/utils/offlineQueue";
 
 export const OfflineData = () => {
   const [offlineCount, setOfflineCount] = useState(0);
@@ -44,19 +43,21 @@ export const OfflineData = () => {
   }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
       {offlineCount > 0 && (
-        <View style={styles.container}>
-          <Text style={styles.offlineCountLabel}>Fila Offline: {offlineCount} item(s)</Text>
+        <>
+          <Text style={[styles.itemContainer, styles.offlineCountLabel]}>Fila Offline: {offlineCount} item(s)</Text>
 
-          {isProcessing && <Text style={styles.indicatorLabel}>Processando dados da fila, aguarde...</Text>}
-        </View>
+          {isProcessing && (
+            <Text style={[styles.itemContainer, styles.indicatorLabel]}>Processando dados da fila, aguarde...</Text>
+          )}
+        </>
       )}
 
-      {!internetConnection && !isProcessing && (
-        <View style={styles.container}>
-          <Text style={styles.indicatorLabel}>Você está offline, alguns serviços podem estar indisponíveis...</Text>
-        </View>
+      {!internetConnection && (
+        <Text style={[styles.itemContainer, styles.indicatorLabel]}>
+          Você está offline, alguns serviços podem estar indisponíveis...
+        </Text>
       )}
     </View>
   );

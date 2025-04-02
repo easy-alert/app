@@ -5,8 +5,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { StatusBar } from "expo-status-bar";
 
-import { Routes } from "@/routes";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { MainLayout } from "@/layouts/MainLayout";
 
 export default function App() {
   return (
@@ -16,7 +16,7 @@ export default function App() {
       <SafeAreaProvider>
         <View style={styles.appContainer}>
           <AuthProvider>
-            <Routes />
+            <MainLayout />
           </AuthProvider>
         </View>
       </SafeAreaProvider>

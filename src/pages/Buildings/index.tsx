@@ -5,8 +5,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation } from "@react-navigation/native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { styles } from "./styles";
 
 import type { IUser } from "@/types/IUser";
@@ -68,7 +66,7 @@ export const Buildings = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Escolha uma Edificação</Text>
 
       <FlatList
@@ -77,6 +75,6 @@ export const Buildings = () => {
         renderItem={renderBuilding}
         ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
       />
-    </SafeAreaView>
+    </View>
   );
 };

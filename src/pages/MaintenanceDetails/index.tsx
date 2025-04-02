@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
@@ -121,42 +119,40 @@ export const MaintenanceDetails = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
-          <Header maintenanceDetails={maintenanceDetails} />
-          <DataLabels maintenanceDetails={maintenanceDetails} />
-          <Suppliers
-            supplier={supplier}
-            maintenanceId={maintenanceId}
-            getMaintenanceSupplier={handleGetMaintenanceSupplier}
-          />
-          <Comments
-            maintenanceId={maintenanceId}
-            setLoading={setLoading}
-            getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
-          />
-          <History historyActivities={historyActivities} />
-          <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
-          <Attachments
-            maintenanceDetails={maintenanceDetails}
-            files={files}
-            images={images}
-            setFiles={setFiles}
-            setImages={setImages}
-          />
-          <CallToActions
-            maintenanceDetails={maintenanceDetails}
-            files={files}
-            images={images}
-            cost={cost}
-            setFiles={setFiles}
-            setImages={setImages}
-            setCost={setCost}
-            setLoading={setLoading}
-          />
-        </ScreenWithCloseButton>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
+        <Header maintenanceDetails={maintenanceDetails} />
+        <DataLabels maintenanceDetails={maintenanceDetails} />
+        <Suppliers
+          supplier={supplier}
+          maintenanceId={maintenanceId}
+          getMaintenanceSupplier={handleGetMaintenanceSupplier}
+        />
+        <Comments
+          maintenanceId={maintenanceId}
+          setLoading={setLoading}
+          getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
+        />
+        <History historyActivities={historyActivities} />
+        <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
+        <Attachments
+          maintenanceDetails={maintenanceDetails}
+          files={files}
+          images={images}
+          setFiles={setFiles}
+          setImages={setImages}
+        />
+        <CallToActions
+          maintenanceDetails={maintenanceDetails}
+          files={files}
+          images={images}
+          cost={cost}
+          setFiles={setFiles}
+          setImages={setImages}
+          setCost={setCost}
+          setLoading={setLoading}
+        />
+      </ScreenWithCloseButton>
+    </KeyboardAvoidingView>
   );
 };
