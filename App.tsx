@@ -3,18 +3,24 @@ import { View, StyleSheet } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { StatusBar } from "expo-status-bar";
+
 import { Routes } from "@/routes";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function App() {
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
-      <View style={styles.appContainer}>
-        <AuthProvider>
-          <Routes />
-        </AuthProvider>
-      </View>
-    </SafeAreaProvider>
+    <>
+      <StatusBar translucent style="dark" />
+
+      <SafeAreaProvider>
+        <View style={styles.appContainer}>
+          <AuthProvider>
+            <Routes />
+          </AuthProvider>
+        </View>
+      </SafeAreaProvider>
+    </>
   );
 }
 

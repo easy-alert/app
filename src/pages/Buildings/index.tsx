@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, SafeAreaView } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation } from "@react-navigation/native";
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "./styles";
 
 import type { IUser } from "@/types/IUser";
 import type { Navigation } from "@/routes/navigation";
 
+type IBuilding = IUser["UserBuildingsPermissions"][0];
+
 export const Buildings = () => {
   const navigation = useNavigation<Navigation>();
 
-  const [buildings, setBuildings] = useState<IUser["UserBuildingsPermissions"]>([]);
+  const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [loading, setLoading] = useState(true);
 
   const handleGetBuildings = async () => {
@@ -37,7 +41,7 @@ export const Buildings = () => {
     handleGetBuildings();
   }, []);
 
-  const handleBuildingSelect = async (building: any) => {
+  const handleSelectBuilding = async (building: IBuilding) => {
     try {
       await AsyncStorage.setItem("buildingId", building.Building.id);
       await AsyncStorage.setItem("buildingName", building.Building.name);
@@ -49,15 +53,15 @@ export const Buildings = () => {
     }
   };
 
-  const renderBuilding = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.buildingItem} onPress={() => handleBuildingSelect(item)}>
+  const renderBuilding = ({ item }: { item: IBuilding }) => (
+    <TouchableOpacity style={styles.buildingItem} onPress={() => handleSelectBuilding(item)}>
       <Text style={styles.buildingName}>{item.Building.name}</Text>
     </TouchableOpacity>
   );
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#c62828" />
       </View>
     );
@@ -65,15 +69,14 @@ export const Buildings = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Escolha uma Edificação</Text>
-        <FlatList
-          data={buildings}
-          keyExtractor={(building) => building?.Building?.id}
-          renderItem={renderBuilding}
-          ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
-        />
-      </View>
+      <Text style={styles.title}>Escolha uma Edificação</Text>
+
+      <FlatList
+        data={buildings}
+        keyExtractor={(building) => building?.Building?.id}
+        renderItem={renderBuilding}
+        ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
+      />
     </SafeAreaView>
   );
 };
