@@ -6,9 +6,9 @@ import NetInfo from "@react-native-community/netinfo";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { styles } from "./styles";
-
 import { processOfflineQueue, startPeriodicQueueProcessing } from "@/utils/processOfflineQueue";
+
+import { styles } from "./styles";
 
 export const OfflineData = () => {
   const [offlineCount, setOfflineCount] = useState(0);
