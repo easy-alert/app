@@ -15,6 +15,7 @@ import { styles } from "./styles";
 
 import { convertCostToInteger } from "../utils/convertCostToInteger";
 
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { Navigation } from "@/routes/navigation";
@@ -146,7 +147,7 @@ export const CallToActions = ({
           type: (image as ILocalFile).type,
         }));
 
-        const newEntry = {
+        const newEntry: IOfflineQueueItem = {
           type: "saveProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
@@ -256,7 +257,7 @@ export const CallToActions = ({
           type: (image as ILocalFile).type,
         }));
 
-        const newEntry = {
+        const newEntry: IOfflineQueueItem = {
           type: "finishMaintenance",
           userId,
           maintenanceId: maintenanceDetails.id,

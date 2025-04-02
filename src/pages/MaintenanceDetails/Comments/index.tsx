@@ -16,6 +16,7 @@ import { styles } from "./styles";
 
 import { openFilePicker } from "../utils/openFilePicker";
 
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import type { ILocalFile } from "@/types/ILocalFile";
 import type { Navigation } from "@/routes/navigation";
 
@@ -89,7 +90,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           type: file.type,
         }));
 
-        const newEntry = {
+        const newEntry: IOfflineQueueItem = {
           type: "addHistoryActivity",
           userId,
           maintenanceId,
