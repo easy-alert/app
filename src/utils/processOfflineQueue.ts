@@ -6,7 +6,8 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 
-const OFFLINE_QUEUE_KEY = "offline_queue";
+import { OFFLINE_QUEUE_KEY } from "./constants";
+
 let isProcessing = false; // Global lock to prevent overlapping processes
 
 export const processOfflineQueue = async () => {

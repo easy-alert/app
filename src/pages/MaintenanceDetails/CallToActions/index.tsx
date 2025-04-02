@@ -9,11 +9,11 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
+import { OFFLINE_QUEUE_KEY } from "@/utils/constants";
 
 import { styles } from "./styles";
 
 import { convertCostToInteger } from "../utils/convertCostToInteger";
-import { OFFLINE_QUEUE_KEY } from "../utils/constants";
 
 import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";

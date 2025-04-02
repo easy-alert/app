@@ -10,11 +10,11 @@ import { useNavigation } from "@react-navigation/native";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
+import { OFFLINE_QUEUE_KEY } from "@/utils/constants";
 
 import { styles } from "./styles";
 
 import { openFilePicker } from "../utils/openFilePicker";
-import { OFFLINE_QUEUE_KEY } from "../utils/constants";
 
 import type { ILocalFile } from "@/types/ILocalFile";
 import type { Navigation } from "@/routes/navigation";
