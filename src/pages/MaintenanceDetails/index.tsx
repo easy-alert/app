@@ -8,6 +8,7 @@ import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistor
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageLayout } from "@/components/PageLayout";
 
 import { Header } from "./Header";
 import { DataLabels } from "./DataLabels";
@@ -119,40 +120,42 @@ export const MaintenanceDetails = () => {
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
-        <Header maintenanceDetails={maintenanceDetails} />
-        <DataLabels maintenanceDetails={maintenanceDetails} />
-        <Suppliers
-          supplier={supplier}
-          maintenanceId={maintenanceId}
-          getMaintenanceSupplier={handleGetMaintenanceSupplier}
-        />
-        <Comments
-          maintenanceId={maintenanceId}
-          setLoading={setLoading}
-          getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
-        />
-        <History historyActivities={historyActivities} />
-        <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
-        <Attachments
-          maintenanceDetails={maintenanceDetails}
-          files={files}
-          images={images}
-          setFiles={setFiles}
-          setImages={setImages}
-        />
-        <CallToActions
-          maintenanceDetails={maintenanceDetails}
-          files={files}
-          images={images}
-          cost={cost}
-          setFiles={setFiles}
-          setImages={setImages}
-          setCost={setCost}
-          setLoading={setLoading}
-        />
-      </ScreenWithCloseButton>
-    </KeyboardAvoidingView>
+    <PageLayout>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
+          <Header maintenanceDetails={maintenanceDetails} />
+          <DataLabels maintenanceDetails={maintenanceDetails} />
+          <Suppliers
+            supplier={supplier}
+            maintenanceId={maintenanceId}
+            getMaintenanceSupplier={handleGetMaintenanceSupplier}
+          />
+          <Comments
+            maintenanceId={maintenanceId}
+            setLoading={setLoading}
+            getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
+          />
+          <History historyActivities={historyActivities} />
+          <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
+          <Attachments
+            maintenanceDetails={maintenanceDetails}
+            files={files}
+            images={images}
+            setFiles={setFiles}
+            setImages={setImages}
+          />
+          <CallToActions
+            maintenanceDetails={maintenanceDetails}
+            files={files}
+            images={images}
+            cost={cost}
+            setFiles={setFiles}
+            setImages={setImages}
+            setCost={setCost}
+            setLoading={setLoading}
+          />
+        </ScreenWithCloseButton>
+      </KeyboardAvoidingView>
+    </PageLayout>
   );
 };

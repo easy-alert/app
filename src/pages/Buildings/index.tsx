@@ -5,6 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation } from "@react-navigation/native";
 
+import { PageLayout } from "@/components/PageLayout";
+
 import { styles } from "./styles";
 
 import type { IUser } from "@/types/IUser";
@@ -66,7 +68,7 @@ export const Buildings = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <PageLayout style={styles.container}>
       <Text style={styles.title}>Escolha uma Edificação</Text>
 
       <FlatList
@@ -75,6 +77,6 @@ export const Buildings = () => {
         renderItem={renderBuilding}
         ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma edificação encontrado para este número.</Text>}
       />
-    </View>
+    </PageLayout>
   );
 };

@@ -6,10 +6,23 @@ import { Maintenances } from "@/pages/Maintenances";
 import { Buildings } from "@/pages/Buildings";
 import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
 import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
+import { useAuth } from "@/contexts/AuthContext";
+import { Splash } from "@/components/Splash";
+import { Login } from "@/pages/Login";
 
 const Stack = createNativeStackNavigator();
 
 export const Routes = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated === undefined) {
+    return <Splash />;
+  }
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
+
   const linking: LinkingOptions<ReactNavigation.RootParamList> = {
     prefixes: __DEV__
       ? ["exp://127.0.0.1:8081/--/"] //

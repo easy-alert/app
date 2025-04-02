@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Text } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -8,6 +8,7 @@ import { useNavigationState } from "@react-navigation/native";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageLayout } from "@/components/PageLayout";
 
 import { Kanban } from "./Kanban";
 import { Navbar } from "./Navbar";
@@ -97,7 +98,7 @@ export const Maintenances = () => {
   }, [logout, navigationState.index, navigationState.routes, userId]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <PageLayout>
       <Navbar logoUrl={logo} buildingNanoId={buildingId} />
 
       {loading && <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />}
@@ -107,6 +108,6 @@ export const Maintenances = () => {
       {!loading && kanbanData.length > 0 && (
         <Kanban kanbanData={kanbanData} buildingName={buildingName} buildingId={buildingId} />
       )}
-    </View>
+    </PageLayout>
   );
 };
