@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const styles = (isSyncing: boolean) =>
+export const createStyle = (isSyncing: boolean) =>
   StyleSheet.create({
     container: {
       backgroundColor: "#fff",

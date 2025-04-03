@@ -4,11 +4,11 @@ import { View, Text, ActivityIndicator } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Ionicons";
 
+import { createStyle } from "./styles";
+
 import { syncOfflineQueue, startPeriodicQueueSync, getOfflineQueue } from "@/utils/offlineQueue";
 
-import { styles as stylesFunction } from "./styles";
-
-export const OfflineData = () => {
+export const OfflineQueueBadge = () => {
   const [offlineQueueLength, setOfflineQueueLength] = useState(0);
   const [hasInternetConnection, setHasInternetConnection] = useState(true);
 
@@ -46,7 +46,7 @@ export const OfflineData = () => {
 
   const isSyncing = hasInternetConnection && offlineQueueLength > 0;
 
-  const styles = stylesFunction(isSyncing);
+  const styles = createStyle(isSyncing);
 
   return (
     <View style={styles.container}>
