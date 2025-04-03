@@ -1,16 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
-
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+
 const OFFLINE_QUEUE_KEY = "offline_queue";
 
-let isProcessing = false; // Global lock to prevent overlapping processes
+let isSyncing = false; // Global lock to prevent overlapping sync
 
 export const getOfflineQueue = async (): Promise<IOfflineQueueItem[]> => {
   const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -23,12 +23,12 @@ export const addItemToOfflineQueue = async (item: IOfflineQueueItem) => {
   await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 };
 
-export const processOfflineQueue = async () => {
-  if (isProcessing) {
-    return; // Exit if already processing
+export const syncOfflineQueue = async () => {
+  if (isSyncing) {
+    return; // Exit if already syncing
   }
 
-  isProcessing = true; // Set lock to prevent overlapping processes
+  isSyncing = true; // Set lock to prevent overlapping sync
 
   try {
     const offlineQueue = await getOfflineQueue();
@@ -149,10 +149,10 @@ export const processOfflineQueue = async () => {
           });
         }
 
-        // Save the updated queue after successful processing
+        // Save the updated queue after successful sync
         await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
       } catch (error) {
-        console.error("Failed to process offline queue item:", error);
+        console.error("Failed to sync offline queue item:", error);
         // Re-add the item to the queue if it fails
         offlineQueue.push(currentItem);
         await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
@@ -160,17 +160,17 @@ export const processOfflineQueue = async () => {
       }
     }
   } catch (error) {
-    console.error("Error during offline queue processing:", error);
+    console.error("Error during offline queue syncing:", error);
   } finally {
-    isProcessing = false; // Release lock after processing
+    isSyncing = false; // Release lock after sync
   }
 };
 
-export const startPeriodicQueueProcessing = () => {
+export const startPeriodicQueueSync = () => {
   const interval = setInterval(async () => {
     const networkState = await NetInfo.fetch();
     if (networkState.isConnected) {
-      await processOfflineQueue();
+      await syncOfflineQueue();
     }
   }, 3000); // Check every 3 seconds
 

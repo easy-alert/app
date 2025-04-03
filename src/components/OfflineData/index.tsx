@@ -1,64 +1,63 @@
 import React, { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 
 import NetInfo from "@react-native-community/netinfo";
+import Icon from "react-native-vector-icons/Ionicons";
 
-import { styles } from "./styles";
+import { syncOfflineQueue, startPeriodicQueueSync, getOfflineQueue } from "@/utils/offlineQueue";
 
-import { processOfflineQueue, startPeriodicQueueProcessing, getOfflineQueue } from "@/utils/offlineQueue";
+import { styles as stylesFunction } from "./styles";
 
 export const OfflineData = () => {
-  const [offlineCount, setOfflineCount] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [internetConnection, setInternetConnection] = useState(true);
+  const [offlineQueueLength, setOfflineQueueLength] = useState(0);
+  const [hasInternetConnection, setHasInternetConnection] = useState(true);
 
   useEffect(() => {
-    const stopProcessing = startPeriodicQueueProcessing();
-
-    return () => stopProcessing(); // Limpa o intervalo ao desmontar o componente
+    const stopSyncCaller = startPeriodicQueueSync();
+    return () => stopSyncCaller(); // Limpa o intervalo ao desmontar o componente
   }, []);
 
   useEffect(() => {
     const getOfflineQueueCount = async () => {
       const offlineQueue = await getOfflineQueue();
-      setOfflineCount(offlineQueue.length);
+      setOfflineQueueLength(offlineQueue.length);
     };
 
-    const processQueueOnReconnect = () => {
+    const syncQueueOnReconnect = () => {
       NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          setInternetConnection(true);
-          setIsProcessing(true);
-          await processOfflineQueue(); // Processa a fila
-          setIsProcessing(false);
-          await getOfflineQueueCount(); // Atualiza o contador
-        } else {
-          setInternetConnection(false);
+        if (!state.isConnected) {
+          setHasInternetConnection(false);
+          return;
         }
+
+        setHasInternetConnection(true);
+        await syncOfflineQueue();
+        await getOfflineQueueCount();
       });
     };
 
     getOfflineQueueCount(); // Atualiza o contador ao montar o componente
-    processQueueOnReconnect(); // Observa reconexões de internet
+    syncQueueOnReconnect(); // Observa reconexões de internet
   }, []);
+
+  if (hasInternetConnection && offlineQueueLength === 0) {
+    return null;
+  }
+
+  const isSyncing = hasInternetConnection && offlineQueueLength > 0;
+
+  const styles = stylesFunction(isSyncing);
 
   return (
     <View style={styles.container}>
-      {offlineCount > 0 && (
-        <>
-          <Text style={[styles.itemContainer, styles.offlineCountLabel]}>Fila Offline: {offlineCount} item(s)</Text>
+      <View style={styles.badgeContainer}>
+        {isSyncing && <ActivityIndicator color="#fff" />}
+        {!isSyncing && <Icon name={"cloud-offline-outline"} size={16} color="#fff" />}
 
-          {isProcessing && (
-            <Text style={[styles.itemContainer, styles.indicatorLabel]}>Processando dados da fila, aguarde...</Text>
-          )}
-        </>
-      )}
+        <Text style={styles.offlineLabel}>{isSyncing ? "Sincronizando" : "Offline"}</Text>
 
-      {!internetConnection && (
-        <Text style={[styles.itemContainer, styles.indicatorLabel]}>
-          Você está offline, alguns serviços podem estar indisponíveis...
-        </Text>
-      )}
+        {offlineQueueLength > 0 && <Text style={styles.offlineQueueLengthLabel}>{offlineQueueLength}</Text>}
+      </View>
     </View>
   );
 };
