@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 
 import NetInfo from "@react-native-community/netinfo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { updateMaintenance } from "@/services/updateMaintenance";
@@ -9,12 +8,13 @@ import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 import { useAuth } from "@/contexts/AuthContext";
+import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
 import { convertCostToInteger } from "../utils/convertCostToInteger";
-import { OFFLINE_QUEUE_KEY } from "../utils/constants";
 
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { Navigation } from "@/routes/navigation";
@@ -129,10 +129,6 @@ export const CallToActions = ({
         setCost("");
         navigation.goBack();
       } else {
-        // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-
         // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
@@ -146,7 +142,7 @@ export const CallToActions = ({
           type: (image as ILocalFile).type,
         }));
 
-        const newEntry = {
+        const newEntry: IOfflineQueueItem = {
           type: "saveProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
@@ -156,8 +152,7 @@ export const CallToActions = ({
           timestamp: new Date().toISOString(),
         };
 
-        offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await addItemToOfflineQueue(newEntry);
 
         setFiles([]);
         setImages([]);
@@ -239,10 +234,6 @@ export const CallToActions = ({
         setCost("");
         navigation.goBack();
       } else {
-        // If offline, save data to a queue in AsyncStorage
-        const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
-        const offlineQueue = offlineQueueString ? JSON.parse(offlineQueueString) : [];
-
         // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
@@ -256,7 +247,7 @@ export const CallToActions = ({
           type: (image as ILocalFile).type,
         }));
 
-        const newEntry = {
+        const newEntry: IOfflineQueueItem = {
           type: "finishMaintenance",
           userId,
           maintenanceId: maintenanceDetails.id,
@@ -266,8 +257,7 @@ export const CallToActions = ({
           timestamp: new Date().toISOString(),
         };
 
-        offlineQueue.push(newEntry);
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await addItemToOfflineQueue(newEntry);
 
         setFiles([]);
         setImages([]);

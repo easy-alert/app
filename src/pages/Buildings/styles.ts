@@ -2,13 +2,11 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -20,7 +18,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
   buildingItem: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,

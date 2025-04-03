@@ -3,13 +3,12 @@ import React, { useEffect, useState } from "react";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageLayout } from "@/components/PageLayout";
 
 import { Header } from "./Header";
 import { DataLabels } from "./DataLabels";
@@ -121,7 +120,7 @@ export const MaintenanceDetails = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <PageLayout>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
           <Header maintenanceDetails={maintenanceDetails} />
@@ -157,6 +156,6 @@ export const MaintenanceDetails = () => {
           />
         </ScreenWithCloseButton>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </PageLayout>
   );
 };

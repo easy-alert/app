@@ -1,9 +1,9 @@
 import { KeyboardAvoidingView, Platform } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageLayout } from "@/components/PageLayout";
 
 import { Form } from "./Form";
 
@@ -15,12 +15,12 @@ export const CreateOccasionalMaintenance = () => {
   const { buildingId } = route.params as CreateOccasionalMaintenanceParams;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <PageLayout>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <ScreenWithCloseButton title="Manutenção avulsa" onClose={() => navigation.goBack()}>
           <Form buildingId={buildingId} />
         </ScreenWithCloseButton>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </PageLayout>
   );
 };
