@@ -1,15 +1,17 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+    gap: 8,
+  },
   titleLabel: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
   },
   tagsContainer: {
     flexDirection: "row",
     gap: 8,
-    marginBottom: 16,
   },
   tagContainer: {
     paddingVertical: 2,
