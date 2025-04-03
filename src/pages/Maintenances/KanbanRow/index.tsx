@@ -2,6 +2,8 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 
+import Icon from "react-native-vector-icons/Ionicons";
+
 import { getStatus } from "@/utils/getStatus";
 import { formatDate } from "@/utils/formatDate";
 
@@ -13,9 +15,10 @@ import type { IKanbanColumn } from "@/types/IKanbanColumn";
 interface KanbanRowProps {
   maintenance: IKanbanColumn["maintenances"][0];
   columnStatus: string;
+  hasPendingSync: boolean;
 }
 
-export const KanbanRow = ({ maintenance, columnStatus }: KanbanRowProps) => {
+export const KanbanRow = ({ maintenance, columnStatus, hasPendingSync }: KanbanRowProps) => {
   const navigation = useNavigation<Navigation>();
 
   const handleNavigateToMaintenanceDetails = () => {
@@ -54,7 +57,14 @@ export const KanbanRow = ({ maintenance, columnStatus }: KanbanRowProps) => {
         <Text style={styles.completedLabel}>Concluída em {formatDate(maintenance.date)}</Text>
       )}
 
-      {maintenance.label && <Text style={styles.cardFooter}>{maintenance.label}</Text>}
+      {maintenance.label && <Text style={styles.footerLabel}>{maintenance.label}</Text>}
+
+      {hasPendingSync && (
+        <View style={styles.pendingSyncContainer}>
+          <Icon name="cloud-offline-outline" size={16} color="#fff" />
+          <Text style={styles.pendingSyncLabel}>Sincronização pendente</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };

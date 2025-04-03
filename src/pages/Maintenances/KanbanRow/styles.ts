@@ -21,13 +21,13 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       elevation: 2, // Elevação para sombra no Android
       borderLeftWidth: 9,
       borderLeftColor: getStatus(columnStatus).color,
+      gap: 6,
     },
     typeTagContainer: {
       paddingVertical: 2,
       paddingHorizontal: 4,
       borderRadius: 4,
       alignSelf: "flex-start", // Ajusta o tamanho ao conteúdo
-      marginBottom: 8,
       backgroundColor: getStatus(maintenanceType).color,
     },
     statusTagContainer: {
@@ -35,7 +35,6 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       paddingHorizontal: 4,
       borderRadius: 4,
       alignSelf: "flex-start", // Ajusta o tamanho ao conteúdo
-      marginBottom: 8,
       backgroundColor: getStatus(maintenanceStatus).color,
     },
     tagText: {
@@ -46,22 +45,33 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
     cardTitle: {
       fontSize: 14,
       fontWeight: "bold",
-      marginBottom: 4,
       color: "#000", // Cor do texto principal
     },
     cardDescription: {
       fontSize: 14,
       color: "#666666", // Cinza para o texto secundário
-      marginBottom: 8,
     },
     completedLabel: {
       maxHeight: "100%", // Limita a altura da área de cartões, ajuste conforme necessário
       color: "#34b53a",
     },
-    cardFooter: {
+    footerLabel: {
       fontSize: 14,
       fontWeight: "bold",
       color: getStatus(maintenanceStatus).color,
+    },
+    pendingSyncContainer: {
+      alignSelf: "baseline",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      backgroundColor: "#2B7FFF",
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      borderRadius: 999,
+    },
+    pendingSyncLabel: {
+      color: "#fff",
     },
   });
 };
