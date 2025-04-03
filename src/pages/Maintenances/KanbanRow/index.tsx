@@ -2,10 +2,9 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 
-import Icon from "react-native-vector-icons/Ionicons";
-
 import { getStatus } from "@/utils/getStatus";
 import { formatDate } from "@/utils/formatDate";
+import { PendingSyncBadge } from "@/components/PendingSyncBadge";
 
 import { createStyle } from "./styles";
 
@@ -59,12 +58,7 @@ export const KanbanRow = ({ maintenance, columnStatus, hasPendingSync }: KanbanR
 
       {maintenance.label && <Text style={styles.footerLabel}>{maintenance.label}</Text>}
 
-      {hasPendingSync && (
-        <View style={styles.pendingSyncContainer}>
-          <Icon name="cloud-offline-outline" size={16} color="#fff" />
-          <Text style={styles.pendingSyncLabel}>Sincronização pendente</Text>
-        </View>
-      )}
+      {hasPendingSync && <PendingSyncBadge />}
     </TouchableOpacity>
   );
 };
