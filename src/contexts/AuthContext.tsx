@@ -69,6 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await AsyncStorage.setItem("phoneNumber", phone);
       await AsyncStorage.setItem("buildingsList", JSON.stringify(response.user.UserBuildingsPermissions));
 
+      setUserId(response.user.id);
       setIsAuthenticated(true);
     } catch {
       setIsAuthenticated(false);
