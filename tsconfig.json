@@ -11,13 +11,5 @@
     }
   },
 
-  "include": [
-    "App.tsx",
-    "src/**/*",
-    ".eslintrc.js",
-    "babel.config.js",
-    "metro.config.js",
-    "gesture-handler.js",
-    "gesture-handler.native.js"
-  ]
+  "include": ["App.tsx", "src/**/*", ".eslintrc.js", "babel.config.js", "metro.config.js"]
 }
