@@ -9,12 +9,12 @@ interface IOfflineQueueItemBase {
   }[];
 }
 
-interface IAddHistoryActivityQueueItem extends IOfflineQueueItemBase {
+export interface IAddHistoryActivityQueueItem extends IOfflineQueueItemBase {
   type: "addHistoryActivity";
   comment: string;
 }
 
-interface ISaveProgressQueueItem extends IOfflineQueueItemBase {
+export interface ISaveProgressQueueItem extends IOfflineQueueItemBase {
   type: "saveProgress";
   cost: number;
   images: {
@@ -24,7 +24,7 @@ interface ISaveProgressQueueItem extends IOfflineQueueItemBase {
   }[];
 }
 
-interface IFinishMaintenanceQueueItem extends IOfflineQueueItemBase {
+export interface IFinishMaintenanceQueueItem extends IOfflineQueueItemBase {
   type: "finishMaintenance";
   cost: number;
   images: {

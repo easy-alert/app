@@ -1,16 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
 
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+import type {
+  IAddHistoryActivityQueueItem,
+  IFinishMaintenanceQueueItem,
+  IOfflineQueueItem,
+  ISaveProgressQueueItem,
+} from "@/types/IOfflineQueueItem";
 
 const OFFLINE_QUEUE_KEY = "offline_queue";
 
-let isSyncing = false; // Global lock to prevent overlapping sync
+let isSyncing = false;
 
 export const getOfflineQueue = async (): Promise<IOfflineQueueItem[]> => {
   const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
@@ -25,10 +29,10 @@ export const addItemToOfflineQueue = async (item: IOfflineQueueItem) => {
 
 export const syncOfflineQueue = async () => {
   if (isSyncing) {
-    return; // Exit if already syncing
+    return;
   }
 
-  isSyncing = true; // Set lock to prevent overlapping sync
+  isSyncing = true;
 
   try {
     const offlineQueue = await getOfflineQueue();
@@ -38,115 +42,16 @@ export const syncOfflineQueue = async () => {
       const currentItem = offlineQueue.shift()!;
 
       try {
-        if (currentItem.type === "addHistoryActivity") {
-          // Handle addHistoryActivity
-          const filesUploaded = [];
-          for (const file of currentItem.files) {
-            const fileUrl = await uploadFile({
-              uri: file.uri,
-              type: file.type,
-              name: file.originalName,
-            });
-
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              type: file.type,
-            });
-          }
-
-          await createMaintenanceHistoryActivity({
-            maintenanceId: currentItem?.maintenanceId,
-            userId: currentItem?.userId,
-            content: currentItem?.comment,
-            uploadedFile: filesUploaded,
-          });
-        } else if (currentItem.type === "saveProgress") {
-          // Handle saveProgress
-          const filesUploaded = [];
-          for (const file of currentItem.files) {
-            const fileUrl = await uploadFile({
-              uri: file.uri,
-              type: file.type,
-              name: file.originalName,
-            });
-
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              name: file.originalName,
-            });
-          }
-
-          const imagesUploaded = [];
-          for (const image of currentItem.images) {
-            const fileUrl = await uploadFile({
-              uri: image.uri,
-              type: image.type,
-              name: image.originalName,
-            });
-
-            imagesUploaded.push({
-              originalName: image.originalName,
-              url: fileUrl,
-              name: image.originalName,
-            });
-          }
-
-          // TODO: fix, this is not working
-          await updateMaintenanceProgress({
-            // @ts-expect-error not working
-            syndicNanoId: currentItem.syndicNanoId,
-            userId: currentItem.userId,
-            // @ts-expect-error not working
-            maintenanceHistoryId: currentItem.maintenanceHistoryId,
-            // @ts-expect-error not working
-            inProgressChange: currentItem.inProgressChange,
-          });
-        } else if (currentItem.type === "finishMaintenance") {
-          // Handle finishMaintenance
-          const filesUploaded = [];
-          for (const file of currentItem.files) {
-            const fileUrl = await uploadFile({
-              uri: file.uri,
-              type: file.type,
-              name: file.originalName,
-            });
-
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              name: file.originalName,
-            });
-          }
-
-          const imagesUploaded = [];
-          for (const image of currentItem.images) {
-            const fileUrl = await uploadFile({
-              uri: image.uri,
-              type: image.type,
-              name: image.originalName,
-            });
-
-            imagesUploaded.push({
-              originalName: image.originalName,
-              url: fileUrl,
-              name: image.originalName,
-            });
-          }
-
-          // TODO: fix, this is not working
-          await updateMaintenanceFinish({
-            // @ts-expect-error not working
-            maintenanceHistoryId: currentItem.maintenanceHistoryId,
-            userId: currentItem.userId,
-            // @ts-expect-error not working
-            syndicNanoId: currentItem.syndicNanoId,
-            // @ts-expect-error not working
-            maintenanceReport: currentItem.maintenanceReport,
-            files: filesUploaded,
-            images: imagesUploaded,
-          });
+        switch (currentItem.type) {
+          case "addHistoryActivity":
+            await syncAddHistoryActivity(currentItem);
+            break;
+          case "saveProgress":
+            await syncSaveProgress(currentItem);
+            break;
+          case "finishMaintenance":
+            await syncFinishMaintenance(currentItem);
+            break;
         }
 
         // Save the updated queue after successful sync
@@ -162,17 +67,122 @@ export const syncOfflineQueue = async () => {
   } catch (error) {
     console.error("Error during offline queue syncing:", error);
   } finally {
-    isSyncing = false; // Release lock after sync
+    isSyncing = false;
   }
 };
 
-export const startPeriodicQueueSync = () => {
-  const interval = setInterval(async () => {
-    const networkState = await NetInfo.fetch();
-    if (networkState.isConnected) {
-      await syncOfflineQueue();
-    }
-  }, 3000); // Check every 3 seconds
+const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem) => {
+  const filesUploaded = [];
 
-  return () => clearInterval(interval); // Return a cleanup function
+  for (const file of item.files) {
+    const fileUrl = await uploadFile({
+      uri: file.uri,
+      type: file.type,
+      name: file.originalName,
+    });
+
+    filesUploaded.push({
+      originalName: file.originalName,
+      url: fileUrl,
+      type: file.type,
+    });
+  }
+
+  await createMaintenanceHistoryActivity({
+    maintenanceId: item?.maintenanceId,
+    userId: item?.userId,
+    content: item?.comment,
+    uploadedFile: filesUploaded,
+  });
+};
+
+const syncSaveProgress = async (item: ISaveProgressQueueItem) => {
+  const filesUploaded = [];
+
+  for (const file of item.files) {
+    const fileUrl = await uploadFile({
+      uri: file.uri,
+      type: file.type,
+      name: file.originalName,
+    });
+
+    filesUploaded.push({
+      originalName: file.originalName,
+      url: fileUrl,
+      name: file.originalName,
+    });
+  }
+
+  const imagesUploaded = [];
+
+  for (const image of item.images) {
+    const fileUrl = await uploadFile({
+      uri: image.uri,
+      type: image.type,
+      name: image.originalName,
+    });
+
+    imagesUploaded.push({
+      originalName: image.originalName,
+      url: fileUrl,
+      name: image.originalName,
+    });
+  }
+
+  // TODO: fix, this is not working
+  await updateMaintenanceProgress({
+    // @ts-expect-error not working
+    syndicNanoId: item.syndicNanoId,
+    userId: item.userId,
+    // @ts-expect-error not working
+    maintenanceHistoryId: item.maintenanceHistoryId,
+    // @ts-expect-error not working
+    inProgressChange: item.inProgressChange,
+  });
+};
+
+const syncFinishMaintenance = async (item: IFinishMaintenanceQueueItem) => {
+  const filesUploaded = [];
+
+  for (const file of item.files) {
+    const fileUrl = await uploadFile({
+      uri: file.uri,
+      type: file.type,
+      name: file.originalName,
+    });
+
+    filesUploaded.push({
+      originalName: file.originalName,
+      url: fileUrl,
+      name: file.originalName,
+    });
+  }
+
+  const imagesUploaded = [];
+  for (const image of item.images) {
+    const fileUrl = await uploadFile({
+      uri: image.uri,
+      type: image.type,
+      name: image.originalName,
+    });
+
+    imagesUploaded.push({
+      originalName: image.originalName,
+      url: fileUrl,
+      name: image.originalName,
+    });
+  }
+
+  // TODO: fix, this is not working
+  await updateMaintenanceFinish({
+    // @ts-expect-error not working
+    maintenanceHistoryId: item.maintenanceHistoryId,
+    userId: item.userId,
+    // @ts-expect-error not working
+    syndicNanoId: item.syndicNanoId,
+    // @ts-expect-error not working
+    maintenanceReport: item.maintenanceReport,
+    files: filesUploaded,
+    images: imagesUploaded,
+  });
 };

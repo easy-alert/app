@@ -4,18 +4,13 @@ import { View, Text, ActivityIndicator } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Ionicons";
 
-import { createStyle } from "./styles";
+import { syncOfflineQueue, getOfflineQueue } from "@/utils/offlineQueue";
 
-import { syncOfflineQueue, startPeriodicQueueSync, getOfflineQueue } from "@/utils/offlineQueue";
+import { createStyle } from "./styles";
 
 export const OfflineQueueBadge = () => {
   const [offlineQueueLength, setOfflineQueueLength] = useState(0);
   const [hasInternetConnection, setHasInternetConnection] = useState(true);
-
-  useEffect(() => {
-    const stopSyncCaller = startPeriodicQueueSync();
-    return () => stopSyncCaller(); // Limpa o intervalo ao desmontar o componente
-  }, []);
 
   useEffect(() => {
     const getOfflineQueueCount = async () => {
@@ -23,7 +18,7 @@ export const OfflineQueueBadge = () => {
       setOfflineQueueLength(offlineQueue.length);
     };
 
-    const syncQueueOnReconnect = () => {
+    const syncQueueOnReconnect = () =>
       NetInfo.addEventListener(async (state) => {
         if (!state.isConnected) {
           setHasInternetConnection(false);
@@ -34,10 +29,26 @@ export const OfflineQueueBadge = () => {
         await syncOfflineQueue();
         await getOfflineQueueCount();
       });
-    };
 
-    getOfflineQueueCount(); // Atualiza o contador ao montar o componente
-    syncQueueOnReconnect(); // Observa reconexões de internet
+    const syncQueueOnInterval = () =>
+      setInterval(async () => {
+        const networkState = await NetInfo.fetch();
+
+        if (networkState.isConnected) {
+          await syncOfflineQueue();
+          await getOfflineQueueCount();
+        }
+      }, 3000);
+
+    getOfflineQueueCount();
+
+    const unsubscribe = syncQueueOnReconnect();
+    const interval = syncQueueOnInterval();
+
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, []);
 
   if (hasInternetConnection && offlineQueueLength === 0) {
