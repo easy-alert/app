@@ -2,8 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
+
+import { updateMaintenance } from "@/services/updateMaintenance";
 
 import type {
   IAddHistoryActivityQueueItem,
@@ -89,9 +90,9 @@ const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem) => {
   }
 
   await createMaintenanceHistoryActivity({
-    maintenanceId: item?.maintenanceId,
-    userId: item?.userId,
-    content: item?.comment,
+    maintenanceId: item.maintenanceId,
+    userId: item.userId,
+    content: item.comment,
     uploadedFile: filesUploaded,
   });
 };
@@ -129,15 +130,16 @@ const syncSaveProgress = async (item: ISaveProgressQueueItem) => {
     });
   }
 
-  // TODO: fix, this is not working
-  await updateMaintenanceProgress({
-    // @ts-expect-error not working
-    syndicNanoId: item.syndicNanoId,
+  await updateMaintenance({
+    maintenanceHistoryId: item.maintenanceId,
+    syndicNanoId: "",
     userId: item.userId,
-    // @ts-expect-error not working
-    maintenanceHistoryId: item.maintenanceHistoryId,
-    // @ts-expect-error not working
-    inProgressChange: item.inProgressChange,
+    maintenanceReport: {
+      cost: item.cost,
+      observation: "",
+    },
+    files: filesUploaded,
+    images: imagesUploaded,
   });
 };
 
@@ -173,15 +175,14 @@ const syncFinishMaintenance = async (item: IFinishMaintenanceQueueItem) => {
     });
   }
 
-  // TODO: fix, this is not working
   await updateMaintenanceFinish({
-    // @ts-expect-error not working
-    maintenanceHistoryId: item.maintenanceHistoryId,
+    maintenanceHistoryId: item.maintenanceId,
+    syndicNanoId: "",
     userId: item.userId,
-    // @ts-expect-error not working
-    syndicNanoId: item.syndicNanoId,
-    // @ts-expect-error not working
-    maintenanceReport: item.maintenanceReport,
+    maintenanceReport: {
+      cost: item.cost,
+      observation: "",
+    },
     files: filesUploaded,
     images: imagesUploaded,
   });
