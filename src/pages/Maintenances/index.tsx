@@ -12,6 +12,7 @@ import { PageLayout } from "@/components/PageLayout";
 
 import { Kanban } from "./Kanban";
 import { Navbar } from "./Navbar";
+import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 
 import { styles } from "./styles";
 
@@ -108,6 +109,8 @@ export const Maintenances = () => {
       {!loading && kanbanData.length > 0 && (
         <Kanban kanbanData={kanbanData} buildingName={buildingName} buildingId={buildingId} />
       )}
+
+      {!loading && <CreateOccasionalMaintenanceButton buildingId={buildingId} />}
     </PageLayout>
   );
 };
