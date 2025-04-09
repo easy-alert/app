@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/Feather";
 
 import type { Navigation } from "@/routes/navigation";
 
+import { FiltersButton } from "../FiltersButton";
 import { styles } from "./styles";
 
 interface KanbanHeaderProps {
@@ -20,13 +21,13 @@ export const KanbanHeader = ({ buildingName, buildingId }: KanbanHeaderProps) =>
 
   return (
     <View style={styles.container}>
-      <View style={styles.buildingNameContainer}>
+      <TouchableOpacity onPress={handleNavigateToBuildings} style={styles.buildingNameButton}>
         <Text style={styles.buildingNameLabel}>{buildingName}</Text>
 
-        <TouchableOpacity onPress={handleNavigateToBuildings} style={styles.buildingNameButton}>
-          <Icon name="repeat" size={24} color="#b21d1d" />
-        </TouchableOpacity>
-      </View>
+        <Icon name="repeat" size={24} color="#b21d1d" />
+      </TouchableOpacity>
+
+      <FiltersButton />
     </View>
   );
 };

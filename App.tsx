@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BottomSheetProvider } from "@/contexts/BottomSheetContext";
 import { Routes } from "@/routes";
 
 export default function App() {
@@ -14,9 +15,11 @@ export default function App() {
 
       <SafeAreaProvider>
         <View style={styles.appContainer}>
-          <AuthProvider>
-            <Routes />
-          </AuthProvider>
+          <BottomSheetProvider>
+            <AuthProvider>
+              <Routes />
+            </AuthProvider>
+          </BottomSheetProvider>
         </View>
       </SafeAreaProvider>
     </GestureHandlerRootView>
