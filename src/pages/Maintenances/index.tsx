@@ -1,23 +1,19 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigationState } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Text } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import { useNavigationState } from "@react-navigation/native";
-
+import { PageLayout } from "@/components/PageLayout";
+import { useAuth } from "@/contexts/AuthContext";
+import type { RouteList } from "@/routes/navigation";
 import { getBuildingLogo } from "@/services/getBuildingLogo";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
-import { useAuth } from "@/contexts/AuthContext";
-import { PageLayout } from "@/components/PageLayout";
+import type { IKanbanColumn } from "@/types/IKanbanColumn";
 
+import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 import { Kanban } from "./Kanban";
 import { Navbar } from "./Navbar";
-import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
-
 import { styles } from "./styles";
-
-import type { IKanbanColumn } from "@/types/IKanbanColumn";
-import type { RouteList } from "@/routes/navigation";
 
 export const Maintenances = () => {
   const navigationState = useNavigationState((state) => state);

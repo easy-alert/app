@@ -1,11 +1,10 @@
-import { unMaskBRL } from "@/utils/unMaskBRL";
+import type { IError } from "@/types/IError";
+import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
+import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
 import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import { unMaskBRL } from "@/utils/unMaskBRL";
 
 import { baseApi } from "./baseApi";
-
-import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
-import type { IError } from "@/types/IError";
 
 interface ICreateOccasionalMaintenance {
   origin: string;

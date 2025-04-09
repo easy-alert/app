@@ -1,21 +1,18 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-
-import { useEffect, useState } from "react";
-
 import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
-import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
-import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
-import { useAuth } from "@/contexts/AuthContext";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { Dropdown } from "@/components/Dropdown";
 import { LabelInput } from "@/components/LabelInput";
-
-import { styles } from "./styles";
-
+import { useAuth } from "@/contexts/AuthContext";
 import type { Navigation } from "@/routes/navigation";
+import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
+import { getCategoriesByBuildingId } from "@/services/getCategoriesByBuildingId";
 import type { ICategory } from "@/types/ICategory";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
+
+import { styles } from "./styles";
 
 interface IHandleCreateOccasionalMaintenance {
   occasionalMaintenanceType: IOccasionalMaintenanceType;

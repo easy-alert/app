@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, TextInput } from "react-native";
-
-import { styles } from "./styles";
+import { Text, TextInput, View } from "react-native";
 
 import type { IMaintenance } from "@/types/IMaintenance";
+
+import { styles } from "./styles";
 
 interface CostsProps {
   maintenanceDetails: IMaintenance;

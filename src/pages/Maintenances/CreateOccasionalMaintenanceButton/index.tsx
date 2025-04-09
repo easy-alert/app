@@ -1,12 +1,10 @@
-import { TouchableOpacity } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
-
+import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import { styles } from "./styles";
-
 import type { Navigation } from "@/routes/navigation";
+
+import { styles } from "./styles";
 
 interface CreateOccasionalMaintenanceButtonProps {
   buildingId: string;

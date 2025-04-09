@@ -1,19 +1,18 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-  Text,
-  TextInput,
-  TouchableOpacity,
   ActivityIndicator,
   Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { Keyboard } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
 
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";

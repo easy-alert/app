@@ -1,9 +1,7 @@
-import { StyleProp, TextInput, View, ViewStyle } from "react-native";
-
 import { useState } from "react";
-
-import Icon from "react-native-vector-icons/Feather";
+import { StyleProp, TextInput, View, ViewStyle } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 

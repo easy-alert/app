@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
-
 import NetInfo from "@react-native-community/netinfo";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
-import { syncOfflineQueue, getOfflineQueue } from "@/utils/offlineQueue";
+import { getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
 
 import { createStyle } from "./styles";
 

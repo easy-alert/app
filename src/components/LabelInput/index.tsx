@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TextInputProps, StyleProp, ViewStyle, TextStyle } from "react-native";
+import { StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native";
 
 import { styles } from "./styles";
 

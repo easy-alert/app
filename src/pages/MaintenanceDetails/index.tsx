@@ -1,32 +1,29 @@
-import { KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
+import { PageLayout } from "@/components/PageLayout";
+import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
-import { PageLayout } from "@/components/PageLayout";
-
-import { Header } from "./Header";
-import { DataLabels } from "./DataLabels";
-import { Comments } from "./Comments";
-import { Suppliers } from "./Suppliers";
-import { History } from "./History";
-import { Attachments } from "./Attachments";
-import { Costs } from "./Costs";
-import { CallToActions } from "./CallToActions";
-
-import { styles } from "./styles";
-
-import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { ISupplier } from "@/types/ISupplier";
-import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
-import type { IRemoteFile } from "@/types/IRemoteFile";
 import type { ILocalFile } from "@/types/ILocalFile";
+import type { IMaintenance } from "@/types/IMaintenance";
+import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
+import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { ISupplier } from "@/types/ISupplier";
+
+import { Attachments } from "./Attachments";
+import { CallToActions } from "./CallToActions";
+import { Comments } from "./Comments";
+import { Costs } from "./Costs";
+import { DataLabels } from "./DataLabels";
+import { Header } from "./Header";
+import { History } from "./History";
+import { styles } from "./styles";
+import { Suppliers } from "./Suppliers";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<Navigation>();

@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { ScrollView, View, Text } from "react-native";
-
-import { getOfflineQueue } from "@/utils/offlineQueue";
-
-import { styles } from "./styles";
-
-import { KanbanRow } from "../KanbanRow";
-import { KanbanHeader } from "../KanbanHeader";
+import { ScrollView, Text, View } from "react-native";
 
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
 import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+import { getOfflineQueue } from "@/utils/offlineQueue";
+
+import { KanbanHeader } from "../KanbanHeader";
+import { KanbanRow } from "../KanbanRow";
+import { styles } from "./styles";
 
 interface KanbanProps {
   kanbanData: IKanbanColumn[];

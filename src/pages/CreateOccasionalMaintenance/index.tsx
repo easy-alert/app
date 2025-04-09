@@ -1,13 +1,11 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
-import { useNavigation, useRoute } from "@react-navigation/native";
-
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
 import { PageLayout } from "@/components/PageLayout";
+import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import type { CreateOccasionalMaintenanceParams, Navigation } from "@/routes/navigation";
 
 import { Form } from "./Form";
-
-import type { CreateOccasionalMaintenanceParams, Navigation } from "@/routes/navigation";
 
 export const CreateOccasionalMaintenance = () => {
   const navigation = useNavigation<Navigation>();
