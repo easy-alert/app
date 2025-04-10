@@ -1,24 +1,33 @@
 import { StyleSheet } from "react-native";
+
+const baseStyle = StyleSheet.create({
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  buttonLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+});
+
 export const styles = StyleSheet.create({
   primaryButton: {
+    ...baseStyle.button,
     backgroundColor: "#b21d1d",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
   },
   primaryButtonLabel: {
-    fontSize: 14,
+    ...baseStyle.buttonLabel,
     color: "#fff",
-    fontWeight: "bold",
   },
   secondaryButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    ...baseStyle.button,
   },
   secondaryButtonLabel: {
-    fontSize: 14,
+    ...baseStyle.buttonLabel,
     color: "#75c5ff",
-    fontWeight: "bold",
   },
 });
