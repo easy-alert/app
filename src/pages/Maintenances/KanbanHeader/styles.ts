@@ -19,15 +19,4 @@ export const styles = StyleSheet.create({
   icon: {
     color: "#B22222",
   },
-  filterButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  filterButtonLabel: {
-    fontSize: 16,
-    color: "#333333",
-  },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
@@ -7,8 +7,10 @@ import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 
+import { emptyFilters, IFilter } from "../utils";
 import { styles } from "./styles";
 
+// TODO: get correct values
 const data = [
   { label: "Item 1", value: "1" },
   { label: "Item 2", value: "2" },
@@ -20,20 +22,31 @@ const data = [
   { label: "Item 8", value: "8" },
 ];
 
-export const Filters = () => {
-  const [search, setSearch] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<string>(new Date().toISOString());
-  const [endDate, setEndDate] = useState<string>(new Date().toISOString());
+interface FiltersProps {
+  filters: IFilter;
+  setFilters: (filters: IFilter) => void;
+}
+
+export const Filters = ({ filters, setFilters }: FiltersProps) => {
+  const { closeBottomSheet } = useBottomSheet();
+
+  const [filtersCache, setFiltersCache] = useState<IFilter>(filters);
+
+  const handleClearFilters = () => {
+    setFilters(emptyFilters);
+    closeBottomSheet();
+  };
+
+  const handleApplyFilters = () => {
+    setFilters(filtersCache);
+    closeBottomSheet();
+  };
 
   return (
     <View style={styles.container}>
       <LabelInput
-        value={search}
-        onChangeText={setSearch}
+        value={filtersCache.search}
+        onChangeText={(search) => setFiltersCache({ ...filtersCache, search })}
         label="Buscar"
         placeholder="Procurar por algum termo"
         isBottomSheetInput
@@ -42,8 +55,8 @@ export const Filters = () => {
       <LabelInput label="Usuário">
         <MultiSelect
           data={data}
-          value={selectedUsers}
-          onChange={setSelectedUsers}
+          value={filtersCache.selectedUsers}
+          onChange={(selectedUsers) => setFiltersCache({ ...filtersCache, selectedUsers })}
           placeholder="Selecione"
           labelField="label"
           valueField="value"
@@ -53,8 +66,8 @@ export const Filters = () => {
       <LabelInput label="Status">
         <MultiSelect
           data={data}
-          value={selectedStatus}
-          onChange={setSelectedStatus}
+          value={filtersCache.selectedStatus}
+          onChange={(selectedStatus) => setFiltersCache({ ...filtersCache, selectedStatus })}
           placeholder="Selecione"
           labelField="label"
           valueField="value"
@@ -64,8 +77,8 @@ export const Filters = () => {
       <LabelInput label="Categoria">
         <MultiSelect
           data={data}
-          value={selectedCategories}
-          onChange={setSelectedCategories}
+          value={filtersCache.selectedCategories}
+          onChange={(selectedCategories) => setFiltersCache({ ...filtersCache, selectedCategories })}
           placeholder="Selecione"
           labelField="label"
           valueField="value"
@@ -75,8 +88,8 @@ export const Filters = () => {
       <LabelInput label="Prioridade">
         <MultiSelect
           data={data}
-          value={selectedPriorities}
-          onChange={setSelectedPriorities}
+          value={filtersCache.selectedPriorities}
+          onChange={(selectedPriorities) => setFiltersCache({ ...filtersCache, selectedPriorities })}
           placeholder="Selecione"
           labelField="label"
           valueField="value"
@@ -85,32 +98,26 @@ export const Filters = () => {
 
       <LabelInput label="Data inicial">
         <DateTimeInput
-          value={new Date(startDate).toLocaleDateString("pt-BR", {
+          value={new Date(filtersCache.startDate).toLocaleDateString("pt-BR", {
             timeZone: "UTC",
           })}
-          onSelectDate={(selectedDate) => setStartDate(selectedDate.toISOString())}
+          onSelectDate={(selectedDate) => setFiltersCache({ ...filtersCache, startDate: selectedDate.toISOString() })}
         />
       </LabelInput>
 
       <LabelInput label="Data final">
         <DateTimeInput
-          value={new Date(endDate).toLocaleDateString("pt-BR", {
+          value={new Date(filtersCache.endDate).toLocaleDateString("pt-BR", {
             timeZone: "UTC",
           })}
-          onSelectDate={(selectedDate) => setEndDate(selectedDate.toISOString())}
+          onSelectDate={(selectedDate) => setFiltersCache({ ...filtersCache, endDate: selectedDate.toISOString() })}
         />
       </LabelInput>
-    </View>
-  );
-};
 
-export const FiltersFooter = () => {
-  const { closeBottomSheet } = useBottomSheet();
-
-  return (
-    <View style={styles.footerContainer}>
-      <SecondaryButton label="Limpar filtros" style={styles.footerButton} onPress={closeBottomSheet} />
-      <PrimaryButton label="Filtrar" style={styles.footerButton} onPress={closeBottomSheet} />
+      <View style={styles.footerContainer}>
+        <SecondaryButton label="Limpar filtros" style={styles.footerButton} onPress={handleClearFilters} />
+        <PrimaryButton label="Filtrar" style={styles.footerButton} onPress={handleApplyFilters} />
+      </View>
     </View>
   );
 };

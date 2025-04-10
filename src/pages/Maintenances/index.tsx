@@ -14,6 +14,7 @@ import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenance
 import { Kanban } from "./Kanban";
 import { Navbar } from "./Navbar";
 import { styles } from "./styles";
+import { emptyFilters, IFilter } from "./utils";
 
 export const Maintenances = () => {
   const navigationState = useNavigationState((state) => state);
@@ -21,6 +22,7 @@ export const Maintenances = () => {
   const { userId, logout } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
+  const [filters, setFilters] = useState<IFilter>(emptyFilters);
 
   const [buildingName, setBuildingName] = useState("");
   const [buildingId, setBuildingId] = useState("");
@@ -47,6 +49,7 @@ export const Maintenances = () => {
 
         const responseData = await getMaintenancesKanban({
           userId,
+          // TODO: apply filters
           filter: {
             buildings: [buildingId],
             status: [],
@@ -103,7 +106,7 @@ export const Maintenances = () => {
       {!loading && kanbanData.length === 0 && <Text style={styles.emptyDataLabel}>Nenhum dado encontrado.</Text>}
 
       {!loading && kanbanData.length > 0 && (
-        <Kanban kanbanData={kanbanData} buildingName={buildingName} buildingId={buildingId} />
+        <Kanban kanbanData={kanbanData} buildingName={buildingName} filters={filters} setFilters={setFilters} />
       )}
 
       {!loading && <CreateOccasionalMaintenanceButton buildingId={buildingId} />}

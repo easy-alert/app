@@ -7,15 +7,17 @@ import { getOfflineQueue } from "@/utils/offlineQueue";
 
 import { KanbanHeader } from "../KanbanHeader";
 import { KanbanRow } from "../KanbanRow";
+import { IFilter } from "../utils";
 import { styles } from "./styles";
 
 interface KanbanProps {
   kanbanData: IKanbanColumn[];
   buildingName: string;
-  buildingId: string;
+  filters: IFilter;
+  setFilters: (filters: IFilter) => void;
 }
 
-export const Kanban = ({ kanbanData, buildingName, buildingId }: KanbanProps) => {
+export const Kanban = ({ kanbanData, buildingName, filters, setFilters }: KanbanProps) => {
   const [offlineQueue, setOfflineQueue] = useState<IOfflineQueueItem[]>([]);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export const Kanban = ({ kanbanData, buildingName, buildingId }: KanbanProps) =>
 
   return (
     <View style={styles.container}>
-      <KanbanHeader buildingName={buildingName} buildingId={buildingId} />
+      <KanbanHeader buildingName={buildingName} filters={filters} setFilters={setFilters} />
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {kanbanData?.map((column, index) => (

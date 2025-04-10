@@ -2,32 +2,23 @@ import { useNavigation } from "@react-navigation/native";
 import { Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import type { Navigation } from "@/routes/navigation";
 
-import { Filters, FiltersFooter } from "../Filters";
+import { FiltersButton } from "../FiltersButton";
+import { IFilter } from "../utils";
 import { styles } from "./styles";
 
 interface KanbanHeaderProps {
   buildingName: string;
-  buildingId: string;
+  filters: IFilter;
+  setFilters: (filters: IFilter) => void;
 }
 
-export const KanbanHeader = ({ buildingName, buildingId }: KanbanHeaderProps) => {
+export const KanbanHeader = ({ buildingName, filters, setFilters }: KanbanHeaderProps) => {
   const navigation = useNavigation<Navigation>();
 
   const handleNavigateToBuildings = () => {
     navigation.navigate("Buildings");
-  };
-
-  const { openBottomSheet } = useBottomSheet();
-
-  const openFilters = () => {
-    openBottomSheet({
-      content: <Filters />,
-      footer: <FiltersFooter />,
-      fullSize: true,
-    });
   };
 
   return (
@@ -38,11 +29,7 @@ export const KanbanHeader = ({ buildingName, buildingId }: KanbanHeaderProps) =>
         <Icon name="repeat" size={24} style={styles.icon} />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.filterButton} onPress={openFilters}>
-        <Text style={styles.filterButtonLabel}>Filtros</Text>
-
-        <Icon name="filter" size={24} style={styles.icon} />
-      </TouchableOpacity>
+      <FiltersButton filters={filters} setFilters={setFilters} />
     </View>
   );
 };
