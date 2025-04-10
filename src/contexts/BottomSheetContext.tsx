@@ -1,9 +1,18 @@
-import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
 import { useWindowDimensions } from "react-native";
 
+interface OpenBottomSheetProps {
+  content: ReactNode;
+  fullSize?: boolean;
+}
+
 interface BottomSheetContextData {
-  openBottomSheet: (content: ReactNode) => void;
+  openBottomSheet: (props: OpenBottomSheetProps) => void;
   closeBottomSheet: () => void;
 }
 
@@ -11,11 +20,13 @@ const BottomSheetContext = createContext({} as BottomSheetContextData);
 
 export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const [content, setContent] = useState<ReactNode | null>(null);
+  const [fullSize, setFullSize] = useState(false);
 
   const { height } = useWindowDimensions();
 
-  const openBottomSheet = (content: ReactNode) => {
+  const openBottomSheet = ({ content, fullSize }: OpenBottomSheetProps) => {
     setContent(content);
+    setFullSize(fullSize ?? false);
     ref.current?.expand();
   };
 
@@ -41,23 +52,26 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
 
       <BottomSheet
         ref={ref}
-        enableDynamicSizing
+        enableDynamicSizing={!fullSize}
         enablePanDownToClose
-        maxDynamicContentSize={height * 0.7}
+        maxDynamicContentSize={fullSize ? undefined : height * 0.7}
+        snapPoints={fullSize ? [height * 0.9] : undefined}
         index={-1}
         onClose={closeBottomSheet}
         backdropComponent={renderBackdrop}
       >
-        <BottomSheetView
-          style={{
-            flex: 1,
+        <BottomSheetScrollView
+          contentContainerStyle={{
             paddingHorizontal: 24,
             paddingTop: 20,
             paddingBottom: 60,
           }}
+          style={{
+            flex: 1,
+          }}
         >
           {content}
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </BottomSheet>
     </BottomSheetContext.Provider>
   );
