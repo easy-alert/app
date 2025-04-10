@@ -1,7 +1,8 @@
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, View } from "react-native";
 
+import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Navigation } from "@/routes/navigation";
 import { updateMaintenance } from "@/services/updateMaintenance";
@@ -291,17 +292,14 @@ export const CallToActions = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.secondaryButton} onPress={handleChangeMaintenanceProgress}>
-        <Text style={styles.secondaryButtonLabel}>{maintenanceDetails.inProgress ? "Parar" : "Iniciar"}</Text>
-      </TouchableOpacity>
+      <SecondaryButton
+        label={maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
+        onPress={handleChangeMaintenanceProgress}
+      />
 
-      <TouchableOpacity style={styles.secondaryButton} onPress={handleSaveMaintenanceProgress}>
-        <Text style={styles.secondaryButtonLabel}>Salvar</Text>
-      </TouchableOpacity>
+      <SecondaryButton label="Salvar" onPress={handleSaveMaintenanceProgress} />
 
-      <TouchableOpacity style={styles.primaryButton} onPress={openFinishMaintenanceAlert}>
-        <Text style={styles.primaryButtonLabel}>Finalizar manutenção</Text>
-      </TouchableOpacity>
+      <PrimaryButton label="Finalizar manutenção" onPress={openFinishMaintenanceAlert} />
     </View>
   );
 };

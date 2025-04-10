@@ -1,7 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
+import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { Dropdown } from "@/components/Dropdown";
 import { LabelInput } from "@/components/LabelInput";
@@ -179,28 +180,24 @@ export const Form = ({ buildingId }: FormProps) => {
       </LabelInput>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.primaryButton}
+        <SecondaryButton
+          label={"Criar em execução"}
           onPress={() =>
             handleCreateOccasionalMaintenance({
               occasionalMaintenanceType: "pending",
               inProgress: true,
             })
           }
-        >
-          <Text style={styles.secondaryButtonLabel}>Criar em execução</Text>
-        </TouchableOpacity>
+        />
 
-        <TouchableOpacity
-          style={styles.secondaryButton}
+        <PrimaryButton
+          label={"Criar manutenção"}
           onPress={() =>
             handleCreateOccasionalMaintenance({
               occasionalMaintenanceType: "pending",
             })
           }
-        >
-          <Text style={styles.primaryButtonLabel}>Criar manutenção</Text>
-        </TouchableOpacity>
+        />
       </View>
     </View>
   );

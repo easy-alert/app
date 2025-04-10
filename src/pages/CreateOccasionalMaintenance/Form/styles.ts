@@ -15,24 +15,4 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  primaryButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 4,
-  },
-  secondaryButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 4,
-    backgroundColor: "#b21d1d",
-  },
-  primaryButtonLabel: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
-  secondaryButtonLabel: {
-    fontSize: 14,
-    color: "#28a5ff",
-  },
 });
