@@ -1,13 +1,11 @@
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
-import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
-import { useWindowDimensions } from "react-native";
+import BottomSheetComponent from "@gorhom/bottom-sheet";
+import { createContext, ReactNode, useContext, useRef, useState } from "react";
+
+import { BottomSheet } from "@/components/BottomSheet";
 
 interface OpenBottomSheetProps {
   content: ReactNode;
+  footer?: ReactNode;
   fullSize?: boolean;
 }
 
@@ -20,59 +18,30 @@ const BottomSheetContext = createContext({} as BottomSheetContextData);
 
 export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const [content, setContent] = useState<ReactNode | null>(null);
+  const [footer, setFooter] = useState<ReactNode | null>(null);
   const [fullSize, setFullSize] = useState(false);
 
-  const { height } = useWindowDimensions();
+  const ref = useRef<BottomSheetComponent>(null);
 
-  const openBottomSheet = ({ content, fullSize }: OpenBottomSheetProps) => {
+  const openBottomSheet = ({ content, footer = null, fullSize = false }: OpenBottomSheetProps) => {
     setContent(content);
-    setFullSize(fullSize ?? false);
+    setFooter(footer);
+    setFullSize(fullSize);
     ref.current?.expand();
   };
 
   const closeBottomSheet = () => {
     ref.current?.close();
     setContent(null);
+    setFooter(null);
+    setFullSize(false);
   };
-
-  // ---
-
-  const ref = useRef<BottomSheet>(null);
-
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} pressBehavior="close" />
-    ),
-    [],
-  );
 
   return (
     <BottomSheetContext.Provider value={{ openBottomSheet, closeBottomSheet }}>
       {children}
 
-      <BottomSheet
-        ref={ref}
-        enableDynamicSizing={!fullSize}
-        enablePanDownToClose
-        maxDynamicContentSize={fullSize ? undefined : height * 0.7}
-        snapPoints={fullSize ? [height * 0.9] : undefined}
-        index={-1}
-        onClose={closeBottomSheet}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetScrollView
-          contentContainerStyle={{
-            paddingHorizontal: 24,
-            paddingTop: 20,
-            paddingBottom: 60,
-          }}
-          style={{
-            flex: 1,
-          }}
-        >
-          {content}
-        </BottomSheetScrollView>
-      </BottomSheet>
+      <BottomSheet ref={ref} content={content} fullSize={fullSize} footer={footer} onClose={closeBottomSheet} />
     </BottomSheetContext.Provider>
   );
 };
