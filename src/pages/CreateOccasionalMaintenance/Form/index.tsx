@@ -172,7 +172,6 @@ export const Form = ({ buildingId }: FormProps) => {
       <LabelInput label="Data de execução *">
         <DateTimeInput
           onSelectDate={(selectedDate) => setExecutionDate(selectedDate.toISOString())}
-          style={styles.dateTimeInput}
           value={new Date(executionDate).toLocaleDateString("pt-BR", {
             timeZone: "UTC",
           })}

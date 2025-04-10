@@ -1,5 +1,6 @@
 import { StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native";
 
+import { commonStyles } from "../common-styles";
 import { styles } from "./styles";
 
 interface LabelInputProps extends TextInputProps {
@@ -14,7 +15,7 @@ export const LabelInput = ({ label, style, inputTextStyle, children, ...props }:
     <View style={style}>
       <Text style={styles.label}>{label}</Text>
 
-      {children || <TextInput placeholderTextColor="gray" style={[styles.input, inputTextStyle]} {...props} />}
+      {children || <TextInput placeholderTextColor="gray" style={[commonStyles.input, inputTextStyle]} {...props} />}
     </View>
   );
 };

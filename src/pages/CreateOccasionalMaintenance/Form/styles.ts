@@ -10,14 +10,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     gap: 16,
   },
-  dateTimeInput: {
-    height: 40,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#999999",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-  },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
