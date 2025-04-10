@@ -30,7 +30,7 @@ export const BottomSheet = forwardRef(
 
     const renderFooter = useCallback(
       (props: BottomSheetFooterProps) => (
-        <BottomSheetFooter {...props} bottomInset={24}>
+        <BottomSheetFooter {...props} style={styles.footerContainer}>
           {footer}
         </BottomSheetFooter>
       ),
