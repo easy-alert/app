@@ -16,11 +16,18 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-  createOccasionalMaintenanceButton: {
+  icon: {
+    color: "#B22222",
+  },
+  filterButton: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  createOccasionalMaintenanceButtonLabel: {
+  filterButtonLabel: {
+    fontSize: 16,
     color: "#333333",
   },
 });
