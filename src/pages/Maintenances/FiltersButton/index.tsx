@@ -14,16 +14,17 @@ export const FiltersButton = () => {
   const styles = createStyle(filtersCount);
 
   const openFilters = () => {
-    openBottomSheet(<Filters />);
+    openBottomSheet({
+      content: <Filters />,
+      fullSize: true,
+    });
   };
 
   return (
     <TouchableOpacity style={styles.button} onPress={openFilters}>
-      <Icon name="filter" size={22} color={filtersCount > 0 ? "#B22222" : "black"} />
-
       <Text style={styles.label}>Filtros</Text>
 
-      {filtersCount > 0 && <Text style={styles.countLabel}>{filtersCount}</Text>}
+      <Icon name="filter" size={24} style={styles.icon} />
     </TouchableOpacity>
   );
 };
