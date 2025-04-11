@@ -1,11 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
+import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { uploadFile } from "@/services/uploadFile";
-
-import { updateMaintenance } from "@/services/updateMaintenance";
-
 import type {
   IAddHistoryActivityQueueItem,
   IFinishMaintenanceQueueItem,

@@ -10,11 +10,7 @@ export const styles = StyleSheet.create({
     color: "#000",
   },
   input: {
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    marginTop: 4,
     marginBottom: 20,
   },
   readonlyContainer: {

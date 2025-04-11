@@ -1,14 +1,13 @@
 import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { Maintenances } from "@/pages/Maintenances";
+import { Splash } from "@/components/Splash";
+import { useAuth } from "@/contexts/AuthContext";
 import { Buildings } from "@/pages/Buildings";
 import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
-import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
-import { useAuth } from "@/contexts/AuthContext";
-import { Splash } from "@/components/Splash";
 import { Login } from "@/pages/Login";
+import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
+import { Maintenances } from "@/pages/Maintenances";
 
 const Stack = createNativeStackNavigator();
 

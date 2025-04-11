@@ -1,15 +1,13 @@
-import { View, Text, TouchableOpacity } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
+import { Text, TouchableOpacity, View } from "react-native";
 
-import { getStatus } from "@/utils/getStatus";
-import { formatDate } from "@/utils/formatDate";
 import { PendingSyncBadge } from "@/components/PendingSyncBadge";
-
-import { createStyle } from "./styles";
-
 import type { Navigation } from "@/routes/navigation";
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import { formatDate } from "@/utils/formatDate";
+import { getStatus } from "@/utils/getStatus";
+
+import { createStyle } from "./styles";
 
 interface KanbanRowProps {
   maintenance: IKanbanColumn["maintenances"][0];

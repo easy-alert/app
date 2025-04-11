@@ -1,5 +1,4 @@
-import { View, TouchableOpacity, Text, ScrollView, StyleProp, ViewStyle } from "react-native";
-
+import { ScrollView, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";

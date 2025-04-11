@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 
+import { PendingSyncBadge } from "@/components/PendingSyncBadge";
+import type { IMaintenance } from "@/types/IMaintenance";
 import { getStatus } from "@/utils/getStatus";
 import { getOfflineQueue } from "@/utils/offlineQueue";
-import { PendingSyncBadge } from "@/components/PendingSyncBadge";
 
 import { styles } from "./styles";
-
-import type { IMaintenance } from "@/types/IMaintenance";
 
 interface HeaderProps {
   maintenanceDetails: IMaintenance;

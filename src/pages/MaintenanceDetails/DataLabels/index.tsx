@@ -1,10 +1,9 @@
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 
+import type { IMaintenance } from "@/types/IMaintenance";
 import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";
-
-import type { IMaintenance } from "@/types/IMaintenance";
 
 interface DataLabelsProps {
   maintenanceDetails: IMaintenance;

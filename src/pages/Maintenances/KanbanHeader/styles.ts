@@ -4,28 +4,19 @@ export const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginHorizontal: 6,
     marginVertical: 12,
   },
-  buildingNameContainer: {
+  buildingNameButton: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 6,
   },
   buildingNameLabel: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  buildingNameButton: {
-    marginLeft: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  createOccasionalMaintenanceButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  createOccasionalMaintenanceButtonLabel: {
-    color: "#333333",
+  icon: {
+    color: "#B22222",
   },
 });

@@ -1,25 +1,23 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
+import { Alert, View } from "react-native";
 
+import { PrimaryButton, SecondaryButton } from "@/components/Button";
+import { useAuth } from "@/contexts/AuthContext";
+import type { Navigation } from "@/routes/navigation";
 import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
-import { useAuth } from "@/contexts/AuthContext";
+import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
+import type { ILocalFile } from "@/types/ILocalFile";
+import type { IMaintenance } from "@/types/IMaintenance";
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+import type { IRemoteFile } from "@/types/IRemoteFile";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
-import { styles } from "./styles";
-
 import { convertCostToInteger } from "../utils/convertCostToInteger";
-
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { Navigation } from "@/routes/navigation";
-import type { IRemoteFile } from "@/types/IRemoteFile";
-import type { ILocalFile } from "@/types/ILocalFile";
+import { styles } from "./styles";
 
 interface CallToActionsProps {
   maintenanceDetails: IMaintenance;
@@ -294,17 +292,14 @@ export const CallToActions = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.secondaryButton} onPress={handleChangeMaintenanceProgress}>
-        <Text style={styles.secondaryButtonLabel}>{maintenanceDetails.inProgress ? "Parar" : "Iniciar"}</Text>
-      </TouchableOpacity>
+      <SecondaryButton
+        label={maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
+        onPress={handleChangeMaintenanceProgress}
+      />
 
-      <TouchableOpacity style={styles.secondaryButton} onPress={handleSaveMaintenanceProgress}>
-        <Text style={styles.secondaryButtonLabel}>Salvar</Text>
-      </TouchableOpacity>
+      <SecondaryButton label="Salvar" onPress={handleSaveMaintenanceProgress} />
 
-      <TouchableOpacity style={styles.primaryButton} onPress={openFinishMaintenanceAlert}>
-        <Text style={styles.primaryButtonLabel}>Finalizar manutenção</Text>
-      </TouchableOpacity>
+      <PrimaryButton label="Finalizar manutenção" onPress={openFinishMaintenanceAlert} />
     </View>
   );
 };

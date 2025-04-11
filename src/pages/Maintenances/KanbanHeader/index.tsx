@@ -1,49 +1,49 @@
-import { View, Text, TouchableOpacity } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
-
+import { Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import { styles } from "./styles";
-
 import type { Navigation } from "@/routes/navigation";
+import type { IAvailableFilter } from "@/types/IAvailableFilter";
+
+import { FiltersButton } from "../FiltersButton";
+import { IFilter } from "../utils";
+import { styles } from "./styles";
 
 interface KanbanHeaderProps {
   buildingName: string;
-  buildingId: string;
+  filters: IFilter;
+  setFilters: (filters: IFilter) => void;
+  availableUsers: IAvailableFilter[];
+  availableCategories: IAvailableFilter[];
 }
 
-export const KanbanHeader = ({ buildingName, buildingId }: KanbanHeaderProps) => {
+export const KanbanHeader = ({
+  buildingName,
+  filters,
+  setFilters,
+  availableUsers,
+  availableCategories,
+}: KanbanHeaderProps) => {
   const navigation = useNavigation<Navigation>();
 
   const handleNavigateToBuildings = () => {
     navigation.navigate("Buildings");
   };
 
-  const handleNavigateToCreateOccasionalMaintenance = () => {
-    navigation.navigate("CreateOccasionalMaintenance", {
-      buildingId,
-    });
-  };
-
   return (
     <View style={styles.container}>
-      <View style={styles.buildingNameContainer}>
+      <TouchableOpacity onPress={handleNavigateToBuildings} style={styles.buildingNameButton}>
         <Text style={styles.buildingNameLabel}>{buildingName}</Text>
 
-        <TouchableOpacity onPress={handleNavigateToBuildings} style={styles.buildingNameButton}>
-          <Icon name="repeat" size={24} color="#b21d1d" />
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity
-        onPress={handleNavigateToCreateOccasionalMaintenance}
-        style={styles.createOccasionalMaintenanceButton}
-      >
-        <Text style={styles.createOccasionalMaintenanceButtonLabel}>Avulsa</Text>
-
-        <Icon name="plus" size={24} color="#b21d1d" />
+        <Icon name="repeat" size={24} style={styles.icon} />
       </TouchableOpacity>
+
+      <FiltersButton
+        filters={filters}
+        setFilters={setFilters}
+        availableUsers={availableUsers}
+        availableCategories={availableCategories}
+      />
     </View>
   );
 };

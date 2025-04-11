@@ -1,9 +1,8 @@
-import { Modal, TouchableOpacity, Linking, Text, FlatList } from "react-native";
-
+import { FlatList, Linking, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { useAuth } from "@/contexts/AuthContext";
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";
 

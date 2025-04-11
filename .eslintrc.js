@@ -7,44 +7,14 @@ module.exports = {
 
   ignorePatterns: ["/dist/*"],
 
-  extends: [
-    "expo",
-    "eslint:recommended",
-    "plugin:import/typescript",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-  ],
-  plugins: ["@typescript-eslint", "prettier"],
+  extends: ["expo", "eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  plugins: ["@typescript-eslint", "prettier", "simple-import-sort"],
 
   rules: {
     camelcase: 2,
 
-    "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
-    "import/prefer-default-export": "off",
-    "import/extensions": "off",
-    "import/no-unresolved": "off",
-    "import/no-cycle": "off",
-    "import/order": [
-      "error",
-      {
-        "newlines-between": "always-and-inside-groups",
-
-        groups: [["builtin", "external"], "internal", "sibling", "parent", "index", "type"],
-
-        pathGroups: [
-          {
-            pattern: "@(react|react-native)",
-            group: "external",
-            position: "before",
-          },
-          {
-            pattern: "@(components|pages|routes|hooks|utils|types|services|assets|styles|context|theme)/**",
-            group: "internal",
-          },
-        ],
-        pathGroupsExcludedImportTypes: ["react", "internal", "type"],
-      },
-    ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
 
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
