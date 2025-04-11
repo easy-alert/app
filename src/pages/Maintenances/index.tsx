@@ -37,10 +37,6 @@ export const Maintenances = () => {
   useEffect(() => {
     const handleGetBuildingLogo = async () => {
       try {
-        if (logo) {
-          return;
-        }
-
         const buildingId = await AsyncStorage.getItem("buildingId");
 
         if (!buildingId) {
@@ -54,33 +50,6 @@ export const Maintenances = () => {
         }
       } catch (error) {
         console.error("🚀 ~ handleGetBuildingLogo ~ error:", error);
-      }
-    };
-
-    const getAvailableCategories = async () => {
-      try {
-        if (availableCategories.length > 0) {
-          return;
-        }
-
-        const responseData = await getMaintenancesKanban({
-          userId,
-          filters: {
-            endDate: filters.endDate,
-            startDate: filters.startDate,
-          },
-        });
-
-        if (responseData?.maintenanceCategoriesForSelect) {
-          setAvailableCategories(
-            responseData.maintenanceCategoriesForSelect.map((category: { id: string; name: string }) => ({
-              value: category.id,
-              label: category.name,
-            })),
-          );
-        }
-      } catch (error) {
-        console.error("🚀 ~ getAvailableCategories ~ error:", error);
       }
     };
 
@@ -108,9 +77,8 @@ export const Maintenances = () => {
     };
 
     handleGetBuildingLogo();
-    getAvailableCategories();
     getAvailableUsers();
-  }, [logo, availableCategories, filters.endDate, filters.startDate, userId]);
+  }, []);
 
   useEffect(() => {
     const handleGetKanbanData = async () => {
@@ -144,6 +112,12 @@ export const Maintenances = () => {
 
         if (responseData) {
           setLoading(false);
+          setAvailableCategories(
+            responseData.maintenanceCategoriesForSelect?.map((category: { id: string; name: string }) => ({
+              value: category.id,
+              label: category.name,
+            })) || [],
+          );
           setKanbanData(responseData.kanban || []);
         }
       } catch (error) {
