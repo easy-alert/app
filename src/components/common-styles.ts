@@ -23,4 +23,7 @@ export const commonStyles = StyleSheet.create({
   inputIconImageType: {
     tintColor: "#b21d1d",
   },
+  dropdownContainer: {
+    borderRadius: 8,
+  },
 });

@@ -11,6 +11,7 @@ export function Dropdown<T>(props: DropdownProps<T>) {
       selectedTextStyle={commonStyles.inputContentLabel}
       itemTextStyle={commonStyles.inputContentLabel}
       iconStyle={commonStyles.inputIconImageType}
+      containerStyle={commonStyles.dropdownContainer}
       maxHeight={300}
       {...props}
     />

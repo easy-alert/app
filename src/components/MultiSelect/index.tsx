@@ -13,8 +13,10 @@ export function MultiSelect<T>(props: MultiSelectProps<T>) {
       selectedStyle={styles.selectedStyle}
       selectedTextStyle={commonStyles.inputContentLabel}
       iconStyle={commonStyles.inputIconImageType}
+      containerStyle={commonStyles.dropdownContainer}
       inside
-      mode="modal"
+      maxHeight={300}
+      mode="default"
       {...props}
     />
   );
