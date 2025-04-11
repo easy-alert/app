@@ -3,7 +3,7 @@ import { StyleProp, TextInput, TouchableOpacity, View, ViewStyle } from "react-n
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Icon from "react-native-vector-icons/Feather";
 
-import { commonStyles } from "../common-styles";
+import { commonStyles, iconColor } from "../common-styles";
 import { styles } from "./styles";
 
 interface DateTimeInputProps {
@@ -32,7 +32,7 @@ export const DateTimeInput = ({ value, onSelectDate, style }: DateTimeInputProps
       <TextInput style={[commonStyles.input, style]} value={value} placeholder="dd/mm/aaaa" editable={false} />
 
       <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setShowDatePicker(true)}>
-        <Icon name="calendar" size={20} style={commonStyles.inputIconTextType} />
+        <Icon name="calendar" size={20} color={iconColor} />
       </TouchableOpacity>
     </View>
   );

@@ -1,5 +1,8 @@
 import { StyleSheet } from "react-native";
 
+export const iconColor = "#b21d1d";
+export const disabledIconColor = "lightgray";
+
 export const commonStyles = StyleSheet.create({
   input: {
     minHeight: 44,
@@ -16,12 +19,6 @@ export const commonStyles = StyleSheet.create({
   inputContentLabel: {
     fontSize: 14,
     color: "black",
-  },
-  inputIconTextType: {
-    color: "#b21d1d",
-  },
-  inputIconImageType: {
-    tintColor: "#b21d1d",
   },
   dropdownContainer: {
     borderRadius: 8,
