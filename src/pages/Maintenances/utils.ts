@@ -3,7 +3,6 @@ export interface IFilter {
   selectedUsers: string[];
   selectedStatus: string[];
   selectedCategories: string[];
-  selectedPriorities: string[];
   startDate: string;
   endDate: string;
 }
@@ -13,7 +12,6 @@ export const emptyFilters: IFilter = {
   selectedUsers: [],
   selectedStatus: [],
   selectedCategories: [],
-  selectedPriorities: [],
-  startDate: new Date().toISOString(), // TODO: change to default dates
-  endDate: new Date().toISOString(),
+  startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(),
+  endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
 };

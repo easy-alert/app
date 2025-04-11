@@ -85,17 +85,6 @@ export const Filters = ({ filters, setFilters }: FiltersProps) => {
         />
       </LabelInput>
 
-      <LabelInput label="Prioridade">
-        <MultiSelect
-          data={data}
-          value={filtersCache.selectedPriorities}
-          onChange={(selectedPriorities) => setFiltersCache({ ...filtersCache, selectedPriorities })}
-          placeholder="Selecione"
-          labelField="label"
-          valueField="value"
-        />
-      </LabelInput>
-
       <LabelInput label="Data inicial">
         <DateTimeInput
           value={new Date(filtersCache.startDate).toLocaleDateString("pt-BR", {

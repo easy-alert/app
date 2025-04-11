@@ -49,15 +49,14 @@ export const Maintenances = () => {
 
         const responseData = await getMaintenancesKanban({
           userId,
-          // TODO: apply filters
-          filter: {
+          filters: {
             buildings: [buildingId],
-            status: [],
-            categories: [],
-            users: [],
-            priorityName: "",
-            endDate: "2100-01-01",
-            startDate: "1900-01-01",
+            status: filters.selectedStatus,
+            categories: filters.selectedCategories,
+            users: filters.selectedUsers,
+            search: filters.search,
+            endDate: filters.endDate,
+            startDate: filters.startDate,
           },
         });
 
@@ -89,13 +88,14 @@ export const Maintenances = () => {
       }
     };
 
+    // Significa que uma navegação foi feita para a tela de manutenções.
     const toRefreshData = (navigationState.routes[navigationState.index].name as RouteList) === "Maintenances";
 
     if (toRefreshData) {
       handleGetKanbanData();
       handleGetBuildingLogo();
     }
-  }, [logout, navigationState.index, navigationState.routes, userId]);
+  }, [logout, navigationState.index, navigationState.routes, userId, filters]);
 
   return (
     <PageLayout>
