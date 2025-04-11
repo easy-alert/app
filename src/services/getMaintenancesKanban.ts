@@ -5,7 +5,7 @@ import { baseApi } from "./baseApi";
 interface IGetMaintenancesKanban {
   userId: string;
   filters: {
-    buildings: string[];
+    buildings?: string[];
     status?: string[];
     categories?: string[];
     users?: string[];
@@ -19,10 +19,10 @@ interface IGetMaintenancesKanban {
 export const getMaintenancesKanban = async ({ userId, filters }: IGetMaintenancesKanban) => {
   const params = {
     userId,
-    buildingId: filters.buildings.join(","),
-    status: filters?.status?.join(",") || "",
-    category: filters?.categories?.join(",") || "",
-    user: filters?.users?.join(",") || "",
+    buildingId: filters.buildings?.join(",") || "",
+    status: filters.status?.join(",") || "",
+    category: filters.categories?.join(",") || "",
+    user: filters.users?.join(",") || "",
     priorityName: filters.priorityName || "",
     search: filters.search || "",
     startDate: filters.startDate,

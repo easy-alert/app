@@ -6,28 +6,20 @@ import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
+import { IAvailableFilter } from "@/types/IAvailableFilter";
+import { maintenanceStatus } from "@/types/IMaintenanceStatus";
 
 import { emptyFilters, IFilter } from "../utils";
 import { styles } from "./styles";
 
-// TODO: get correct values
-const data = [
-  { label: "Item 1", value: "1" },
-  { label: "Item 2", value: "2" },
-  { label: "Item 3", value: "3" },
-  { label: "Item 4", value: "4" },
-  { label: "Item 5", value: "5" },
-  { label: "Item 6", value: "6" },
-  { label: "Item 7", value: "7" },
-  { label: "Item 8", value: "8" },
-];
-
 interface FiltersProps {
   filters: IFilter;
   setFilters: (filters: IFilter) => void;
+  availableUsers: IAvailableFilter[];
+  availableCategories: IAvailableFilter[];
 }
 
-export const Filters = ({ filters, setFilters }: FiltersProps) => {
+export const Filters = ({ filters, setFilters, availableUsers, availableCategories }: FiltersProps) => {
   const { closeBottomSheet } = useBottomSheet();
 
   const [filtersCache, setFiltersCache] = useState<IFilter>(filters);
@@ -54,7 +46,7 @@ export const Filters = ({ filters, setFilters }: FiltersProps) => {
 
       <LabelInput label="Usuário">
         <MultiSelect
-          data={data}
+          data={availableUsers}
           value={filtersCache.selectedUsers}
           onChange={(selectedUsers) => setFiltersCache({ ...filtersCache, selectedUsers })}
           placeholder="Selecione"
@@ -65,7 +57,7 @@ export const Filters = ({ filters, setFilters }: FiltersProps) => {
 
       <LabelInput label="Status">
         <MultiSelect
-          data={data}
+          data={maintenanceStatus}
           value={filtersCache.selectedStatus}
           onChange={(selectedStatus) => setFiltersCache({ ...filtersCache, selectedStatus })}
           placeholder="Selecione"
@@ -76,7 +68,7 @@ export const Filters = ({ filters, setFilters }: FiltersProps) => {
 
       <LabelInput label="Categoria">
         <MultiSelect
-          data={data}
+          data={availableCategories}
           value={filtersCache.selectedCategories}
           onChange={(selectedCategories) => setFiltersCache({ ...filtersCache, selectedCategories })}
           placeholder="Selecione"
