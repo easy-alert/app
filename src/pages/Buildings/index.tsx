@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
 
 import { PageLayout } from "@/components/PageLayout";
+import type { Navigation } from "@/routes/navigation";
+import type { IUser } from "@/types/IUser";
 
 import { styles } from "./styles";
-
-import type { IUser } from "@/types/IUser";
-import type { Navigation } from "@/routes/navigation";
 
 type IBuilding = IUser["UserBuildingsPermissions"][0];
 

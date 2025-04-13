@@ -1,23 +1,19 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-
-import { useState } from "react";
-
 import NetInfo from "@react-native-community/netinfo";
-import Icon from "react-native-vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Feather";
 
+import { useAuth } from "@/contexts/AuthContext";
+import type { Navigation } from "@/routes/navigation";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
-import { useAuth } from "@/contexts/AuthContext";
+import type { ILocalFile } from "@/types/ILocalFile";
+import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
-import { styles } from "./styles";
-
 import { openFilePicker } from "../utils/openFilePicker";
-
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { Navigation } from "@/routes/navigation";
+import { styles } from "./styles";
 
 interface CommentsProps {
   maintenanceId: string;

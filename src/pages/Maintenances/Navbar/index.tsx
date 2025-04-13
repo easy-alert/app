@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { View, Image, TouchableOpacity } from "react-native";
-
+import { Image, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import { styles } from "./styles";
-
 import { NavbarDrawer } from "../NavbarDrawer";
+import { styles } from "./styles";
 
 interface NavbarProps {
   logoUrl: string;

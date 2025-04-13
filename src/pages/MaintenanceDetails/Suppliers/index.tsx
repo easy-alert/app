@@ -1,17 +1,13 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
-
 import React, { useState } from "react";
-
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import { unlinkMaintenanceSupplier } from "@/services/unlinkMaintenanceSupplier";
 import { useAuth } from "@/contexts/AuthContext";
-
-import { styles } from "./styles";
+import { unlinkMaintenanceSupplier } from "@/services/unlinkMaintenanceSupplier";
+import type { ISupplier } from "@/types/ISupplier";
 
 import { SupplierModal } from "../SupplierModal";
-
-import type { ISupplier } from "@/types/ISupplier";
+import { styles } from "./styles";
 
 interface SuppliersProps {
   supplier?: ISupplier;

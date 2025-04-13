@@ -1,14 +1,11 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
-
 import { useState } from "react";
-
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
+import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
 import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";
-
-import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
 
 interface HistoryProps {
   historyActivities?: IMaintenanceHistoryActivities;

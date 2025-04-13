@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, TextInput } from "react-native";
+import { Text, TextInput, View } from "react-native";
+
+import { commonStyles } from "@/components/common-styles";
+import type { IMaintenance } from "@/types/IMaintenance";
 
 import { styles } from "./styles";
-
-import type { IMaintenance } from "@/types/IMaintenance";
 
 interface CostsProps {
   maintenanceDetails: IMaintenance;
@@ -41,7 +42,7 @@ export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
         <>
           <Text style={styles.titleLabel}>Custo</Text>
           <TextInput
-            style={styles.input}
+            style={[commonStyles.input, styles.input]}
             placeholder="R$ 0,00"
             value={cost}
             onChangeText={(text) => handleChangeCost(text)}

@@ -1,26 +1,28 @@
+import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { View, StyleSheet } from "react-native";
-
+import { StyleSheet, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { StatusBar } from "expo-status-bar";
-
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BottomSheetProvider } from "@/contexts/BottomSheetContext";
 import { Routes } from "@/routes";
 
 export default function App() {
   return (
-    <>
+    <GestureHandlerRootView>
       <StatusBar translucent style="dark" />
 
       <SafeAreaProvider>
         <View style={styles.appContainer}>
-          <AuthProvider>
-            <Routes />
-          </AuthProvider>
+          <BottomSheetProvider>
+            <AuthProvider>
+              <Routes />
+            </AuthProvider>
+          </BottomSheetProvider>
         </View>
       </SafeAreaProvider>
-    </>
+    </GestureHandlerRootView>
   );
 }
 

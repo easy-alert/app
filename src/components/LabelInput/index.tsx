@@ -1,5 +1,7 @@
-import { View, Text, TextInput, TextInputProps, StyleProp, ViewStyle, TextStyle } from "react-native";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native";
 
+import { commonStyles } from "../common-styles";
 import { styles } from "./styles";
 
 interface LabelInputProps extends TextInputProps {
@@ -7,14 +9,26 @@ interface LabelInputProps extends TextInputProps {
   style?: StyleProp<ViewStyle>;
   inputTextStyle?: StyleProp<TextStyle>;
   children?: React.ReactNode;
+  isBottomSheetInput?: boolean;
 }
 
-export const LabelInput = ({ label, style, inputTextStyle, children, ...props }: LabelInputProps) => {
+export const LabelInput = ({
+  label,
+  style,
+  inputTextStyle,
+  children,
+  isBottomSheetInput = false,
+  ...props
+}: LabelInputProps) => {
+  const InputComponent = isBottomSheetInput ? BottomSheetTextInput : TextInput;
+
   return (
     <View style={style}>
       <Text style={styles.label}>{label}</Text>
 
-      {children || <TextInput placeholderTextColor="gray" style={[styles.input, inputTextStyle]} {...props} />}
+      {children || (
+        <InputComponent placeholderTextColor="gray" style={[commonStyles.input, inputTextStyle]} {...props} />
+      )}
     </View>
   );
 };

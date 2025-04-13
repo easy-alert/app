@@ -1,23 +1,33 @@
 import { useEffect, useState } from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
-import { getOfflineQueue } from "@/utils/offlineQueue";
-
-import { styles } from "./styles";
-
-import { KanbanRow } from "../KanbanRow";
-import { KanbanHeader } from "../KanbanHeader";
-
+import { IAvailableFilter } from "@/types/IAvailableFilter";
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
 import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+import { getOfflineQueue } from "@/utils/offlineQueue";
+
+import { KanbanHeader } from "../KanbanHeader";
+import { KanbanRow } from "../KanbanRow";
+import { IFilter } from "../utils";
+import { styles } from "./styles";
 
 interface KanbanProps {
   kanbanData: IKanbanColumn[];
   buildingName: string;
-  buildingId: string;
+  filters: IFilter;
+  setFilters: (filters: IFilter) => void;
+  availableUsers: IAvailableFilter[];
+  availableCategories: IAvailableFilter[];
 }
 
-export const Kanban = ({ kanbanData, buildingName, buildingId }: KanbanProps) => {
+export const Kanban = ({
+  kanbanData,
+  buildingName,
+  filters,
+  setFilters,
+  availableUsers,
+  availableCategories,
+}: KanbanProps) => {
   const [offlineQueue, setOfflineQueue] = useState<IOfflineQueueItem[]>([]);
 
   useEffect(() => {
@@ -31,7 +41,13 @@ export const Kanban = ({ kanbanData, buildingName, buildingId }: KanbanProps) =>
 
   return (
     <View style={styles.container}>
-      <KanbanHeader buildingName={buildingName} buildingId={buildingId} />
+      <KanbanHeader
+        buildingName={buildingName}
+        filters={filters}
+        setFilters={setFilters}
+        availableUsers={availableUsers}
+        availableCategories={availableCategories}
+      />
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {kanbanData?.map((column, index) => (

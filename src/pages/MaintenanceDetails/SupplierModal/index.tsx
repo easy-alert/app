@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
-
 import { Modal, Text, TouchableOpacity } from "react-native";
-
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { useAuth } from "@/contexts/AuthContext";
 import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
 import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
-import { useAuth } from "@/contexts/AuthContext";
+import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
 
 import { styles } from "./styles";
-
-import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
 
 interface SupplierModalProps {
   maintenanceId: string;

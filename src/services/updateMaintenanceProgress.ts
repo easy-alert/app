@@ -1,8 +1,7 @@
+import type { IError } from "@/types/IError";
 import { alertMessage, catchHandler } from "@/utils/handleAlerts";
 
 import { baseApi } from "./baseApi";
-
-import type { IError } from "@/types/IError";
 
 interface IUpdateMaintenanceProgress {
   syndicNanoId: string;
