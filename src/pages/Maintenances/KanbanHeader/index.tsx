@@ -33,7 +33,9 @@ export const KanbanHeader = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleNavigateToBuildings} style={styles.buildingNameButton}>
-        <Text style={styles.buildingNameLabel}>{buildingName}</Text>
+        <Text style={styles.buildingNameLabel} numberOfLines={1}>
+          {buildingName}
+        </Text>
 
         <Icon name="repeat" size={24} style={styles.icon} />
       </TouchableOpacity>
