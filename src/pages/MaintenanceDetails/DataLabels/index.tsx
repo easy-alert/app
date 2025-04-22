@@ -1,8 +1,9 @@
-import { Text, View } from "react-native";
+import { Linking, Text, TouchableOpacity, View } from "react-native";
 
 import type { IMaintenance } from "@/types/IMaintenance";
 import { formatDate } from "@/utils/formatDate";
 
+import truncateText from "../utils/truncateText";
 import { styles } from "./styles";
 
 interface DataLabelsProps {
@@ -65,7 +66,23 @@ export const DataLabels = ({ maintenanceDetails }: DataLabelsProps) => {
 
       <View style={styles.rowContainer}>
         <Text style={styles.titleLabel}>Instruções</Text>
-        <Text style={styles.valueLabel}>{maintenanceDetails.Maintenance.instructions[0]?.name}</Text>
+        <View style={{ flex: 2 }}>
+          {maintenanceDetails.Maintenance.instructions.map((instruction, index) =>
+            instruction.url ? (
+              <TouchableOpacity key={index} onPress={() => Linking.openURL(instruction.url)}>
+                <Text
+                  style={[styles.valueLabel, { color: "blue", textDecorationLine: "underline", textAlign: "left" }]}
+                >
+                  {truncateText(instruction.name)}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <Text key={index} style={[styles.valueLabel, { textAlign: "left" }]}>
+                {truncateText(instruction.name)}
+              </Text>
+            ),
+          )}
+        </View>
       </View>
 
       <View style={styles.rowContainer}>
