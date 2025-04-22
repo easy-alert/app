@@ -54,7 +54,9 @@ export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
       {!canBeEdited && (
         <View style={styles.readonlyContainer}>
           <Text style={styles.readonlyTitleLabel}>Custo</Text>
-          <Text style={styles.readonlyValueLabel}>{`R$ ${cost}`}</Text>
+          <Text style={styles.readonlyValueLabel}>
+            {formatCurrency(maintenanceDetails.MaintenanceReport[0].cost.toString())}
+          </Text>
         </View>
       )}
     </View>
