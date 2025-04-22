@@ -68,11 +68,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           uploadedFile: uploadedFiles,
         });
 
-        setComment("");
-        setLocalFiles([]);
         await getMaintenanceHistoryActivities();
-
-        setLoading(false);
       } else {
         // Include file metadata instead of uploading
         const filesToQueue = localFiles.map((file) => ({
@@ -87,16 +83,15 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           maintenanceId,
           comment,
           files: filesToQueue,
-          timestamp: new Date().toISOString(),
         };
 
         await addItemToOfflineQueue(newEntry);
 
-        setComment("");
-        setLocalFiles([]);
-        setLoading(false);
         navigation.goBack();
       }
+
+      setComment("");
+      setLocalFiles([]);
     } catch (error) {
       console.error("Error in addHistoryActivity:", error);
     } finally {

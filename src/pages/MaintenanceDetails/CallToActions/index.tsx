@@ -46,13 +46,27 @@ export const CallToActions = ({
   const handleChangeMaintenanceProgress = async () => {
     setLoading(true);
 
+    const networkState = await NetInfo.fetch();
+    const isConnected = networkState.isConnected;
+
     try {
-      await updateMaintenanceProgress({
-        maintenanceHistoryId: maintenanceDetails.id,
-        inProgressChange: !maintenanceDetails.inProgress,
-        syndicNanoId: "",
-        userId,
-      });
+      if (isConnected) {
+        await updateMaintenanceProgress({
+          maintenanceHistoryId: maintenanceDetails.id,
+          inProgressChange: !maintenanceDetails.inProgress,
+          syndicNanoId: "",
+          userId,
+        });
+      } else {
+        const newEntry: IOfflineQueueItem = {
+          type: "updateProgress",
+          userId,
+          maintenanceId: maintenanceDetails.id,
+          inProgressChange: !maintenanceDetails.inProgress,
+        };
+
+        await addItemToOfflineQueue(newEntry);
+      }
     } finally {
       navigation.goBack();
       setLoading(false);
@@ -121,11 +135,6 @@ export const CallToActions = ({
           files: filesUploaded,
           images: imagesUploaded,
         });
-
-        setFiles([]);
-        setImages([]);
-        setCost("");
-        navigation.goBack();
       } else {
         // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
@@ -147,16 +156,15 @@ export const CallToActions = ({
           cost: formatedCost,
           files: filesToQueue,
           images: imagesToQueue,
-          timestamp: new Date().toISOString(),
         };
 
         await addItemToOfflineQueue(newEntry);
-
-        setFiles([]);
-        setImages([]);
-        setCost("");
-        navigation.goBack();
       }
+
+      setFiles([]);
+      setImages([]);
+      setCost("");
+      navigation.goBack();
     } catch (error) {
       console.error("Error in saveProgress:", error);
     } finally {
@@ -226,11 +234,6 @@ export const CallToActions = ({
           files: filesUploaded,
           images: imagesUploaded,
         });
-
-        setFiles([]);
-        setImages([]);
-        setCost("");
-        navigation.goBack();
       } else {
         // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
@@ -252,16 +255,15 @@ export const CallToActions = ({
           cost: formatedCost,
           files: filesToQueue,
           images: imagesToQueue,
-          timestamp: new Date().toISOString(),
         };
 
         await addItemToOfflineQueue(newEntry);
-
-        setFiles([]);
-        setImages([]);
-        setCost("");
-        navigation.goBack();
       }
+
+      setFiles([]);
+      setImages([]);
+      setCost("");
+      navigation.goBack();
     } catch (error) {
       console.error("Error in handleFinishMaintenance:", error);
     } finally {

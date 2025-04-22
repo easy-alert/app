@@ -3,12 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
 import type {
   IAddHistoryActivityQueueItem,
   IFinishMaintenanceQueueItem,
   IOfflineQueueItem,
   ISaveProgressQueueItem,
+  IUpdateProgressQueueItem,
 } from "@/types/IOfflineQueueItem";
 
 const OFFLINE_QUEUE_KEY = "offline_queue";
@@ -47,6 +49,9 @@ export const syncOfflineQueue = async () => {
             break;
           case "saveProgress":
             await syncSaveProgress(currentItem);
+            break;
+          case "updateProgress":
+            await syncUpdateProgress(currentItem);
             break;
           case "finishMaintenance":
             await syncFinishMaintenance(currentItem);
@@ -138,6 +143,15 @@ const syncSaveProgress = async (item: ISaveProgressQueueItem) => {
     },
     files: filesUploaded,
     images: imagesUploaded,
+  });
+};
+
+const syncUpdateProgress = async (item: IUpdateProgressQueueItem) => {
+  await updateMaintenanceProgress({
+    maintenanceHistoryId: item.maintenanceId,
+    inProgressChange: item.inProgressChange,
+    syndicNanoId: "",
+    userId: item.userId,
   });
 };
 
