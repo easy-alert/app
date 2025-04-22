@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   buildingNameLabel: {
-    flex: 1,
+    flexShrink: 1,
     fontSize: 20,
     fontWeight: "bold",
   },
