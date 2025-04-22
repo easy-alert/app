@@ -48,6 +48,12 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
     maintenanceDetails.MaintenancesStatus.name !== "completed" &&
     maintenanceDetails.MaintenancesStatus.name !== "overdue";
 
+  const imagesToShow: string[] = canBeEdited
+    ? images.map((image) => image.url)
+    : ((maintenanceDetails.MaintenanceReport[0]?.ReportImages.map((image) => image.url) ?? []).filter(
+        Boolean,
+      ) as string[]);
+
   return (
     <View>
       {/* Botão de anexar arquivos */}
@@ -90,10 +96,10 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
         )}
 
         <View style={styles.fileList}>
-          {images.map((image, index) => (
+          {imagesToShow.map((image, index) => (
             <View key={index} style={styles.fileItem}>
-              <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
-                <Image source={{ uri: image.url }} style={styles.previewImage} />
+              <TouchableOpacity onPress={() => Linking.openURL(image)}>
+                <Image source={{ uri: image }} style={styles.previewImage} />
               </TouchableOpacity>
 
               {canBeEdited && (
