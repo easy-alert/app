@@ -4,7 +4,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native"
 
 import { PageLayout } from "@/components/PageLayout";
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
-import type { MaintenanceDetailsParams, Navigation } from "@/routes/navigation";
+import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
@@ -26,7 +26,7 @@ import { styles } from "./styles";
 import { Suppliers } from "./Suppliers";
 
 export const MaintenanceDetails = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProtectedNavigation>();
   const route = useRoute();
   const { maintenanceId } = route.params as MaintenanceDetailsParams;
 

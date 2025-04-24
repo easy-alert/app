@@ -8,7 +8,7 @@ import { DateTimeInput } from "@/components/DateTimeInput";
 import { Dropdown } from "@/components/Dropdown";
 import { LabelInput } from "@/components/LabelInput";
 import { useAuth } from "@/contexts/AuthContext";
-import type { Navigation } from "@/routes/navigation";
+import type { ProtectedNavigation } from "@/routes/navigation";
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
 import { getCategories } from "@/services/getCategories";
 import type { ICategory } from "@/types/ICategory";
@@ -50,7 +50,7 @@ interface IHandleCreateOccasionalMaintenance {
 
 export const Form = () => {
   const { userId } = useAuth();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProtectedNavigation>();
 
   const [loading, setLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(false);

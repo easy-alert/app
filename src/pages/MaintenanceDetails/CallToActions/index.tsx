@@ -4,7 +4,7 @@ import { Alert, View } from "react-native";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { useAuth } from "@/contexts/AuthContext";
-import type { Navigation } from "@/routes/navigation";
+import type { ProtectedNavigation } from "@/routes/navigation";
 import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
@@ -40,7 +40,7 @@ export const CallToActions = ({
   setCost,
   setLoading,
 }: CallToActionsProps) => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
 
   const handleChangeMaintenanceProgress = async () => {

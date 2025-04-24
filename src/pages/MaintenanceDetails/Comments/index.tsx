@@ -5,7 +5,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { useAuth } from "@/contexts/AuthContext";
-import type { Navigation } from "@/routes/navigation";
+import type { ProtectedNavigation } from "@/routes/navigation";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
 import type { ILocalFile } from "@/types/ILocalFile";
@@ -22,7 +22,7 @@ interface CommentsProps {
 }
 
 export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActivities }: CommentsProps) => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
 
   const [localFiles, setLocalFiles] = useState<ILocalFile[]>([]);

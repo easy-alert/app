@@ -3,12 +3,12 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 
 import { PageLayout } from "@/components/PageLayout";
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
-import type { Navigation } from "@/routes/navigation";
+import type { ProtectedNavigation } from "@/routes/navigation";
 
 import { Form } from "./Form";
 
 export const CreateOccasionalMaintenance = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProtectedNavigation>();
 
   return (
     <PageLayout>

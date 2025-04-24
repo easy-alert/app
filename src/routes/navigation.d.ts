@@ -4,19 +4,19 @@ export interface MaintenanceDetailsParams {
   maintenanceId: string;
 }
 
-interface RoutesParams {
+interface ProtectedRoutesParams {
   Maintenances: undefined;
   CreateOccasionalMaintenance: undefined;
   MaintenanceDetails: MaintenanceDetailsParams;
 }
 
-export type Navigation = NativeStackNavigationProp<RoutesParams>;
+export type ProtectedNavigation = NativeStackNavigationProp<ProtectedRoutesParams>;
 
-export type RouteList = keyof RoutesParams;
+export type RouteList = keyof ProtectedRoutesParams;
 
 export declare global {
   namespace ReactNavigation {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface RootParamList extends RoutesParams {}
+    interface RootParamList extends ProtectedRoutesParams {}
   }
 }
