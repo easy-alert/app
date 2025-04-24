@@ -8,10 +8,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  passwordContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
   logo: {
     width: 150,
     height: 34,
@@ -35,24 +31,20 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#555",
   },
-  icon: {
-    position: "absolute",
-    right: 15,
-    top: 15,
-  },
   buttonContainer: {
     height: 50,
     width: "100%",
     justifyContent: "center",
   },
-  loginButton: {
-    flex: 1,
+  button: {
+    width: "100%",
+    height: 50,
     backgroundColor: "#c62828",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
   },
-  loginButtonText: {
+  buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
