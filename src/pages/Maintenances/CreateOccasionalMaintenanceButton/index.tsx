@@ -6,17 +6,11 @@ import type { Navigation } from "@/routes/navigation";
 
 import { styles } from "./styles";
 
-interface CreateOccasionalMaintenanceButtonProps {
-  buildingId: string;
-}
-
-export const CreateOccasionalMaintenanceButton = ({ buildingId }: CreateOccasionalMaintenanceButtonProps) => {
+export const CreateOccasionalMaintenanceButton = () => {
   const navigation = useNavigation<Navigation>();
 
   const handleNavigateToCreateOccasionalMaintenance = () => {
-    navigation.navigate("CreateOccasionalMaintenance", {
-      buildingId,
-    });
+    navigation.navigate("CreateOccasionalMaintenance");
   };
 
   return (

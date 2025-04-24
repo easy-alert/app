@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { Splash } from "@/components/Splash";
 import { useAuth } from "@/contexts/AuthContext";
-import { Buildings } from "@/pages/Buildings";
 import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
 import { Login } from "@/pages/Login";
 import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
@@ -28,33 +27,21 @@ export const Routes = () => {
       : ["easyalert://", "https://company.easyalert.com.br/"],
     config: {
       screens: {
-        Buildings: "*",
-        Maintenances: "maintenances",
-        CreateOccasionalMaintenance: "buildings/:buildingId/maintenances/new",
+        Maintenances: {
+          path: "maintenances",
+          alias: ["*"],
+        },
+        CreateOccasionalMaintenance: "maintenances/new",
         MaintenanceDetails: "maintenances/:maintenanceId",
       },
-      initialRouteName: "Buildings",
+      initialRouteName: "Maintenances",
     },
   };
 
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="Buildings"
-          component={Buildings}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen
-          name="Maintenances"
-          component={Maintenances}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
-
+        <Stack.Screen name="Maintenances" component={Maintenances} />
         <Stack.Screen name="CreateOccasionalMaintenance" component={CreateOccasionalMaintenance} />
         <Stack.Screen name="MaintenanceDetails" component={MaintenanceDetails} />
       </Stack.Navigator>

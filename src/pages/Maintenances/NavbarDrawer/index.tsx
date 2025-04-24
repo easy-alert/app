@@ -1,4 +1,4 @@
-import { FlatList, Linking, Modal, Text, TouchableOpacity } from "react-native";
+import { FlatList, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
@@ -9,14 +9,9 @@ import { styles } from "./styles";
 interface NavbarDrawerProps {
   open: boolean;
   toggleOpen: () => void;
-  buildingNanoId: string;
 }
 
-export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerProps) => {
-  const openWeb = () => {
-    Linking.openURL(`https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${userId}`);
-  };
-
+export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
   const handleLogout = async () => {
     await logout();
     toggleOpen();
@@ -24,16 +19,12 @@ export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerP
 
   const buttons = [
     {
-      label: "Acesso web",
-      action: openWeb,
-    },
-    {
       label: "Sair",
       action: handleLogout,
     },
   ];
 
-  const { logout, userId } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <Modal visible={open} animationType="slide" onRequestClose={toggleOpen} statusBarTranslucent>

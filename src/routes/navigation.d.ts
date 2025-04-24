@@ -1,17 +1,12 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export interface CreateOccasionalMaintenanceParams {
-  buildingId: string;
-}
-
 export interface MaintenanceDetailsParams {
   maintenanceId: string;
 }
 
 interface RoutesParams {
-  Buildings: undefined;
   Maintenances: undefined;
-  CreateOccasionalMaintenance: CreateOccasionalMaintenanceParams;
+  CreateOccasionalMaintenance: undefined;
   MaintenanceDetails: MaintenanceDetailsParams;
 }
 
