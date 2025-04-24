@@ -13,21 +13,12 @@ import { styles } from "./styles";
 
 interface KanbanProps {
   kanbanData: IKanbanColumn[];
-  buildingName: string;
   filters: IFilter;
   setFilters: (filters: IFilter) => void;
-  availableUsers: IAvailableFilter[];
   availableCategories: IAvailableFilter[];
 }
 
-export const Kanban = ({
-  kanbanData,
-  buildingName,
-  filters,
-  setFilters,
-  availableUsers,
-  availableCategories,
-}: KanbanProps) => {
+export const Kanban = ({ kanbanData, filters, setFilters, availableCategories }: KanbanProps) => {
   const [offlineQueue, setOfflineQueue] = useState<IOfflineQueueItem[]>([]);
 
   useEffect(() => {
@@ -41,13 +32,7 @@ export const Kanban = ({
 
   return (
     <View style={styles.container}>
-      <KanbanHeader
-        buildingName={buildingName}
-        filters={filters}
-        setFilters={setFilters}
-        availableUsers={availableUsers}
-        availableCategories={availableCategories}
-      />
+      <KanbanHeader filters={filters} setFilters={setFilters} availableCategories={availableCategories} />
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {kanbanData?.map((column, index) => (

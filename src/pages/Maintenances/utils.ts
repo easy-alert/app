@@ -1,4 +1,5 @@
 export interface IFilter {
+  selectedBuildings: string[];
   search: string;
   selectedUsers: string[];
   selectedStatus: string[];
@@ -8,6 +9,7 @@ export interface IFilter {
 }
 
 export const emptyFilters: IFilter = {
+  selectedBuildings: [],
   search: "",
   selectedUsers: [],
   selectedStatus: [],
