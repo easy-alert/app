@@ -234,6 +234,7 @@ export const Form = () => {
               inProgress: true,
             })
           }
+          style={styles.footerButton}
         />
 
         <PrimaryButton
@@ -243,6 +244,7 @@ export const Form = () => {
               occasionalMaintenanceType: "pending",
             })
           }
+          style={styles.footerButton}
         />
       </View>
     </View>
