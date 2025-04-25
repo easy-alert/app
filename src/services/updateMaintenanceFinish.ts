@@ -1,10 +1,9 @@
+import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
+import type { IError } from "@/types/IError";
+import type { IMaintenanceReportProgress } from "@/types/IMaintenanceReportProgress";
+import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+
 import { baseApi } from "./baseApi";
-
-import { alertMessage, catchHandler } from "../utils/handleAlerts";
-
-import type { IAnnexesAndImages } from "../types/IAnnexesAndImages";
-import type { IError } from "../types/IError";
-import type { IMaintenanceReportProgress } from "../types/IMaintenanceReportProgress";
 
 interface IUpdateMaintenanceFinish {
   syndicNanoId: string;

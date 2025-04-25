@@ -6,7 +6,7 @@ interface IGetMaintenanceHistoryActivities {
   maintenanceHistoryId: string;
 }
 
-export async function getMaintenanceHistoryActivities({ maintenanceHistoryId }: IGetMaintenanceHistoryActivities) {
+export const getMaintenanceHistoryActivities = async ({ maintenanceHistoryId }: IGetMaintenanceHistoryActivities) => {
   const uri = `company/maintenance-history-activities/${maintenanceHistoryId}`;
 
   try {
@@ -33,4 +33,4 @@ export async function getMaintenanceHistoryActivities({ maintenanceHistoryId }: 
 
     return null; // Retorna null se nenhum dado for encontrado
   }
-}
+};
