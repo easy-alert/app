@@ -1,6 +1,6 @@
-import type { IAnnexesAndImages } from ".";
+import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 
-export interface MaintenanceReport {
+export interface IMaintenanceReport {
   id: string;
   cost: number;
   observation: string;

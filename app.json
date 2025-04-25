@@ -2,7 +2,7 @@
   "expo": {
     "name": "Easy Alert",
     "slug": "app",
-    "version": "1.0.8",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,12 +12,18 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme": "easyalert",
+    "androidStatusBar": {
+      "barStyle": "dark-content"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.easyalert.app",
+      "associatedDomains": ["applinks:company.easyalert.com.br"],
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to register a maintenance that was done.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select pictures of done maintenances."
+        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select pictures of done maintenances.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -25,7 +31,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.easyalert.app"
+      "package": "com.easyalert.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "company.easyalert.com.br"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

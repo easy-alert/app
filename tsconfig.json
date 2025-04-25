@@ -2,28 +2,14 @@
   "extends": "expo/tsconfig.base",
 
   "compilerOptions": {
-    "baseUrl": ".",
+    "typeRoots": ["node_modules/@types", "src/types/*"],
     "strict": true,
 
-    "typeRoots": ["node_modules/@types", "src/types/*"],
-
+    "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"],
-      "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
-      "@types/*": ["src/types/*"]
+      "@/*": ["src/*"]
     }
   },
 
-  "include": [
-    "App.tsx",
-    "src/**/*",
-    ".eslintrc.js",
-    "babel.config.js",
-    "metro.config.js",
-    "gesture-handler.js",
-    "gesture-handler.native.js"
-  ]
+  "include": ["App.tsx", "src/**/*", ".eslintrc.js", "babel.config.js", "metro.config.js"]
 }

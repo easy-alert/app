@@ -6,7 +6,7 @@ interface IGetSuppliersForMaintenance {
   maintenanceId: string;
 }
 
-export async function getSuppliersForMaintenance({ maintenanceId }: IGetSuppliersForMaintenance) {
+export const getSuppliersForMaintenance = async ({ maintenanceId }: IGetSuppliersForMaintenance) => {
   const uri = `company/suppliers/to-select/${maintenanceId}`;
 
   try {
@@ -30,4 +30,4 @@ export async function getSuppliersForMaintenance({ maintenanceId }: IGetSupplier
 
     return null;
   }
-}
+};

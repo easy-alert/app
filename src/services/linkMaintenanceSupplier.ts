@@ -1,8 +1,7 @@
+import type { IError } from "@/types/IError";
+import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+
 import { baseApi } from "./baseApi";
-
-import { alertMessage, catchHandler } from "../utils/handleAlerts";
-
-import type { IError } from "../types/IError";
 
 interface ILinkMaintenanceSupplier {
   maintenanceId: string;
@@ -10,7 +9,7 @@ interface ILinkMaintenanceSupplier {
   userId: string;
 }
 
-export async function linkMaintenanceSupplier({ maintenanceId, supplierId, userId }: ILinkMaintenanceSupplier) {
+export const linkMaintenanceSupplier = async ({ maintenanceId, supplierId, userId }: ILinkMaintenanceSupplier) => {
   const uri = `company/suppliers/link-to-maintenance-history`;
 
   const body = {
@@ -34,4 +33,4 @@ export async function linkMaintenanceSupplier({ maintenanceId, supplierId, userI
       statusCode: response?.status,
     });
   }
-}
+};
