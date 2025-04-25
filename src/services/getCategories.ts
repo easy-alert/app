@@ -1,11 +1,10 @@
-// GLOBAL TYPES
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { ICategory } from "@/types/ICategory";
 
 import { baseApi } from "./baseApi";
 
-export const getCategoriesByBuildingId = async () => {
+export const getCategories = async () => {
   const uri = `company/buildings/maintenances/occasional/auxiliarydata/`;
 
   try {
@@ -25,7 +24,7 @@ export const getCategoriesByBuildingId = async () => {
 
     return categories;
   } catch (error: any) {
-    console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getCategoriesByBuildingId):", error);
+    console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getCategories):", error);
 
     // Tenta carregar os dados do cache
     try {
