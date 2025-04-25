@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Splash } from "@/components/Splash";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
+import { ForgotPassword } from "@/pages/ForgotPassword";
 import { Login } from "@/pages/Login";
 import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
 import { Maintenances } from "@/pages/Maintenances";
@@ -18,7 +19,14 @@ export const Routes = () => {
   }
 
   if (!isAuthenticated) {
-    return <Login />;
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
   }
 
   const linking: LinkingOptions<ReactNavigation.RootParamList> = {
