@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
+import { recoverPassword } from "@/services/recoverPassword";
 import { userLogin } from "@/services/userLogin";
 
 interface AuthContextData {
@@ -9,6 +10,7 @@ interface AuthContextData {
   userId: string;
   login: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  recoverPassword: (email: string) => Promise<{ success: boolean }>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -79,6 +81,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.clear();
   };
 
+  const handleRecoverPassword = (email: string) => recoverPassword({ email });
+
   return (
     <AuthContext.Provider
       value={{
@@ -86,6 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         userId: userId || "",
         login,
         logout,
+        recoverPassword: handleRecoverPassword,
       }}
     >
       {children}
