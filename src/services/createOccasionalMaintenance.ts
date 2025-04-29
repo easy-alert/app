@@ -70,7 +70,6 @@ export const createOccasionalMaintenance = async ({
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
   }
 };
