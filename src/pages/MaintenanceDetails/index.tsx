@@ -133,24 +133,29 @@ export const MaintenanceDetails = () => {
             getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
           />
           <History historyActivities={historyActivities} />
-          <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
-          <Attachments
-            maintenanceDetails={maintenanceDetails}
-            files={files}
-            images={images}
-            setFiles={setFiles}
-            setImages={setImages}
-          />
-          <CallToActions
-            maintenanceDetails={maintenanceDetails}
-            files={files}
-            images={images}
-            cost={cost}
-            setFiles={setFiles}
-            setImages={setImages}
-            setCost={setCost}
-            setLoading={setLoading}
-          />
+          {maintenanceDetails.canReport && (
+            <>
+              <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
+              <Attachments
+                maintenanceDetails={maintenanceDetails}
+                files={files}
+                images={images}
+                setFiles={setFiles}
+                setImages={setImages}
+              />
+
+              <CallToActions
+                maintenanceDetails={maintenanceDetails}
+                files={files}
+                images={images}
+                cost={cost}
+                setFiles={setFiles}
+                setImages={setImages}
+                setCost={setCost}
+                setLoading={setLoading}
+              />
+            </>
+          )}
         </ScreenWithCloseButton>
       </KeyboardAvoidingView>
     </PageLayout>
