@@ -32,6 +32,14 @@ export interface IMaintenance {
 
     instructions: { name: string; url: string }[];
   };
+  Users: {
+    User: {
+      id: string;
+      name: string;
+      image: string;
+      email: string;
+    };
+  }[];
   canReport: boolean;
   inProgress: boolean;
   daysInAdvance: number;

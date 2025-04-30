@@ -24,6 +24,7 @@ import { Header } from "./Header";
 import { History } from "./History";
 import { styles } from "./styles";
 import { Suppliers } from "./Suppliers";
+import { Users } from "./Users";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<ProtectedNavigation>();
@@ -122,6 +123,7 @@ export const MaintenanceDetails = () => {
         <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
           <Header maintenanceDetails={maintenanceDetails} />
           <DataLabels maintenanceDetails={maintenanceDetails} />
+          <Users maintenanceDetails={maintenanceDetails} />
           <Suppliers
             supplier={supplier}
             maintenanceId={maintenanceId}
