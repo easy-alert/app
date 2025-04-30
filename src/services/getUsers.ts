@@ -2,9 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { baseApi } from "./baseApi";
 
-export const getUsers = async () => {
+export const getUsers = async (buildingId?: string) => {
   const params = {
-    buildingId: "",
+    buildingId: buildingId || "",
     checkPerms: false,
   };
 

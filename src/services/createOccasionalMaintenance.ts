@@ -27,6 +27,7 @@ export const createOccasionalMaintenance = async ({
     activity,
     responsible,
     priorityName,
+    users,
   },
 }: ICreateOccasionalMaintenance) => {
   const uri = "company/buildings/reports/occasional/create";
@@ -54,6 +55,8 @@ export const createOccasionalMaintenance = async ({
       files: reportData.files || null,
       images: reportData.images || null,
     },
+
+    usersId: users,
   };
 
   try {

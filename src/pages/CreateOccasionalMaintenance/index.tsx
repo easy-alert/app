@@ -13,7 +13,7 @@ export const CreateOccasionalMaintenance = () => {
   return (
     <PageLayout>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <ScreenWithCloseButton title="Manutenção avulsa" onClose={() => navigation.goBack()}>
+        <ScreenWithCloseButton title="Manutenção avulsa" onClose={() => navigation.goBack()} isScrollView>
           <Form />
         </ScreenWithCloseButton>
       </KeyboardAvoidingView>

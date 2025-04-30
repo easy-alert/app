@@ -10,13 +10,15 @@ import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { Dropdown } from "@/components/Dropdown";
 import { LabelInput } from "@/components/LabelInput";
+import { MultiSelect } from "@/components/MultiSelect";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
 import { getCategories } from "@/services/getCategories";
+import { getUsers } from "@/services/getUsers";
 import type { ICategory } from "@/types/ICategory";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-import { IUser } from "@/types/IUser";
+import type { IUser } from "@/types/IUser";
 
 import { styles } from "./styles";
 
@@ -55,6 +57,7 @@ const formSchema = z.object({
   element: z.string().min(1, { message: "Elemento é obrigatório." }),
   activity: z.string().min(1, { message: "Atividade é obrigatória." }),
   responsible: z.string().min(1, { message: "Responsável é obrigatório." }),
+  users: z.array(z.string()).min(1, { message: "Usuários é obrigatório." }),
   priority: z.string().min(1, { message: "Prioridade é obrigatória." }),
   executionDate: z.string().min(1, { message: "Data de execução é obrigatória." }),
 });
@@ -70,11 +73,13 @@ export const Form = () => {
   const navigation = useNavigation<ProtectedNavigation>();
 
   const [loadingCategories, setLoadingCategories] = useState(false);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   const [creating, setCreating] = useState(false);
   const [creatingInProgress, setCreatingInProgress] = useState(false);
 
   const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     const handleGetCategories = async () => {
@@ -116,10 +121,37 @@ export const Form = () => {
       element: "",
       activity: "",
       responsible: "",
+      users: [],
       priority: "",
       executionDate: "",
     },
   });
+
+  const buildingId = form.watch("buildingId");
+
+  useEffect(() => {
+    const handleGetUsers = async () => {
+      if (!buildingId) {
+        return;
+      }
+
+      try {
+        setLoadingUsers(true);
+
+        const responseData = await getUsers(buildingId);
+
+        if (responseData?.users) {
+          setUsers(responseData.users);
+        }
+      } catch (error) {
+        console.error("🚀 ~ getAvailableUsers ~ error:", error);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    handleGetUsers();
+  }, [buildingId]);
 
   const handleCreateOccasionalMaintenance = async ({
     data,
@@ -133,7 +165,7 @@ export const Form = () => {
         setCreating(true);
       }
 
-      const { buildingId, categoryId, element, activity, responsible, priority, executionDate } = data;
+      const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
 
       const occasionalMaintenanceBody = {
         buildingId,
@@ -156,6 +188,8 @@ export const Form = () => {
           files: [],
           images: [],
         },
+
+        users,
       };
 
       const responseData = await createOccasionalMaintenance({
@@ -268,6 +302,25 @@ export const Form = () => {
               value={field.value}
               onChange={(value) => field.onChange(value.name)}
               disable={form.formState.isSubmitting}
+            />
+          </LabelInput>
+        )}
+      />
+
+      <Controller
+        control={form.control}
+        name="users"
+        render={({ field }) => (
+          <LabelInput label="Usuário(s) *" error={form.formState.errors.responsible?.message}>
+            <MultiSelect
+              placeholder="Selecione um ou mais usuários"
+              data={users}
+              labelField="name"
+              valueField="id"
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              disable={form.formState.isSubmitting || !buildingId}
+              loading={loadingUsers}
             />
           </LabelInput>
         )}
