@@ -34,10 +34,10 @@ export const KanbanRow = ({ maintenance, columnStatus, hasPendingSync }: KanbanR
     maintenanceStatus: maintenance.status,
   });
 
-  // TODO: add building name
-
   return (
     <TouchableOpacity style={styles.card} onPress={handleNavigateToMaintenanceDetails}>
+      <Text style={styles.buildingName}>{maintenance.buildingName}</Text>
+
       <View style={styles.typeTagContainer}>
         <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
       </View>
