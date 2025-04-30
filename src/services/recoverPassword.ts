@@ -31,7 +31,6 @@ export const recoverPassword = async ({ email }: IRecoverPassword): Promise<{ su
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
 
     return { success: false };

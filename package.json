@@ -12,6 +12,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@gorhom/bottom-sheet": "^5.1.2",
+    "@hookform/resolvers": "^5.0.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/netinfo": "^11.4.1",
@@ -27,6 +28,7 @@
     "expo-updates": "~0.27.4",
     "jwt-decode": "^4.0.0",
     "react": "18.3.1",
+    "react-hook-form": "^7.56.1",
     "react-native": "0.76.9",
     "react-native-document-picker": "^9.3.1",
     "react-native-element-dropdown": "^2.12.4",
@@ -37,7 +39,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-svg": "15.8.0",
     "react-native-svg-transformer": "^1.5.0",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

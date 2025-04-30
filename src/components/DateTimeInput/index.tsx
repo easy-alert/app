@@ -10,9 +10,10 @@ interface DateTimeInputProps {
   value?: string;
   onSelectDate?: (date: Date) => void;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }
 
-export const DateTimeInput = ({ value, onSelectDate, style }: DateTimeInputProps) => {
+export const DateTimeInput = ({ value, onSelectDate, style, disabled = false }: DateTimeInputProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   return (
@@ -31,7 +32,7 @@ export const DateTimeInput = ({ value, onSelectDate, style }: DateTimeInputProps
 
       <TextInput style={[commonStyles.input, style]} value={value} placeholder="dd/mm/aaaa" editable={false} />
 
-      <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setShowDatePicker(true)}>
+      <TouchableOpacity style={styles.iconButtonContainer} onPress={() => setShowDatePicker(true)} disabled={disabled}>
         <Icon name="calendar" size={20} color={iconColor} />
       </TouchableOpacity>
     </View>
