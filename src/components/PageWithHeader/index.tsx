@@ -5,8 +5,9 @@ import { styles } from "./styles";
 
 interface PageWithHeaderProps {
   title: string;
-  onClose: () => void;
   children: React.ReactNode;
+  onClose?: () => void;
+  onEdit?: () => void;
   withPadding?: boolean;
   isScrollView?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -14,8 +15,9 @@ interface PageWithHeaderProps {
 
 export const PageWithHeader = ({
   title,
-  onClose,
   children,
+  onClose,
+  onEdit,
   withPadding = true,
   isScrollView = false,
   style,
@@ -25,9 +27,19 @@ export const PageWithHeader = ({
       <View style={[styles.header, !withPadding && styles.contentPadding]}>
         <Text style={styles.title}>{title}</Text>
 
-        <TouchableOpacity onPress={onClose} style={styles.closeIcon}>
-          <Icon name="x" size={24} color="#b21d1d" />
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          {onEdit && (
+            <TouchableOpacity onPress={onEdit} style={styles.button}>
+              <Icon name="edit-2" size={20} color="#b21d1d" />
+            </TouchableOpacity>
+          )}
+
+          {onClose && (
+            <TouchableOpacity onPress={onClose} style={styles.button}>
+              <Icon name="x" size={24} color="#b21d1d" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {children}
