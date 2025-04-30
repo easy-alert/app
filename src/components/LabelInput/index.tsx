@@ -10,6 +10,7 @@ interface LabelInputProps extends TextInputProps {
   inputTextStyle?: StyleProp<TextStyle>;
   children?: React.ReactNode;
   isBottomSheetInput?: boolean;
+  error?: string;
 }
 
 export const LabelInput = ({
@@ -18,6 +19,7 @@ export const LabelInput = ({
   inputTextStyle,
   children,
   isBottomSheetInput = false,
+  error,
   ...props
 }: LabelInputProps) => {
   const InputComponent = isBottomSheetInput ? BottomSheetTextInput : TextInput;
@@ -29,6 +31,8 @@ export const LabelInput = ({
       {children || (
         <InputComponent placeholderTextColor="gray" style={[commonStyles.input, inputTextStyle]} {...props} />
       )}
+
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };
