@@ -3,7 +3,7 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-interface ScreenWithCloseButtonProps {
+interface PageWithHeaderProps {
   title: string;
   onClose: () => void;
   children: React.ReactNode;
@@ -12,14 +12,14 @@ interface ScreenWithCloseButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const ScreenWithCloseButton = ({
+export const PageWithHeader = ({
   title,
   onClose,
   children,
   withPadding = true,
   isScrollView = false,
   style,
-}: ScreenWithCloseButtonProps) => {
+}: PageWithHeaderProps) => {
   return (
     <Container withPadding={withPadding} isScrollView={isScrollView} style={style}>
       <View style={[styles.header, !withPadding && styles.contentPadding]}>

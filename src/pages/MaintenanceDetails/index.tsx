@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
 import { PageLayout } from "@/components/PageLayout";
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageWithHeader } from "@/components/PageWithHeader";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
@@ -120,7 +120,7 @@ export const MaintenanceDetails = () => {
   return (
     <PageLayout>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
+        <PageWithHeader title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
           <Header maintenanceDetails={maintenanceDetails} />
           <DataLabels maintenanceDetails={maintenanceDetails} />
           <Users maintenanceDetails={maintenanceDetails} />
@@ -158,7 +158,7 @@ export const MaintenanceDetails = () => {
               />
             </>
           )}
-        </ScreenWithCloseButton>
+        </PageWithHeader>
       </KeyboardAvoidingView>
     </PageLayout>
   );
