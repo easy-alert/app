@@ -3,27 +3,23 @@ import { alertMessage, catchHandler } from "@/utils/handleAlerts";
 
 import { baseApi } from "./baseApi";
 
-interface IUnlinkMaintenanceSupplier {
-  maintenanceHistoryId: string;
-  supplierId: string;
-  userId: string;
+interface IUpdateMaintenanceDueDate {
+  id: string;
+  dueDate: string;
+  status: string;
 }
 
-export const unlinkMaintenanceSupplier = async ({
-  maintenanceHistoryId,
-  supplierId,
-  userId,
-}: IUnlinkMaintenanceSupplier) => {
-  const uri = `company/suppliers/unlink-to-maintenance-history`;
+export const updateMaintenanceDueDate = async ({ id, dueDate, status }: IUpdateMaintenanceDueDate) => {
+  const uri = `company/maintenances/history/edit`;
 
   const body = {
-    maintenanceHistoryId,
-    supplierId,
-    userId,
+    id,
+    dueDate,
+    maintenanceStatus: status,
   };
 
   try {
-    const response = await baseApi.post(uri, body);
+    const response = await baseApi.put(uri, body);
 
     alertMessage({
       type: "success",

@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
 import { PageLayout } from "@/components/PageLayout";
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageWithHeader } from "@/components/PageWithHeader";
+import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
 import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
@@ -20,15 +21,18 @@ import { CallToActions } from "./CallToActions";
 import { Comments } from "./Comments";
 import { Costs } from "./Costs";
 import { DataLabels } from "./DataLabels";
+import { EditForm } from "./EditForm";
 import { Header } from "./Header";
 import { History } from "./History";
 import { styles } from "./styles";
 import { Suppliers } from "./Suppliers";
+import { Users } from "./Users";
 
 export const MaintenanceDetails = () => {
   const navigation = useNavigation<ProtectedNavigation>();
   const route = useRoute();
   const { maintenanceId } = route.params as MaintenanceDetailsParams;
+  const { openBottomSheet } = useBottomSheet();
 
   const [maintenanceDetails, setMaintenanceDetails] = useState<IMaintenance>();
   const [supplier, setSupplier] = useState<ISupplier>();
@@ -93,20 +97,20 @@ export const MaintenanceDetails = () => {
     }
   };
 
+  const loadData = async () => {
+    setLoading(true);
+
+    try {
+      await handleGetMaintenanceReportProgress();
+      await handleGetMaintenanceDetails();
+      await handleGetMaintenanceSupplier();
+      await handleGetMaintenanceHistoryActivities();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-
-      try {
-        await handleGetMaintenanceReportProgress();
-        await handleGetMaintenanceDetails();
-        await handleGetMaintenanceSupplier();
-        await handleGetMaintenanceHistoryActivities();
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,12 +120,28 @@ export const MaintenanceDetails = () => {
     return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
   }
 
+  const openEditForm = () => {
+    openBottomSheet({
+      content: <EditForm maintenanceDetails={maintenanceDetails} onFinishEditing={loadData} />,
+    });
+  };
+
+  const showEditFormButton =
+    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
+    maintenanceDetails.MaintenancesStatus.name !== "overdue";
+
   return (
     <PageLayout>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <ScreenWithCloseButton title="Enviar relato" onClose={() => navigation.goBack()} isScrollView>
+        <PageWithHeader
+          title="Enviar relato"
+          onClose={() => navigation.goBack()}
+          isScrollView
+          onEdit={showEditFormButton ? openEditForm : undefined}
+        >
           <Header maintenanceDetails={maintenanceDetails} />
           <DataLabels maintenanceDetails={maintenanceDetails} />
+          <Users maintenanceDetails={maintenanceDetails} />
           <Suppliers
             supplier={supplier}
             maintenanceId={maintenanceId}
@@ -156,7 +176,7 @@ export const MaintenanceDetails = () => {
               />
             </>
           )}
-        </ScreenWithCloseButton>
+        </PageWithHeader>
       </KeyboardAvoidingView>
     </PageLayout>
   );

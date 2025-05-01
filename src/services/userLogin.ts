@@ -48,7 +48,6 @@ export const userLogin = async ({
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
 
     return { user: {} as IUser, authToken: "" };

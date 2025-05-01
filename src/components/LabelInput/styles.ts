@@ -6,4 +6,10 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 4,
   },
+  error: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "red",
+    marginTop: 8,
+  },
 });

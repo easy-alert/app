@@ -23,4 +23,6 @@ export interface IOccasionalMaintenanceData {
     files: IAnnexesAndImages[];
     images: IAnnexesAndImages[];
   };
+
+  users: string[];
 }

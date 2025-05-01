@@ -1,7 +1,7 @@
 import { FlatList, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";
@@ -30,7 +30,7 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
     <Modal visible={open} animationType="slide" onRequestClose={toggleOpen} statusBarTranslucent>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
-          <ScreenWithCloseButton title="Opções" onClose={toggleOpen}>
+          <PageWithHeader title="Opções" onClose={toggleOpen}>
             <FlatList
               data={buttons}
               keyExtractor={(_, index) => index.toString()}
@@ -40,7 +40,7 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
                 </TouchableOpacity>
               )}
             />
-          </ScreenWithCloseButton>
+          </PageWithHeader>
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>
