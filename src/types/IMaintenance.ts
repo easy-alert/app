@@ -24,6 +24,7 @@ export interface IMaintenance {
     FrequencyTimeInterval: {
       pluralLabel: string;
       singularLabel: string;
+      unitTime: number;
     };
 
     MaintenanceType: {

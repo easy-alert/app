@@ -42,7 +42,13 @@ export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps)
 
   const canChangeDueDate = maintenanceDetails.Maintenance.MaintenanceType.name !== "occasional";
 
-  // TODO: corrigir dueDate
+  const daysToAdd =
+    (maintenanceDetails.Maintenance.FrequencyTimeInterval?.unitTime ?? 0) *
+      (maintenanceDetails.Maintenance.frequency ?? 0) -
+    1;
+
+  const limitDate = new Date(maintenanceDetails.notificationDate);
+  limitDate.setDate(limitDate.getDate() + daysToAdd);
 
   return (
     <View style={styles.container}>
@@ -52,8 +58,7 @@ export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps)
       {canChangeDueDate && (
         <>
           <Text style={styles.dueDateLabel}>
-            A data limite para a manutenção é:{" "}
-            <Text style={styles.dueDate}>{formatDate(maintenanceDetails.dueDate)}</Text>
+            A data limite para a manutenção é: <Text style={styles.dueDate}>{formatDate(limitDate.toISOString())}</Text>
           </Text>
           <LabelInput label="Data de vencimento">
             <DateTimeInput
