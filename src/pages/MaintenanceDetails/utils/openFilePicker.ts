@@ -70,7 +70,7 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
         return null;
       }
 
-      let imageResult;
+      let imageResult: ImagePicker.ImagePickerResult | null = null;
 
       if (userChoice === "camera") {
         // Solicitar permissão para câmera
@@ -83,8 +83,8 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
 
         // Abrir câmera
         imageResult = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
+          mediaTypes: ["images"],
+          allowsEditing: false,
           quality: 1,
         });
       } else if (userChoice === "gallery") {
@@ -98,13 +98,13 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
 
         // Abrir galeria
         imageResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
+          mediaTypes: ["images"],
+          allowsEditing: false,
           quality: 1,
         });
       }
 
-      if (imageResult?.canceled) {
+      if (!imageResult || imageResult.canceled) {
         console.log("Nenhuma imagem selecionada.");
         return null;
       }
