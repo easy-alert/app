@@ -16,6 +16,11 @@
     "androidStatusBar": {
       "barStyle": "dark-content"
     },
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#b21d1d",
+      "iosDisplayInForeground": true
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.easyalert.app",
