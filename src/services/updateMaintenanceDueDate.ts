@@ -7,12 +7,14 @@ interface IUpdateMaintenanceDueDate {
   id: string;
   dueDate: string;
   status: string;
+  showToResident: boolean;
 }
 
 export const updateMaintenanceDueDate = async ({
   id,
   dueDate,
   status,
+  showToResident,
 }: IUpdateMaintenanceDueDate): Promise<{ success: boolean }> => {
   const uri = `company/maintenances/history/edit`;
 
@@ -20,7 +22,7 @@ export const updateMaintenanceDueDate = async ({
     maintenanceHistoryId: id,
     dueDate,
     maintenanceStatus: status,
-    showToResident: true,
+    showToResident,
   };
 
   try {

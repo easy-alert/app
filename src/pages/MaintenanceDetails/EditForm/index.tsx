@@ -45,6 +45,7 @@ export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps)
       id: maintenanceDetails.id,
       dueDate: dueDate.toISOString(),
       status: maintenanceDetails.MaintenancesStatus.name,
+      showToResident: maintenanceDetails.showToResident,
     });
 
     if (success) {
