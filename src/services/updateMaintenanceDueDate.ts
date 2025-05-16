@@ -9,13 +9,18 @@ interface IUpdateMaintenanceDueDate {
   status: string;
 }
 
-export const updateMaintenanceDueDate = async ({ id, dueDate, status }: IUpdateMaintenanceDueDate) => {
+export const updateMaintenanceDueDate = async ({
+  id,
+  dueDate,
+  status,
+}: IUpdateMaintenanceDueDate): Promise<{ success: boolean }> => {
   const uri = `company/maintenances/history/edit`;
 
   const body = {
-    id,
+    maintenanceHistoryId: id,
     dueDate,
     maintenanceStatus: status,
+    showToResident: true,
   };
 
   try {
@@ -25,11 +30,15 @@ export const updateMaintenanceDueDate = async ({ id, dueDate, status }: IUpdateM
       type: "success",
       message: response?.data?.ServerMessage?.message,
     });
+
+    return { success: true };
   } catch (error: any) {
     const response = error.response as IError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
     });
+
+    return { success: false };
   }
 };
