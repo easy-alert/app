@@ -5,6 +5,7 @@
   },
   "build": {
     "development_simulator": {
+      "channel": "development",
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
@@ -12,13 +13,16 @@
       }
     },
     "development": {
+      "channel": "development",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+      "channel": "preview",
       "distribution": "internal"
     },
     "production": {
+      "channel": "production",
       "autoIncrement": true
     }
   },
