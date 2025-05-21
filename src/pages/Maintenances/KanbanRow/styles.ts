@@ -42,7 +42,7 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
     },
     tagText: {
       color: "#ffffff", // Texto branco
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: "bold",
     },
     cardTitle: {
