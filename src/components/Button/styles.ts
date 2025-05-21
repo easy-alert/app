@@ -2,6 +2,8 @@ import { StyleSheet } from "react-native";
 
 const baseStyle = StyleSheet.create({
   button: {
+    flexDirection: "row",
+    gap: 8,
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,

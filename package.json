@@ -7,9 +7,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "eslint . --fix && prettier --write ."
+    "lint": "eslint . --fix && prettier --write .",
+    "update:preview": "eas update --auto --branch preview",
+    "update:production": "eas update --auto --branch production"
   },
   "dependencies": {
+    "@expo/fingerprint": "^0.12.4",
     "@expo/vector-icons": "^14.0.2",
     "@gorhom/bottom-sheet": "^5.1.2",
     "@hookform/resolvers": "^5.0.1",
@@ -20,8 +23,10 @@
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/native-stack": "^7.3.10",
     "axios": "^1.7.9",
+    "compare-versions": "^6.1.1",
     "events": "^3.3.0",
     "expo": "~52.0.42",
+    "expo-application": "~6.0.2",
     "expo-document-picker": "~13.0.3",
     "expo-image-picker": "~16.0.6",
     "expo-status-bar": "~2.0.1",
