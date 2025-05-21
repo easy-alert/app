@@ -22,10 +22,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const verifyStorageAuth = async () => {
       try {
+        const userId = await AsyncStorage.getItem("userId");
         const authToken = await AsyncStorage.getItem("authToken");
         const buildingsList = await AsyncStorage.getItem("buildingsList");
 
-        if (!authToken || !buildingsList) {
+        if (!userId || !authToken || !buildingsList) {
           setIsAuthenticated(false);
           return;
         }
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
 
+        setUserId(userId);
         setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);
@@ -60,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
+      await AsyncStorage.setItem("userId", response.user.id);
       await AsyncStorage.setItem("authToken", response.authToken);
       await AsyncStorage.setItem("buildingsList", JSON.stringify(response.user.UserBuildingsPermissions));
 
