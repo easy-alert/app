@@ -1,15 +1,20 @@
 import NetInfo from "@react-native-community/netinfo";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 import { getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
 
-import { createStyle } from "./styles";
+interface OfflineQueueContextData {
+  offlineQueueLength: number;
+  hasInternetConnection: boolean;
+  isSyncing: boolean;
+}
 
-export const OfflineQueueBadge = () => {
+const OfflineQueueContext = createContext({} as OfflineQueueContextData);
+
+export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
   const [offlineQueueLength, setOfflineQueueLength] = useState(0);
   const [hasInternetConnection, setHasInternetConnection] = useState(true);
+  const isSyncing = hasInternetConnection && offlineQueueLength > 0;
 
   useEffect(() => {
     const getOfflineQueueCount = async () => {
@@ -38,8 +43,9 @@ export const OfflineQueueBadge = () => {
 
           if (networkState.isConnected) {
             await syncOfflineQueue();
-            await getOfflineQueueCount();
           }
+
+          await getOfflineQueueCount();
         } catch {}
       }, 3000);
 
@@ -54,24 +60,17 @@ export const OfflineQueueBadge = () => {
     };
   }, []);
 
-  if (hasInternetConnection && offlineQueueLength === 0) {
-    return null;
-  }
-
-  const isSyncing = hasInternetConnection && offlineQueueLength > 0;
-
-  const styles = createStyle(isSyncing);
-
   return (
-    <View style={styles.container}>
-      <View style={styles.badgeContainer}>
-        {isSyncing && <ActivityIndicator color="#fff" />}
-        {!isSyncing && <Icon name={"cloud-offline-outline"} size={16} color="#fff" />}
-
-        <Text style={styles.offlineLabel}>{isSyncing ? "Sincronizando" : "Offline"}</Text>
-
-        {offlineQueueLength > 0 && <Text style={styles.offlineQueueLengthLabel}>{offlineQueueLength}</Text>}
-      </View>
-    </View>
+    <OfflineQueueContext.Provider
+      value={{
+        offlineQueueLength,
+        hasInternetConnection,
+        isSyncing,
+      }}
+    >
+      {children}
+    </OfflineQueueContext.Provider>
   );
 };
+
+export const useOfflineQueue = (): OfflineQueueContextData => useContext(OfflineQueueContext);

@@ -3,32 +3,31 @@ import { StyleSheet } from "react-native";
 export const createStyle = (isSyncing: boolean) =>
   StyleSheet.create({
     container: {
-      backgroundColor: "#fff",
-      alignItems: "flex-end",
-      marginHorizontal: 16,
-      marginVertical: 8,
-    },
-    badgeContainer: {
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
       backgroundColor: isSyncing ? "#2B7FFF" : "#EF4444",
-      paddingVertical: 8,
-      paddingHorizontal: 16,
+      paddingVertical: 6,
+      paddingHorizontal: 8,
       borderRadius: 999,
     },
-    offlineLabel: {
-      fontSize: 16,
+    label: {
+      fontSize: 12,
       fontWeight: "bold",
       color: "#fff",
     },
-    offlineQueueLengthLabel: {
-      fontSize: 12,
+    countContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#fff",
+      borderRadius: 999,
+      minWidth: 16,
+      minHeight: 16,
+      paddingHorizontal: 4,
+    },
+    countLabel: {
+      fontSize: 10,
       fontWeight: "bold",
       color: "#000",
-      backgroundColor: "#fff",
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 999,
     },
   });
