@@ -1,14 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { Platform } from "react-native";
 
+import { recoverPassword } from "@/services/recoverPassword";
 import { userLogin } from "@/services/userLogin";
+import { getDeviceId } from "@/utils/deviceId";
+import { getPushNotificationToken } from "@/utils/pushNotification";
 
 interface AuthContextData {
   isAuthenticated: boolean | undefined;
   userId: string;
   login: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  recoverPassword: (email: string) => Promise<{ success: boolean }>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -22,10 +27,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const userId = await AsyncStorage.getItem("userId");
         const authToken = await AsyncStorage.getItem("authToken");
-        const phoneNumber = await AsyncStorage.getItem("phoneNumber");
         const buildingsList = await AsyncStorage.getItem("buildingsList");
 
-        if (!userId || !authToken || !phoneNumber || !buildingsList) {
+        if (!userId || !authToken || !buildingsList) {
           setIsAuthenticated(false);
           return;
         }
@@ -51,9 +55,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (phone: string, password: string) => {
     try {
+      const pushNotificationToken = await getPushNotificationToken();
+      const deviceId = await getDeviceId();
+
       const response = await userLogin({
         login: phone,
-        password: password,
+        password,
+        pushNotificationToken,
+        deviceId,
+        os: Platform.OS,
       });
 
       if (!response.user || !response.user.id) {
@@ -63,8 +73,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       await AsyncStorage.setItem("userId", response.user.id);
       await AsyncStorage.setItem("authToken", response.authToken);
-
-      await AsyncStorage.setItem("phoneNumber", phone);
       await AsyncStorage.setItem("buildingsList", JSON.stringify(response.user.UserBuildingsPermissions));
 
       setUserId(response.user.id);
@@ -79,6 +87,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.clear();
   };
 
+  const handleRecoverPassword = (email: string) => recoverPassword({ email });
+
   return (
     <AuthContext.Provider
       value={{
@@ -86,6 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         userId: userId || "",
         login,
         logout,
+        recoverPassword: handleRecoverPassword,
       }}
     >
       {children}

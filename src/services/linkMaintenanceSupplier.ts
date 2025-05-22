@@ -30,7 +30,6 @@ export const linkMaintenanceSupplier = async ({ maintenanceId, supplierId, userI
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
   }
 };

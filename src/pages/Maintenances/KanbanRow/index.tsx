@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { PendingSyncBadge } from "@/components/PendingSyncBadge";
-import type { Navigation } from "@/routes/navigation";
+import type { ProtectedNavigation } from "@/routes/navigation";
 import type { IKanbanColumn } from "@/types/IKanbanColumn";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
@@ -16,7 +16,7 @@ interface KanbanRowProps {
 }
 
 export const KanbanRow = ({ maintenance, columnStatus, hasPendingSync }: KanbanRowProps) => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProtectedNavigation>();
 
   const handleNavigateToMaintenanceDetails = () => {
     navigation.navigate("MaintenanceDetails", {
@@ -36,6 +36,8 @@ export const KanbanRow = ({ maintenance, columnStatus, hasPendingSync }: KanbanR
 
   return (
     <TouchableOpacity style={styles.card} onPress={handleNavigateToMaintenanceDetails}>
+      <Text style={styles.buildingName}>{maintenance.buildingName}</Text>
+
       <View style={styles.typeTagContainer}>
         <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
       </View>

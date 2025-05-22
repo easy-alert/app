@@ -41,12 +41,6 @@ interface IMaintenance {
   instructions: any[];
 }
 
-interface IBuilding {
-  name: string;
-  id: string;
-  guestCanCompleteMaintenance: boolean;
-}
-
 interface IMaintenanceDetails {
   id: string;
   element: string;
@@ -62,12 +56,12 @@ interface IMaintenanceDetails {
   resolutionDate: string;
   daysInAdvance: number;
   canReport: boolean;
+  buildingName: string;
   MaintenanceReport: IMaintenanceReport[];
   MaintenanceReportProgress: IMaintenanceReportProgress[];
   MaintenancesStatus: {
     name: string;
   };
-  Building: IBuilding;
   Maintenance: IMaintenance;
 }
 

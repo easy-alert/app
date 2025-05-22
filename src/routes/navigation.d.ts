@@ -1,27 +1,28 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export interface CreateOccasionalMaintenanceParams {
-  buildingId: string;
-}
-
 export interface MaintenanceDetailsParams {
   maintenanceId: string;
 }
 
-interface RoutesParams {
-  Buildings: undefined;
+interface ProtectedRoutesParams {
   Maintenances: undefined;
-  CreateOccasionalMaintenance: CreateOccasionalMaintenanceParams;
+  CreateOccasionalMaintenance: undefined;
   MaintenanceDetails: MaintenanceDetailsParams;
 }
 
-export type Navigation = NativeStackNavigationProp<RoutesParams>;
+interface PublicRoutesParams {
+  Login: undefined;
+  ForgotPassword: undefined;
+}
 
-export type RouteList = keyof RoutesParams;
+export type ProtectedNavigation = NativeStackNavigationProp<ProtectedRoutesParams>;
+export type PublicNavigation = NativeStackNavigationProp<PublicRoutesParams>;
+
+export type RouteList = keyof ProtectedRoutesParams | keyof PublicRoutesParams;
 
 export declare global {
   namespace ReactNavigation {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface RootParamList extends RoutesParams {}
+    interface RootParamList extends ProtectedRoutesParams, PublicRoutesParams {}
   }
 }

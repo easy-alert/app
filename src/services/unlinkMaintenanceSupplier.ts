@@ -34,7 +34,6 @@ export const unlinkMaintenanceSupplier = async ({
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
   }
 };

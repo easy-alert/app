@@ -16,13 +16,4 @@ export const styles = StyleSheet.create({
     position: "absolute",
     left: 16,
   },
-  logoContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  logo: {
-    width: 120,
-    height: 40,
-    resizeMode: "contain",
-  },
 });

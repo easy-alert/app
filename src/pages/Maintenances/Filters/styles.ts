@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: "row",
     gap: 10,
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
   footerButton: {
     flex: 1,

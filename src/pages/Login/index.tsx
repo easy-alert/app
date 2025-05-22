@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -16,10 +17,12 @@ import { Keyboard } from "react-native";
 
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
+import { PublicNavigation } from "@/routes/navigation";
 
 import { styles } from "./styles";
 
 export const Login = () => {
+  const navigation = useNavigation<PublicNavigation>();
   const { login } = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -113,13 +116,22 @@ export const Login = () => {
             />
           </View>
 
-          {isLoggingIn ? (
-            <ActivityIndicator size="large" color="#ffffff" />
-          ) : (
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Entrar</Text>
-            </TouchableOpacity>
-          )}
+          <View style={styles.buttonContainer}>
+            {isLoggingIn ? (
+              <ActivityIndicator size="large" color="#ffffff" />
+            ) : (
+              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                <Text style={styles.loginButtonText}>Entrar</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <Text style={styles.forgotPasswordText}>
+            Esqueceu sua senha?{" "}
+            <Text style={styles.forgotPasswordTextLink} onPress={() => navigation.navigate("ForgotPassword")}>
+              Recuperar senha
+            </Text>
+          </Text>
         </View>
       </KeyboardAvoidingView>
     </>
