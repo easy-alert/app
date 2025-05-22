@@ -35,9 +35,18 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#555",
   },
-  loginButton: {
-    width: "100%",
+  icon: {
+    position: "absolute",
+    right: 15,
+    top: 15,
+  },
+  buttonContainer: {
     height: 50,
+    width: "100%",
+    justifyContent: "center",
+  },
+  loginButton: {
+    flex: 1,
     backgroundColor: "#c62828",
     borderRadius: 8,
     justifyContent: "center",
@@ -48,9 +57,12 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  icon: {
-    position: "absolute",
-    right: 15,
-    top: 15,
+  forgotPasswordText: {
+    marginTop: 16,
+    color: "#fff",
+    fontSize: 16,
+  },
+  forgotPasswordTextLink: {
+    fontWeight: "bold",
   },
 });

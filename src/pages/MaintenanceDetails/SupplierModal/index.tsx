@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
 import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
@@ -55,7 +55,7 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
     <Modal visible={visible} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
-          <ScreenWithCloseButton title="Vincular fornecedor" onClose={onClose} isScrollView>
+          <PageWithHeader title="Vincular fornecedor" onClose={onClose} isScrollView>
             <Text style={styles.subtitleLabel}>
               Clique em uma das opções abaixo para vincular o fornecedor desejado:
             </Text>
@@ -98,7 +98,7 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
                 Clique aqui para cadastrar!
               </Text>
             </Text>
-          </ScreenWithCloseButton>
+          </PageWithHeader>
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>

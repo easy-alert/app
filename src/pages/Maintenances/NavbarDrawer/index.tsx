@@ -1,7 +1,7 @@
-import { FlatList, Linking, Modal, Text, TouchableOpacity } from "react-native";
+import { FlatList, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { ScreenWithCloseButton } from "@/components/ScreenWithCloseButton";
+import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";
@@ -9,14 +9,9 @@ import { styles } from "./styles";
 interface NavbarDrawerProps {
   open: boolean;
   toggleOpen: () => void;
-  buildingNanoId: string;
 }
 
-export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerProps) => {
-  const openWeb = () => {
-    Linking.openURL(`https://public.easyalert.com.br/syndicarea/${buildingNanoId}?syndicNanoId=${userId}`);
-  };
-
+export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
   const handleLogout = async () => {
     await logout();
     toggleOpen();
@@ -24,22 +19,18 @@ export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerP
 
   const buttons = [
     {
-      label: "Acesso web",
-      action: openWeb,
-    },
-    {
       label: "Sair",
       action: handleLogout,
     },
   ];
 
-  const { logout, userId } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <Modal visible={open} animationType="slide" onRequestClose={toggleOpen} statusBarTranslucent>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
-          <ScreenWithCloseButton title="Opções" onClose={toggleOpen}>
+          <PageWithHeader title="Opções" onClose={toggleOpen}>
             <FlatList
               data={buttons}
               keyExtractor={(_, index) => index.toString()}
@@ -49,7 +40,7 @@ export const NavbarDrawer = ({ open, toggleOpen, buildingNanoId }: NavbarDrawerP
                 </TouchableOpacity>
               )}
             />
-          </ScreenWithCloseButton>
+          </PageWithHeader>
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>

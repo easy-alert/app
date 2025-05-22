@@ -4,9 +4,13 @@ import { Alert } from "react-native";
 
 import type { ILocalFile } from "@/types/ILocalFile";
 
-export const openFilePicker = async (type?: "file" | "image" | null): Promise<ILocalFile | null> => {
+export const openFilePicker = async (type?: "file" | "image" | null): Promise<ILocalFile[]> => {
   try {
-    let file: { uri: string; name: string; type: string } | null = null;
+    let files: {
+      uri: string;
+      name: string;
+      type: string;
+    }[] = [];
 
     if (!type) {
       type = await new Promise<"file" | "image" | null>((resolve) => {
@@ -28,25 +32,28 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
 
       if (!type) {
         console.log("Ação cancelada pelo usuário.");
-        return null;
+        return [];
       }
     }
 
     if (type === "file") {
       // Seletor de documentos
-      const fileResult = await DocumentPicker.getDocumentAsync({
+      const filesResult = await DocumentPicker.getDocumentAsync({
         type: "*/*",
         copyToCacheDirectory: true,
-        multiple: false,
+        multiple: true,
       });
 
-      if (fileResult.canceled) {
+      if (filesResult.canceled) {
         console.log("Nenhum arquivo selecionado.");
-        return null;
+        return [];
       }
 
-      const { uri, name, mimeType } = fileResult.assets[0];
-      file = { uri, name, type: mimeType || "application/octet-stream" };
+      files = filesResult.assets.map((file) => ({
+        uri: file.uri,
+        name: file.name,
+        type: file.mimeType || "application/octet-stream",
+      }));
     } else if (type === "image") {
       const userChoice = await new Promise<string>((resolve) => {
         Alert.alert(
@@ -67,10 +74,10 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
 
       if (userChoice === "cancel") {
         console.log("Ação cancelada pelo usuário.");
-        return null;
+        return [];
       }
 
-      let imageResult;
+      let imagesResult: ImagePicker.ImagePickerResult | null = null;
 
       if (userChoice === "camera") {
         // Solicitar permissão para câmera
@@ -78,13 +85,14 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
 
         if (!permissionCameraResult.granted) {
           console.log("Permissão necessária para acessar a câmera.");
-          return null;
+          return [];
         }
 
         // Abrir câmera
-        imageResult = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
+        imagesResult = await ImagePicker.launchCameraAsync({
+          mediaTypes: ["images"],
+          allowsEditing: false,
+          allowsMultipleSelection: true,
           quality: 1,
         });
       } else if (userChoice === "gallery") {
@@ -93,42 +101,47 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
 
         if (!permissionLibraryResult.granted) {
           console.log("Permissão necessária para acessar a galeria.");
-          return null;
+          return [];
         }
 
         // Abrir galeria
-        imageResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
+        imagesResult = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ["images"],
+          allowsEditing: false,
+          allowsMultipleSelection: true,
           quality: 1,
         });
       }
 
-      if (imageResult?.canceled) {
+      if (!imagesResult || imagesResult.canceled) {
         console.log("Nenhuma imagem selecionada.");
-        return null;
+        return [];
       }
 
       // Sobrescreve a variável file com os dados da imagem
-      file = {
-        uri: imageResult?.assets[0].uri || "",
-        type: "image/jpeg",
-        name: `photo-${Date.now()}.jpg`,
-      };
+      files = imagesResult.assets.map((image) => {
+        const extension = image.uri.split(".").pop() || "jpg";
+
+        return {
+          uri: image.uri,
+          type: image.mimeType || "image/jpeg",
+          name: `photo-${Date.now()}.${extension}`,
+        };
+      });
     }
 
-    if (!file) {
-      return null;
+    if (!files) {
+      return [];
     }
 
-    return {
+    return files.map((file) => ({
       originalName: file.name,
       url: file.uri,
       name: file.name,
       type: file.type,
-    };
+    }));
   } catch (error) {
     console.error("Erro ao selecionar ou enviar:", error);
-    return null;
+    return [];
   }
 };

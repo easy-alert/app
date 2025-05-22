@@ -24,6 +24,7 @@ export interface IMaintenance {
     FrequencyTimeInterval: {
       pluralLabel: string;
       singularLabel: string;
+      unitTime: number;
     };
 
     MaintenanceType: {
@@ -32,9 +33,18 @@ export interface IMaintenance {
 
     instructions: { name: string; url: string }[];
   };
+  Users: {
+    User: {
+      id: string;
+      name: string;
+      image: string;
+      email: string;
+    };
+  }[];
   canReport: boolean;
   inProgress: boolean;
   daysInAdvance: number;
   additionalInfo?: string;
   userResponsible?: IUser;
+  showToResident: boolean;
 }

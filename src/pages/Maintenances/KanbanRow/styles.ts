@@ -23,6 +23,9 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       borderLeftColor: getStatus(columnStatus).color,
       gap: 6,
     },
+    buildingName: {
+      fontSize: 18,
+    },
     typeTagContainer: {
       paddingVertical: 2,
       paddingHorizontal: 4,

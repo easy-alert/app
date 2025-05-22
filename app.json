@@ -2,7 +2,7 @@
   "expo": {
     "name": "Easy Alert",
     "slug": "app",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,6 +15,11 @@
     "scheme": "easyalert",
     "androidStatusBar": {
       "barStyle": "dark-content"
+    },
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#b21d1d",
+      "iosDisplayInForeground": true
     },
     "ios": {
       "supportsTablet": true,
@@ -44,7 +49,8 @@
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
-      ]
+      ],
+      "googleServicesFile": "./credentials/firebase.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -55,7 +61,7 @@
       }
     },
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "fingerprint"
     },
     "updates": {
       "url": "https://u.expo.dev/27517197-dbbd-4bac-ac20-ae03ee07310c"

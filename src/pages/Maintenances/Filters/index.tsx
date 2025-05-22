@@ -15,11 +15,18 @@ import { styles } from "./styles";
 interface FiltersProps {
   filters: IFilter;
   setFilters: (filters: IFilter) => void;
+  availableBuildings: IAvailableFilter[];
   availableUsers: IAvailableFilter[];
   availableCategories: IAvailableFilter[];
 }
 
-export const Filters = ({ filters, setFilters, availableUsers, availableCategories }: FiltersProps) => {
+export const Filters = ({
+  filters,
+  setFilters,
+  availableBuildings,
+  availableUsers,
+  availableCategories,
+}: FiltersProps) => {
   const { closeBottomSheet } = useBottomSheet();
 
   const [filtersCache, setFiltersCache] = useState<IFilter>(filters);
@@ -36,6 +43,17 @@ export const Filters = ({ filters, setFilters, availableUsers, availableCategori
 
   return (
     <View style={styles.container}>
+      <LabelInput label="Edificação">
+        <MultiSelect
+          data={availableBuildings}
+          value={filtersCache.selectedBuildings}
+          onChange={(selectedBuildings) => setFiltersCache({ ...filtersCache, selectedBuildings })}
+          placeholder="Selecione"
+          labelField="label"
+          valueField="value"
+        />
+      </LabelInput>
+
       <LabelInput
         value={filtersCache.search}
         onChangeText={(search) => setFiltersCache({ ...filtersCache, search })}

@@ -8,12 +8,18 @@ import { baseApi } from "./baseApi";
 
 interface IUserLogin {
   login: string;
-  password?: string;
+  password: string;
+  pushNotificationToken: string | null;
+  deviceId: string | null;
+  os: string;
 }
 
 export const userLogin = async ({
   login,
   password,
+  pushNotificationToken,
+  deviceId,
+  os,
 }: IUserLogin): Promise<{
   user: IUser;
   authToken: string;
@@ -32,6 +38,9 @@ export const userLogin = async ({
   const body = {
     login,
     password,
+    pushNotificationToken,
+    deviceId,
+    os,
   };
 
   try {
@@ -48,7 +57,6 @@ export const userLogin = async ({
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
 
     return { user: {} as IUser, authToken: "" };

@@ -2,7 +2,6 @@ import { Alert } from "react-native";
 
 interface ICatchHandler {
   message: string;
-  statusCode?: number;
 }
 
 interface IAlertMessage {
@@ -10,10 +9,7 @@ interface IAlertMessage {
   message: string;
 }
 
-export const catchHandler = async ({
-  message,
-  statusCode, // remove if not needed
-}: ICatchHandler) => {
+export const catchHandler = async ({ message }: ICatchHandler) => {
   const errorMessage = message || "Erro ao realizar a operação";
 
   Alert.alert("Erro", errorMessage);

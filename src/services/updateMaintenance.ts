@@ -49,7 +49,6 @@ export const updateMaintenance = async ({
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
-      statusCode: response?.status,
     });
   }
 };

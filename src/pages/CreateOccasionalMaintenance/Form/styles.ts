@@ -12,7 +12,10 @@ export const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
+    gap: 10,
     justifyContent: "space-between",
-    alignItems: "center",
+  },
+  footerButton: {
+    flex: 1,
   },
 });
