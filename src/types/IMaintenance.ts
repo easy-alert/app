@@ -46,4 +46,5 @@ export interface IMaintenance {
   daysInAdvance: number;
   additionalInfo?: string;
   userResponsible?: IUser;
+  showToResident: boolean;
 }
