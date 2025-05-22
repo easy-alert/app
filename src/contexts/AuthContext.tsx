@@ -1,9 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { Platform } from "react-native";
 
 import { recoverPassword } from "@/services/recoverPassword";
 import { userLogin } from "@/services/userLogin";
+import { getDeviceId } from "@/utils/deviceId";
+import { getPushNotificationToken } from "@/utils/pushNotification";
 
 interface AuthContextData {
   isAuthenticated: boolean | undefined;
@@ -50,9 +53,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (phone: string, password: string) => {
     try {
+      const pushNotificationToken = await getPushNotificationToken();
+      const deviceId = await getDeviceId();
+
       const response = await userLogin({
         login: phone,
-        password: password,
+        password,
+        pushNotificationToken,
+        deviceId,
+        os: Platform.OS,
       });
 
       if (!response.user || !response.user.id) {
