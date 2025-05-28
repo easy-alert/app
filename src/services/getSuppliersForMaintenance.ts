@@ -1,16 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
+
 import { baseApi } from "./baseApi";
 
 interface IGetSuppliersForMaintenance {
   maintenanceId: string;
 }
 
-export const getSuppliersForMaintenance = async ({ maintenanceId }: IGetSuppliersForMaintenance) => {
+export const getSuppliersForMaintenance = async ({
+  maintenanceId,
+}: IGetSuppliersForMaintenance): Promise<IMaintenanceSuppliers | null> => {
   const uri = `company/suppliers/to-select/${maintenanceId}`;
 
   try {
-    const response = await baseApi.get(uri);
+    const response = await baseApi.get<IMaintenanceSuppliers>(uri);
 
     await AsyncStorage.setItem(uri, JSON.stringify(response.data));
 
@@ -22,7 +26,7 @@ export const getSuppliersForMaintenance = async ({ maintenanceId }: IGetSupplier
       const cachedData = await AsyncStorage.getItem(uri);
 
       if (cachedData) {
-        return JSON.parse(cachedData);
+        return JSON.parse(cachedData) as IMaintenanceSuppliers;
       }
     } catch (cacheError) {
       console.error("Erro ao carregar dados do cache:", cacheError);

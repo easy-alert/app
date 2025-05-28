@@ -4,7 +4,7 @@ import type { ICategory } from "@/types/api/ICategory";
 
 import { baseApi } from "./baseApi";
 
-export const getCategories = async () => {
+export const getCategories = async (): Promise<ICategory[]> => {
   // TODO: remover a barra
   const uri = `company/buildings/maintenances/occasional/auxiliarydata/`;
 
@@ -17,7 +17,7 @@ export const getCategories = async () => {
       throw new Error("Categorias ausentes ou no formato errado na resposta");
     }
 
-    const categories = response?.data?.Categories;
+    const categories: ICategory[] = response.data.Categories;
 
     // Salva no cache
     await AsyncStorage.setItem(uri, JSON.stringify(categories));

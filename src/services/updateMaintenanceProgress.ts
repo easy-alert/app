@@ -15,7 +15,7 @@ export const updateMaintenanceProgress = async ({
   userId,
   maintenanceHistoryId,
   inProgressChange,
-}: IUpdateMaintenanceProgress) => {
+}: IUpdateMaintenanceProgress): Promise<void> => {
   const uri = `company/maintenances/set/in-progress`;
 
   const params = {

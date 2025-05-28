@@ -13,8 +13,6 @@ interface KanbanHeaderProps {
 }
 
 export const KanbanHeader = ({ filters, setFilters, availableCategories }: KanbanHeaderProps) => {
-  // TODO: mover o botão de filtros para o navbar
-
   return (
     <View style={styles.container}>
       <FiltersButton filters={filters} setFilters={setFilters} availableCategories={availableCategories} />

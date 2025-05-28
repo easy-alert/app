@@ -9,7 +9,11 @@ interface ILinkMaintenanceSupplier {
   userId: string;
 }
 
-export const linkMaintenanceSupplier = async ({ maintenanceId, supplierId, userId }: ILinkMaintenanceSupplier) => {
+export const linkMaintenanceSupplier = async ({
+  maintenanceId,
+  supplierId,
+  userId,
+}: ILinkMaintenanceSupplier): Promise<void> => {
   const uri = `company/suppliers/link-to-maintenance-history`;
 
   const body = {

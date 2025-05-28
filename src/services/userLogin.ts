@@ -24,7 +24,7 @@ export const userLogin = async ({
 }: IUserLogin): Promise<{
   user: IUser;
   authToken: string;
-}> => {
+} | null> => {
   // TODO: essa validação não deve ser feita aqui, e sim anteriormente
   if (!login || !password) {
     alertMessage({
@@ -32,7 +32,7 @@ export const userLogin = async ({
       message: "Por favor, insira um número de telefone e senha válidos.",
     });
 
-    return { user: {} as IUser, authToken: "" };
+    return null;
   }
 
   // TODO: remover a barra
@@ -51,7 +51,7 @@ export const userLogin = async ({
 
     if (response.data.error) {
       Alert.alert("Erro", response.data.error);
-      return { user: {} as IUser, authToken: "" };
+      return null;
     }
 
     return response.data;
@@ -62,6 +62,6 @@ export const userLogin = async ({
       message: response?.data?.ServerMessage?.message,
     });
 
-    return { user: {} as IUser, authToken: "" };
+    return null;
   }
 };

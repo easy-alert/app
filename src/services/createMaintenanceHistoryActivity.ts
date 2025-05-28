@@ -19,7 +19,7 @@ export const createMaintenanceHistoryActivity = async ({
   userId,
   content,
   uploadedFile,
-}: ICreateMaintenanceHistoryActivity) => {
+}: ICreateMaintenanceHistoryActivity): Promise<void> => {
   const uri = `company/maintenance-history-activities`;
 
   const body = {

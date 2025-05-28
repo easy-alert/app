@@ -48,7 +48,9 @@ export const MaintenanceDetails = () => {
         maintenanceHistoryId: maintenanceId,
       });
 
-      setMaintenanceDetails(responseData);
+      if (responseData) {
+        setMaintenanceDetails(responseData);
+      }
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceDetails ~ error:", error);
     }
@@ -74,7 +76,9 @@ export const MaintenanceDetails = () => {
         maintenanceHistoryId: maintenanceId,
       });
 
-      setHistoryActivities(responseData);
+      if (responseData) {
+        setHistoryActivities(responseData);
+      }
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
     }

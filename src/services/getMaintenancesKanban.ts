@@ -16,6 +16,7 @@ interface IGetMaintenancesKanban {
   };
 }
 
+// TODO: add return types
 export const getMaintenancesKanban = async ({ userId, filters }: IGetMaintenancesKanban) => {
   const params = {
     userId,

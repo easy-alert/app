@@ -1,16 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
+
 import { baseApi } from "./baseApi";
 
 interface IGetMaintenanceHistoryActivities {
   maintenanceHistoryId: string;
 }
 
-export const getMaintenanceHistoryActivities = async ({ maintenanceHistoryId }: IGetMaintenanceHistoryActivities) => {
+export const getMaintenanceHistoryActivities = async ({
+  maintenanceHistoryId,
+}: IGetMaintenanceHistoryActivities): Promise<IMaintenanceHistoryActivities | null> => {
   const uri = `company/maintenance-history-activities/${maintenanceHistoryId}`;
 
   try {
-    const response = await baseApi.get(uri);
+    const response = await baseApi.get<IMaintenanceHistoryActivities>(uri);
 
     await AsyncStorage.setItem(uri, JSON.stringify(response.data));
 
@@ -25,7 +29,7 @@ export const getMaintenanceHistoryActivities = async ({ maintenanceHistoryId }: 
       const cachedData = await AsyncStorage.getItem(uri);
 
       if (cachedData) {
-        return JSON.parse(cachedData);
+        return JSON.parse(cachedData) as IMaintenanceHistoryActivities;
       }
     } catch (cacheError) {
       console.error("Erro ao carregar dados do cache:", cacheError);

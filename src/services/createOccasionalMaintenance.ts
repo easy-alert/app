@@ -39,6 +39,7 @@ interface ICreateOccasionalMaintenance {
   occasionalMaintenanceData: IOccasionalMaintenanceData;
 }
 
+// TODO: add return types
 export const createOccasionalMaintenance = async ({
   origin,
   userId,

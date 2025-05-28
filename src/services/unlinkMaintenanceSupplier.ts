@@ -13,7 +13,7 @@ export const unlinkMaintenanceSupplier = async ({
   maintenanceHistoryId,
   supplierId,
   userId,
-}: IUnlinkMaintenanceSupplier) => {
+}: IUnlinkMaintenanceSupplier): Promise<void> => {
   const uri = `company/suppliers/unlink-to-maintenance-history`;
 
   const body = {

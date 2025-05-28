@@ -23,7 +23,7 @@ export const updateMaintenanceFinish = async ({
   maintenanceReport,
   files,
   images,
-}: IUpdateMaintenanceFinish) => {
+}: IUpdateMaintenanceFinish): Promise<void> => {
   const uri = `company/maintenances/create/report`;
 
   const body = {
