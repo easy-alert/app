@@ -93,7 +93,7 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
           mediaTypes: ["images"],
           allowsEditing: false,
           allowsMultipleSelection: true,
-          quality: 1,
+          quality: 0.2,
         });
       } else if (userChoice === "gallery") {
         // Solicitar permissão para galeria
@@ -109,7 +109,7 @@ export const openFilePicker = async (type?: "file" | "image" | null): Promise<IL
           mediaTypes: ["images"],
           allowsEditing: false,
           allowsMultipleSelection: true,
-          quality: 1,
+          quality: 0.2,
         });
       }
 
