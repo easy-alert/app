@@ -2,8 +2,8 @@ import { Linking, Text, TouchableOpacity, View } from "react-native";
 
 import type { IMaintenance } from "@/types/IMaintenance";
 import { formatDate } from "@/utils/formatDate";
+import { truncateText } from "@/utils/truncateText";
 
-import truncateText from "../utils/truncateText";
 import { styles } from "./styles";
 
 interface DataLabelsProps {

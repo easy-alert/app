@@ -1,5 +1,5 @@
 import type { IError } from "@/types/IError";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
 

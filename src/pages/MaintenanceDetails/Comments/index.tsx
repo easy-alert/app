@@ -11,8 +11,8 @@ import { uploadFile } from "@/services/uploadFile";
 import type { ILocalFile } from "@/types/ILocalFile";
 import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
+import { openFilePicker } from "@/utils/openFilePicker";
 
-import { openFilePicker } from "../utils/openFilePicker";
 import { styles } from "./styles";
 
 interface CommentsProps {
