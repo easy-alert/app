@@ -3,6 +3,8 @@ interface OfflineQueueItemBase {
   maintenanceId: string;
 }
 
+// TODO: trocar as props de files e images para LocalFile depois de alterar de url para uri
+
 export interface AddHistoryActivityQueueItem extends OfflineQueueItemBase {
   type: "addHistoryActivity";
   comment: string;

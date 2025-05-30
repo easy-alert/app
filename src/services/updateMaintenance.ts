@@ -1,4 +1,4 @@
-import type { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
+import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
@@ -12,8 +12,8 @@ interface IUpdateMaintenance {
     cost: number;
     observation?: string;
   };
-  files: IAnnexesAndImages[];
-  images: IAnnexesAndImages[];
+  files: IRemoteFile[];
+  images: IRemoteFile[];
 }
 
 export const updateMaintenance = async ({

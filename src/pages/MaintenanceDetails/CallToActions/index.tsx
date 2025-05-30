@@ -9,7 +9,6 @@ import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
-import type { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
@@ -81,49 +80,51 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded = [] as IAnnexesAndImages[];
-    const imagesUploaded = [] as IAnnexesAndImages[];
+    const filesUploaded: IRemoteFile[] = [];
+    const imagesUploaded: IRemoteFile[] = [];
 
     try {
       if (isConnected) {
-        // Handle file uploads when online
-        if (files?.length > 0) {
-          for (const file of files) {
-            const fileUrl = (file as LocalFile).type
-              ? await uploadFile({
-                  uri: file.url,
-                  type: (file as LocalFile).type,
-                  name: file.originalName,
-                })
-              : file.url;
+        for (const file of files) {
+          const fileUrl = (file as LocalFile).type
+            ? await uploadFile({
+                uri: file.url,
+                type: (file as LocalFile).type,
+                name: file.originalName,
+              })
+            : file.url;
 
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              name: file.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          filesUploaded.push({
+            originalName: file.originalName,
+            url: fileUrl,
+            name: file.originalName,
+          });
         }
 
-        if (images?.length > 0) {
-          for (const image of images) {
-            const fileUrl = (image as LocalFile).type
-              ? await uploadFile({
-                  uri: image.url,
-                  type: (image as LocalFile).type,
-                  name: image.originalName,
-                })
-              : image.url;
+        for (const image of images) {
+          const fileUrl = (image as LocalFile).type
+            ? await uploadFile({
+                uri: image.url,
+                type: (image as LocalFile).type,
+                name: image.originalName,
+              })
+            : image.url;
 
-            imagesUploaded.push({
-              originalName: image.originalName,
-              url: fileUrl,
-              name: image.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          imagesUploaded.push({
+            originalName: image.originalName,
+            url: fileUrl,
+            name: image.originalName,
+          });
         }
 
-        // If online, send data to the server
         await updateMaintenance({
           maintenanceHistoryId: maintenanceDetails.id,
           syndicNanoId: "",
@@ -136,7 +137,6 @@ export const CallToActions = ({
           images: imagesUploaded,
         });
       } else {
-        // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
@@ -180,49 +180,51 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded = [];
-    const imagesUploaded = [];
+    const filesUploaded: IRemoteFile[] = [];
+    const imagesUploaded: IRemoteFile[] = [];
 
     try {
       if (isConnected) {
-        // Handle file uploads when online
-        if (files?.length > 0) {
-          for (const file of files) {
-            const fileUrl = (file as LocalFile).type
-              ? await uploadFile({
-                  uri: file.url,
-                  type: (file as LocalFile).type,
-                  name: file.originalName,
-                })
-              : file.url;
+        for (const file of files) {
+          const fileUrl = (file as LocalFile).type
+            ? await uploadFile({
+                uri: file.url,
+                type: (file as LocalFile).type,
+                name: file.originalName,
+              })
+            : file.url;
 
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              name: file.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          filesUploaded.push({
+            originalName: file.originalName,
+            url: fileUrl,
+            name: file.originalName,
+          });
         }
 
-        if (images?.length > 0) {
-          for (const image of images) {
-            const fileUrl = (image as LocalFile).type
-              ? await uploadFile({
-                  uri: image.url,
-                  type: (image as LocalFile).type,
-                  name: image.originalName,
-                })
-              : image.url;
+        for (const image of images) {
+          const fileUrl = (image as LocalFile).type
+            ? await uploadFile({
+                uri: image.url,
+                type: (image as LocalFile).type,
+                name: image.originalName,
+              })
+            : image.url;
 
-            imagesUploaded.push({
-              originalName: image.originalName,
-              url: fileUrl,
-              name: image.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          imagesUploaded.push({
+            originalName: image.originalName,
+            url: fileUrl,
+            name: image.originalName,
+          });
         }
 
-        // If online, send data to the server
         await updateMaintenanceFinish({
           maintenanceHistoryId: maintenanceDetails.id,
           syndicNanoId: "",
@@ -235,7 +237,6 @@ export const CallToActions = ({
           images: imagesUploaded,
         });
       } else {
-        // Include file and image metadata instead of uploading
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,

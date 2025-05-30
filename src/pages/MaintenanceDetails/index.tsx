@@ -38,6 +38,8 @@ export const MaintenanceDetails = () => {
   const [supplier, setSupplier] = useState<ISupplier>();
   const [historyActivities, setHistoryActivities] = useState<IMaintenanceHistoryActivities>();
   const [cost, setCost] = useState("0,00");
+
+  // TODO: separar em dois estados diferentes
   const [files, setFiles] = useState<(IRemoteFile | LocalFile)[]>([]);
   const [images, setImages] = useState<(IRemoteFile | LocalFile)[]>([]);
   const [loading, setLoading] = useState(false);

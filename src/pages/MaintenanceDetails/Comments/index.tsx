@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
+import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
@@ -39,38 +40,37 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const uploadedFiles = [];
+    const filesUploaded: IRemoteFile[] = [];
 
     try {
       if (isConnected) {
-        // Handle file uploads when online
-        if (localFiles?.length > 0) {
-          for (const file of localFiles) {
-            const fileUrl = await uploadFile({
-              uri: file.url,
-              type: file.type!,
-              name: file.originalName!,
-            });
+        for (const file of localFiles) {
+          const fileUrl = await uploadFile({
+            uri: file.url,
+            type: file.type,
+            name: file.originalName,
+          });
 
-            uploadedFiles.push({
-              originalName: file.originalName!,
-              url: fileUrl,
-              type: file.type!,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          filesUploaded.push({
+            originalName: file.originalName,
+            name: file.originalName,
+            url: fileUrl,
+          });
         }
 
-        // If online, send data to the server
         await createMaintenanceHistoryActivity({
           maintenanceId,
           userId,
           content: comment,
-          uploadedFile: uploadedFiles,
+          filesUploaded: filesUploaded,
         });
 
         await getMaintenanceHistoryActivities();
       } else {
-        // Include file metadata instead of uploading
         const filesToQueue = localFiles.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
@@ -124,7 +124,6 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         numberOfLines={4}
       />
 
-      {/* Renderização dos arquivos enviados */}
       <View style={styles.filesContainer}>
         {localFiles.map((file, index) => (
           <View key={index} style={styles.fileItem}>

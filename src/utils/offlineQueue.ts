@@ -5,6 +5,7 @@ import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
+import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type {
   AddHistoryActivityQueueItem,
   FinishMaintenanceQueueItem,
@@ -76,7 +77,7 @@ export const syncOfflineQueue = async (): Promise<void> => {
 };
 
 const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promise<void> => {
-  const filesUploaded = [];
+  const filesUploaded: IRemoteFile[] = [];
 
   for (const file of item.files) {
     const fileUrl = await uploadFile({
@@ -85,10 +86,14 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
       name: file.originalName,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     filesUploaded.push({
       originalName: file.originalName,
       url: fileUrl,
-      type: file.type,
+      name: file.originalName,
     });
   }
 
@@ -96,12 +101,12 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
     maintenanceId: item.maintenanceId,
     userId: item.userId,
     content: item.comment,
-    uploadedFile: filesUploaded,
+    filesUploaded,
   });
 };
 
 const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
-  const filesUploaded = [];
+  const filesUploaded: IRemoteFile[] = [];
 
   for (const file of item.files) {
     const fileUrl = await uploadFile({
@@ -110,6 +115,10 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
       name: file.originalName,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     filesUploaded.push({
       originalName: file.originalName,
       url: fileUrl,
@@ -117,7 +126,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     });
   }
 
-  const imagesUploaded = [];
+  const imagesUploaded: IRemoteFile[] = [];
 
   for (const image of item.images) {
     const fileUrl = await uploadFile({
@@ -125,6 +134,10 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
       type: image.type,
       name: image.originalName,
     });
+
+    if (!fileUrl) {
+      continue;
+    }
 
     imagesUploaded.push({
       originalName: image.originalName,
@@ -156,7 +169,7 @@ const syncUpdateProgress = async (item: UpdateProgressQueueItem): Promise<void> 
 };
 
 const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<void> => {
-  const filesUploaded = [];
+  const filesUploaded: IRemoteFile[] = [];
 
   for (const file of item.files) {
     const fileUrl = await uploadFile({
@@ -165,6 +178,10 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
       name: file.originalName,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     filesUploaded.push({
       originalName: file.originalName,
       url: fileUrl,
@@ -172,13 +189,18 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     });
   }
 
-  const imagesUploaded = [];
+  const imagesUploaded: IRemoteFile[] = [];
+
   for (const image of item.images) {
     const fileUrl = await uploadFile({
       uri: image.uri,
       type: image.type,
       name: image.originalName,
     });
+
+    if (!fileUrl) {
+      continue;
+    }
 
     imagesUploaded.push({
       originalName: image.originalName,

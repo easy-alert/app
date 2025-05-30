@@ -1,4 +1,3 @@
-import { IAnnexesAndImages } from "./IAnnexesAndImages";
 import type { ICategory } from "./ICategory";
 
 interface IMaintenanceData {
@@ -35,9 +34,9 @@ export interface IMaintenance {
     id: string;
     cost: number;
     observation: string;
-    // TODO: refatorar files
-    ReportAnnexes: IAnnexesAndImages[];
-    ReportImages: IAnnexesAndImages[];
+    ReportImages: {
+      url: string;
+    }[];
   }[];
   MaintenancesStatus: {
     name: "expired" | "pending" | "completed" | "overdue";

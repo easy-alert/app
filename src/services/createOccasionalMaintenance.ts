@@ -1,4 +1,3 @@
-import { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
@@ -25,8 +24,6 @@ interface IOccasionalMaintenanceData {
   reportData: {
     cost: string;
     observation: string;
-    files: IAnnexesAndImages[];
-    images: IAnnexesAndImages[];
   };
 
   users: string[];
@@ -81,8 +78,8 @@ export const createOccasionalMaintenance = async ({
     reportData: {
       cost: unMaskBRL(reportData.cost) || null,
       observation: reportData.observation || null,
-      files: reportData.files || null,
-      images: reportData.images || null,
+      files: [],
+      images: [],
     },
 
     usersId: users,

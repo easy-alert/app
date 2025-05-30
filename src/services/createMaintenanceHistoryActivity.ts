@@ -1,3 +1,4 @@
+import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
@@ -7,18 +8,14 @@ interface ICreateMaintenanceHistoryActivity {
   maintenanceId: string;
   userId: string;
   content: string;
-  uploadedFile?: {
-    originalName: string;
-    url: string | null;
-    type: string;
-  }[];
+  filesUploaded: IRemoteFile[];
 }
 
 export const createMaintenanceHistoryActivity = async ({
   maintenanceId,
   userId,
   content,
-  uploadedFile,
+  filesUploaded,
 }: ICreateMaintenanceHistoryActivity): Promise<void> => {
   const uri = `company/maintenance-history-activities`;
 
@@ -26,7 +23,7 @@ export const createMaintenanceHistoryActivity = async ({
     maintenanceHistoryId: maintenanceId,
     userId,
     content,
-    images: uploadedFile,
+    images: filesUploaded,
   };
 
   try {

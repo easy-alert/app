@@ -163,36 +163,32 @@ export const Form = () => {
 
       const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
 
-      const occasionalMaintenanceData = {
-        buildingId,
-
-        element,
-        activity,
-        responsible,
-        executionDate,
-        inProgress,
-        priorityName: priority,
-
-        categoryData: {
-          id: categoryId,
-          name: categories.find((category) => category.id === categoryId)?.name!,
-        },
-
-        reportData: {
-          cost: "R$ 0,00",
-          observation: "",
-          files: [],
-          images: [],
-        },
-
-        users,
-      };
-
       const responseData = await createOccasionalMaintenance({
         origin: "Mobile",
         userId,
         occasionalMaintenanceType: "pending",
-        occasionalMaintenanceData,
+        occasionalMaintenanceData: {
+          buildingId,
+
+          element,
+          activity,
+          responsible,
+          executionDate,
+          inProgress,
+          priorityName: priority,
+
+          categoryData: {
+            id: categoryId,
+            name: categories.find((category) => category.id === categoryId)?.name!,
+          },
+
+          reportData: {
+            cost: "R$ 0,00",
+            observation: "",
+          },
+
+          users,
+        },
       });
 
       if (responseData?.ServerMessage.statusCode === 200) {
