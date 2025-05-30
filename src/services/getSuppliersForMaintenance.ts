@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
+import { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
 
 import { baseApi } from "./baseApi";
 
