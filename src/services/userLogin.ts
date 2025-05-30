@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 
-import type { IError } from "@/types/IError";
-import type { IUser } from "@/types/IUser";
+import type { IUser } from "@/types/api/IUser";
+import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
@@ -14,6 +14,7 @@ interface IUserLogin {
   os: string;
 }
 
+// TODO: change to login
 export const userLogin = async ({
   login,
   password,
@@ -24,6 +25,7 @@ export const userLogin = async ({
   user: IUser;
   authToken: string;
 }> => {
+  // TODO: essa validação não deve ser feita aqui, e sim anteriormente
   if (!login || !password) {
     alertMessage({
       type: "error",
@@ -33,6 +35,7 @@ export const userLogin = async ({
     return { user: {} as IUser, authToken: "" };
   }
 
+  // TODO: remover a barra
   const url = `/mobile/auth/login`;
 
   const body = {
@@ -53,7 +56,7 @@ export const userLogin = async ({
 
     return response.data;
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

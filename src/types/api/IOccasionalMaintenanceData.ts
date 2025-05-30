@@ -1,4 +1,4 @@
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
+import type { IAnnexesAndImages } from "./IAnnexesAndImages";
 
 export interface IOccasionalMaintenanceData {
   buildingId: string;

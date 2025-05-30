@@ -1,8 +1,8 @@
-import type { IBuilding } from "@/types/IBuilding";
-import type { ICategory } from "@/types/ICategory";
-import type { IMaintenanceReport } from "@/types/IMaintenanceReport";
-import type { IMaintenancesStatus } from "@/types/IMaintenanceStatus";
-import type { IUser } from "@/types/IUser";
+import type { IBuilding } from "./IBuilding";
+import type { ICategory } from "./ICategory";
+import type { IMaintenanceReport } from "./IMaintenanceReport";
+import type { IMaintenancesStatus } from "./IMaintenanceStatus";
+import type { IUser } from "./IUser";
 
 export interface IMaintenance {
   id: string;

@@ -10,11 +10,11 @@ import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
-import type { IRemoteFile } from "@/types/IRemoteFile";
-import type { ISupplier } from "@/types/ISupplier";
+import type { IMaintenance } from "@/types/api/IMaintenance";
+import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
+import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { ISupplier } from "@/types/api/ISupplier";
+import type { LocalFile } from "@/types/utils/LocalFile";
 
 import { Attachments } from "./Attachments";
 import { CallToActions } from "./CallToActions";
@@ -38,8 +38,8 @@ export const MaintenanceDetails = () => {
   const [supplier, setSupplier] = useState<ISupplier>();
   const [historyActivities, setHistoryActivities] = useState<IMaintenanceHistoryActivities>();
   const [cost, setCost] = useState("0,00");
-  const [files, setFiles] = useState<(IRemoteFile | ILocalFile)[]>([]);
-  const [images, setImages] = useState<(IRemoteFile | ILocalFile)[]>([]);
+  const [files, setFiles] = useState<(IRemoteFile | LocalFile)[]>([]);
+  const [images, setImages] = useState<(IRemoteFile | LocalFile)[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleGetMaintenanceDetails = async () => {

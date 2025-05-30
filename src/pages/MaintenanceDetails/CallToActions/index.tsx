@@ -9,11 +9,11 @@ import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
-import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
+import type { IMaintenance } from "@/types/api/IMaintenance";
+import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
+import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
 import { convertCostToInteger } from "@/utils/convertCostToInteger";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
@@ -21,11 +21,11 @@ import { styles } from "./styles";
 
 interface CallToActionsProps {
   maintenanceDetails: IMaintenance;
-  files: (IRemoteFile | ILocalFile)[];
-  images: (IRemoteFile | ILocalFile)[];
+  files: (IRemoteFile | LocalFile)[];
+  images: (IRemoteFile | LocalFile)[];
   cost: string;
-  setFiles: (files: (IRemoteFile | ILocalFile)[]) => void;
-  setImages: (images: (IRemoteFile | ILocalFile)[]) => void;
+  setFiles: (files: (IRemoteFile | LocalFile)[]) => void;
+  setImages: (images: (IRemoteFile | LocalFile)[]) => void;
   setCost: (cost: string) => void;
   setLoading: (loading: boolean) => void;
 }
@@ -58,7 +58,7 @@ export const CallToActions = ({
           userId,
         });
       } else {
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "updateProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
@@ -89,10 +89,10 @@ export const CallToActions = ({
         // Handle file uploads when online
         if (files?.length > 0) {
           for (const file of files) {
-            const fileUrl = (file as ILocalFile).type
+            const fileUrl = (file as LocalFile).type
               ? await uploadFile({
                   uri: file.url,
-                  type: (file as ILocalFile).type,
+                  type: (file as LocalFile).type,
                   name: file.originalName,
                 })
               : file.url;
@@ -107,10 +107,10 @@ export const CallToActions = ({
 
         if (images?.length > 0) {
           for (const image of images) {
-            const fileUrl = (image as ILocalFile).type
+            const fileUrl = (image as LocalFile).type
               ? await uploadFile({
                   uri: image.url,
-                  type: (image as ILocalFile).type,
+                  type: (image as LocalFile).type,
                   name: image.originalName,
                 })
               : image.url;
@@ -140,16 +140,16 @@ export const CallToActions = ({
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
-          type: (file as ILocalFile).type,
+          type: (file as LocalFile).type,
         }));
 
         const imagesToQueue = images.map((image) => ({
           originalName: image.originalName,
           uri: image.url,
-          type: (image as ILocalFile).type,
+          type: (image as LocalFile).type,
         }));
 
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "saveProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
@@ -188,10 +188,10 @@ export const CallToActions = ({
         // Handle file uploads when online
         if (files?.length > 0) {
           for (const file of files) {
-            const fileUrl = (file as ILocalFile).type
+            const fileUrl = (file as LocalFile).type
               ? await uploadFile({
                   uri: file.url,
-                  type: (file as ILocalFile).type,
+                  type: (file as LocalFile).type,
                   name: file.originalName,
                 })
               : file.url;
@@ -206,10 +206,10 @@ export const CallToActions = ({
 
         if (images?.length > 0) {
           for (const image of images) {
-            const fileUrl = (image as ILocalFile).type
+            const fileUrl = (image as LocalFile).type
               ? await uploadFile({
                   uri: image.url,
-                  type: (image as ILocalFile).type,
+                  type: (image as LocalFile).type,
                   name: image.originalName,
                 })
               : image.url;
@@ -239,16 +239,16 @@ export const CallToActions = ({
         const filesToQueue = files.map((file) => ({
           originalName: file.originalName,
           uri: file.url,
-          type: (file as ILocalFile).type,
+          type: (file as LocalFile).type,
         }));
 
         const imagesToQueue = images.map((image) => ({
           originalName: image.originalName,
           uri: image.url,
-          type: (image as ILocalFile).type,
+          type: (image as LocalFile).type,
         }));
 
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "finishMaintenance",
           userId,
           maintenanceId: maintenanceDetails.id,

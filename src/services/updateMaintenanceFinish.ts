@@ -1,6 +1,6 @@
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
-import type { IError } from "@/types/IError";
-import type { IMaintenanceReportProgress } from "@/types/IMaintenanceReportProgress";
+import type { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
+import type { IMaintenanceReportProgress } from "@/types/api/IMaintenanceReportProgress";
+import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
@@ -42,7 +42,7 @@ export const updateMaintenanceFinish = async ({
       message: response?.data?.ServerMessage?.message,
     });
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

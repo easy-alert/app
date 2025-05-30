@@ -1,6 +1,6 @@
-import type { IError } from "@/types/IError";
-import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
-import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
+import type { IOccasionalMaintenanceData } from "@/types/api/IOccasionalMaintenanceData";
+import type { IOccasionalMaintenanceType } from "@/types/api/IOccasionalMaintenanceType";
+import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
@@ -69,7 +69,7 @@ export const createOccasionalMaintenance = async ({
 
     return response.data;
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

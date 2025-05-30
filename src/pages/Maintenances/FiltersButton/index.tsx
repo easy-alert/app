@@ -5,8 +5,8 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { getUsers } from "@/services/getUsers";
-import { IAvailableFilter } from "@/types/IAvailableFilter";
-import { IUser } from "@/types/IUser";
+import { IUser } from "@/types/api/IUser";
+import { AvailableFilter } from "@/types/utils/AvailableFilter";
 
 import { Filters } from "../Filters";
 import { IFilter } from "../utils";
@@ -17,14 +17,14 @@ type IBuilding = IUser["UserBuildingsPermissions"][0];
 interface FiltersButtonProps {
   filters: IFilter;
   setFilters: (filters: IFilter) => void;
-  availableCategories: IAvailableFilter[];
+  availableCategories: AvailableFilter[];
 }
 
 export const FiltersButton = ({ filters, setFilters, availableCategories }: FiltersButtonProps) => {
   const { openBottomSheet } = useBottomSheet();
 
-  const [availableUsers, setAvailableUsers] = useState<IAvailableFilter[]>([]);
-  const [availableBuildings, setAvailableBuildings] = useState<IAvailableFilter[]>([]);
+  const [availableUsers, setAvailableUsers] = useState<AvailableFilter[]>([]);
+  const [availableBuildings, setAvailableBuildings] = useState<AvailableFilter[]>([]);
 
   useEffect(() => {
     const getAvailableUsers = async () => {

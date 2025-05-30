@@ -16,9 +16,9 @@ import type { ProtectedNavigation } from "@/routes/navigation";
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
 import { getCategories } from "@/services/getCategories";
 import { getUsers } from "@/services/getUsers";
-import type { ICategory } from "@/types/ICategory";
-import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-import type { IUser } from "@/types/IUser";
+import type { ICategory } from "@/types/api/ICategory";
+import type { IOccasionalMaintenanceType } from "@/types/api/IOccasionalMaintenanceType";
+import type { IUser } from "@/types/api/IUser";
 
 import { styles } from "./styles";
 

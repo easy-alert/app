@@ -3,7 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 import { Image as ImageCompressor } from "react-native-compressor";
 
-import type { ILocalFile } from "@/types/ILocalFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
 
 type FilePickerMode = "document" | "image" | "request_user_choice";
 
@@ -11,9 +11,9 @@ interface OpenFilePickerProps {
   mode: FilePickerMode;
 }
 
-export const openFilePicker = async ({ mode }: OpenFilePickerProps): Promise<ILocalFile[]> => {
+export const openFilePicker = async ({ mode }: OpenFilePickerProps): Promise<LocalFile[]> => {
   try {
-    let files: ILocalFile[] = [];
+    let files: LocalFile[] = [];
 
     if (mode === "request_user_choice") {
       const choiceMode = await requestUserModeChoice();
@@ -68,7 +68,7 @@ const requestUserModeChoice = (): Promise<"document" | "image" | "cancel"> =>
     );
   });
 
-const pickDocuments = async (): Promise<ILocalFile[]> => {
+const pickDocuments = async (): Promise<LocalFile[]> => {
   const documents = await DocumentPicker.getDocumentAsync({
     type: "*/*",
     copyToCacheDirectory: true,
@@ -107,7 +107,7 @@ const requestUserImageModeChoice = (): Promise<"camera" | "gallery" | "cancel"> 
   });
 };
 
-const pickImagesFromCamera = async (): Promise<ILocalFile[]> => {
+const pickImagesFromCamera = async (): Promise<LocalFile[]> => {
   const permission = await ImagePicker.requestCameraPermissionsAsync();
 
   if (!permission.granted) {
@@ -124,7 +124,7 @@ const pickImagesFromCamera = async (): Promise<ILocalFile[]> => {
   return compressImages(images);
 };
 
-const pickImagesFromGallery = async (): Promise<ILocalFile[]> => {
+const pickImagesFromGallery = async (): Promise<LocalFile[]> => {
   const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
   if (!permission.granted) {
@@ -141,13 +141,13 @@ const pickImagesFromGallery = async (): Promise<ILocalFile[]> => {
   return compressImages(images);
 };
 
-const compressImages = async (imagePickerResult: ImagePicker.ImagePickerResult): Promise<ILocalFile[]> => {
+const compressImages = async (imagePickerResult: ImagePicker.ImagePickerResult): Promise<LocalFile[]> => {
   if (imagePickerResult.canceled) {
     console.log("Nenhuma imagem selecionada.");
     return [];
   }
 
-  const images: ILocalFile[] = [];
+  const images: LocalFile[] = [];
 
   for (const image of imagePickerResult.assets) {
     const compressedImageUri = await ImageCompressor.compress(image.uri);

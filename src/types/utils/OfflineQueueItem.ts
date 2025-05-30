@@ -1,9 +1,9 @@
-interface IOfflineQueueItemBase {
+interface OfflineQueueItemBase {
   userId: string;
   maintenanceId: string;
 }
 
-export interface IAddHistoryActivityQueueItem extends IOfflineQueueItemBase {
+export interface AddHistoryActivityQueueItem extends OfflineQueueItemBase {
   type: "addHistoryActivity";
   comment: string;
   files: {
@@ -13,7 +13,7 @@ export interface IAddHistoryActivityQueueItem extends IOfflineQueueItemBase {
   }[];
 }
 
-export interface ISaveProgressQueueItem extends IOfflineQueueItemBase {
+export interface SaveProgressQueueItem extends OfflineQueueItemBase {
   type: "saveProgress";
   cost: number;
   files: {
@@ -28,12 +28,12 @@ export interface ISaveProgressQueueItem extends IOfflineQueueItemBase {
   }[];
 }
 
-export interface IUpdateProgressQueueItem extends IOfflineQueueItemBase {
+export interface UpdateProgressQueueItem extends OfflineQueueItemBase {
   type: "updateProgress";
   inProgressChange: boolean;
 }
 
-export interface IFinishMaintenanceQueueItem extends IOfflineQueueItemBase {
+export interface FinishMaintenanceQueueItem extends OfflineQueueItemBase {
   type: "finishMaintenance";
   cost: number;
   files: {
@@ -48,8 +48,8 @@ export interface IFinishMaintenanceQueueItem extends IOfflineQueueItemBase {
   }[];
 }
 
-export type IOfflineQueueItem =
-  | IAddHistoryActivityQueueItem
-  | ISaveProgressQueueItem
-  | IUpdateProgressQueueItem
-  | IFinishMaintenanceQueueItem;
+export type OfflineQueueItem =
+  | AddHistoryActivityQueueItem
+  | SaveProgressQueueItem
+  | UpdateProgressQueueItem
+  | FinishMaintenanceQueueItem;

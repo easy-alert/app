@@ -1,6 +1,6 @@
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 
-import type { IMaintenance } from "@/types/IMaintenance";
+import type { IMaintenance } from "@/types/api/IMaintenance";
 import { formatDate } from "@/utils/formatDate";
 import { truncateText } from "@/utils/truncateText";
 

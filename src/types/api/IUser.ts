@@ -1,4 +1,4 @@
-import type { IPermission } from "@/types/IPermission";
+import type { IPermission } from "./IPermission";
 
 export interface IUser {
   id: string;

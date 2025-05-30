@@ -8,8 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+import type { LocalFile } from "@/types/utils/LocalFile";
+import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 import { openFilePicker } from "@/utils/openFilePicker";
 
@@ -25,7 +25,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
 
-  const [localFiles, setLocalFiles] = useState<ILocalFile[]>([]);
+  const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [comment, setComment] = useState(" ");
 
   const handleCreateMaintenanceActivity = async () => {
@@ -77,7 +77,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           type: file.type,
         }));
 
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "addHistoryActivity",
           userId,
           maintenanceId,

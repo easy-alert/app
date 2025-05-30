@@ -1,9 +1,9 @@
 import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { IMaintenance } from "@/types/api/IMaintenance";
+import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
 import { openFilePicker } from "@/utils/openFilePicker";
 import { removeItem } from "@/utils/removeItem";
 
@@ -11,10 +11,10 @@ import { styles } from "./styles";
 
 interface AttachmentsProps {
   maintenanceDetails: IMaintenance;
-  files: (IRemoteFile | ILocalFile)[];
-  images: (IRemoteFile | ILocalFile)[];
-  setFiles: React.Dispatch<React.SetStateAction<(IRemoteFile | ILocalFile)[]>>;
-  setImages: React.Dispatch<React.SetStateAction<(IRemoteFile | ILocalFile)[]>>;
+  files: (IRemoteFile | LocalFile)[];
+  images: (IRemoteFile | LocalFile)[];
+  setFiles: React.Dispatch<React.SetStateAction<(IRemoteFile | LocalFile)[]>>;
+  setImages: React.Dispatch<React.SetStateAction<(IRemoteFile | LocalFile)[]>>;
 }
 
 export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {

@@ -1,4 +1,4 @@
-export interface ILocalFile {
+export interface LocalFile {
   originalName: string;
   name: string;
   url: string;
