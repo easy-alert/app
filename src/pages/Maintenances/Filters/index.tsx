@@ -6,8 +6,8 @@ import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
-import { maintenanceStatus } from "@/types/api/IMaintenanceStatus";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { maintenanceStatus } from "@/utils/getStatus";
 
 import { emptyFilters, IFilter } from "../utils";
 import { styles } from "./styles";

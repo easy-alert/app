@@ -1,5 +1,4 @@
 import type { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
-import type { IMaintenanceReportProgress } from "@/types/api/IMaintenanceReportProgress";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
@@ -9,7 +8,10 @@ interface IUpdateMaintenanceFinish {
   syndicNanoId: string;
   userId: string;
   maintenanceHistoryId: string;
-  maintenanceReport: IMaintenanceReportProgress;
+  maintenanceReport: {
+    cost: number;
+    observation?: string;
+  };
   files: IAnnexesAndImages[];
   images: IAnnexesAndImages[];
 }

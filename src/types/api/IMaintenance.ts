@@ -1,41 +1,54 @@
-import type { IBuilding } from "./IBuilding";
+import { IAnnexesAndImages } from "./IAnnexesAndImages";
 import type { ICategory } from "./ICategory";
-import type { IMaintenanceReport } from "./IMaintenanceReport";
-import type { IMaintenancesStatus } from "./IMaintenanceStatus";
-import type { IUser } from "./IUser";
+
+interface IMaintenanceData {
+  Category: ICategory;
+  activity: string;
+  element: string;
+  observation: string;
+  responsible: string;
+  source: string;
+
+  frequency: number;
+  FrequencyTimeInterval: {
+    pluralLabel: string;
+    singularLabel: string;
+    unitTime: number;
+  };
+
+  MaintenanceType: {
+    name: string;
+  };
+
+  instructions: {
+    name: string;
+    url: string;
+  }[];
+}
 
 export interface IMaintenance {
   id: string;
   dueDate: string;
   resolutionDate: string;
   notificationDate: string;
-  MaintenanceReport: IMaintenanceReport[];
-  MaintenancesStatus: IMaintenancesStatus;
-  Building: IBuilding;
-  Maintenance: {
-    Category: ICategory;
-    activity: string;
-    element: string;
+  MaintenanceReport: {
+    id: string;
+    cost: number;
     observation: string;
-    responsible: string;
-    source: string;
-
-    frequency: number;
-    FrequencyTimeInterval: {
-      pluralLabel: string;
-      singularLabel: string;
-      unitTime: number;
-    };
-
-    MaintenanceType: {
-      name: string;
-    };
-
-    instructions: { name: string; url: string }[];
+    // TODO: refatorar files
+    ReportAnnexes: IAnnexesAndImages[];
+    ReportImages: IAnnexesAndImages[];
+  }[];
+  MaintenancesStatus: {
+    name: "expired" | "pending" | "completed" | "overdue";
   };
+  Building: {
+    id?: string;
+    name?: string;
+  };
+  Maintenance: IMaintenanceData;
   Users: {
     User: {
-      id: string;
       name: string;
       image: string;
       email: string;
@@ -43,8 +56,5 @@ export interface IMaintenance {
   }[];
   canReport: boolean;
   inProgress: boolean;
-  daysInAdvance: number;
-  additionalInfo?: string;
-  userResponsible?: IUser;
   showToResident: boolean;
 }

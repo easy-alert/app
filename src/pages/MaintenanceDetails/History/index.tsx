@@ -59,11 +59,7 @@ export const History = ({ historyActivities }: HistoryProps) => {
                       <View key={index} style={styles.imageItemContainer}>
                         <Image source={{ uri: image.url }} style={styles.previewImage} />
 
-                        <Text
-                          style={styles.imageNameLabel}
-                          numberOfLines={1} // Limita a uma linha
-                          ellipsizeMode="tail"
-                        >
+                        <Text style={styles.imageNameLabel} numberOfLines={1} ellipsizeMode="tail">
                           {image.name}
                         </Text>
                       </View>

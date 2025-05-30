@@ -12,6 +12,7 @@ import { Filters } from "../Filters";
 import { IFilter } from "../utils";
 import { styles } from "./styles";
 
+// TODO: refatorar
 type IBuilding = IUser["UserBuildingsPermissions"][0];
 
 interface FiltersButtonProps {

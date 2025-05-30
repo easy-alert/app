@@ -1,23 +1,51 @@
-import type { IOccasionalMaintenanceData } from "@/types/api/IOccasionalMaintenanceData";
-import type { IOccasionalMaintenanceType } from "@/types/api/IOccasionalMaintenanceType";
+import { IAnnexesAndImages } from "@/types/api/IAnnexesAndImages";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
 import { baseApi } from "./baseApi";
 
+interface IOccasionalMaintenanceData {
+  buildingId: string;
+
+  element: string;
+  activity: string;
+  responsible: string;
+  executionDate: string;
+
+  inProgress: boolean;
+
+  priorityName: string;
+
+  categoryData: {
+    id: string;
+    name: string;
+  };
+
+  reportData: {
+    cost: string;
+    observation: string;
+    files: IAnnexesAndImages[];
+    images: IAnnexesAndImages[];
+  };
+
+  users: string[];
+}
+
 interface ICreateOccasionalMaintenance {
   origin: string;
   userId: string;
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  occasionalMaintenanceBody: IOccasionalMaintenanceData;
+  occasionalMaintenanceType: "pending" | "finished";
+  occasionalMaintenanceData: IOccasionalMaintenanceData;
 }
 
 export const createOccasionalMaintenance = async ({
   origin,
   userId,
   occasionalMaintenanceType,
-  occasionalMaintenanceBody: {
+  occasionalMaintenanceData,
+}: ICreateOccasionalMaintenance) => {
+  const {
     buildingId,
     executionDate,
     categoryData,
@@ -28,8 +56,8 @@ export const createOccasionalMaintenance = async ({
     responsible,
     priorityName,
     users,
-  },
-}: ICreateOccasionalMaintenance) => {
+  } = occasionalMaintenanceData;
+
   const uri = "company/buildings/reports/occasional/create";
 
   const body = {
