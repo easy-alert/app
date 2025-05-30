@@ -4,9 +4,9 @@ import Icon from "react-native-vector-icons/Feather";
 import type { ILocalFile } from "@/types/ILocalFile";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { IRemoteFile } from "@/types/IRemoteFile";
+import { openFilePicker } from "@/utils/openFilePicker";
+import { removeItem } from "@/utils/removeItem";
 
-import { openFilePicker } from "../utils/openFilePicker";
-import { removeItem } from "../utils/removeItem";
 import { styles } from "./styles";
 
 interface AttachmentsProps {
@@ -19,7 +19,7 @@ interface AttachmentsProps {
 
 export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {
   const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker("file");
+    const localFiles = await openFilePicker({ mode: "document" });
 
     if (localFiles.length) {
       setFiles((prev) => [...prev, ...localFiles]);
@@ -27,7 +27,7 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
   };
 
   const handleOpenImagePicker = async () => {
-    const localFiles = await openFilePicker("image");
+    const localFiles = await openFilePicker({ mode: "image" });
 
     if (localFiles.length) {
       setImages((prev) => [...prev, ...localFiles]);

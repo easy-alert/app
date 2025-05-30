@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 
 import type { IError } from "@/types/IError";
 import type { IUser } from "@/types/IUser";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
 

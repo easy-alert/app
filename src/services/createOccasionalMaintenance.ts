@@ -1,7 +1,7 @@
 import type { IError } from "@/types/IError";
 import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
 import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
 import { baseApi } from "./baseApi";

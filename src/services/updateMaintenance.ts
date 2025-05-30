@@ -1,7 +1,7 @@
 import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
 import type { IError } from "@/types/IError";
 import type { IMaintenanceReportProgress } from "@/types/IMaintenanceReportProgress";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
 
