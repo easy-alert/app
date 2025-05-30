@@ -1,6 +1,7 @@
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
+import { Image as ImageCompressor } from "react-native-compressor";
 
 import type { ILocalFile } from "@/types/ILocalFile";
 
@@ -118,10 +119,9 @@ const pickImagesFromCamera = async (): Promise<ILocalFile[]> => {
     mediaTypes: ["images"],
     allowsEditing: false,
     allowsMultipleSelection: true,
-    quality: 0.2,
   });
 
-  return transformImagePickerResultToLocalFile(images);
+  return compressImages(images);
 };
 
 const pickImagesFromGallery = async (): Promise<ILocalFile[]> => {
@@ -136,27 +136,30 @@ const pickImagesFromGallery = async (): Promise<ILocalFile[]> => {
     mediaTypes: ["images"],
     allowsEditing: false,
     allowsMultipleSelection: true,
-    quality: 0.2,
   });
 
-  return transformImagePickerResultToLocalFile(images);
+  return compressImages(images);
 };
 
-const transformImagePickerResultToLocalFile = (imagePickerResult: ImagePicker.ImagePickerResult): ILocalFile[] => {
+const compressImages = async (imagePickerResult: ImagePicker.ImagePickerResult): Promise<ILocalFile[]> => {
   if (imagePickerResult.canceled) {
     console.log("Nenhuma imagem selecionada.");
     return [];
   }
 
-  return imagePickerResult.assets.map((image) => {
-    const extension = image.uri.split(".").pop() || "jpg";
-    const name = `photo-${Date.now()}.${extension}`;
+  const images: ILocalFile[] = [];
 
-    return {
+  for (const image of imagePickerResult.assets) {
+    const compressedImageUri = await ImageCompressor.compress(image.uri);
+    const name = `photo-${Date.now()}.jpg`;
+
+    images.push({
       originalName: name,
-      url: image.uri,
+      url: compressedImageUri,
       name,
-      type: image.mimeType || "image/jpeg",
-    };
-  });
+      type: "image/jpeg",
+    });
+  }
+
+  return images;
 };
