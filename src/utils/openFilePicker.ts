@@ -4,144 +4,159 @@ import { Alert } from "react-native";
 
 import type { ILocalFile } from "@/types/ILocalFile";
 
-export const openFilePicker = async (type?: "file" | "image" | null): Promise<ILocalFile[]> => {
+type FilePickerMode = "document" | "image" | "request_user_choice";
+
+interface OpenFilePickerProps {
+  mode: FilePickerMode;
+}
+
+export const openFilePicker = async ({ mode }: OpenFilePickerProps): Promise<ILocalFile[]> => {
   try {
-    let files: {
-      uri: string;
-      name: string;
-      type: string;
-    }[] = [];
+    let files: ILocalFile[] = [];
 
-    if (!type) {
-      type = await new Promise<"file" | "image" | null>((resolve) => {
-        Alert.alert(
-          "Seleção de Tipo",
-          "O que você gostaria de selecionar?",
-          [
-            { text: "Arquivo", onPress: () => resolve("file") },
-            { text: "Imagem", onPress: () => resolve("image") },
-            {
-              text: "Cancelar",
-              onPress: () => resolve(null),
-              style: "cancel",
-            },
-          ],
-          { cancelable: true },
-        );
-      });
+    if (mode === "request_user_choice") {
+      const choiceMode = await requestUserModeChoice();
 
-      if (!type) {
-        console.log("Ação cancelada pelo usuário.");
-        return [];
-      }
-    }
-
-    if (type === "file") {
-      // Seletor de documentos
-      const filesResult = await DocumentPicker.getDocumentAsync({
-        type: "*/*",
-        copyToCacheDirectory: true,
-        multiple: true,
-      });
-
-      if (filesResult.canceled) {
-        console.log("Nenhum arquivo selecionado.");
-        return [];
-      }
-
-      files = filesResult.assets.map((file) => ({
-        uri: file.uri,
-        name: file.name,
-        type: file.mimeType || "application/octet-stream",
-      }));
-    } else if (type === "image") {
-      const userChoice = await new Promise<string>((resolve) => {
-        Alert.alert(
-          "Selecionar Imagem",
-          "De onde você gostaria de selecionar a imagem?",
-          [
-            { text: "Câmera", onPress: () => resolve("camera") },
-            { text: "Galeria", onPress: () => resolve("gallery") },
-            {
-              text: "Cancelar",
-              onPress: () => resolve("cancel"),
-              style: "cancel",
-            },
-          ],
-          { cancelable: true },
-        );
-      });
-
-      if (userChoice === "cancel") {
+      if (choiceMode === "cancel") {
         console.log("Ação cancelada pelo usuário.");
         return [];
       }
 
-      let imagesResult: ImagePicker.ImagePickerResult | null = null;
+      mode = choiceMode;
+    }
 
-      if (userChoice === "camera") {
-        // Solicitar permissão para câmera
-        const permissionCameraResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (mode === "document") {
+      files = await pickDocuments();
+    } else if (mode === "image") {
+      const choiceImageMode = await requestUserImageModeChoice();
 
-        if (!permissionCameraResult.granted) {
-          console.log("Permissão necessária para acessar a câmera.");
-          return [];
-        }
-
-        // Abrir câmera
-        imagesResult = await ImagePicker.launchCameraAsync({
-          mediaTypes: ["images"],
-          allowsEditing: false,
-          allowsMultipleSelection: true,
-          quality: 0.2,
-        });
-      } else if (userChoice === "gallery") {
-        // Solicitar permissão para galeria
-        const permissionLibraryResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (!permissionLibraryResult.granted) {
-          console.log("Permissão necessária para acessar a galeria.");
-          return [];
-        }
-
-        // Abrir galeria
-        imagesResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ["images"],
-          allowsEditing: false,
-          allowsMultipleSelection: true,
-          quality: 0.2,
-        });
-      }
-
-      if (!imagesResult || imagesResult.canceled) {
-        console.log("Nenhuma imagem selecionada.");
+      if (choiceImageMode === "cancel") {
+        console.log("Ação cancelada pelo usuário.");
         return [];
       }
 
-      // Sobrescreve a variável file com os dados da imagem
-      files = imagesResult.assets.map((image) => {
-        const extension = image.uri.split(".").pop() || "jpg";
-
-        return {
-          uri: image.uri,
-          type: image.mimeType || "image/jpeg",
-          name: `photo-${Date.now()}.${extension}`,
-        };
-      });
+      if (choiceImageMode === "camera") {
+        files = await pickImagesFromCamera();
+      } else if (choiceImageMode === "gallery") {
+        files = await pickImagesFromGallery();
+      }
     }
 
-    if (!files) {
-      return [];
-    }
-
-    return files.map((file) => ({
-      originalName: file.name,
-      url: file.uri,
-      name: file.name,
-      type: file.type,
-    }));
+    return files;
   } catch (error) {
     console.error("Erro ao selecionar ou enviar:", error);
     return [];
   }
+};
+
+const requestUserModeChoice = (): Promise<"document" | "image" | "cancel"> =>
+  new Promise<"document" | "image" | "cancel">((resolve) => {
+    Alert.alert(
+      "Seleção de Tipo",
+      "O que você gostaria de selecionar?",
+      [
+        { text: "Arquivo", onPress: () => resolve("document") },
+        { text: "Imagem", onPress: () => resolve("image") },
+        {
+          text: "Cancelar",
+          onPress: () => resolve("cancel"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true },
+    );
+  });
+
+const pickDocuments = async (): Promise<ILocalFile[]> => {
+  const documents = await DocumentPicker.getDocumentAsync({
+    type: "*/*",
+    copyToCacheDirectory: true,
+    multiple: true,
+  });
+
+  if (documents.canceled) {
+    console.log("Nenhum arquivo selecionado.");
+    return [];
+  }
+
+  return documents.assets.map((file) => ({
+    originalName: file.name,
+    url: file.uri,
+    name: file.name,
+    type: file.mimeType || "application/octet-stream",
+  }));
+};
+
+const requestUserImageModeChoice = (): Promise<"camera" | "gallery" | "cancel"> => {
+  return new Promise<"camera" | "gallery" | "cancel">((resolve) => {
+    Alert.alert(
+      "Selecionar Imagem",
+      "De onde você gostaria de selecionar a imagem?",
+      [
+        { text: "Câmera", onPress: () => resolve("camera") },
+        { text: "Galeria", onPress: () => resolve("gallery") },
+        {
+          text: "Cancelar",
+          onPress: () => resolve("cancel"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true },
+    );
+  });
+};
+
+const pickImagesFromCamera = async (): Promise<ILocalFile[]> => {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+
+  if (!permission.granted) {
+    console.log("Permissão necessária para acessar a câmera.");
+    return [];
+  }
+
+  const images = await ImagePicker.launchCameraAsync({
+    mediaTypes: ["images"],
+    allowsEditing: false,
+    allowsMultipleSelection: true,
+    quality: 0.2,
+  });
+
+  return transformImagePickerResultToLocalFile(images);
+};
+
+const pickImagesFromGallery = async (): Promise<ILocalFile[]> => {
+  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (!permission.granted) {
+    console.log("Permissão necessária para acessar a galeria.");
+    return [];
+  }
+
+  const images = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ["images"],
+    allowsEditing: false,
+    allowsMultipleSelection: true,
+    quality: 0.2,
+  });
+
+  return transformImagePickerResultToLocalFile(images);
+};
+
+const transformImagePickerResultToLocalFile = (imagePickerResult: ImagePicker.ImagePickerResult): ILocalFile[] => {
+  if (imagePickerResult.canceled) {
+    console.log("Nenhuma imagem selecionada.");
+    return [];
+  }
+
+  return imagePickerResult.assets.map((image) => {
+    const extension = image.uri.split(".").pop() || "jpg";
+    const name = `photo-${Date.now()}.${extension}`;
+
+    return {
+      originalName: name,
+      url: image.uri,
+      name,
+      type: image.mimeType || "image/jpeg",
+    };
+  });
 };

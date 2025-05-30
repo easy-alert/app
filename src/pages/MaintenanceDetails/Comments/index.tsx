@@ -104,7 +104,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   };
 
   const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker();
+    const localFiles = await openFilePicker({ mode: "request_user_choice" });
 
     if (localFiles.length) {
       setLocalFiles((prev) => [...prev, ...localFiles]);

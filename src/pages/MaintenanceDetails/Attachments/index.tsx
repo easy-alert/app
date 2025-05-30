@@ -19,7 +19,7 @@ interface AttachmentsProps {
 
 export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {
   const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker("file");
+    const localFiles = await openFilePicker({ mode: "document" });
 
     if (localFiles.length) {
       setFiles((prev) => [...prev, ...localFiles]);
@@ -27,7 +27,7 @@ export const Attachments = ({ maintenanceDetails, files, images, setFiles, setIm
   };
 
   const handleOpenImagePicker = async () => {
-    const localFiles = await openFilePicker("image");
+    const localFiles = await openFilePicker({ mode: "image" });
 
     if (localFiles.length) {
       setImages((prev) => [...prev, ...localFiles]);
