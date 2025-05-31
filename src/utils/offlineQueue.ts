@@ -79,9 +79,9 @@ export const syncOfflineQueue = async (): Promise<void> => {
 const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.files) {
+  for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
-      uri: file.uri,
+      uri: file.url,
       type: file.type,
       name: file.originalName,
     });
@@ -108,9 +108,9 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
 const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.files) {
+  for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
-      uri: file.uri,
+      uri: file.url,
       type: file.type,
       name: file.originalName,
     });
@@ -128,9 +128,9 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 
   const imagesUploaded: IRemoteFile[] = [];
 
-  for (const image of item.images) {
+  for (const image of item.localImages) {
     const fileUrl = await uploadFile({
-      uri: image.uri,
+      uri: image.url,
       type: image.type,
       name: image.originalName,
     });
@@ -154,8 +154,8 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
       cost: item.cost,
       observation: "",
     },
-    files: filesUploaded,
-    images: imagesUploaded,
+    files: [...filesUploaded, ...item.remoteFiles],
+    images: [...imagesUploaded, ...item.remoteImages],
   });
 };
 
@@ -171,9 +171,9 @@ const syncUpdateProgress = async (item: UpdateProgressQueueItem): Promise<void> 
 const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.files) {
+  for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
-      uri: file.uri,
+      uri: file.url,
       type: file.type,
       name: file.originalName,
     });
@@ -191,9 +191,9 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
 
   const imagesUploaded: IRemoteFile[] = [];
 
-  for (const image of item.images) {
+  for (const image of item.localImages) {
     const fileUrl = await uploadFile({
-      uri: image.uri,
+      uri: image.url,
       type: image.type,
       name: image.originalName,
     });
@@ -217,7 +217,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
       cost: item.cost,
       observation: "",
     },
-    files: filesUploaded,
-    images: imagesUploaded,
+    files: [...filesUploaded, ...item.remoteFiles],
+    images: [...imagesUploaded, ...item.remoteImages],
   });
 };

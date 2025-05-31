@@ -71,18 +71,12 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
 
         await getMaintenanceHistoryActivities();
       } else {
-        const filesToQueue = localFiles.map((file) => ({
-          originalName: file.originalName,
-          uri: file.url,
-          type: file.type,
-        }));
-
         const newEntry: OfflineQueueItem = {
           type: "addHistoryActivity",
           userId,
           maintenanceId,
           comment,
-          files: filesToQueue,
+          localFiles,
         };
 
         await addItemToOfflineQueue(newEntry);

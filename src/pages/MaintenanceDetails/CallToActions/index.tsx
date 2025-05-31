@@ -20,22 +20,26 @@ import { styles } from "./styles";
 
 interface CallToActionsProps {
   maintenanceDetails: IMaintenance;
-  files: (IRemoteFile | LocalFile)[];
-  images: (IRemoteFile | LocalFile)[];
+  localFiles: LocalFile[];
+  localImages: LocalFile[];
+  setLocalFiles: (files: LocalFile[]) => void;
+  setLocalImages: (images: LocalFile[]) => void;
+  remoteFiles: IRemoteFile[];
+  remoteImages: IRemoteFile[];
   cost: string;
-  setFiles: (files: (IRemoteFile | LocalFile)[]) => void;
-  setImages: (images: (IRemoteFile | LocalFile)[]) => void;
   setCost: (cost: string) => void;
   setLoading: (loading: boolean) => void;
 }
 
 export const CallToActions = ({
   maintenanceDetails,
-  files,
-  images,
+  localFiles,
+  localImages,
+  setLocalFiles,
+  setLocalImages,
+  remoteFiles,
+  remoteImages,
   cost,
-  setFiles,
-  setImages,
   setCost,
   setLoading,
 }: CallToActionsProps) => {
@@ -85,14 +89,12 @@ export const CallToActions = ({
 
     try {
       if (isConnected) {
-        for (const file of files) {
-          const fileUrl = (file as LocalFile).type
-            ? await uploadFile({
-                uri: file.url,
-                type: (file as LocalFile).type,
-                name: file.originalName,
-              })
-            : file.url;
+        for (const file of localFiles) {
+          const fileUrl = await uploadFile({
+            uri: file.url,
+            type: file.type,
+            name: file.originalName,
+          });
 
           if (!fileUrl) {
             continue;
@@ -105,14 +107,12 @@ export const CallToActions = ({
           });
         }
 
-        for (const image of images) {
-          const fileUrl = (image as LocalFile).type
-            ? await uploadFile({
-                uri: image.url,
-                type: (image as LocalFile).type,
-                name: image.originalName,
-              })
-            : image.url;
+        for (const image of localImages) {
+          const fileUrl = await uploadFile({
+            uri: image.url,
+            type: image.type,
+            name: image.originalName,
+          });
 
           if (!fileUrl) {
             continue;
@@ -133,36 +133,26 @@ export const CallToActions = ({
             cost: formatedCost,
             observation: "",
           },
-          files: filesUploaded,
-          images: imagesUploaded,
+          files: [...filesUploaded, ...remoteFiles],
+          images: [...imagesUploaded, ...remoteImages],
         });
       } else {
-        const filesToQueue = files.map((file) => ({
-          originalName: file.originalName,
-          uri: file.url,
-          type: (file as LocalFile).type,
-        }));
-
-        const imagesToQueue = images.map((image) => ({
-          originalName: image.originalName,
-          uri: image.url,
-          type: (image as LocalFile).type,
-        }));
-
         const newEntry: OfflineQueueItem = {
           type: "saveProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
           cost: formatedCost,
-          files: filesToQueue,
-          images: imagesToQueue,
+          localFiles,
+          localImages,
+          remoteFiles,
+          remoteImages,
         };
 
         await addItemToOfflineQueue(newEntry);
       }
 
-      setFiles([]);
-      setImages([]);
+      setLocalFiles([]);
+      setLocalImages([]);
       setCost("");
       navigation.goBack();
     } catch (error) {
@@ -185,14 +175,12 @@ export const CallToActions = ({
 
     try {
       if (isConnected) {
-        for (const file of files) {
-          const fileUrl = (file as LocalFile).type
-            ? await uploadFile({
-                uri: file.url,
-                type: (file as LocalFile).type,
-                name: file.originalName,
-              })
-            : file.url;
+        for (const file of localFiles) {
+          const fileUrl = await uploadFile({
+            uri: file.url,
+            type: file.type,
+            name: file.originalName,
+          });
 
           if (!fileUrl) {
             continue;
@@ -205,14 +193,12 @@ export const CallToActions = ({
           });
         }
 
-        for (const image of images) {
-          const fileUrl = (image as LocalFile).type
-            ? await uploadFile({
-                uri: image.url,
-                type: (image as LocalFile).type,
-                name: image.originalName,
-              })
-            : image.url;
+        for (const image of localImages) {
+          const fileUrl = await uploadFile({
+            uri: image.url,
+            type: image.type,
+            name: image.originalName,
+          });
 
           if (!fileUrl) {
             continue;
@@ -233,36 +219,26 @@ export const CallToActions = ({
             cost: formatedCost,
             observation: "",
           },
-          files: filesUploaded,
-          images: imagesUploaded,
+          files: [...filesUploaded, ...remoteFiles],
+          images: [...imagesUploaded, ...remoteImages],
         });
       } else {
-        const filesToQueue = files.map((file) => ({
-          originalName: file.originalName,
-          uri: file.url,
-          type: (file as LocalFile).type,
-        }));
-
-        const imagesToQueue = images.map((image) => ({
-          originalName: image.originalName,
-          uri: image.url,
-          type: (image as LocalFile).type,
-        }));
-
         const newEntry: OfflineQueueItem = {
           type: "finishMaintenance",
           userId,
           maintenanceId: maintenanceDetails.id,
           cost: formatedCost,
-          files: filesToQueue,
-          images: imagesToQueue,
+          localFiles,
+          localImages,
+          remoteFiles,
+          remoteImages,
         };
 
         await addItemToOfflineQueue(newEntry);
       }
 
-      setFiles([]);
-      setImages([]);
+      setLocalFiles([]);
+      setLocalImages([]);
       setCost("");
       navigation.goBack();
     } catch (error) {
