@@ -35,14 +35,15 @@ export const MainRoutes = () => {
   };
 
   return (
-    <PageLayout>
-      <NavigationContainer linking={linking} theme={navigationTheme}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Maintenances" component={Maintenances} />
-          <Stack.Screen name="CreateOccasionalMaintenance" component={CreateOccasionalMaintenance} />
-          <Stack.Screen name="MaintenanceDetails" component={MaintenanceDetails} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PageLayout>
+    <NavigationContainer linking={linking} theme={navigationTheme}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        screenLayout={({ children }) => <PageLayout>{children}</PageLayout>}
+      >
+        <Stack.Screen name="Maintenances" component={Maintenances} />
+        <Stack.Screen name="CreateOccasionalMaintenance" component={CreateOccasionalMaintenance} />
+        <Stack.Screen name="MaintenanceDetails" component={MaintenanceDetails} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };

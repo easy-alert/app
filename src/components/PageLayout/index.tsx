@@ -11,7 +11,7 @@ interface PageLayoutProps {
 
 export const PageLayout = ({ children, style }: PageLayoutProps) => {
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: "#fff" }, style]}>
+    <SafeAreaView style={[{ flex: 1 }, style]} edges={["top"]}>
       <OfflineBadge />
       {children}
     </SafeAreaView>
