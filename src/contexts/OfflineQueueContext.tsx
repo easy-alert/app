@@ -2,12 +2,13 @@ import NetInfo from "@react-native-community/netinfo";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 import { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
+import { addItemToOfflineQueue, getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
 
 interface OfflineQueueContextData {
   offlineQueue: OfflineQueueItem[];
   hasInternetConnection: boolean;
   isSyncing: boolean;
+  addItem: (item: OfflineQueueItem) => Promise<void>;
 }
 
 const OfflineQueueContext = createContext({} as OfflineQueueContextData);
@@ -18,11 +19,6 @@ export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
   const isSyncing = hasInternetConnection && offlineQueue.length > 0;
 
   useEffect(() => {
-    const getOfflineQueueCount = async () => {
-      const offlineQueue = await getOfflineQueue();
-      setOfflineQueue(offlineQueue);
-    };
-
     const syncQueueOnReconnect = () =>
       NetInfo.addEventListener(async (state) => {
         try {
@@ -33,7 +29,7 @@ export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
 
           setHasInternetConnection(true);
           await syncOfflineQueue();
-          await getOfflineQueueCount();
+          await handleGetOfflineQueue();
         } catch {}
       });
 
@@ -46,11 +42,11 @@ export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
             await syncOfflineQueue();
           }
 
-          await getOfflineQueueCount();
+          await handleGetOfflineQueue();
         } catch {}
       }, 10_000);
 
-    getOfflineQueueCount();
+    handleGetOfflineQueue();
 
     const unsubscribe = syncQueueOnReconnect();
     const interval = syncQueueOnInterval();
@@ -61,12 +57,23 @@ export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  const handleGetOfflineQueue = async () => {
+    const offlineQueue = await getOfflineQueue();
+    setOfflineQueue(offlineQueue);
+  };
+
+  const addItem = async (item: OfflineQueueItem): Promise<void> => {
+    await addItemToOfflineQueue(item);
+    await handleGetOfflineQueue();
+  };
+
   return (
     <OfflineQueueContext.Provider
       value={{
         offlineQueue,
         hasInternetConnection,
         isSyncing,
+        addItem,
       }}
     >
       {children}
