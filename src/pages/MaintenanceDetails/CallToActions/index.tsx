@@ -14,9 +14,9 @@ import type { ILocalFile } from "@/types/ILocalFile";
 import type { IMaintenance } from "@/types/IMaintenance";
 import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import type { IRemoteFile } from "@/types/IRemoteFile";
+import { convertCostToInteger } from "@/utils/convertCostToInteger";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
-import { convertCostToInteger } from "../utils/convertCostToInteger";
 import { styles } from "./styles";
 
 interface CallToActionsProps {

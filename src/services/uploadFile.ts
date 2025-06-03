@@ -1,31 +1,34 @@
-export const uploadFile = async (file: { uri: string; type: string; name: string }): Promise<string | null> => {
+import { baseApi } from "./baseApi";
+
+interface IUploadFile {
+  uri: string;
+  type: string;
+  name: string;
+}
+
+interface IUploadFileResponse {
+  Location: string;
+}
+
+// TODO: todo lugar que está chamando o upload file, caso de erro e retorne null, continua a operação sem verificar isso,
+// precisamos verificar se deu algum erro antes de continuar
+export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<string | null> => {
   try {
     const formData = new FormData();
 
-    // Certifique-se de adicionar a chave "file" ao FormData
     formData.append("file", {
-      uri: file.uri,
-      type: file.type,
-      name: file.name,
+      uri,
+      type,
+      name,
     } as any);
 
-    const response = await fetch(`https://easyalert-production.herokuapp.com/api/company/upload/file`, {
-      method: "POST",
+    const response = await baseApi.post<IUploadFileResponse>("company/upload/file", formData, {
       headers: {
-        Accept: "application/json", // Apenas Accept; FormData já lida com Content-Type
+        "Content-Type": "multipart/form-data",
       },
-      body: formData,
     });
 
-    if (!response.ok) {
-      const responseBody = await response.text();
-      console.error("Erro no servidor:", responseBody);
-      throw new Error(`Erro do servidor: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    return data.Location;
+    return response.data.Location;
   } catch (error) {
     console.error("Erro ao realizar upload do arquivo:", error);
     return null;

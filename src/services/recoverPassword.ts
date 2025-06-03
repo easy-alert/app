@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 
 import type { IError } from "@/types/IError";
-import { catchHandler } from "@/utils/handleAlerts";
+import { catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
 

@@ -22,13 +22,13 @@ export const getOfflineQueue = async (): Promise<IOfflineQueueItem[]> => {
   return offlineQueueString ? JSON.parse(offlineQueueString) : [];
 };
 
-export const addItemToOfflineQueue = async (item: IOfflineQueueItem) => {
+export const addItemToOfflineQueue = async (item: IOfflineQueueItem): Promise<void> => {
   const offlineQueue = await getOfflineQueue();
   offlineQueue.push(item);
   await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 };
 
-export const syncOfflineQueue = async () => {
+export const syncOfflineQueue = async (): Promise<void> => {
   if (isSyncing) {
     return;
   }
@@ -75,7 +75,7 @@ export const syncOfflineQueue = async () => {
   }
 };
 
-const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem) => {
+const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem): Promise<void> => {
   const filesUploaded = [];
 
   for (const file of item.files) {
@@ -100,7 +100,7 @@ const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem) => {
   });
 };
 
-const syncSaveProgress = async (item: ISaveProgressQueueItem) => {
+const syncSaveProgress = async (item: ISaveProgressQueueItem): Promise<void> => {
   const filesUploaded = [];
 
   for (const file of item.files) {
@@ -146,7 +146,7 @@ const syncSaveProgress = async (item: ISaveProgressQueueItem) => {
   });
 };
 
-const syncUpdateProgress = async (item: IUpdateProgressQueueItem) => {
+const syncUpdateProgress = async (item: IUpdateProgressQueueItem): Promise<void> => {
   await updateMaintenanceProgress({
     maintenanceHistoryId: item.maintenanceId,
     inProgressChange: item.inProgressChange,
@@ -155,7 +155,7 @@ const syncUpdateProgress = async (item: IUpdateProgressQueueItem) => {
   });
 };
 
-const syncFinishMaintenance = async (item: IFinishMaintenanceQueueItem) => {
+const syncFinishMaintenance = async (item: IFinishMaintenanceQueueItem): Promise<void> => {
   const filesUploaded = [];
 
   for (const file of item.files) {

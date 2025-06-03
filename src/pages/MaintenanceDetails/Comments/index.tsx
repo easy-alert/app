@@ -11,8 +11,8 @@ import { uploadFile } from "@/services/uploadFile";
 import type { ILocalFile } from "@/types/ILocalFile";
 import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
+import { openFilePicker } from "@/utils/openFilePicker";
 
-import { openFilePicker } from "../utils/openFilePicker";
 import { styles } from "./styles";
 
 interface CommentsProps {
@@ -104,7 +104,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   };
 
   const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker();
+    const localFiles = await openFilePicker({ mode: "request_user_choice" });
 
     if (localFiles.length) {
       setLocalFiles((prev) => [...prev, ...localFiles]);
