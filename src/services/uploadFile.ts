@@ -6,13 +6,26 @@ interface IUploadFile {
   name: string;
 }
 
-interface IUploadFileResponse {
+interface RequestResponse {
   Location: string;
 }
 
+// TODO: criar esse padrão de retorno para as mutations
+type IUploadFileResponse =
+  | {
+      success: true;
+      data: {
+        url: string;
+      };
+    }
+  | {
+      success: false;
+      data: null;
+    };
+
 // TODO: todo lugar que está chamando o upload file, caso de erro e retorne null, continua a operação sem verificar isso,
 // precisamos verificar se deu algum erro antes de continuar
-export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<string | null> => {
+export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<IUploadFileResponse> => {
   try {
     const formData = new FormData();
 
@@ -22,15 +35,24 @@ export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<stri
       name,
     } as any);
 
-    const response = await baseApi.post<IUploadFileResponse>("company/upload/file", formData, {
+    const response = await baseApi.post<RequestResponse>("company/upload/file", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    return response.data.Location;
+    return {
+      success: true,
+      data: {
+        url: response.data.Location,
+      },
+    };
   } catch (error) {
     console.error("Erro ao realizar upload do arquivo:", error);
-    return null;
+
+    return {
+      success: false,
+      data: null,
+    };
   }
 };

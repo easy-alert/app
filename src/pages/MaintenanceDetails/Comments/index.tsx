@@ -46,19 +46,19 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
     try {
       if (isConnected) {
         for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
+          if (!success) {
             continue;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
         }
 

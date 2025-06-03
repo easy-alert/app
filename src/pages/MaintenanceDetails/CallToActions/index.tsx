@@ -85,36 +85,36 @@ export const CallToActions = ({
     try {
       if (isConnected) {
         for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
+          if (!success) {
             continue;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
         }
 
         for (const image of localImages) {
-          const fileUrl = await uploadFile({
+          const { success, data } = await uploadFile({
             uri: image.uri,
             type: image.type,
             name: image.name,
           });
 
-          if (!fileUrl) {
+          if (!success) {
             continue;
           }
 
           imagesUploaded.push({
             name: image.name,
-            url: fileUrl,
+            url: data.url,
           });
         }
 
@@ -174,36 +174,36 @@ export const CallToActions = ({
     try {
       if (isConnected) {
         for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
+          if (!success) {
             continue;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
         }
 
         for (const image of localImages) {
-          const fileUrl = await uploadFile({
+          const { success, data } = await uploadFile({
             uri: image.uri,
             type: image.type,
             name: image.name,
           });
 
-          if (!fileUrl) {
+          if (!success) {
             continue;
           }
 
           imagesUploaded.push({
             name: image.name,
-            url: fileUrl,
+            url: data.url,
           });
         }
 

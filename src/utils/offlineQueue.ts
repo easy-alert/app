@@ -86,19 +86,19 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
   const filesUploaded: IRemoteFile[] = [];
 
   for (const file of item.localFiles) {
-    const fileUrl = await uploadFile({
+    const { success, data } = await uploadFile({
       uri: file.uri,
       type: file.type,
       name: file.name,
     });
 
-    if (!fileUrl) {
+    if (!success) {
       continue;
     }
 
     filesUploaded.push({
       name: file.name,
-      url: fileUrl,
+      url: data.url,
     });
   }
 
@@ -118,38 +118,38 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
   for (const file of item.localFiles) {
-    const fileUrl = await uploadFile({
+    const { success, data } = await uploadFile({
       uri: file.uri,
       type: file.type,
       name: file.name,
     });
 
-    if (!fileUrl) {
+    if (!success) {
       continue;
     }
 
     filesUploaded.push({
       name: file.name,
-      url: fileUrl,
+      url: data.url,
     });
   }
 
   const imagesUploaded: IRemoteFile[] = [];
 
   for (const image of item.localImages) {
-    const fileUrl = await uploadFile({
+    const { success, data } = await uploadFile({
       uri: image.uri,
       type: image.type,
       name: image.name,
     });
 
-    if (!fileUrl) {
+    if (!success) {
       continue;
     }
 
     imagesUploaded.push({
       name: image.name,
-      url: fileUrl,
+      url: data.url,
     });
   }
 
@@ -187,38 +187,38 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
   const filesUploaded: IRemoteFile[] = [];
 
   for (const file of item.localFiles) {
-    const fileUrl = await uploadFile({
+    const { success, data } = await uploadFile({
       uri: file.uri,
       type: file.type,
       name: file.name,
     });
 
-    if (!fileUrl) {
+    if (!success) {
       continue;
     }
 
     filesUploaded.push({
       name: file.name,
-      url: fileUrl,
+      url: data.url,
     });
   }
 
   const imagesUploaded: IRemoteFile[] = [];
 
   for (const image of item.localImages) {
-    const fileUrl = await uploadFile({
+    const { success, data } = await uploadFile({
       uri: image.uri,
       type: image.type,
       name: image.name,
     });
 
-    if (!fileUrl) {
+    if (!success) {
       continue;
     }
 
     imagesUploaded.push({
       name: image.name,
-      url: fileUrl,
+      url: data.url,
     });
   }
 
