@@ -1,4 +1,5 @@
-import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import type { IMaintenance } from "@/types/api/IMaintenance";
@@ -32,19 +33,34 @@ export const Attachments = ({
   setLocalFiles,
   setLocalImages,
 }: AttachmentsProps) => {
-  const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker({ mode: "document" });
+  const [loadingImages, setLoadingImages] = useState(false);
+  const [loadingFiles, setLoadingFiles] = useState(false);
 
-    if (localFiles.length) {
-      setLocalFiles((prev) => [...prev, ...localFiles]);
+  const handleOpenFilePicker = async () => {
+    try {
+      setLoadingFiles(true);
+
+      const localFiles = await openFilePicker({ mode: "document" });
+
+      if (localFiles.length) {
+        setLocalFiles((prev) => [...prev, ...localFiles]);
+      }
+    } finally {
+      setLoadingFiles(false);
     }
   };
 
   const handleOpenImagePicker = async () => {
-    const localImages = await openFilePicker({ mode: "image" });
+    try {
+      setLoadingImages(true);
 
-    if (localImages.length) {
-      setLocalImages((prev) => [...prev, ...localImages]);
+      const localImages = await openFilePicker({ mode: "image" });
+
+      if (localImages.length) {
+        setLocalImages((prev) => [...prev, ...localImages]);
+      }
+    } finally {
+      setLoadingImages(false);
     }
   };
 
@@ -80,11 +96,15 @@ export const Attachments = ({
 
   return (
     <View>
-      <Text style={styles.titleLabel}>Anexos</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleLabel}>Anexos</Text>
+
+        {loadingFiles && <ActivityIndicator size="small" color="#c62828" />}
+      </View>
 
       <View style={styles.contentContainer}>
         {canBeEdited && (
-          <TouchableOpacity onPress={handleOpenFilePicker}>
+          <TouchableOpacity onPress={handleOpenFilePicker} style={styles.pickerButton}>
             <Icon name="paperclip" size={24} color="#c62828" />
           </TouchableOpacity>
         )}
@@ -123,11 +143,15 @@ export const Attachments = ({
         </View>
       </View>
 
-      <Text style={styles.titleLabel}>Imagens</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleLabel}>Imagens</Text>
+
+        {loadingImages && <ActivityIndicator size="small" color="#c62828" />}
+      </View>
 
       <View style={styles.contentContainer}>
         {canBeEdited && (
-          <TouchableOpacity onPress={handleOpenImagePicker}>
+          <TouchableOpacity onPress={handleOpenImagePicker} style={styles.pickerButton}>
             <Icon name="image" size={24} color="#c62828" />
           </TouchableOpacity>
         )}
