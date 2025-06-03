@@ -1,4 +1,4 @@
-import type { IError } from "@/types/IError";
+import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
@@ -15,7 +15,7 @@ export const updateMaintenanceProgress = async ({
   userId,
   maintenanceHistoryId,
   inProgressChange,
-}: IUpdateMaintenanceProgress) => {
+}: IUpdateMaintenanceProgress): Promise<void> => {
   const uri = `company/maintenances/set/in-progress`;
 
   const params = {
@@ -36,7 +36,7 @@ export const updateMaintenanceProgress = async ({
       message: response?.data?.ServerMessage?.message,
     });
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

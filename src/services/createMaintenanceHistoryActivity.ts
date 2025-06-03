@@ -1,4 +1,4 @@
-import type { IError } from "@/types/IError";
+import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
@@ -7,10 +7,10 @@ interface ICreateMaintenanceHistoryActivity {
   maintenanceId: string;
   userId: string;
   content: string;
-  uploadedFile?: {
+  filesUploaded: {
     originalName: string;
-    url: string | null;
-    type: string;
+    name: string;
+    url: string;
   }[];
 }
 
@@ -18,15 +18,15 @@ export const createMaintenanceHistoryActivity = async ({
   maintenanceId,
   userId,
   content,
-  uploadedFile,
-}: ICreateMaintenanceHistoryActivity) => {
+  filesUploaded,
+}: ICreateMaintenanceHistoryActivity): Promise<void> => {
   const uri = `company/maintenance-history-activities`;
 
   const body = {
     maintenanceHistoryId: maintenanceId,
     userId,
     content,
-    images: uploadedFile,
+    images: filesUploaded,
   };
 
   try {
@@ -37,7 +37,7 @@ export const createMaintenanceHistoryActivity = async ({
       message: response?.data?.ServerMessage?.message,
     });
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

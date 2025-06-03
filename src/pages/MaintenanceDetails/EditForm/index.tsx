@@ -9,7 +9,7 @@ import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { updateMaintenanceDueDate } from "@/services/updateMaintenanceDueDate";
-import type { IMaintenance } from "@/types/IMaintenance";
+import type { IMaintenance } from "@/types/api/IMaintenance";
 import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";

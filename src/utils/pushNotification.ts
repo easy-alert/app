@@ -57,7 +57,5 @@ export const requestPushNotificationPermissions = async (): Promise<void> => {
     }
 
     await Notifications.requestPermissionsAsync();
-  } catch {
-    //
-  }
+  } catch {}
 };

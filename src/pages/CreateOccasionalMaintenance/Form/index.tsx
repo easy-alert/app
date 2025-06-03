@@ -16,9 +16,8 @@ import type { ProtectedNavigation } from "@/routes/navigation";
 import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
 import { getCategories } from "@/services/getCategories";
 import { getUsers } from "@/services/getUsers";
-import type { ICategory } from "@/types/ICategory";
-import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-import type { IUser } from "@/types/IUser";
+import type { ICategory } from "@/types/api/ICategory";
+import type { IUser } from "@/types/api/IUser";
 
 import { styles } from "./styles";
 
@@ -49,6 +48,7 @@ const priorities = [
   },
 ];
 
+// TODO: refatorar
 type IBuilding = IUser["UserBuildingsPermissions"][0];
 
 const formSchema = z.object({
@@ -61,12 +61,6 @@ const formSchema = z.object({
   priority: z.string().min(1, { message: "Prioridade é obrigatória." }),
   executionDate: z.string().min(1, { message: "Data de execução é obrigatória." }),
 });
-
-interface IHandleCreateOccasionalMaintenance {
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  inProgress?: boolean;
-  data: z.infer<typeof formSchema>;
-}
 
 export const Form = () => {
   const { userId } = useAuth();
@@ -154,10 +148,12 @@ export const Form = () => {
   }, [buildingId]);
 
   const handleCreateOccasionalMaintenance = async ({
-    data,
-    occasionalMaintenanceType,
     inProgress = false,
-  }: IHandleCreateOccasionalMaintenance) => {
+    data,
+  }: {
+    inProgress?: boolean;
+    data: z.infer<typeof formSchema>;
+  }) => {
     try {
       if (inProgress) {
         setCreatingInProgress(true);
@@ -167,36 +163,32 @@ export const Form = () => {
 
       const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
 
-      const occasionalMaintenanceBody = {
-        buildingId,
-
-        element,
-        activity,
-        responsible,
-        executionDate,
-        inProgress,
-        priorityName: priority,
-
-        categoryData: {
-          id: categoryId,
-          name: categories.find((category) => category.id === categoryId)?.name!,
-        },
-
-        reportData: {
-          cost: "R$ 0,00",
-          observation: "",
-          files: [],
-          images: [],
-        },
-
-        users,
-      };
-
       const responseData = await createOccasionalMaintenance({
         origin: "Mobile",
         userId,
-        occasionalMaintenanceType,
-        occasionalMaintenanceBody,
+        occasionalMaintenanceType: "pending",
+        occasionalMaintenanceData: {
+          buildingId,
+
+          element,
+          activity,
+          responsible,
+          executionDate,
+          inProgress,
+          priorityName: priority,
+
+          categoryData: {
+            id: categoryId,
+            name: categories.find((category) => category.id === categoryId)?.name!,
+          },
+
+          reportData: {
+            cost: "R$ 0,00",
+            observation: "",
+          },
+
+          users,
+        },
       });
 
       if (responseData?.ServerMessage.statusCode === 200) {
@@ -370,7 +362,6 @@ export const Form = () => {
           onPress={form.handleSubmit((data) =>
             handleCreateOccasionalMaintenance({
               data,
-              occasionalMaintenanceType: "pending",
               inProgress: true,
             }),
           )}
@@ -384,7 +375,6 @@ export const Form = () => {
           onPress={form.handleSubmit((data) =>
             handleCreateOccasionalMaintenance({
               data,
-              occasionalMaintenanceType: "pending",
             }),
           )}
           style={styles.footerButton}

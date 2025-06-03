@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 import { PendingSyncBadge } from "@/components/PendingSyncBadge";
-import type { IMaintenance } from "@/types/IMaintenance";
+import type { IMaintenance } from "@/types/api/IMaintenance";
 import { getStatus } from "@/utils/getStatus";
 import { getOfflineQueue } from "@/utils/offlineQueue";
 
