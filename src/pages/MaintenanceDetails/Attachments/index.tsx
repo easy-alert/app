@@ -110,35 +110,32 @@ export const Attachments = ({
         )}
 
         <View style={styles.fileList}>
-          {/* TODO: deixar com uma cor diferente quando for local e remover o openURL */}
           {localFiles.map((file, index) => (
-            <TouchableOpacity key={index} onPress={async () => Linking.openURL(file.uri)}>
-              <View style={styles.fileItem}>
-                <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
-                  {file.name}
-                </Text>
+            <View key={index} style={styles.fileItem}>
+              <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
+                {file.name}
+              </Text>
 
-                <TouchableOpacity onPress={() => handleRemoveLocalFile(index)}>
-                  <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleRemoveLocalFile(index)}>
+                <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+              </TouchableOpacity>
+            </View>
           ))}
 
           {remoteFiles.map((file, index) => (
-            <TouchableOpacity key={index} onPress={() => Linking.openURL(file.url)}>
-              <View style={styles.fileItem}>
+            <View key={index} style={styles.fileItem}>
+              <TouchableOpacity onPress={() => Linking.openURL(file.url)}>
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
                   {file.name}
                 </Text>
+              </TouchableOpacity>
 
-                {canBeEdited && (
-                  <TouchableOpacity onPress={() => handleRemoveRemoteFile(index)}>
-                    <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                  </TouchableOpacity>
-                )}
-              </View>
-            </TouchableOpacity>
+              {canBeEdited && (
+                <TouchableOpacity onPress={() => handleRemoveRemoteFile(index)}>
+                  <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+                </TouchableOpacity>
+              )}
+            </View>
           ))}
         </View>
       </View>
@@ -157,12 +154,9 @@ export const Attachments = ({
         )}
 
         <View style={styles.fileList}>
-          {/* TODO: deixar com uma cor diferente quando for local e remover o openURL */}
           {localImages.map((image, index) => (
             <View key={index} style={styles.fileItem}>
-              <TouchableOpacity onPress={() => Linking.openURL(image.uri)}>
-                <Image source={{ uri: image.uri }} style={styles.previewImage} />
-              </TouchableOpacity>
+              <Image source={{ uri: image.uri }} style={styles.previewImage} />
 
               <TouchableOpacity onPress={() => handleRemoveLocalImage(index)}>
                 <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
