@@ -83,7 +83,7 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
     const fileUrl = await uploadFile({
       uri: file.uri,
       type: file.type,
-      name: file.originalName,
+      name: file.name,
     });
 
     if (!fileUrl) {
@@ -91,9 +91,8 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
     }
 
     filesUploaded.push({
-      originalName: file.originalName,
+      name: file.name,
       url: fileUrl,
-      name: file.originalName,
     });
   }
 
@@ -101,7 +100,11 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
     maintenanceId: item.maintenanceId,
     userId: item.userId,
     content: item.comment,
-    filesUploaded,
+    filesUploaded: filesUploaded.map((file) => ({
+      originalName: file.name,
+      name: file.name,
+      url: file.url,
+    })),
   });
 };
 
@@ -112,7 +115,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     const fileUrl = await uploadFile({
       uri: file.uri,
       type: file.type,
-      name: file.originalName,
+      name: file.name,
     });
 
     if (!fileUrl) {
@@ -120,9 +123,8 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     }
 
     filesUploaded.push({
-      originalName: file.originalName,
+      name: file.name,
       url: fileUrl,
-      name: file.originalName,
     });
   }
 
@@ -132,7 +134,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     const fileUrl = await uploadFile({
       uri: image.uri,
       type: image.type,
-      name: image.originalName,
+      name: image.name,
     });
 
     if (!fileUrl) {
@@ -140,9 +142,8 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     }
 
     imagesUploaded.push({
-      originalName: image.originalName,
+      name: image.name,
       url: fileUrl,
-      name: image.originalName,
     });
   }
 
@@ -154,8 +155,16 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
       cost: item.cost,
       observation: "",
     },
-    files: [...filesUploaded, ...item.remoteFiles],
-    images: [...imagesUploaded, ...item.remoteImages],
+    files: [...filesUploaded, ...item.remoteFiles].map((file) => ({
+      originalName: file.name,
+      name: file.name,
+      url: file.url,
+    })),
+    images: [...imagesUploaded, ...item.remoteImages].map((image) => ({
+      originalName: image.name,
+      name: image.name,
+      url: image.url,
+    })),
   });
 };
 
@@ -175,7 +184,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     const fileUrl = await uploadFile({
       uri: file.uri,
       type: file.type,
-      name: file.originalName,
+      name: file.name,
     });
 
     if (!fileUrl) {
@@ -183,9 +192,8 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     }
 
     filesUploaded.push({
-      originalName: file.originalName,
+      name: file.name,
       url: fileUrl,
-      name: file.originalName,
     });
   }
 
@@ -195,7 +203,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     const fileUrl = await uploadFile({
       uri: image.uri,
       type: image.type,
-      name: image.originalName,
+      name: image.name,
     });
 
     if (!fileUrl) {
@@ -203,9 +211,8 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     }
 
     imagesUploaded.push({
-      originalName: image.originalName,
+      name: image.name,
       url: fileUrl,
-      name: image.originalName,
     });
   }
 
@@ -217,7 +224,15 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
       cost: item.cost,
       observation: "",
     },
-    files: [...filesUploaded, ...item.remoteFiles],
-    images: [...imagesUploaded, ...item.remoteImages],
+    files: [...filesUploaded, ...item.remoteFiles].map((file) => ({
+      originalName: file.name,
+      name: file.name,
+      url: file.url,
+    })),
+    images: [...imagesUploaded, ...item.remoteImages].map((image) => ({
+      originalName: image.name,
+      name: image.name,
+      url: image.url,
+    })),
   });
 };

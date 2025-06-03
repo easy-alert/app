@@ -115,7 +115,7 @@ export const Attachments = ({
             <TouchableOpacity key={index} onPress={async () => Linking.openURL(file.uri)}>
               <View style={styles.fileItem}>
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
-                  {file.originalName}
+                  {file.name}
                 </Text>
 
                 <TouchableOpacity onPress={() => handleRemoveLocalFile(index)}>
@@ -129,7 +129,7 @@ export const Attachments = ({
             <TouchableOpacity key={index} onPress={() => Linking.openURL(file.url)}>
               <View style={styles.fileItem}>
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
-                  {file.originalName}
+                  {file.name}
                 </Text>
 
                 {canBeEdited && (

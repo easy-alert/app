@@ -22,12 +22,9 @@ interface CallToActionsProps {
   maintenanceDetails: IMaintenance;
   localFiles: LocalFile[];
   localImages: LocalFile[];
-  setLocalFiles: (files: LocalFile[]) => void;
-  setLocalImages: (images: LocalFile[]) => void;
   remoteFiles: IRemoteFile[];
   remoteImages: IRemoteFile[];
   cost: string;
-  setCost: (cost: string) => void;
   setLoading: (loading: boolean) => void;
 }
 
@@ -35,12 +32,9 @@ export const CallToActions = ({
   maintenanceDetails,
   localFiles,
   localImages,
-  setLocalFiles,
-  setLocalImages,
   remoteFiles,
   remoteImages,
   cost,
-  setCost,
   setLoading,
 }: CallToActionsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
@@ -93,7 +87,7 @@ export const CallToActions = ({
           const fileUrl = await uploadFile({
             uri: file.uri,
             type: file.type,
-            name: file.originalName,
+            name: file.name,
           });
 
           if (!fileUrl) {
@@ -101,9 +95,8 @@ export const CallToActions = ({
           }
 
           filesUploaded.push({
-            originalName: file.originalName,
+            name: file.name,
             url: fileUrl,
-            name: file.originalName,
           });
         }
 
@@ -111,7 +104,7 @@ export const CallToActions = ({
           const fileUrl = await uploadFile({
             uri: image.uri,
             type: image.type,
-            name: image.originalName,
+            name: image.name,
           });
 
           if (!fileUrl) {
@@ -119,9 +112,8 @@ export const CallToActions = ({
           }
 
           imagesUploaded.push({
-            originalName: image.originalName,
+            name: image.name,
             url: fileUrl,
-            name: image.originalName,
           });
         }
 
@@ -133,8 +125,16 @@ export const CallToActions = ({
             cost: formatedCost,
             observation: "",
           },
-          files: [...filesUploaded, ...remoteFiles],
-          images: [...imagesUploaded, ...remoteImages],
+          files: [...filesUploaded, ...remoteFiles].map((file) => ({
+            originalName: file.name,
+            name: file.name,
+            url: file.url,
+          })),
+          images: [...imagesUploaded, ...remoteImages].map((image) => ({
+            originalName: image.name,
+            name: image.name,
+            url: image.url,
+          })),
         });
       } else {
         const newEntry: OfflineQueueItem = {
@@ -151,9 +151,6 @@ export const CallToActions = ({
         await addItemToOfflineQueue(newEntry);
       }
 
-      setLocalFiles([]);
-      setLocalImages([]);
-      setCost("");
       navigation.goBack();
     } catch (error) {
       console.error("Error in saveProgress:", error);
@@ -179,7 +176,7 @@ export const CallToActions = ({
           const fileUrl = await uploadFile({
             uri: file.uri,
             type: file.type,
-            name: file.originalName,
+            name: file.name,
           });
 
           if (!fileUrl) {
@@ -187,9 +184,8 @@ export const CallToActions = ({
           }
 
           filesUploaded.push({
-            originalName: file.originalName,
+            name: file.name,
             url: fileUrl,
-            name: file.originalName,
           });
         }
 
@@ -197,7 +193,7 @@ export const CallToActions = ({
           const fileUrl = await uploadFile({
             uri: image.uri,
             type: image.type,
-            name: image.originalName,
+            name: image.name,
           });
 
           if (!fileUrl) {
@@ -205,9 +201,8 @@ export const CallToActions = ({
           }
 
           imagesUploaded.push({
-            originalName: image.originalName,
+            name: image.name,
             url: fileUrl,
-            name: image.originalName,
           });
         }
 
@@ -219,8 +214,16 @@ export const CallToActions = ({
             cost: formatedCost,
             observation: "",
           },
-          files: [...filesUploaded, ...remoteFiles],
-          images: [...imagesUploaded, ...remoteImages],
+          files: [...filesUploaded, ...remoteFiles].map((file) => ({
+            originalName: file.name,
+            name: file.name,
+            url: file.url,
+          })),
+          images: [...imagesUploaded, ...remoteImages].map((image) => ({
+            originalName: image.name,
+            name: image.name,
+            url: image.url,
+          })),
         });
       } else {
         const newEntry: OfflineQueueItem = {
@@ -237,9 +240,6 @@ export const CallToActions = ({
         await addItemToOfflineQueue(newEntry);
       }
 
-      setLocalFiles([]);
-      setLocalImages([]);
-      setCost("");
       navigation.goBack();
     } catch (error) {
       console.error("Error in handleFinishMaintenance:", error);

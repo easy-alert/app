@@ -179,12 +179,9 @@ export const MaintenanceDetails = () => {
                 maintenanceDetails={maintenanceDetails}
                 localFiles={localFiles}
                 localImages={localImages}
-                setLocalFiles={setLocalFiles}
-                setLocalImages={setLocalImages}
                 remoteFiles={remoteFiles}
                 remoteImages={remoteImages}
                 cost={cost}
-                setCost={setCost}
                 setLoading={setLoading}
               />
             </>

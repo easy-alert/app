@@ -48,7 +48,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           const fileUrl = await uploadFile({
             uri: file.uri,
             type: file.type,
-            name: file.originalName,
+            name: file.name,
           });
 
           if (!fileUrl) {
@@ -56,8 +56,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           }
 
           filesUploaded.push({
-            originalName: file.originalName,
-            name: file.originalName,
+            name: file.name,
             url: fileUrl,
           });
         }
@@ -66,7 +65,11 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           maintenanceId,
           userId,
           content: comment,
-          filesUploaded: filesUploaded,
+          filesUploaded: filesUploaded.map((file) => ({
+            originalName: file.name,
+            name: file.name,
+            url: file.url,
+          })),
         });
 
         await getMaintenanceHistoryActivities();
@@ -122,7 +125,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         {localFiles.map((file, index) => (
           <View key={index} style={styles.fileItem}>
             <View style={styles.fileDetailsContainer}>
-              <Text style={styles.fileNameLabel}>{file.originalName}</Text>
+              <Text style={styles.fileNameLabel}>{file.name}</Text>
             </View>
 
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleRemoveFile(index)}>

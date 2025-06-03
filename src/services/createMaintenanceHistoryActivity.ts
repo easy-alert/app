@@ -1,4 +1,3 @@
-import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
@@ -8,7 +7,11 @@ interface ICreateMaintenanceHistoryActivity {
   maintenanceId: string;
   userId: string;
   content: string;
-  filesUploaded: IRemoteFile[];
+  filesUploaded: {
+    originalName: string;
+    name: string;
+    url: string;
+  }[];
 }
 
 export const createMaintenanceHistoryActivity = async ({

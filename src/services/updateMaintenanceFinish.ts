@@ -1,4 +1,3 @@
-import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
@@ -12,8 +11,16 @@ interface IUpdateMaintenanceFinish {
     cost: number;
     observation?: string;
   };
-  files: IRemoteFile[];
-  images: IRemoteFile[];
+  files: {
+    originalName: string;
+    name: string;
+    url: string;
+  }[];
+  images: {
+    originalName: string;
+    name: string;
+    url: string;
+  }[];
 }
 
 export const updateMaintenanceFinish = async ({
