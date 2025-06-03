@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
+import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { getOfflineQueue } from "@/utils/offlineQueue";
 
 import { KanbanHeader } from "../KanbanHeader";
 import { KanbanRow } from "../KanbanRow";
@@ -19,16 +17,7 @@ interface KanbanProps {
 }
 
 export const Kanban = ({ kanbanData, filters, setFilters, availableCategories }: KanbanProps) => {
-  const [offlineQueue, setOfflineQueue] = useState<OfflineQueueItem[]>([]);
-
-  useEffect(() => {
-    const handleGetOfflineQueue = async () => {
-      const queue = await getOfflineQueue();
-      setOfflineQueue(queue);
-    };
-
-    handleGetOfflineQueue();
-  }, []);
+  const { offlineQueue } = useOfflineQueue();
 
   return (
     <View style={styles.container}>
