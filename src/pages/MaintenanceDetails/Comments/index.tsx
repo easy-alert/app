@@ -27,7 +27,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   const { userId } = useAuth();
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
-  const [comment, setComment] = useState(" ");
+  const [comment, setComment] = useState(" "); // TODO: remover espaço em branco.
 
   const handleCreateMaintenanceActivity = async () => {
     if (!comment) {
