@@ -5,8 +5,8 @@ import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 
 import { styles } from "./styles";
 
-export const OfflineQueueBadge = () => {
-  const { offlineQueueLength, isSyncing } = useOfflineQueue();
+export const SyncingBadge = () => {
+  const { offlineQueue, isSyncing } = useOfflineQueue();
 
   if (!isSyncing) {
     return null;
@@ -19,7 +19,7 @@ export const OfflineQueueBadge = () => {
       <Text style={styles.label}>{"Sincronizando"}</Text>
 
       <View style={styles.countContainer}>
-        <Text style={styles.countLabel}>{offlineQueueLength}</Text>
+        <Text style={styles.countLabel}>{offlineQueue.length}</Text>
       </View>
     </View>
   );

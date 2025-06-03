@@ -1,10 +1,11 @@
 import NetInfo from "@react-native-community/netinfo";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
+import { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
 import { getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
 
 interface OfflineQueueContextData {
-  offlineQueueLength: number;
+  offlineQueue: OfflineQueueItem[];
   hasInternetConnection: boolean;
   isSyncing: boolean;
 }
@@ -12,14 +13,14 @@ interface OfflineQueueContextData {
 const OfflineQueueContext = createContext({} as OfflineQueueContextData);
 
 export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
-  const [offlineQueueLength, setOfflineQueueLength] = useState(0);
+  const [offlineQueue, setOfflineQueue] = useState<OfflineQueueItem[]>([]);
   const [hasInternetConnection, setHasInternetConnection] = useState(true);
-  const isSyncing = hasInternetConnection && offlineQueueLength > 0;
+  const isSyncing = hasInternetConnection && offlineQueue.length > 0;
 
   useEffect(() => {
     const getOfflineQueueCount = async () => {
       const offlineQueue = await getOfflineQueue();
-      setOfflineQueueLength(offlineQueue.length);
+      setOfflineQueue(offlineQueue);
     };
 
     const syncQueueOnReconnect = () =>
@@ -63,7 +64,7 @@ export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
   return (
     <OfflineQueueContext.Provider
       value={{
-        offlineQueueLength,
+        offlineQueue,
         hasInternetConnection,
         isSyncing,
       }}
