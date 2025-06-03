@@ -30,13 +30,13 @@ export const addItemToOfflineQueue = async (item: OfflineQueueItem): Promise<voi
 };
 
 export const syncOfflineQueue = async (): Promise<void> => {
-  if (isSyncing) {
-    return;
-  }
-
-  isSyncing = true;
-
   try {
+    if (isSyncing) {
+      return;
+    }
+
+    isSyncing = true;
+
     const offlineQueue = await getOfflineQueue();
 
     while (offlineQueue.length > 0) {
