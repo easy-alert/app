@@ -48,7 +48,7 @@ export const OfflineQueueProvider = ({ children }: { children: ReactNode }) => {
 
           await getOfflineQueueCount();
         } catch {}
-      }, 3000);
+      }, 10_000);
 
     getOfflineQueueCount();
 

@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const { exp: jwtExpiration } = jwtDecode(authToken);
 
-        const isValidJwt = !!jwtExpiration && jwtExpiration * 1000 > Date.now();
+        const isValidJwt = !!jwtExpiration && jwtExpiration * 1_000 > Date.now();
 
         if (!isValidJwt) {
           setIsAuthenticated(false);
