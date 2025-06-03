@@ -7,14 +7,15 @@ import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { Filter } from "@/types/utils/Filter";
+import { emptyFilters } from "@/utils/filters";
 import { maintenanceStatus } from "@/utils/getStatus";
 
-import { emptyFilters, IFilter } from "../utils";
 import { styles } from "./styles";
 
 interface FiltersProps {
-  filters: IFilter;
-  setFilters: (filters: IFilter) => void;
+  filters: Filter;
+  setFilters: (filters: Filter) => void;
   availableBuildings: AvailableFilter[];
   availableUsers: AvailableFilter[];
   availableCategories: AvailableFilter[];
@@ -29,7 +30,7 @@ export const Filters = ({
 }: FiltersProps) => {
   const { closeBottomSheet } = useBottomSheet();
 
-  const [filtersCache, setFiltersCache] = useState<IFilter>(filters);
+  const [filtersCache, setFiltersCache] = useState<Filter>(filters);
 
   const handleClearFilters = () => {
     setFilters(emptyFilters);

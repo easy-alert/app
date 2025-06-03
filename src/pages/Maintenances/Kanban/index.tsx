@@ -3,16 +3,16 @@ import { ScrollView, Text, View } from "react-native";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { Filter } from "@/types/utils/Filter";
 
 import { KanbanHeader } from "../KanbanHeader";
 import { KanbanRow } from "../KanbanRow";
-import { IFilter } from "../utils";
 import { styles } from "./styles";
 
 interface KanbanProps {
   kanbanData: IKanbanColumn[];
-  filters: IFilter;
-  setFilters: (filters: IFilter) => void;
+  filters: Filter;
+  setFilters: (filters: Filter) => void;
   availableCategories: AvailableFilter[];
 }
 

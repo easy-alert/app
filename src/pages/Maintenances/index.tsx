@@ -7,12 +7,13 @@ import type { RouteList } from "@/routes/navigation";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { Filter } from "@/types/utils/Filter";
+import { emptyFilters } from "@/utils/filters";
 
 import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 import { Kanban } from "./Kanban";
 import { Navbar } from "./Navbar";
 import { styles } from "./styles";
-import { emptyFilters, IFilter } from "./utils";
 
 export const Maintenances = () => {
   const navigationState = useNavigationState((state) => state);
@@ -20,7 +21,7 @@ export const Maintenances = () => {
   const { userId, logout } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
-  const [filters, setFilters] = useState<IFilter>(emptyFilters);
+  const [filters, setFilters] = useState<Filter>(emptyFilters);
   const [availableCategories, setAvailableCategories] = useState<AvailableFilter[]>([]);
 
   const [loading, setLoading] = useState(true);
