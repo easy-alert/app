@@ -1,8 +1,7 @@
 import { useNavigationState } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
-import { PageLayout } from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import type { RouteList } from "@/routes/navigation";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
@@ -69,7 +68,7 @@ export const Maintenances = () => {
   }, [logout, navigationState.index, navigationState.routes, userId, filters]);
 
   return (
-    <PageLayout>
+    <View style={styles.container}>
       <Navbar />
 
       {loading && <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />}
@@ -85,6 +84,6 @@ export const Maintenances = () => {
         />
       )}
       {!loading && <CreateOccasionalMaintenanceButton />}
-    </PageLayout>
+    </View>
   );
 };
