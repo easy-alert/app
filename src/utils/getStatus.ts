@@ -14,3 +14,22 @@ export const getStatus = (status: string): { color: string; label: string } => {
 
   return statusMap[status] || { color: "gray", label: "Desconhecido" };
 };
+
+export const maintenanceStatus = [
+  {
+    value: "expired",
+    label: "Vencida",
+  },
+  {
+    value: "pending",
+    label: "Pendente",
+  },
+  {
+    value: "completed",
+    label: "Concluída",
+  },
+  {
+    value: "overdue",
+    label: "Feita em atraso",
+  },
+];

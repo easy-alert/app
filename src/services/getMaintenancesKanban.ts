@@ -16,6 +16,7 @@ interface IGetMaintenancesKanban {
   };
 }
 
+// TODO: add return types
 export const getMaintenancesKanban = async ({ userId, filters }: IGetMaintenancesKanban) => {
   const params = {
     userId,
@@ -29,6 +30,7 @@ export const getMaintenancesKanban = async ({ userId, filters }: IGetMaintenance
     endDate: filters.endDate,
   };
 
+  // TODO: remover a barra
   const uri = "/company/maintenances/kanban";
 
   // Criar uma chave única para o cache com base na URI + parâmetros

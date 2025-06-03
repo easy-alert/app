@@ -5,37 +5,38 @@ import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
+import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type {
-  IAddHistoryActivityQueueItem,
-  IFinishMaintenanceQueueItem,
-  IOfflineQueueItem,
-  ISaveProgressQueueItem,
-  IUpdateProgressQueueItem,
-} from "@/types/IOfflineQueueItem";
+  AddHistoryActivityQueueItem,
+  FinishMaintenanceQueueItem,
+  OfflineQueueItem,
+  SaveProgressQueueItem,
+  UpdateProgressQueueItem,
+} from "@/types/utils/OfflineQueueItem";
 
 const OFFLINE_QUEUE_KEY = "offline_queue";
 
 let isSyncing = false;
 
-export const getOfflineQueue = async (): Promise<IOfflineQueueItem[]> => {
+export const getOfflineQueue = async (): Promise<OfflineQueueItem[]> => {
   const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
   return offlineQueueString ? JSON.parse(offlineQueueString) : [];
 };
 
-export const addItemToOfflineQueue = async (item: IOfflineQueueItem): Promise<void> => {
+export const addItemToOfflineQueue = async (item: OfflineQueueItem): Promise<void> => {
   const offlineQueue = await getOfflineQueue();
   offlineQueue.push(item);
   await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 };
 
 export const syncOfflineQueue = async (): Promise<void> => {
-  if (isSyncing) {
-    return;
-  }
-
-  isSyncing = true;
-
   try {
+    if (isSyncing) {
+      return;
+    }
+
+    isSyncing = true;
+
     const offlineQueue = await getOfflineQueue();
 
     while (offlineQueue.length > 0) {
@@ -75,20 +76,23 @@ export const syncOfflineQueue = async (): Promise<void> => {
   }
 };
 
-const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem): Promise<void> => {
-  const filesUploaded = [];
+const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promise<void> => {
+  const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.files) {
+  for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
       uri: file.uri,
       type: file.type,
-      name: file.originalName,
+      name: file.name,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     filesUploaded.push({
-      originalName: file.originalName,
+      name: file.name,
       url: fileUrl,
-      type: file.type,
     });
   }
 
@@ -96,40 +100,50 @@ const syncAddHistoryActivity = async (item: IAddHistoryActivityQueueItem): Promi
     maintenanceId: item.maintenanceId,
     userId: item.userId,
     content: item.comment,
-    uploadedFile: filesUploaded,
+    filesUploaded: filesUploaded.map((file) => ({
+      originalName: file.name,
+      name: file.name,
+      url: file.url,
+    })),
   });
 };
 
-const syncSaveProgress = async (item: ISaveProgressQueueItem): Promise<void> => {
-  const filesUploaded = [];
+const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
+  const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.files) {
+  for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
       uri: file.uri,
       type: file.type,
-      name: file.originalName,
+      name: file.name,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     filesUploaded.push({
-      originalName: file.originalName,
+      name: file.name,
       url: fileUrl,
-      name: file.originalName,
     });
   }
 
-  const imagesUploaded = [];
+  const imagesUploaded: IRemoteFile[] = [];
 
-  for (const image of item.images) {
+  for (const image of item.localImages) {
     const fileUrl = await uploadFile({
       uri: image.uri,
       type: image.type,
-      name: image.originalName,
+      name: image.name,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     imagesUploaded.push({
-      originalName: image.originalName,
+      name: image.name,
       url: fileUrl,
-      name: image.originalName,
     });
   }
 
@@ -141,12 +155,20 @@ const syncSaveProgress = async (item: ISaveProgressQueueItem): Promise<void> => 
       cost: item.cost,
       observation: "",
     },
-    files: filesUploaded,
-    images: imagesUploaded,
+    files: [...filesUploaded, ...item.remoteFiles].map((file) => ({
+      originalName: file.name,
+      name: file.name,
+      url: file.url,
+    })),
+    images: [...imagesUploaded, ...item.remoteImages].map((image) => ({
+      originalName: image.name,
+      name: image.name,
+      url: image.url,
+    })),
   });
 };
 
-const syncUpdateProgress = async (item: IUpdateProgressQueueItem): Promise<void> => {
+const syncUpdateProgress = async (item: UpdateProgressQueueItem): Promise<void> => {
   await updateMaintenanceProgress({
     maintenanceHistoryId: item.maintenanceId,
     inProgressChange: item.inProgressChange,
@@ -155,35 +177,42 @@ const syncUpdateProgress = async (item: IUpdateProgressQueueItem): Promise<void>
   });
 };
 
-const syncFinishMaintenance = async (item: IFinishMaintenanceQueueItem): Promise<void> => {
-  const filesUploaded = [];
+const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<void> => {
+  const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.files) {
+  for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
       uri: file.uri,
       type: file.type,
-      name: file.originalName,
+      name: file.name,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     filesUploaded.push({
-      originalName: file.originalName,
+      name: file.name,
       url: fileUrl,
-      name: file.originalName,
     });
   }
 
-  const imagesUploaded = [];
-  for (const image of item.images) {
+  const imagesUploaded: IRemoteFile[] = [];
+
+  for (const image of item.localImages) {
     const fileUrl = await uploadFile({
       uri: image.uri,
       type: image.type,
-      name: image.originalName,
+      name: image.name,
     });
 
+    if (!fileUrl) {
+      continue;
+    }
+
     imagesUploaded.push({
-      originalName: image.originalName,
+      name: image.name,
       url: fileUrl,
-      name: image.originalName,
     });
   }
 
@@ -195,7 +224,15 @@ const syncFinishMaintenance = async (item: IFinishMaintenanceQueueItem): Promise
       cost: item.cost,
       observation: "",
     },
-    files: filesUploaded,
-    images: imagesUploaded,
+    files: [...filesUploaded, ...item.remoteFiles].map((file) => ({
+      originalName: file.name,
+      name: file.name,
+      url: file.url,
+    })),
+    images: [...imagesUploaded, ...item.remoteImages].map((image) => ({
+      originalName: image.name,
+      name: image.name,
+      url: image.url,
+    })),
   });
 };

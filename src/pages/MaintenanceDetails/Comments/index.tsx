@@ -8,8 +8,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
+import { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
+import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 import { openFilePicker } from "@/utils/openFilePicker";
 
@@ -25,7 +26,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
 
-  const [localFiles, setLocalFiles] = useState<ILocalFile[]>([]);
+  const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [comment, setComment] = useState(" ");
 
   const handleCreateMaintenanceActivity = async () => {
@@ -39,50 +40,46 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const uploadedFiles = [];
+    const filesUploaded: IRemoteFile[] = [];
 
     try {
       if (isConnected) {
-        // Handle file uploads when online
-        if (localFiles?.length > 0) {
-          for (const file of localFiles) {
-            const fileUrl = await uploadFile({
-              uri: file.url,
-              type: file.type!,
-              name: file.originalName!,
-            });
+        for (const file of localFiles) {
+          const fileUrl = await uploadFile({
+            uri: file.uri,
+            type: file.type,
+            name: file.name,
+          });
 
-            uploadedFiles.push({
-              originalName: file.originalName!,
-              url: fileUrl,
-              type: file.type!,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          filesUploaded.push({
+            name: file.name,
+            url: fileUrl,
+          });
         }
 
-        // If online, send data to the server
         await createMaintenanceHistoryActivity({
           maintenanceId,
           userId,
           content: comment,
-          uploadedFile: uploadedFiles,
+          filesUploaded: filesUploaded.map((file) => ({
+            originalName: file.name,
+            name: file.name,
+            url: file.url,
+          })),
         });
 
         await getMaintenanceHistoryActivities();
       } else {
-        // Include file metadata instead of uploading
-        const filesToQueue = localFiles.map((file) => ({
-          originalName: file.originalName,
-          uri: file.url,
-          type: file.type,
-        }));
-
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "addHistoryActivity",
           userId,
           maintenanceId,
           comment,
-          files: filesToQueue,
+          localFiles,
         };
 
         await addItemToOfflineQueue(newEntry);
@@ -124,12 +121,11 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         numberOfLines={4}
       />
 
-      {/* Renderização dos arquivos enviados */}
       <View style={styles.filesContainer}>
         {localFiles.map((file, index) => (
           <View key={index} style={styles.fileItem}>
             <View style={styles.fileDetailsContainer}>
-              <Text style={styles.fileNameLabel}>{file.originalName}</Text>
+              <Text style={styles.fileNameLabel}>{file.name}</Text>
             </View>
 
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleRemoveFile(index)}>

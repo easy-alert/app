@@ -6,8 +6,8 @@ import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
-import { IAvailableFilter } from "@/types/IAvailableFilter";
-import { maintenanceStatus } from "@/types/IMaintenanceStatus";
+import { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { maintenanceStatus } from "@/utils/getStatus";
 
 import { emptyFilters, IFilter } from "../utils";
 import { styles } from "./styles";
@@ -15,9 +15,9 @@ import { styles } from "./styles";
 interface FiltersProps {
   filters: IFilter;
   setFilters: (filters: IFilter) => void;
-  availableBuildings: IAvailableFilter[];
-  availableUsers: IAvailableFilter[];
-  availableCategories: IAvailableFilter[];
+  availableBuildings: AvailableFilter[];
+  availableUsers: AvailableFilter[];
+  availableCategories: AvailableFilter[];
 }
 
 export const Filters = ({

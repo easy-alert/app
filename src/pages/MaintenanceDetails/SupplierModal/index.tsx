@@ -6,7 +6,7 @@ import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
 import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
-import type { IMaintenanceSuppliers } from "@/types/IMaintenanceSuppliers";
+import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
 
 import { styles } from "./styles";
 
