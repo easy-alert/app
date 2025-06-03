@@ -1,6 +1,7 @@
 export interface LocalFile {
+  // TODO: remover o originalName ou name
   originalName: string;
   name: string;
-  url: string; // TODO: trocar de url para uri
+  uri: string;
   type: string;
 }

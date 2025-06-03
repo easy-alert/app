@@ -81,7 +81,7 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
 
   for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
-      uri: file.url,
+      uri: file.uri,
       type: file.type,
       name: file.originalName,
     });
@@ -110,7 +110,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 
   for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
-      uri: file.url,
+      uri: file.uri,
       type: file.type,
       name: file.originalName,
     });
@@ -130,7 +130,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 
   for (const image of item.localImages) {
     const fileUrl = await uploadFile({
-      uri: image.url,
+      uri: image.uri,
       type: image.type,
       name: image.originalName,
     });
@@ -173,7 +173,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
 
   for (const file of item.localFiles) {
     const fileUrl = await uploadFile({
-      uri: file.url,
+      uri: file.uri,
       type: file.type,
       name: file.originalName,
     });
@@ -193,7 +193,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
 
   for (const image of item.localImages) {
     const fileUrl = await uploadFile({
-      uri: image.url,
+      uri: image.uri,
       type: image.type,
       name: image.originalName,
     });

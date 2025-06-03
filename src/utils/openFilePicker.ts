@@ -82,7 +82,7 @@ const pickDocuments = async (): Promise<LocalFile[]> => {
 
   return documents.assets.map((file) => ({
     originalName: file.name,
-    url: file.uri,
+    uri: file.uri,
     name: file.name,
     type: file.mimeType || "application/octet-stream",
   }));
@@ -155,7 +155,7 @@ const compressImages = async (imagePickerResult: ImagePicker.ImagePickerResult):
 
     images.push({
       originalName: name,
-      url: compressedImageUri,
+      uri: compressedImageUri,
       name,
       type: "image/jpeg",
     });

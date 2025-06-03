@@ -92,7 +92,7 @@ export const Attachments = ({
         <View style={styles.fileList}>
           {/* TODO: deixar com uma cor diferente quando for local e remover o openURL */}
           {localFiles.map((file, index) => (
-            <TouchableOpacity key={index} onPress={async () => Linking.openURL(file.url)}>
+            <TouchableOpacity key={index} onPress={async () => Linking.openURL(file.uri)}>
               <View style={styles.fileItem}>
                 <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
                   {file.originalName}
@@ -136,8 +136,8 @@ export const Attachments = ({
           {/* TODO: deixar com uma cor diferente quando for local e remover o openURL */}
           {localImages.map((image, index) => (
             <View key={index} style={styles.fileItem}>
-              <TouchableOpacity onPress={() => Linking.openURL(image.url)}>
-                <Image source={{ uri: image.url }} style={styles.previewImage} />
+              <TouchableOpacity onPress={() => Linking.openURL(image.uri)}>
+                <Image source={{ uri: image.uri }} style={styles.previewImage} />
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => handleRemoveLocalImage(index)}>

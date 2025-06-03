@@ -91,7 +91,7 @@ export const CallToActions = ({
       if (isConnected) {
         for (const file of localFiles) {
           const fileUrl = await uploadFile({
-            uri: file.url,
+            uri: file.uri,
             type: file.type,
             name: file.originalName,
           });
@@ -109,7 +109,7 @@ export const CallToActions = ({
 
         for (const image of localImages) {
           const fileUrl = await uploadFile({
-            uri: image.url,
+            uri: image.uri,
             type: image.type,
             name: image.originalName,
           });
@@ -177,7 +177,7 @@ export const CallToActions = ({
       if (isConnected) {
         for (const file of localFiles) {
           const fileUrl = await uploadFile({
-            uri: file.url,
+            uri: file.uri,
             type: file.type,
             name: file.originalName,
           });
@@ -195,7 +195,7 @@ export const CallToActions = ({
 
         for (const image of localImages) {
           const fileUrl = await uploadFile({
-            uri: image.url,
+            uri: image.uri,
             type: image.type,
             name: image.originalName,
           });
