@@ -2,7 +2,7 @@ import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { OfflineBadge } from "../OfflineBadge";
+import { OfflineBadge } from "@/components/OfflineBadge";
 
 interface MainLayoutProps {
   children: React.ReactNode;

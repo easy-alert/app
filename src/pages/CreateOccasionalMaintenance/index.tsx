@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
-import { PageWithHeaderLayout } from "@/components/PageWithHeaderLayout";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import type { ProtectedNavigation } from "@/routes/navigation";
 
 import { Form } from "./Form";

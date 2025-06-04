@@ -1,7 +1,7 @@
 import { FlatList, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { PageWithHeaderLayout } from "@/components/PageWithHeaderLayout";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { styles } from "./styles";

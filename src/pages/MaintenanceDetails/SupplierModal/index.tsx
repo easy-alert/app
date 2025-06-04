@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { PageWithHeaderLayout } from "@/components/PageWithHeaderLayout";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
 import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
