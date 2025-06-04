@@ -18,7 +18,7 @@ import { styles } from "./styles";
 export const Maintenances = () => {
   const navigationState = useNavigationState((state) => state);
 
-  const { userId, logout } = useAuth();
+  const { userId } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
   const [filters, setFilters] = useState<Filter>(emptyFilters);
@@ -63,7 +63,7 @@ export const Maintenances = () => {
     if (toRefreshData) {
       handleGetKanbanData();
     }
-  }, [logout, navigationState.index, navigationState.routes, userId, filters]);
+  }, [navigationState.index, navigationState.routes, userId, filters]);
 
   return (
     <View style={styles.container}>

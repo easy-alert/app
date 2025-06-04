@@ -12,19 +12,19 @@ interface NavbarDrawerProps {
 }
 
 export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
-  const handleLogout = async () => {
-    await logout();
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
     toggleOpen();
   };
 
   const buttons = [
     {
       label: "Sair",
-      action: handleLogout,
+      action: handleSignOut,
     },
   ];
-
-  const { logout } = useAuth();
 
   return (
     <Modal visible={open} animationType="slide" onRequestClose={toggleOpen} statusBarTranslucent>

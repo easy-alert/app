@@ -13,7 +13,7 @@ interface AuthContextData {
   isAuthenticated: boolean | undefined;
   userId: string;
   signIn: (phone: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  signOut: () => Promise<void>;
   recoverPassword: (email: string) => Promise<MutationResponse>;
 }
 
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const pushNotificationToken = await getPushNotificationToken();
       const deviceId = await getDeviceId();
 
-      const response = await signIn({
+      const { success, data } = await signIn({
         phone,
         password,
         pushNotificationToken,
@@ -67,23 +67,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         os: Platform.OS,
       });
 
-      if (!response || !response.user || !response.user.id) {
+      if (!success) {
         setIsAuthenticated(false);
         return;
       }
 
-      await AsyncStorage.setItem("userId", response.user.id);
-      await AsyncStorage.setItem("authToken", response.authToken);
-      await AsyncStorage.setItem("buildingsList", JSON.stringify(response.user.UserBuildingsPermissions));
+      await AsyncStorage.setItem("userId", data.user.id);
+      await AsyncStorage.setItem("authToken", data.authToken);
+      await AsyncStorage.setItem("buildingsList", JSON.stringify(data.user.UserBuildingsPermissions));
 
-      setUserId(response.user.id);
+      setUserId(data.user.id);
       setIsAuthenticated(true);
     } catch {
       setIsAuthenticated(false);
     }
   };
 
-  const logout = async () => {
+  const signOut = async () => {
     setIsAuthenticated(false);
     await AsyncStorage.clear();
   };
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAuthenticated,
         userId: userId || "",
         signIn: handleSignIn,
-        logout,
+        signOut,
         recoverPassword: handleRecoverPassword,
       }}
     >

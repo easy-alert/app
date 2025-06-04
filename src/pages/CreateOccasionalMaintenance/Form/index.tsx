@@ -184,6 +184,7 @@ export const Form = () => {
         },
       });
 
+      // TODO: padronizar
       if (responseData?.ServerMessage.statusCode === 200) {
         navigation.replace("MaintenanceDetails", {
           maintenanceId: responseData.maintenance.id,

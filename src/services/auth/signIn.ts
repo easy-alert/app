@@ -1,8 +1,7 @@
-import { Alert } from "react-native";
-
 import type { IUser } from "@/types/api/IUser";
 import type { ApiError } from "@/types/utils/ApiError";
-import { alertMessage, catchHandler } from "@/utils/alerts";
+import { MutationResponse } from "@/types/utils/MutationResponse";
+import { catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
 
@@ -14,27 +13,19 @@ interface ISignIn {
   os: string;
 }
 
+interface ISignInResponse {
+  user: IUser;
+  authToken: string;
+}
+
 export const signIn = async ({
   phone,
   password,
   pushNotificationToken,
   deviceId,
   os,
-}: ISignIn): Promise<{
-  user: IUser;
-  authToken: string;
-} | null> => {
+}: ISignIn): Promise<MutationResponse<ISignInResponse>> => {
   try {
-    // TODO: essa validação não deve ser feita aqui, e sim anteriormente
-    if (!phone || !password) {
-      alertMessage({
-        type: "error",
-        message: "Por favor, insira um número de telefone e senha válidos.",
-      });
-
-      return null;
-    }
-
     const body = {
       login: phone,
       password,
@@ -43,14 +34,12 @@ export const signIn = async ({
       os,
     };
 
-    const response = await baseApi.post("/mobile/auth/login", body);
+    const response = await baseApi.post<ISignInResponse>("/mobile/auth/login", body);
 
-    if (response.data.error) {
-      Alert.alert("Erro", response.data.error);
-      return null;
-    }
-
-    return response.data;
+    return {
+      success: true,
+      data: response.data,
+    };
   } catch (error: any) {
     const response = error.response as ApiError;
 
@@ -58,6 +47,9 @@ export const signIn = async ({
       message: response?.data?.ServerMessage?.message,
     });
 
-    return null;
+    return {
+      success: false,
+      data: null,
+    };
   }
 };

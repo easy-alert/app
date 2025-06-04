@@ -64,17 +64,16 @@ export const Login = () => {
       return;
     }
 
-    setIsSigningIn(true);
-
-    try {
-      const cleanedPhone = phoneNumber.replace(/\D/g, "");
-      await signIn(cleanedPhone, password);
-    } catch (error) {
-      console.error("Erro ao autenticar:", error);
-      Alert.alert("Erro", "Número inválido ou não cadastrado");
-    } finally {
-      setIsSigningIn(false);
+    if (!password) {
+      Alert.alert("Erro", "Por favor, insira uma senha válida.");
+      return;
     }
+
+    const cleanedPhone = phoneNumber.replace(/\D/g, "");
+
+    setIsSigningIn(true);
+    await signIn(cleanedPhone, password);
+    setIsSigningIn(false);
   };
 
   return (
