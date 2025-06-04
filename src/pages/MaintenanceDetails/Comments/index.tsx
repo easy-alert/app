@@ -5,13 +5,13 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
 import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/uploadFile";
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 import { openFilePicker } from "@/utils/openFilePicker";
 
 import { styles } from "./styles";
@@ -25,9 +25,10 @@ interface CommentsProps {
 export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActivities }: CommentsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
+  const { addItem } = useOfflineQueue();
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
-  const [comment, setComment] = useState(" ");
+  const [comment, setComment] = useState(" "); // TODO: remover espaço em branco.
 
   const handleCreateMaintenanceActivity = async () => {
     if (!comment) {
@@ -82,7 +83,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           localFiles,
         };
 
-        await addItemToOfflineQueue(newEntry);
+        await addItem(newEntry);
 
         navigation.goBack();
       }

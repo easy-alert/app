@@ -14,6 +14,8 @@ import type {
   UpdateProgressQueueItem,
 } from "@/types/utils/OfflineQueueItem";
 
+import { retry } from "./retry";
+
 const OFFLINE_QUEUE_KEY = "offline_queue";
 
 let isSyncing = false;
@@ -44,29 +46,33 @@ export const syncOfflineQueue = async (): Promise<void> => {
       const currentItem = offlineQueue.shift()!;
 
       try {
-        switch (currentItem.type) {
-          case "addHistoryActivity":
-            await syncAddHistoryActivity(currentItem);
-            break;
-          case "saveProgress":
-            await syncSaveProgress(currentItem);
-            break;
-          case "updateProgress":
-            await syncUpdateProgress(currentItem);
-            break;
-          case "finishMaintenance":
-            await syncFinishMaintenance(currentItem);
-            break;
-        }
+        await retry(async () => {
+          switch (currentItem.type) {
+            case "addHistoryActivity":
+              await syncAddHistoryActivity(currentItem);
+              break;
+            case "saveProgress":
+              await syncSaveProgress(currentItem);
+              break;
+            case "updateProgress":
+              await syncUpdateProgress(currentItem);
+              break;
+            case "finishMaintenance":
+              await syncFinishMaintenance(currentItem);
+              break;
+          }
+        });
 
         // Save the updated queue after successful sync
         await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
       } catch (error) {
         console.error("Failed to sync offline queue item:", error);
+
         // Re-add the item to the queue if it fails
         offlineQueue.push(currentItem);
+
         await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
-        break; // Exit the loop on failure to avoid endless retries
+        break;
       }
     }
   } catch (error) {
