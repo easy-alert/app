@@ -9,13 +9,13 @@ export const getUsers = async (buildingId?: string) => {
     checkPerms: false,
   };
 
-  const uri = `company/list/users`;
+  const url = "/company/list/users";
 
   // Criar uma chave única para o cache com base na URI + parâmetros
-  const cacheKey = `${uri}?${new URLSearchParams(params as any).toString()}`;
+  const cacheKey = `${url}?${new URLSearchParams(params as any).toString()}`;
 
   try {
-    const response = await baseApi.get(uri, { params });
+    const response = await baseApi.get(url, { params });
 
     await AsyncStorage.setItem(cacheKey, JSON.stringify(response.data));
 

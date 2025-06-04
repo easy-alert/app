@@ -11,19 +11,19 @@ interface IGetSuppliersForMaintenance {
 export const getSuppliersForMaintenance = async ({
   maintenanceId,
 }: IGetSuppliersForMaintenance): Promise<IMaintenanceSuppliers | null> => {
-  const uri = `company/suppliers/to-select/${maintenanceId}`;
+  const url = `/company/suppliers/to-select/${maintenanceId}`;
 
   try {
-    const response = await baseApi.get<IMaintenanceSuppliers>(uri);
+    const response = await baseApi.get<IMaintenanceSuppliers>(url);
 
-    await AsyncStorage.setItem(uri, JSON.stringify(response.data));
+    await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data; // Retorna os dados mais recentes
   } catch (error) {
     console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getSuppliersForMaintenance):", error);
 
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         return JSON.parse(cachedData) as IMaintenanceSuppliers;

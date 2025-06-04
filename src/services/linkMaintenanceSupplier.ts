@@ -14,16 +14,14 @@ export const linkMaintenanceSupplier = async ({
   supplierId,
   userId,
 }: ILinkMaintenanceSupplier): Promise<void> => {
-  const uri = `company/suppliers/link-to-maintenance-history`;
-
-  const body = {
-    maintenanceHistoryId: maintenanceId,
-    supplierId,
-    userId,
-  };
-
   try {
-    const response = await baseApi.post(uri, body);
+    const body = {
+      maintenanceHistoryId: maintenanceId,
+      supplierId,
+      userId,
+    };
+
+    const response = await baseApi.post("/company/suppliers/link-to-maintenance-history", body);
 
     alertMessage({
       type: "success",

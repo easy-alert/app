@@ -10,16 +10,13 @@ interface IRecoverPassword {
 }
 
 export const recoverPassword = async ({ email }: IRecoverPassword): Promise<{ success: boolean }> => {
-  // TODO: remover a barra
-  const url = `/company/passwordrecovery/sendemail`;
-
-  const body = {
-    email,
-    link: "https://company.easyalert.com.br/passwordrecovery/change",
-  };
-
   try {
-    const response = await baseApi.post(url, body);
+    const body = {
+      email,
+      link: "https://company.easyalert.com.br/passwordrecovery/change",
+    };
+
+    const response = await baseApi.post("/company/passwordrecovery/sendemail", body);
 
     if (response.data.error) {
       Alert.alert("Erro", response.data.error);

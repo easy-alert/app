@@ -11,19 +11,19 @@ interface IGetMaintenanceDetails {
 export const getMaintenanceDetails = async ({
   maintenanceHistoryId,
 }: IGetMaintenanceDetails): Promise<IMaintenance | null> => {
-  const uri = `company/maintenances/list/details/${maintenanceHistoryId}`;
+  const url = `/company/maintenances/list/details/${maintenanceHistoryId}`;
 
   try {
-    const response = await baseApi.get<IMaintenance>(uri);
+    const response = await baseApi.get<IMaintenance>(url);
 
-    await AsyncStorage.setItem(uri, JSON.stringify(response.data));
+    await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data;
   } catch (error: any) {
     console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceDetails):", error);
 
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         return JSON.parse(cachedData) as IMaintenance;

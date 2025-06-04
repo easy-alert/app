@@ -5,19 +5,19 @@ import type { IStableVersion } from "@/types/api/IStableVersion";
 import { baseApi } from "./baseApi";
 
 export const getAppStableVersion = async (): Promise<IStableVersion | null> => {
-  const uri = `mobile/version`;
+  const url = "/mobile/version";
 
   try {
-    const response = await baseApi.get<IStableVersion>(uri);
+    const response = await baseApi.get<IStableVersion>(url);
 
-    await AsyncStorage.setItem(uri, JSON.stringify(response.data));
+    await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data;
   } catch (error: any) {
     console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getStableVersion):", error);
 
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         console.log("Carregando dados do cache");

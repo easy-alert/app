@@ -5,11 +5,10 @@ import type { ICategory } from "@/types/api/ICategory";
 import { baseApi } from "./baseApi";
 
 export const getCategories = async (): Promise<ICategory[]> => {
-  // TODO: remover a barra
-  const uri = `company/buildings/maintenances/occasional/auxiliarydata/`;
+  const url = "/company/buildings/maintenances/occasional/auxiliarydata";
 
   try {
-    const response = await baseApi.get(uri);
+    const response = await baseApi.get(url);
 
     // Verifica se Categories existe e é uma lista
     if (!Array.isArray(response.data?.Categories)) {
@@ -20,7 +19,7 @@ export const getCategories = async (): Promise<ICategory[]> => {
     const categories: ICategory[] = response.data.Categories;
 
     // Salva no cache
-    await AsyncStorage.setItem(uri, JSON.stringify(categories));
+    await AsyncStorage.setItem(url, JSON.stringify(categories));
     console.log("Categorias armazenadas no cache:");
 
     return categories;
@@ -29,7 +28,7 @@ export const getCategories = async (): Promise<ICategory[]> => {
 
     // Tenta carregar os dados do cache
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         console.log("Carregando dados do cache");

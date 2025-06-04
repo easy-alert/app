@@ -16,17 +16,15 @@ export const updateMaintenanceDueDate = async ({
   status,
   showToResident,
 }: IUpdateMaintenanceDueDate): Promise<{ success: boolean }> => {
-  const uri = `company/maintenances/history/edit`;
-
-  const body = {
-    maintenanceHistoryId: id,
-    dueDate,
-    maintenanceStatus: status,
-    showToResident,
-  };
-
   try {
-    const response = await baseApi.put(uri, body);
+    const body = {
+      maintenanceHistoryId: id,
+      dueDate,
+      maintenanceStatus: status,
+      showToResident,
+    };
+
+    const response = await baseApi.put("/company/maintenances/history/edit", body);
 
     alertMessage({
       type: "success",

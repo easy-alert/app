@@ -7,12 +7,12 @@ interface IGetMaintenanceReportProgress {
 }
 
 export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGetMaintenanceReportProgress) => {
-  const uri = `company/maintenances/list/report/progress/${maintenanceHistoryId}`;
+  const url = `/company/maintenances/list/report/progress/${maintenanceHistoryId}`;
 
   try {
-    const response = await baseApi.get(uri);
+    const response = await baseApi.get(url);
 
-    await AsyncStorage.setItem(uri, JSON.stringify(response.data));
+    await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data;
   } catch (error: any) {
@@ -22,7 +22,7 @@ export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGe
     );
 
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         return JSON.parse(cachedData);

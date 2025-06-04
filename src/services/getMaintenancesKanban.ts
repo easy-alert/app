@@ -30,14 +30,13 @@ export const getMaintenancesKanban = async ({ userId, filters }: IGetMaintenance
     endDate: filters.endDate,
   };
 
-  // TODO: remover a barra
-  const uri = "/company/maintenances/kanban";
+  const url = "/company/maintenances/kanban";
 
   // Criar uma chave única para o cache com base na URI + parâmetros
-  const cacheKey = `${uri}?${new URLSearchParams(params as any).toString()}`;
+  const cacheKey = `${url}?${new URLSearchParams(params as any).toString()}`;
 
   try {
-    const response = await baseApi.get(uri, { params });
+    const response = await baseApi.get(url, { params });
 
     await AsyncStorage.setItem(cacheKey, JSON.stringify(response.data));
 

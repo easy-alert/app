@@ -43,50 +43,48 @@ export const createOccasionalMaintenance = async ({
   occasionalMaintenanceType,
   occasionalMaintenanceData,
 }: ICreateOccasionalMaintenance) => {
-  const {
-    buildingId,
-    executionDate,
-    categoryData,
-    reportData,
-    inProgress,
-    element,
-    activity,
-    responsible,
-    priorityName,
-    users,
-  } = occasionalMaintenanceData;
-
-  const uri = "company/buildings/reports/occasional/create";
-
-  const body = {
-    origin,
-    occasionalMaintenanceType,
-    buildingId: buildingId || null,
-    executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
-    userId,
-    priorityName: priorityName || "low",
-    categoryData: {
-      id: categoryData.id || null,
-      name: categoryData.name || null,
-    },
-    maintenanceData: {
-      element: element || null,
-      activity: activity || null,
-      responsible: responsible || null,
-    },
-    inProgress,
-    reportData: {
-      cost: unMaskBRL(reportData.cost) || null,
-      observation: reportData.observation || null,
-      files: [],
-      images: [],
-    },
-
-    usersId: users,
-  };
-
   try {
-    const response = await baseApi.post(uri, body);
+    const {
+      buildingId,
+      executionDate,
+      categoryData,
+      reportData,
+      inProgress,
+      element,
+      activity,
+      responsible,
+      priorityName,
+      users,
+    } = occasionalMaintenanceData;
+
+    const body = {
+      origin,
+      occasionalMaintenanceType,
+      buildingId: buildingId || null,
+      executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
+      userId,
+      priorityName: priorityName || "low",
+      categoryData: {
+        id: categoryData.id || null,
+        name: categoryData.name || null,
+      },
+      maintenanceData: {
+        element: element || null,
+        activity: activity || null,
+        responsible: responsible || null,
+      },
+      inProgress,
+      reportData: {
+        cost: unMaskBRL(reportData.cost) || null,
+        observation: reportData.observation || null,
+        files: [],
+        images: [],
+      },
+
+      usersId: users,
+    };
+
+    const response = await baseApi.post("/company/buildings/reports/occasional/create", body);
 
     alertMessage({
       type: "success",

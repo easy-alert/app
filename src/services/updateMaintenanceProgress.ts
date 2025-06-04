@@ -16,20 +16,18 @@ export const updateMaintenanceProgress = async ({
   maintenanceHistoryId,
   inProgressChange,
 }: IUpdateMaintenanceProgress): Promise<void> => {
-  const uri = `company/maintenances/set/in-progress`;
-
-  const params = {
-    syndicNanoId,
-  };
-
-  const body = {
-    userId,
-    maintenanceHistoryId,
-    inProgressChange,
-  };
-
   try {
-    const response = await baseApi.post(uri, body, { params });
+    const params = {
+      syndicNanoId,
+    };
+
+    const body = {
+      userId,
+      maintenanceHistoryId,
+      inProgressChange,
+    };
+
+    const response = await baseApi.post("/company/maintenances/set/in-progress", body, { params });
 
     alertMessage({
       type: "success",

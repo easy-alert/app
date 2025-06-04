@@ -35,7 +35,7 @@ export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<IUpl
       name,
     } as any);
 
-    const response = await baseApi.post<RequestResponse>("company/upload/file", formData, {
+    const response = await baseApi.post<RequestResponse>("/company/upload/file", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

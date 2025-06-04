@@ -8,12 +8,12 @@ interface IGetMaintenanceHistorySupplier {
 
 // TODO: add return types
 export const getMaintenanceHistorySupplier = async ({ maintenanceHistoryId }: IGetMaintenanceHistorySupplier) => {
-  const uri = `company/suppliers/selected/${maintenanceHistoryId}`;
+  const url = `/company/suppliers/selected/${maintenanceHistoryId}`;
 
   try {
-    const response = await baseApi.get(uri);
+    const response = await baseApi.get(url);
 
-    await AsyncStorage.setItem(uri, JSON.stringify(response.data));
+    await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data;
   } catch (error) {
@@ -23,7 +23,7 @@ export const getMaintenanceHistorySupplier = async ({ maintenanceHistoryId }: IG
     );
 
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         return JSON.parse(cachedData);

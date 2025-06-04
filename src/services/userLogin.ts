@@ -25,29 +25,26 @@ export const userLogin = async ({
   user: IUser;
   authToken: string;
 } | null> => {
-  // TODO: essa validação não deve ser feita aqui, e sim anteriormente
-  if (!login || !password) {
-    alertMessage({
-      type: "error",
-      message: "Por favor, insira um número de telefone e senha válidos.",
-    });
-
-    return null;
-  }
-
-  // TODO: remover a barra
-  const url = `/mobile/auth/login`;
-
-  const body = {
-    login,
-    password,
-    pushNotificationToken,
-    deviceId,
-    os,
-  };
-
   try {
-    const response = await baseApi.post(url, body);
+    // TODO: essa validação não deve ser feita aqui, e sim anteriormente
+    if (!login || !password) {
+      alertMessage({
+        type: "error",
+        message: "Por favor, insira um número de telefone e senha válidos.",
+      });
+
+      return null;
+    }
+
+    const body = {
+      login,
+      password,
+      pushNotificationToken,
+      deviceId,
+      os,
+    };
+
+    const response = await baseApi.post("/mobile/auth/login", body);
 
     if (response.data.error) {
       Alert.alert("Erro", response.data.error);

@@ -14,16 +14,14 @@ export const unlinkMaintenanceSupplier = async ({
   supplierId,
   userId,
 }: IUnlinkMaintenanceSupplier): Promise<void> => {
-  const uri = `company/suppliers/unlink-to-maintenance-history`;
-
-  const body = {
-    maintenanceHistoryId,
-    supplierId,
-    userId,
-  };
-
   try {
-    const response = await baseApi.post(uri, body);
+    const body = {
+      maintenanceHistoryId,
+      supplierId,
+      userId,
+    };
+
+    const response = await baseApi.post("/company/suppliers/unlink-to-maintenance-history", body);
 
     alertMessage({
       type: "success",

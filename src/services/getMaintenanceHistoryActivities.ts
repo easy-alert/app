@@ -11,12 +11,12 @@ interface IGetMaintenanceHistoryActivities {
 export const getMaintenanceHistoryActivities = async ({
   maintenanceHistoryId,
 }: IGetMaintenanceHistoryActivities): Promise<IMaintenanceHistoryActivities | null> => {
-  const uri = `company/maintenance-history-activities/${maintenanceHistoryId}`;
+  const url = `/company/maintenance-history-activities/${maintenanceHistoryId}`;
 
   try {
-    const response = await baseApi.get<IMaintenanceHistoryActivities>(uri);
+    const response = await baseApi.get<IMaintenanceHistoryActivities>(url);
 
-    await AsyncStorage.setItem(uri, JSON.stringify(response.data));
+    await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data;
   } catch (error) {
@@ -26,7 +26,7 @@ export const getMaintenanceHistoryActivities = async ({
     );
 
     try {
-      const cachedData = await AsyncStorage.getItem(uri);
+      const cachedData = await AsyncStorage.getItem(url);
 
       if (cachedData) {
         return JSON.parse(cachedData) as IMaintenanceHistoryActivities;

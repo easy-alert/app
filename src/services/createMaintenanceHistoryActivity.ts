@@ -20,17 +20,15 @@ export const createMaintenanceHistoryActivity = async ({
   content,
   filesUploaded,
 }: ICreateMaintenanceHistoryActivity): Promise<void> => {
-  const uri = `company/maintenance-history-activities`;
-
-  const body = {
-    maintenanceHistoryId: maintenanceId,
-    userId,
-    content,
-    images: filesUploaded,
-  };
-
   try {
-    const response = await baseApi.post(uri, body);
+    const body = {
+      maintenanceHistoryId: maintenanceId,
+      userId,
+      content,
+      images: filesUploaded,
+    };
+
+    const response = await baseApi.post("/company/maintenance-history-activities", body);
 
     alertMessage({
       type: "success",

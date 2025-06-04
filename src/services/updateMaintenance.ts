@@ -31,23 +31,21 @@ export const updateMaintenance = async ({
   files,
   images,
 }: IUpdateMaintenance): Promise<void> => {
-  const uri = `company/maintenances/create/report/progress`;
-
-  const params = {
-    syndicNanoId,
-  };
-
-  const body = {
-    userId,
-    maintenanceHistoryId,
-    cost: maintenanceReport.cost,
-    observation: maintenanceReport.observation !== "" ? maintenanceReport.observation : null,
-    ReportAnnexes: files,
-    ReportImages: images,
-  };
-
   try {
-    const response = await baseApi.post(uri, body, { params });
+    const params = {
+      syndicNanoId,
+    };
+
+    const body = {
+      userId,
+      maintenanceHistoryId,
+      cost: maintenanceReport.cost,
+      observation: maintenanceReport.observation !== "" ? maintenanceReport.observation : null,
+      ReportAnnexes: files,
+      ReportImages: images,
+    };
+
+    const response = await baseApi.post("/company/maintenances/create/report/progress", body, { params });
 
     alertMessage({
       type: "success",
