@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
+import { storageKeys } from "@/utils/storageKeys";
+
 export const baseApi = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL ?? "https://easyalert-production.herokuapp.com/api",
 
@@ -12,7 +14,7 @@ export const baseApi = axios.create({
 
 baseApi.interceptors.request.use(
   async (config) => {
-    const token = await AsyncStorage.getItem("authToken");
+    const token = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
 
     if (token) {
       config.headers.authorization = `Bearer ${token}`;

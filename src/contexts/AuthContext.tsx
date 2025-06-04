@@ -8,6 +8,7 @@ import { signIn } from "@/services/auth/signIn";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
+import { storageKeys } from "@/utils/storageKeys";
 
 interface AuthContextData {
   isAuthenticated: boolean | undefined;
@@ -26,9 +27,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const verifyStorageAuth = async () => {
       try {
-        const userId = await AsyncStorage.getItem("userId");
-        const authToken = await AsyncStorage.getItem("authToken");
-        const buildingsList = await AsyncStorage.getItem("buildingsList");
+        const userId = await AsyncStorage.getItem(storageKeys.USER_ID_KEY);
+        const authToken = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
+        const buildingsList = await AsyncStorage.getItem(storageKeys.BUILDINGS_LIST_KEY);
 
         if (!userId || !authToken || !buildingsList) {
           setIsAuthenticated(false);
@@ -72,9 +73,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      await AsyncStorage.setItem("userId", data.user.id);
-      await AsyncStorage.setItem("authToken", data.authToken);
-      await AsyncStorage.setItem("buildingsList", JSON.stringify(data.user.UserBuildingsPermissions));
+      await AsyncStorage.setItem(storageKeys.USER_ID_KEY, data.user.id);
+      await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, data.authToken);
+      await AsyncStorage.setItem(storageKeys.BUILDINGS_LIST_KEY, JSON.stringify(data.user.UserBuildingsPermissions));
 
       setUserId(data.user.id);
       setIsAuthenticated(true);

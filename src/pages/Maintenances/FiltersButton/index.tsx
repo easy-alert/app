@@ -8,6 +8,7 @@ import { getUsers } from "@/services/queries/getUsers";
 import { IAuthUser } from "@/types/api/IAuthUser";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";
+import { storageKeys } from "@/utils/storageKeys";
 
 import { Filters } from "../Filters";
 import { styles } from "./styles";
@@ -48,7 +49,7 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
 
     const getAvailableBuildings = async () => {
       try {
-        const storageBuildings = await AsyncStorage.getItem("buildingsList");
+        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDINGS_LIST_KEY);
 
         if (!storageBuildings) {
           throw new Error("Nenhum prédio encontrado.");

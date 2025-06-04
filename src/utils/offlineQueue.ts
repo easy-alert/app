@@ -15,20 +15,19 @@ import type {
 } from "@/types/utils/OfflineQueueItem";
 
 import { retry } from "./retry";
-
-const OFFLINE_QUEUE_KEY = "offline_queue";
+import { storageKeys } from "./storageKeys";
 
 let isSyncing = false;
 
 export const getOfflineQueue = async (): Promise<OfflineQueueItem[]> => {
-  const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+  const offlineQueueString = await AsyncStorage.getItem(storageKeys.OFFLINE_QUEUE_KEY);
   return offlineQueueString ? JSON.parse(offlineQueueString) : [];
 };
 
 export const addItemToOfflineQueue = async (item: OfflineQueueItem): Promise<void> => {
   const offlineQueue = await getOfflineQueue();
   offlineQueue.push(item);
-  await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+  await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 };
 
 export const syncOfflineQueue = async (): Promise<void> => {
@@ -64,14 +63,14 @@ export const syncOfflineQueue = async (): Promise<void> => {
         });
 
         // Save the updated queue after successful sync
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
       } catch (error) {
         console.error("Failed to sync offline queue item:", error);
 
         // Re-add the item to the queue if it fails
         offlineQueue.push(currentItem);
 
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
         break;
       }
     }

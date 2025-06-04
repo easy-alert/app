@@ -18,6 +18,7 @@ import { getCategories } from "@/services/queries/getCategories";
 import { getUsers } from "@/services/queries/getUsers";
 import type { IAuthUser } from "@/types/api/IAuthUser";
 import type { ICategory } from "@/types/api/ICategory";
+import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
 
@@ -86,7 +87,7 @@ export const Form = () => {
 
     const getBuildings = async () => {
       try {
-        const storageBuildings = await AsyncStorage.getItem("buildingsList");
+        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDINGS_LIST_KEY);
 
         if (!storageBuildings) {
           throw new Error("Nenhum prédio encontrado.");
