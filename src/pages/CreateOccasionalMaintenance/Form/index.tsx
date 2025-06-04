@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { z } from "zod";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
@@ -84,18 +84,10 @@ export const Form = () => {
     };
 
     const getBuildings = async () => {
-      try {
-        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
+      const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
-        if (!storageBuildings) {
-          throw new Error("Nenhum prédio encontrado.");
-        }
-
+      if (storageBuildings) {
         setBuildings(JSON.parse(storageBuildings));
-      } catch (error) {
-        console.error("Erro ao carregar a lista de prédios:", error);
-        Alert.alert("Erro", "Não foi possível carregar os prédios.");
-        navigation.goBack();
       }
     };
 

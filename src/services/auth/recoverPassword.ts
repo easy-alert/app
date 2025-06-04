@@ -1,6 +1,6 @@
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { MutationResponse } from "@/types/utils/MutationResponse";
-import { catchHandler } from "@/utils/alerts";
+import { alertCatchMessage } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
 
@@ -21,7 +21,7 @@ export const recoverPassword = async ({ email }: IRecoverPassword): Promise<Muta
   } catch (error: any) {
     const response = error.response as ApiMutationError;
 
-    catchHandler({
+    alertCatchMessage({
       message: response.data.ServerMessage.message,
     });
 

@@ -4,7 +4,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -18,6 +17,7 @@ import { Keyboard } from "react-native";
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
+import { alertMessage } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -60,12 +60,18 @@ export const Login = () => {
     Keyboard.dismiss();
 
     if (!phoneNumber || phoneNumber.length < 11) {
-      Alert.alert("Erro", "Por favor, insira um número de telefone válido.");
+      alertMessage({
+        type: "error",
+        message: "Por favor, insira um número de telefone válido.",
+      });
       return;
     }
 
     if (!password) {
-      Alert.alert("Erro", "Por favor, insira uma senha válida.");
+      alertMessage({
+        type: "error",
+        message: "Por favor, insira uma senha válida.",
+      });
       return;
     }
 
