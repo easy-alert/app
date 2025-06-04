@@ -1,4 +1,6 @@
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
+import { ApiMutationResponse } from "@/types/utils/ApiMutationResponse";
+import { MutationResponse } from "@/types/utils/MutationResponse";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
@@ -36,13 +38,18 @@ interface ICreateOccasionalMaintenance {
   occasionalMaintenanceData: IOccasionalMaintenanceData;
 }
 
-// TODO: add return types
+interface ICreateOccasionalMaintenanceResponse extends ApiMutationResponse {
+  maintenance: {
+    id: string;
+  };
+}
+
 export const createOccasionalMaintenance = async ({
   origin,
   userId,
   occasionalMaintenanceType,
   occasionalMaintenanceData,
-}: ICreateOccasionalMaintenance) => {
+}: ICreateOccasionalMaintenance): Promise<MutationResponse<ICreateOccasionalMaintenanceResponse>> => {
   try {
     const {
       buildingId,
@@ -84,19 +91,30 @@ export const createOccasionalMaintenance = async ({
       usersId: users,
     };
 
-    const response = await baseApi.post("/company/buildings/reports/occasional/create", body);
+    const response = await baseApi.post<ICreateOccasionalMaintenanceResponse>(
+      "/company/buildings/reports/occasional/create",
+      body,
+    );
 
     alertMessage({
       type: "success",
-      message: response?.data?.ServerMessage?.message,
+      message: response.data.ServerMessage.message,
     });
 
-    return response.data;
+    return {
+      success: true,
+      data: response.data,
+    };
   } catch (error: any) {
     const response = error.response as ApiMutationError;
 
     catchHandler({
       message: response.data.ServerMessage.message,
     });
+
+    return {
+      success: false,
+      data: null,
+    };
   }
 };

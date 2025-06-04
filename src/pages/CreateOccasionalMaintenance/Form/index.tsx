@@ -155,7 +155,7 @@ export const Form = () => {
 
       const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
 
-      const responseData = await createOccasionalMaintenance({
+      const { success, data: responseData } = await createOccasionalMaintenance({
         origin: "Mobile",
         userId,
         occasionalMaintenanceType: "pending",
@@ -183,8 +183,7 @@ export const Form = () => {
         },
       });
 
-      // TODO: padronizar
-      if (responseData?.ServerMessage.statusCode === 200) {
+      if (success) {
         navigation.replace("MaintenanceDetails", {
           maintenanceId: responseData.maintenance.id,
         });
