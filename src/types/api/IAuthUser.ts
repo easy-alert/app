@@ -1,4 +1,4 @@
-export interface IUser {
+export interface IAuthUser {
   id: string;
   UserBuildingsPermissions: {
     Building: {

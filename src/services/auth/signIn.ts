@@ -1,4 +1,4 @@
-import type { IUser } from "@/types/api/IUser";
+import type { IAuthUser } from "@/types/api/IAuthUser";
 import type { ApiError } from "@/types/utils/ApiError";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 import { catchHandler } from "@/utils/alerts";
@@ -14,7 +14,7 @@ interface ISignIn {
 }
 
 interface ISignInResponse {
-  user: IUser;
+  user: IAuthUser;
   authToken: string;
 }
 

@@ -16,8 +16,8 @@ import type { ProtectedNavigation } from "@/routes/navigation";
 import { createOccasionalMaintenance } from "@/services/mutations/createOccasionalMaintenance";
 import { getCategories } from "@/services/queries/getCategories";
 import { getUsers } from "@/services/queries/getUsers";
+import type { IAuthUser } from "@/types/api/IAuthUser";
 import type { ICategory } from "@/types/api/ICategory";
-import type { IUser } from "@/types/api/IUser";
 
 import { styles } from "./styles";
 
@@ -49,7 +49,7 @@ const priorities = [
 ];
 
 // TODO: refatorar
-type IBuilding = IUser["UserBuildingsPermissions"][0];
+type IBuilding = IAuthUser["UserBuildingsPermissions"][0];
 
 const formSchema = z.object({
   buildingId: z.string().min(1, { message: "Edificação é obrigatória." }),
@@ -229,8 +229,8 @@ export const Form = () => {
             <Dropdown
               placeholder="Selecione a categoria"
               data={categories.map((category) => ({
-                id: category.id!,
-                name: category.name!,
+                id: category.id,
+                name: category.name,
               }))}
               labelField="name"
               valueField="id"

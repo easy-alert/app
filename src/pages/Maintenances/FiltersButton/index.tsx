@@ -5,7 +5,7 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { getUsers } from "@/services/queries/getUsers";
-import { IUser } from "@/types/api/IUser";
+import { IAuthUser } from "@/types/api/IAuthUser";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";
 
@@ -13,7 +13,7 @@ import { Filters } from "../Filters";
 import { styles } from "./styles";
 
 // TODO: refatorar
-type IBuilding = IUser["UserBuildingsPermissions"][0];
+type IBuilding = IAuthUser["UserBuildingsPermissions"][0];
 
 interface FiltersButtonProps {
   filters: Filter;
