@@ -1,5 +1,5 @@
-import type { IError } from "@/types/IError";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import type { ApiError } from "@/types/utils/ApiError";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
 
@@ -13,7 +13,7 @@ export const unlinkMaintenanceSupplier = async ({
   maintenanceHistoryId,
   supplierId,
   userId,
-}: IUnlinkMaintenanceSupplier) => {
+}: IUnlinkMaintenanceSupplier): Promise<void> => {
   const uri = `company/suppliers/unlink-to-maintenance-history`;
 
   const body = {
@@ -30,7 +30,7 @@ export const unlinkMaintenanceSupplier = async ({
       message: response?.data?.ServerMessage?.message,
     });
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

@@ -14,9 +14,7 @@ export const AppUpdate = () => {
       } else if (Platform.OS === "android") {
         Linking.openURL("market://details?id=com.easyalert.app");
       }
-    } catch {
-      //
-    }
+    } catch {}
   };
 
   return (

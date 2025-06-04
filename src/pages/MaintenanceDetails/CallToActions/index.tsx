@@ -9,35 +9,32 @@ import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
 import { uploadFile } from "@/services/uploadFile";
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IOfflineQueueItem } from "@/types/IOfflineQueueItem";
-import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { IMaintenance } from "@/types/api/IMaintenance";
+import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
+import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
+import { convertCostToInteger } from "@/utils/convertCostToInteger";
 import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
-import { convertCostToInteger } from "../utils/convertCostToInteger";
 import { styles } from "./styles";
 
 interface CallToActionsProps {
   maintenanceDetails: IMaintenance;
-  files: (IRemoteFile | ILocalFile)[];
-  images: (IRemoteFile | ILocalFile)[];
+  localFiles: LocalFile[];
+  localImages: LocalFile[];
+  remoteFiles: IRemoteFile[];
+  remoteImages: IRemoteFile[];
   cost: string;
-  setFiles: (files: (IRemoteFile | ILocalFile)[]) => void;
-  setImages: (images: (IRemoteFile | ILocalFile)[]) => void;
-  setCost: (cost: string) => void;
   setLoading: (loading: boolean) => void;
 }
 
 export const CallToActions = ({
   maintenanceDetails,
-  files,
-  images,
+  localFiles,
+  localImages,
+  remoteFiles,
+  remoteImages,
   cost,
-  setFiles,
-  setImages,
-  setCost,
   setLoading,
 }: CallToActionsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
@@ -58,7 +55,7 @@ export const CallToActions = ({
           userId,
         });
       } else {
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "updateProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
@@ -81,49 +78,45 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded = [] as IAnnexesAndImages[];
-    const imagesUploaded = [] as IAnnexesAndImages[];
+    const filesUploaded: IRemoteFile[] = [];
+    const imagesUploaded: IRemoteFile[] = [];
 
     try {
       if (isConnected) {
-        // Handle file uploads when online
-        if (files?.length > 0) {
-          for (const file of files) {
-            const fileUrl = (file as ILocalFile).type
-              ? await uploadFile({
-                  uri: file.url,
-                  type: (file as ILocalFile).type,
-                  name: file.originalName,
-                })
-              : file.url;
+        for (const file of localFiles) {
+          const fileUrl = await uploadFile({
+            uri: file.uri,
+            type: file.type,
+            name: file.name,
+          });
 
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              name: file.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          filesUploaded.push({
+            name: file.name,
+            url: fileUrl,
+          });
         }
 
-        if (images?.length > 0) {
-          for (const image of images) {
-            const fileUrl = (image as ILocalFile).type
-              ? await uploadFile({
-                  uri: image.url,
-                  type: (image as ILocalFile).type,
-                  name: image.originalName,
-                })
-              : image.url;
+        for (const image of localImages) {
+          const fileUrl = await uploadFile({
+            uri: image.uri,
+            type: image.type,
+            name: image.name,
+          });
 
-            imagesUploaded.push({
-              originalName: image.originalName,
-              url: fileUrl,
-              name: image.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          imagesUploaded.push({
+            name: image.name,
+            url: fileUrl,
+          });
         }
 
-        // If online, send data to the server
         await updateMaintenance({
           maintenanceHistoryId: maintenanceDetails.id,
           syndicNanoId: "",
@@ -132,38 +125,32 @@ export const CallToActions = ({
             cost: formatedCost,
             observation: "",
           },
-          files: filesUploaded,
-          images: imagesUploaded,
+          files: [...filesUploaded, ...remoteFiles].map((file) => ({
+            originalName: file.name,
+            name: file.name,
+            url: file.url,
+          })),
+          images: [...imagesUploaded, ...remoteImages].map((image) => ({
+            originalName: image.name,
+            name: image.name,
+            url: image.url,
+          })),
         });
       } else {
-        // Include file and image metadata instead of uploading
-        const filesToQueue = files.map((file) => ({
-          originalName: file.originalName,
-          uri: file.url,
-          type: (file as ILocalFile).type,
-        }));
-
-        const imagesToQueue = images.map((image) => ({
-          originalName: image.originalName,
-          uri: image.url,
-          type: (image as ILocalFile).type,
-        }));
-
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "saveProgress",
           userId,
           maintenanceId: maintenanceDetails.id,
           cost: formatedCost,
-          files: filesToQueue,
-          images: imagesToQueue,
+          localFiles,
+          localImages,
+          remoteFiles,
+          remoteImages,
         };
 
         await addItemToOfflineQueue(newEntry);
       }
 
-      setFiles([]);
-      setImages([]);
-      setCost("");
       navigation.goBack();
     } catch (error) {
       console.error("Error in saveProgress:", error);
@@ -180,49 +167,45 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded = [];
-    const imagesUploaded = [];
+    const filesUploaded: IRemoteFile[] = [];
+    const imagesUploaded: IRemoteFile[] = [];
 
     try {
       if (isConnected) {
-        // Handle file uploads when online
-        if (files?.length > 0) {
-          for (const file of files) {
-            const fileUrl = (file as ILocalFile).type
-              ? await uploadFile({
-                  uri: file.url,
-                  type: (file as ILocalFile).type,
-                  name: file.originalName,
-                })
-              : file.url;
+        for (const file of localFiles) {
+          const fileUrl = await uploadFile({
+            uri: file.uri,
+            type: file.type,
+            name: file.name,
+          });
 
-            filesUploaded.push({
-              originalName: file.originalName,
-              url: fileUrl,
-              name: file.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          filesUploaded.push({
+            name: file.name,
+            url: fileUrl,
+          });
         }
 
-        if (images?.length > 0) {
-          for (const image of images) {
-            const fileUrl = (image as ILocalFile).type
-              ? await uploadFile({
-                  uri: image.url,
-                  type: (image as ILocalFile).type,
-                  name: image.originalName,
-                })
-              : image.url;
+        for (const image of localImages) {
+          const fileUrl = await uploadFile({
+            uri: image.uri,
+            type: image.type,
+            name: image.name,
+          });
 
-            imagesUploaded.push({
-              originalName: image.originalName,
-              url: fileUrl,
-              name: image.originalName,
-            });
+          if (!fileUrl) {
+            continue;
           }
+
+          imagesUploaded.push({
+            name: image.name,
+            url: fileUrl,
+          });
         }
 
-        // If online, send data to the server
         await updateMaintenanceFinish({
           maintenanceHistoryId: maintenanceDetails.id,
           syndicNanoId: "",
@@ -231,38 +214,32 @@ export const CallToActions = ({
             cost: formatedCost,
             observation: "",
           },
-          files: filesUploaded,
-          images: imagesUploaded,
+          files: [...filesUploaded, ...remoteFiles].map((file) => ({
+            originalName: file.name,
+            name: file.name,
+            url: file.url,
+          })),
+          images: [...imagesUploaded, ...remoteImages].map((image) => ({
+            originalName: image.name,
+            name: image.name,
+            url: image.url,
+          })),
         });
       } else {
-        // Include file and image metadata instead of uploading
-        const filesToQueue = files.map((file) => ({
-          originalName: file.originalName,
-          uri: file.url,
-          type: (file as ILocalFile).type,
-        }));
-
-        const imagesToQueue = images.map((image) => ({
-          originalName: image.originalName,
-          uri: image.url,
-          type: (image as ILocalFile).type,
-        }));
-
-        const newEntry: IOfflineQueueItem = {
+        const newEntry: OfflineQueueItem = {
           type: "finishMaintenance",
           userId,
           maintenanceId: maintenanceDetails.id,
           cost: formatedCost,
-          files: filesToQueue,
-          images: imagesToQueue,
+          localFiles,
+          localImages,
+          remoteFiles,
+          remoteImages,
         };
 
         await addItemToOfflineQueue(newEntry);
       }
 
-      setFiles([]);
-      setImages([]);
-      setCost("");
       navigation.goBack();
     } catch (error) {
       console.error("Error in handleFinishMaintenance:", error);

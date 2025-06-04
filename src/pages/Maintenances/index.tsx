@@ -6,8 +6,8 @@ import { PageLayout } from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import type { RouteList } from "@/routes/navigation";
 import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
-import { IAvailableFilter } from "@/types/IAvailableFilter";
-import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
+import { AvailableFilter } from "@/types/utils/AvailableFilter";
 
 import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 import { Kanban } from "./Kanban";
@@ -22,7 +22,7 @@ export const Maintenances = () => {
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
   const [filters, setFilters] = useState<IFilter>(emptyFilters);
-  const [availableCategories, setAvailableCategories] = useState<IAvailableFilter[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<AvailableFilter[]>([]);
 
   const [loading, setLoading] = useState(true);
 

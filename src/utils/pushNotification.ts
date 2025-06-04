@@ -3,7 +3,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-export const setNotificationHandler = () => {
+export const setNotificationHandler = (): void => {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -44,7 +44,7 @@ export const getPushNotificationToken = async (): Promise<string | null> => {
   return token;
 };
 
-export const requestPushNotificationPermissions = async () => {
+export const requestPushNotificationPermissions = async (): Promise<void> => {
   try {
     if (!Device.isDevice) {
       return;
@@ -57,7 +57,5 @@ export const requestPushNotificationPermissions = async () => {
     }
 
     await Notifications.requestPermissionsAsync();
-  } catch {
-    //
-  }
+  } catch {}
 };

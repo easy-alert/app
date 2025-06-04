@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import { PendingSyncBadge } from "@/components/PendingSyncBadge";
 import type { ProtectedNavigation } from "@/routes/navigation";
-import type { IKanbanColumn } from "@/types/IKanbanColumn";
+import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { formatDate } from "@/utils/formatDate";
 import { getStatus } from "@/utils/getStatus";
 

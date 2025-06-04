@@ -1,7 +1,5 @@
-import type { IAnnexesAndImages } from "@/types/IAnnexesAndImages";
-import type { IError } from "@/types/IError";
-import type { IMaintenanceReportProgress } from "@/types/IMaintenanceReportProgress";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import type { ApiError } from "@/types/utils/ApiError";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "./baseApi";
 
@@ -9,9 +7,20 @@ interface IUpdateMaintenance {
   syndicNanoId: string;
   userId: string;
   maintenanceHistoryId: string;
-  maintenanceReport: IMaintenanceReportProgress;
-  files: IAnnexesAndImages[];
-  images: IAnnexesAndImages[];
+  maintenanceReport: {
+    cost: number;
+    observation?: string;
+  };
+  files: {
+    originalName: string;
+    name: string;
+    url: string;
+  }[];
+  images: {
+    originalName: string;
+    name: string;
+    url: string;
+  }[];
 }
 
 export const updateMaintenance = async ({
@@ -21,7 +30,7 @@ export const updateMaintenance = async ({
   maintenanceHistoryId,
   files,
   images,
-}: IUpdateMaintenance) => {
+}: IUpdateMaintenance): Promise<void> => {
   const uri = `company/maintenances/create/report/progress`;
 
   const params = {
@@ -45,7 +54,7 @@ export const updateMaintenance = async ({
       message: response?.data?.ServerMessage?.message,
     });
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

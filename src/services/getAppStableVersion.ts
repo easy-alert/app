@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import type { IStableVersion } from "@/types/IStableVersion";
+import type { IStableVersion } from "@/types/api/IStableVersion";
 
 import { baseApi } from "./baseApi";
 

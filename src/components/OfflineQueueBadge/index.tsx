@@ -19,24 +19,28 @@ export const OfflineQueueBadge = () => {
 
     const syncQueueOnReconnect = () =>
       NetInfo.addEventListener(async (state) => {
-        if (!state.isConnected) {
-          setHasInternetConnection(false);
-          return;
-        }
+        try {
+          if (!state.isConnected) {
+            setHasInternetConnection(false);
+            return;
+          }
 
-        setHasInternetConnection(true);
-        await syncOfflineQueue();
-        await getOfflineQueueCount();
+          setHasInternetConnection(true);
+          await syncOfflineQueue();
+          await getOfflineQueueCount();
+        } catch {}
       });
 
     const syncQueueOnInterval = () =>
       setInterval(async () => {
-        const networkState = await NetInfo.fetch();
+        try {
+          const networkState = await NetInfo.fetch();
 
-        if (networkState.isConnected) {
-          await syncOfflineQueue();
-          await getOfflineQueueCount();
-        }
+          if (networkState.isConnected) {
+            await syncOfflineQueue();
+            await getOfflineQueueCount();
+          }
+        } catch {}
       }, 3000);
 
     getOfflineQueueCount();

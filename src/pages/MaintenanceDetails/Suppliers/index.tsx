@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { unlinkMaintenanceSupplier } from "@/services/unlinkMaintenanceSupplier";
-import type { ISupplier } from "@/types/ISupplier";
+import type { ISupplier } from "@/types/api/ISupplier";
 
 import { SupplierModal } from "../SupplierModal";
 import { styles } from "./styles";
