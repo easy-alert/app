@@ -6,6 +6,7 @@ interface IGetMaintenanceReportProgress {
   maintenanceHistoryId: string;
 }
 
+// TODO: add return types
 export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGetMaintenanceReportProgress) => {
   const url = `/company/maintenances/list/report/progress/${maintenanceHistoryId}`;
 

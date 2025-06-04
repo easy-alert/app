@@ -8,7 +8,7 @@ interface IUploadFile {
   name: string;
 }
 
-interface RequestResponse {
+interface ApiResponse {
   Location: string;
 }
 
@@ -32,7 +32,7 @@ export const uploadFile = async ({
       name,
     } as any);
 
-    const response = await baseApi.post<RequestResponse>("/company/upload/file", formData, {
+    const response = await baseApi.post<ApiResponse>("/company/upload/file", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
