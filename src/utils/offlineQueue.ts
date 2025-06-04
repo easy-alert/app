@@ -41,7 +41,6 @@ export const syncOfflineQueue = async (): Promise<void> => {
     const offlineQueue = await getOfflineQueue();
 
     while (offlineQueue.length > 0) {
-      // Get and remove the first item in the queue
       const currentItem = offlineQueue.shift()!;
 
       try {
@@ -62,14 +61,10 @@ export const syncOfflineQueue = async (): Promise<void> => {
           }
         });
 
-        // Save the updated queue after successful sync
         await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
       } catch (error) {
         console.error("Failed to sync offline queue item:", error);
-
-        // Re-add the item to the queue if it fails
         offlineQueue.push(currentItem);
-
         await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
         break;
       }

@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#B22222", // Vermelho
+    backgroundColor: "#B22222",
   },
   itemContentContainer: {
     flex: 1,

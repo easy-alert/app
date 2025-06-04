@@ -45,9 +45,9 @@ export const ForgotPassword = () => {
 
     setIsLoading(true);
 
-    const response = await recoverPassword(email);
+    const { success } = await recoverPassword(email);
 
-    if (response.success) {
+    if (success) {
       Alert.alert("Sucesso", "E-mail de recuperação de senha enviado com sucesso.");
       navigation.goBack();
     }
