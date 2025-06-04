@@ -4,7 +4,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { Platform } from "react-native";
 
 import { recoverPassword } from "@/services/auth/recoverPassword";
-import { userLogin } from "@/services/auth/userLogin";
+import { signIn } from "@/services/auth/signIn";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
@@ -12,7 +12,7 @@ import { getPushNotificationToken } from "@/utils/pushNotification";
 interface AuthContextData {
   isAuthenticated: boolean | undefined;
   userId: string;
-  login: (phone: string, password: string) => Promise<void>;
+  signIn: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   recoverPassword: (email: string) => Promise<MutationResponse>;
 }
@@ -54,13 +54,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     verifyStorageAuth();
   }, []);
 
-  const login = async (phone: string, password: string) => {
+  const handleSignIn = async (phone: string, password: string) => {
     try {
       const pushNotificationToken = await getPushNotificationToken();
       const deviceId = await getDeviceId();
 
-      const response = await userLogin({
-        login: phone,
+      const response = await signIn({
+        phone,
         password,
         pushNotificationToken,
         deviceId,
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isAuthenticated,
         userId: userId || "",
-        login,
+        signIn: handleSignIn,
         logout,
         recoverPassword: handleRecoverPassword,
       }}

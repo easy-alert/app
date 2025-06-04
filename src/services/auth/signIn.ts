@@ -6,28 +6,27 @@ import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
 
-interface IUserLogin {
-  login: string;
+interface ISignIn {
+  phone: string;
   password: string;
   pushNotificationToken: string | null;
   deviceId: string | null;
   os: string;
 }
 
-// TODO: change to login
-export const userLogin = async ({
-  login,
+export const signIn = async ({
+  phone,
   password,
   pushNotificationToken,
   deviceId,
   os,
-}: IUserLogin): Promise<{
+}: ISignIn): Promise<{
   user: IUser;
   authToken: string;
 } | null> => {
   try {
     // TODO: essa validação não deve ser feita aqui, e sim anteriormente
-    if (!login || !password) {
+    if (!phone || !password) {
       alertMessage({
         type: "error",
         message: "Por favor, insira um número de telefone e senha válidos.",
@@ -37,7 +36,7 @@ export const userLogin = async ({
     }
 
     const body = {
-      login,
+      login: phone,
       password,
       pushNotificationToken,
       deviceId,
