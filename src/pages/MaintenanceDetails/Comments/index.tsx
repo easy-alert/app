@@ -41,11 +41,11 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded: IRemoteFile[] = [];
-
     try {
       if (isConnected) {
-        for (const file of localFiles) {
+        const filesUploaded: IRemoteFile[] = [];
+
+        const uploadPromises = localFiles.map(async (file) => {
           const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
@@ -53,14 +53,16 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
           });
 
           if (!success) {
-            continue;
+            return;
           }
 
           filesUploaded.push({
             name: file.name,
             url: data.url,
           });
-        }
+        });
+
+        await Promise.all(uploadPromises);
 
         await createMaintenanceHistoryActivity({
           maintenanceId,
@@ -88,6 +90,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         navigation.goBack();
       }
 
+      // TODO: se da erro no createMaintenanceHistoryActivity, está limpando os comentários e arquivos
       setComment("");
       setLocalFiles([]);
     } catch (error) {

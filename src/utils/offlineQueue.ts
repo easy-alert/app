@@ -85,7 +85,7 @@ export const syncOfflineQueue = async (): Promise<void> => {
 const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.localFiles) {
+  const uploadPromises = item.localFiles.map(async (file) => {
     const { success, data } = await uploadFile({
       uri: file.uri,
       type: file.type,
@@ -93,14 +93,16 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
     });
 
     if (!success) {
-      continue;
+      return;
     }
 
     filesUploaded.push({
       name: file.name,
       url: data.url,
     });
-  }
+  });
+
+  await Promise.all(uploadPromises);
 
   await createMaintenanceHistoryActivity({
     maintenanceId: item.maintenanceId,
@@ -117,7 +119,7 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
 const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.localFiles) {
+  const uploadFilesPromises = item.localFiles.map(async (file) => {
     const { success, data } = await uploadFile({
       uri: file.uri,
       type: file.type,
@@ -125,18 +127,18 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     });
 
     if (!success) {
-      continue;
+      return;
     }
 
     filesUploaded.push({
       name: file.name,
       url: data.url,
     });
-  }
+  });
 
   const imagesUploaded: IRemoteFile[] = [];
 
-  for (const image of item.localImages) {
+  const uploadImagesPromises = item.localImages.map(async (image) => {
     const { success, data } = await uploadFile({
       uri: image.uri,
       type: image.type,
@@ -144,14 +146,16 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
     });
 
     if (!success) {
-      continue;
+      return;
     }
 
     imagesUploaded.push({
       name: image.name,
       url: data.url,
     });
-  }
+  });
+
+  await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
   await updateMaintenance({
     maintenanceHistoryId: item.maintenanceId,
@@ -186,7 +190,7 @@ const syncUpdateProgress = async (item: UpdateProgressQueueItem): Promise<void> 
 const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<void> => {
   const filesUploaded: IRemoteFile[] = [];
 
-  for (const file of item.localFiles) {
+  const uploadFilesPromises = item.localFiles.map(async (file) => {
     const { success, data } = await uploadFile({
       uri: file.uri,
       type: file.type,
@@ -194,18 +198,18 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     });
 
     if (!success) {
-      continue;
+      return;
     }
 
     filesUploaded.push({
       name: file.name,
       url: data.url,
     });
-  }
+  });
 
   const imagesUploaded: IRemoteFile[] = [];
 
-  for (const image of item.localImages) {
+  const uploadImagesPromises = item.localImages.map(async (image) => {
     const { success, data } = await uploadFile({
       uri: image.uri,
       type: image.type,
@@ -213,14 +217,16 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
     });
 
     if (!success) {
-      continue;
+      return;
     }
 
     imagesUploaded.push({
       name: image.name,
       url: data.url,
     });
-  }
+  });
+
+  await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
   await updateMaintenanceFinish({
     maintenanceHistoryId: item.maintenanceId,
