@@ -1,5 +1,5 @@
 import type { IAuthUser } from "@/types/api/IAuthUser";
-import type { ApiError } from "@/types/utils/ApiError";
+import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 import { catchHandler } from "@/utils/alerts";
 
@@ -41,10 +41,10 @@ export const signIn = async ({
       data: response.data,
     };
   } catch (error: any) {
-    const response = error.response as ApiError;
+    const response = error.response as ApiMutationError;
 
     catchHandler({
-      message: response?.data?.ServerMessage?.message,
+      message: response.data.ServerMessage.message,
     });
 
     return {

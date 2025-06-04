@@ -1,4 +1,5 @@
-import type { ApiError } from "@/types/utils/ApiError";
+import type { ApiMutationError } from "@/types/utils/ApiMutationError";
+import { ApiMutationResponse } from "@/types/utils/ApiMutationResponse";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
@@ -46,19 +47,21 @@ export const updateMaintenance = async ({
       ReportImages: images,
     };
 
-    const response = await baseApi.post("/company/maintenances/create/report/progress", body, { params });
+    const response = await baseApi.post<ApiMutationResponse>("/company/maintenances/create/report/progress", body, {
+      params,
+    });
 
     alertMessage({
       type: "success",
-      message: response?.data?.ServerMessage?.message,
+      message: response.data.ServerMessage.message,
     });
 
     return { success: true };
   } catch (error: any) {
-    const response = error.response as ApiError;
+    const response = error.response as ApiMutationError;
 
     catchHandler({
-      message: response?.data?.ServerMessage?.message,
+      message: response.data.ServerMessage.message,
     });
 
     return { success: false };

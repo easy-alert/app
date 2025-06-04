@@ -1,4 +1,4 @@
-import type { ApiError } from "@/types/utils/ApiError";
+import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
@@ -93,10 +93,10 @@ export const createOccasionalMaintenance = async ({
 
     return response.data;
   } catch (error: any) {
-    const response = error.response as ApiError;
+    const response = error.response as ApiMutationError;
 
     catchHandler({
-      message: response?.data?.ServerMessage?.message,
+      message: response.data.ServerMessage.message,
     });
   }
 };

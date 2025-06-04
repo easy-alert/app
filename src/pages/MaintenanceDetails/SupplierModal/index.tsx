@@ -22,17 +22,13 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
   const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers>();
 
   const handleLinkMaintenanceSupplier = async (supplierId: string) => {
-    try {
-      await linkMaintenanceSupplier({
-        maintenanceId,
-        supplierId,
-        userId,
-      });
-    } catch (error) {
-      console.error("Erro ao vincular o fornecedor:", error);
-    } finally {
-      onClose();
-    }
+    await linkMaintenanceSupplier({
+      maintenanceId,
+      supplierId,
+      userId,
+    });
+
+    onClose();
   };
 
   useEffect(() => {

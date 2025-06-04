@@ -16,8 +16,6 @@ interface IUploadFileResponse {
   url: string;
 }
 
-// TODO: todo lugar que está chamando o upload file, caso de erro e retorne null, continua a operação sem verificar isso,
-// precisamos verificar se deu algum erro antes de continuar
 export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<MutationResponse<IUploadFileResponse>> => {
   try {
     const formData = new FormData();
