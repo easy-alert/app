@@ -1,17 +1,19 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  pendingSyncContainer: {
+  container: {
     alignSelf: "baseline",
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
     backgroundColor: "#2B7FFF",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 999,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    borderRadius: 4,
   },
-  pendingSyncLabel: {
+  label: {
     color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });

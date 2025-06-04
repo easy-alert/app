@@ -4,6 +4,10 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
 export const setNotificationHandler = (): void => {
+  if (!Device.isDevice) {
+    return;
+  }
+
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { OfflineQueueBadge } from "@/components/OfflineQueueBadge";
+import { OfflineBadge } from "../OfflineBadge";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -11,8 +11,8 @@ interface PageLayoutProps {
 
 export const PageLayout = ({ children, style }: PageLayoutProps) => {
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: "#fff" }, style]}>
-      <OfflineQueueBadge />
+    <SafeAreaView style={[{ flex: 1 }, style]} edges={["top"]}>
+      <OfflineBadge />
       {children}
     </SafeAreaView>
   );

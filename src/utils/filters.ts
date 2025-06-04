@@ -1,14 +1,6 @@
-export interface IFilter {
-  selectedBuildings: string[];
-  search: string;
-  selectedUsers: string[];
-  selectedStatus: string[];
-  selectedCategories: string[];
-  startDate: string;
-  endDate: string;
-}
+import type { Filter } from "@/types/utils/Filter";
 
-export const emptyFilters: IFilter = {
+export const emptyFilters: Filter = {
   selectedBuildings: [],
   search: "",
   selectedUsers: [],

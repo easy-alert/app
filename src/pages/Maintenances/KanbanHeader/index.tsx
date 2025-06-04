@@ -1,14 +1,14 @@
 import { View } from "react-native";
 
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { Filter } from "@/types/utils/Filter";
 
 import { FiltersButton } from "../FiltersButton";
-import { IFilter } from "../utils";
 import { styles } from "./styles";
 
 interface KanbanHeaderProps {
-  filters: IFilter;
-  setFilters: (filters: IFilter) => void;
+  filters: Filter;
+  setFilters: (filters: Filter) => void;
   availableCategories: AvailableFilter[];
 }
 
