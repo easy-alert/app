@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 
 import { recoverPassword } from "@/services/auth/recoverPassword";
 import { userLogin } from "@/services/auth/userLogin";
+import { MutationResponse } from "@/types/utils/MutationResponse";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
 
@@ -13,7 +14,7 @@ interface AuthContextData {
   userId: string;
   login: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  recoverPassword: (email: string) => Promise<{ success: boolean }>;
+  recoverPassword: (email: string) => Promise<MutationResponse>;
 }
 
 const AuthContext = createContext({} as AuthContextData);

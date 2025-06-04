@@ -1,4 +1,5 @@
 import type { ApiError } from "@/types/utils/ApiError";
+import { MutationResponse } from "@/types/utils/MutationResponse";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
@@ -30,7 +31,7 @@ export const updateMaintenanceFinish = async ({
   maintenanceReport,
   files,
   images,
-}: IUpdateMaintenanceFinish): Promise<void> => {
+}: IUpdateMaintenanceFinish): Promise<MutationResponse> => {
   try {
     const body = {
       userId,
@@ -48,11 +49,15 @@ export const updateMaintenanceFinish = async ({
       type: "success",
       message: response?.data?.ServerMessage?.message,
     });
+
+    return { success: true };
   } catch (error: any) {
     const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,
     });
+
+    return { success: false };
   }
 };

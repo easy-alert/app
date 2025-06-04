@@ -1,4 +1,5 @@
 import type { ApiError } from "@/types/utils/ApiError";
+import { MutationResponse } from "@/types/utils/MutationResponse";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
@@ -15,7 +16,7 @@ export const updateMaintenanceDueDate = async ({
   dueDate,
   status,
   showToResident,
-}: IUpdateMaintenanceDueDate): Promise<{ success: boolean }> => {
+}: IUpdateMaintenanceDueDate): Promise<MutationResponse> => {
   try {
     const body = {
       maintenanceHistoryId: id,

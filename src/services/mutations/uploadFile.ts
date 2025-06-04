@@ -1,3 +1,5 @@
+import { MutationResponse } from "@/types/utils/MutationResponse";
+
 import { baseApi } from "../baseApi";
 
 interface IUploadFile {
@@ -10,22 +12,17 @@ interface RequestResponse {
   Location: string;
 }
 
-// TODO: criar esse padrão de retorno para as mutations
-type IUploadFileResponse =
-  | {
-      success: true;
-      data: {
-        url: string;
-      };
-    }
-  | {
-      success: false;
-      data: null;
-    };
-
 // TODO: todo lugar que está chamando o upload file, caso de erro e retorne null, continua a operação sem verificar isso,
 // precisamos verificar se deu algum erro antes de continuar
-export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<IUploadFileResponse> => {
+export const uploadFile = async ({
+  uri,
+  type,
+  name,
+}: IUploadFile): Promise<
+  MutationResponse<{
+    url: string;
+  }>
+> => {
   try {
     const formData = new FormData();
 
