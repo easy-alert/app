@@ -30,6 +30,7 @@ export const Maintenances = () => {
     const handleGetKanbanData = async () => {
       setLoading(true);
 
+      // TODO: retirar try catch quando adicionar os tipos
       try {
         const responseData = await getMaintenancesKanban({
           userId,

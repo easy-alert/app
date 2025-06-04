@@ -45,20 +45,17 @@ export const MaintenanceDetails = () => {
   const [loading, setLoading] = useState(false);
 
   const handleGetMaintenanceDetails = async () => {
-    try {
-      const responseData = await getMaintenanceDetails({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const maintenanceDetails = await getMaintenanceDetails({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      if (responseData) {
-        setMaintenanceDetails(responseData);
-      }
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceDetails ~ error:", error);
+    if (maintenanceDetails) {
+      setMaintenanceDetails(maintenanceDetails);
     }
   };
 
   const handleGetMaintenanceReportProgress = async () => {
+    // TODO: retirar try catch quando adicionar os tipos
     try {
       const responseData = await getMaintenanceReportProgress({
         maintenanceHistoryId: maintenanceId,
@@ -73,33 +70,22 @@ export const MaintenanceDetails = () => {
   };
 
   const handleGetMaintenanceHistoryActivities = async () => {
-    try {
-      const responseData = await getMaintenanceHistoryActivities({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const historyActivities = await getMaintenanceHistoryActivities({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      if (responseData) {
-        setHistoryActivities(responseData);
-      }
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
+    if (historyActivities) {
+      setHistoryActivities(historyActivities);
     }
   };
 
   const handleGetMaintenanceSupplier = async () => {
-    try {
-      const responseData = await getMaintenanceHistorySupplier({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const suppliers = await getMaintenanceHistorySupplier({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      if (responseData?.suppliers?.length === 0) {
-        setSupplier(undefined);
-        return;
-      }
-
-      setSupplier(responseData?.suppliers[0]);
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceSupplier ~ error:", error);
+    if (suppliers.length > 0) {
+      setSupplier(suppliers[0]);
     }
   };
 

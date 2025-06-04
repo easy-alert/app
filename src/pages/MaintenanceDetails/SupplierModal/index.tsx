@@ -37,14 +37,10 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
 
   useEffect(() => {
     const handleGetSuppliersForMaintenance = async () => {
-      try {
-        const responseData = await getSuppliersForMaintenance({ maintenanceId });
+      const suppliers = await getSuppliersForMaintenance({ maintenanceId });
 
-        if (responseData) {
-          setSuppliersData(responseData);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar os dados:", error);
+      if (suppliers) {
+        setSuppliersData(suppliers);
       }
     };
 

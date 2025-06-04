@@ -29,6 +29,7 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
 
   useEffect(() => {
     const getAvailableUsers = async () => {
+      // TODO: retirar try catch quando adicionar os tipos
       try {
         const responseData = await getUsers();
 

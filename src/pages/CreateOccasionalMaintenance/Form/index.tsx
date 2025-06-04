@@ -77,14 +77,11 @@ export const Form = () => {
 
   useEffect(() => {
     const handleGetCategories = async () => {
-      try {
-        setLoadingCategories(true);
-        const categories = await getCategories();
+      setLoadingCategories(true);
+      const categories = await getCategories();
 
-        setCategories(categories);
-      } finally {
-        setLoadingCategories(false);
-      }
+      setCategories(categories);
+      setLoadingCategories(false);
     };
 
     const getBuildings = async () => {
@@ -129,19 +126,15 @@ export const Form = () => {
         return;
       }
 
-      try {
-        setLoadingUsers(true);
+      setLoadingUsers(true);
 
-        const responseData = await getUsers(buildingId);
+      const responseData = await getUsers(buildingId);
 
-        if (responseData?.users) {
-          setUsers(responseData.users);
-        }
-      } catch (error) {
-        console.error("🚀 ~ getAvailableUsers ~ error:", error);
-      } finally {
-        setLoadingUsers(false);
+      if (responseData?.users) {
+        setUsers(responseData.users);
       }
+
+      setLoadingUsers(false);
     };
 
     handleGetUsers();
