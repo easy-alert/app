@@ -1,8 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Toaster } from "sonner-native";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BottomSheetProvider } from "@/contexts/BottomSheetContext";
@@ -22,23 +22,16 @@ export default function App() {
       <StatusBar translucent style="dark" />
 
       <SafeAreaProvider>
-        <View style={styles.appContainer}>
-          <BottomSheetProvider>
-            <AuthProvider>
-              <OfflineQueueProvider>
-                <Routes />
-              </OfflineQueueProvider>
-            </AuthProvider>
-          </BottomSheetProvider>
-        </View>
+        <BottomSheetProvider>
+          <AuthProvider>
+            <OfflineQueueProvider>
+              <Routes />
+            </OfflineQueueProvider>
+          </AuthProvider>
+        </BottomSheetProvider>
+
+        <Toaster closeButton richColors position="bottom-center" />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  appContainer: {
-    flex: 1,
-    backgroundColor: "#EAEAEA",
-  },
-});
