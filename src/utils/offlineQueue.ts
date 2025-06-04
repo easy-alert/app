@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
-import { updateMaintenance } from "@/services/updateMaintenance";
-import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
-import { uploadFile } from "@/services/uploadFile";
+import { createMaintenanceHistoryActivity } from "@/services/mutations/createMaintenanceHistoryActivity";
+import { updateMaintenance } from "@/services/mutations/updateMaintenance";
+import { updateMaintenanceFinish } from "@/services/mutations/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/mutations/updateMaintenanceProgress";
+import { uploadFile } from "@/services/mutations/uploadFile";
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type {
   AddHistoryActivityQueueItem,

@@ -4,8 +4,8 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
-import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
-import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
+import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
+import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
 import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
 
 import { styles } from "./styles";

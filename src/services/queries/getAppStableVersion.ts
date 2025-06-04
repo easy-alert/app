@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { IStableVersion } from "@/types/api/IStableVersion";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
 export const getAppStableVersion = async (): Promise<IStableVersion | null> => {
   const url = "/mobile/version";

@@ -1,13 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
-interface IGetMaintenanceReportProgress {
+interface IGetMaintenanceHistorySupplier {
   maintenanceHistoryId: string;
 }
 
-export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGetMaintenanceReportProgress) => {
-  const url = `/company/maintenances/list/report/progress/${maintenanceHistoryId}`;
+// TODO: add return types
+export const getMaintenanceHistorySupplier = async ({ maintenanceHistoryId }: IGetMaintenanceHistorySupplier) => {
+  const url = `/company/suppliers/selected/${maintenanceHistoryId}`;
 
   try {
     const response = await baseApi.get(url);
@@ -15,9 +16,9 @@ export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGe
     await AsyncStorage.setItem(url, JSON.stringify(response.data));
 
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceReportProgress):",
+      "Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceHistorySupplier):",
       error,
     );
 

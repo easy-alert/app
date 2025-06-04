@@ -3,8 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
-import { recoverPassword } from "@/services/recoverPassword";
-import { userLogin } from "@/services/userLogin";
+import { recoverPassword } from "@/services/auth/recoverPassword";
+import { userLogin } from "@/services/auth/userLogin";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
 

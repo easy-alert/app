@@ -3,7 +3,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { unlinkMaintenanceSupplier } from "@/services/unlinkMaintenanceSupplier";
+import { unlinkMaintenanceSupplier } from "@/services/mutations/unlinkMaintenanceSupplier";
 import type { ISupplier } from "@/types/api/ISupplier";
 
 import { SupplierModal } from "../SupplierModal";

@@ -13,9 +13,9 @@ import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
-import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
-import { getCategories } from "@/services/getCategories";
-import { getUsers } from "@/services/getUsers";
+import { createOccasionalMaintenance } from "@/services/mutations/createOccasionalMaintenance";
+import { getCategories } from "@/services/queries/getCategories";
+import { getUsers } from "@/services/queries/getUsers";
 import type { ICategory } from "@/types/api/ICategory";
 import type { IUser } from "@/types/api/IUser";
 

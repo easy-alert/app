@@ -8,7 +8,7 @@ import { PrimaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
-import { updateMaintenanceDueDate } from "@/services/updateMaintenanceDueDate";
+import { updateMaintenanceDueDate } from "@/services/mutations/updateMaintenanceDueDate";
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import { formatDate } from "@/utils/formatDate";
 

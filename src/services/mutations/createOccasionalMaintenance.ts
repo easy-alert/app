@@ -2,7 +2,7 @@ import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
 interface IOccasionalMaintenanceData {
   buildingId: string;

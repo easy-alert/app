@@ -4,7 +4,7 @@ import { Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
-import { getUsers } from "@/services/getUsers";
+import { getUsers } from "@/services/queries/getUsers";
 import { IUser } from "@/types/api/IUser";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";

@@ -5,10 +5,10 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native"
 import { PageWithHeader } from "@/components/PageWithHeader";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
-import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
-import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
-import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
-import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
+import { getMaintenanceDetails } from "@/services/queries/getMaintenanceDetails";
+import { getMaintenanceHistoryActivities } from "@/services/queries/getMaintenanceHistoryActivities";
+import { getMaintenanceHistorySupplier } from "@/services/queries/getMaintenanceHistorySupplier";
+import { getMaintenanceReportProgress } from "@/services/queries/getMaintenanceReportProgress";
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";

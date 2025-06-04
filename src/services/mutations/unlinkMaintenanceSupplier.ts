@@ -1,27 +1,27 @@
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
-interface ILinkMaintenanceSupplier {
-  maintenanceId: string;
+interface IUnlinkMaintenanceSupplier {
+  maintenanceHistoryId: string;
   supplierId: string;
   userId: string;
 }
 
-export const linkMaintenanceSupplier = async ({
-  maintenanceId,
+export const unlinkMaintenanceSupplier = async ({
+  maintenanceHistoryId,
   supplierId,
   userId,
-}: ILinkMaintenanceSupplier): Promise<void> => {
+}: IUnlinkMaintenanceSupplier): Promise<void> => {
   try {
     const body = {
-      maintenanceHistoryId: maintenanceId,
+      maintenanceHistoryId,
       supplierId,
       userId,
     };
 
-    const response = await baseApi.post("/company/suppliers/link-to-maintenance-history", body);
+    const response = await baseApi.post("/company/suppliers/unlink-to-maintenance-history", body);
 
     alertMessage({
       type: "success",

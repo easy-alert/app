@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 import { Splash } from "@/components/Splash";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppUpdate } from "@/pages/AppUpdate";
-import { getAppStableVersion } from "@/services/getAppStableVersion";
+import { getAppStableVersion } from "@/services/queries/getAppStableVersion";
 
 import { AuthRoutes } from "./AuthRoutes";
 import { MainRoutes } from "./MainRoutes";

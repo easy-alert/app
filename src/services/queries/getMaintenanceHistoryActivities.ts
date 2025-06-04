@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
 interface IGetMaintenanceHistoryActivities {
   maintenanceHistoryId: string;

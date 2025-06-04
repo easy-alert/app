@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
 interface IGetMaintenancesKanban {
   userId: string;

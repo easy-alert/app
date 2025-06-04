@@ -1,34 +1,27 @@
 import type { ApiError } from "@/types/utils/ApiError";
 import { alertMessage, catchHandler } from "@/utils/alerts";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
-interface ICreateMaintenanceHistoryActivity {
+interface ILinkMaintenanceSupplier {
   maintenanceId: string;
+  supplierId: string;
   userId: string;
-  content: string;
-  filesUploaded: {
-    originalName: string;
-    name: string;
-    url: string;
-  }[];
 }
 
-export const createMaintenanceHistoryActivity = async ({
+export const linkMaintenanceSupplier = async ({
   maintenanceId,
+  supplierId,
   userId,
-  content,
-  filesUploaded,
-}: ICreateMaintenanceHistoryActivity): Promise<void> => {
+}: ILinkMaintenanceSupplier): Promise<void> => {
   try {
     const body = {
       maintenanceHistoryId: maintenanceId,
+      supplierId,
       userId,
-      content,
-      images: filesUploaded,
     };
 
-    const response = await baseApi.post("/company/maintenance-history-activities", body);
+    const response = await baseApi.post("/company/suppliers/link-to-maintenance-history", body);
 
     alertMessage({
       type: "success",

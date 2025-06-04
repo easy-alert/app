@@ -4,7 +4,7 @@ import { ActivityIndicator, Text, View } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import type { RouteList } from "@/routes/navigation";
-import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
+import { getMaintenancesKanban } from "@/services/queries/getMaintenancesKanban";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";

@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import type { ApiError } from "@/types/utils/ApiError";
 import { catchHandler } from "@/utils/alerts";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
 interface IRecoverPassword {
   email: string;

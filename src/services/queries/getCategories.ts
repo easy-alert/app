@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { ICategory } from "@/types/api/ICategory";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "../baseApi";
 
 export const getCategories = async (): Promise<ICategory[]> => {
   const url = "/company/buildings/maintenances/occasional/auxiliarydata";
