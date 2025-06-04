@@ -1,38 +1,25 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IUsers } from "@/types/api/IUsers";
 
-import { baseApi } from "../baseApi";
+import { getFromCacheOnError } from "../cache";
 
-// TODO: add return types
-export const getUsers = async (buildingId?: string) => {
+interface IGetUsers {
+  buildingId: string;
+}
+
+export const getUsers = (props?: IGetUsers): Promise<IUsers | null> => {
   const params = {
-    buildingId: buildingId || "",
+    buildingId: props?.buildingId || "",
     checkPerms: false,
   };
 
   const url = "/company/list/users";
-
-  // Criar uma chave única para o cache com base na URI + parâmetros
   const cacheKey = `${url}?${new URLSearchParams(params as any).toString()}`;
 
-  try {
-    const response = await baseApi.get(url, { params });
-
-    await AsyncStorage.setItem(cacheKey, JSON.stringify(response.data));
-
-    return response.data;
-  } catch (error: any) {
-    console.error("Erro ao buscar os dados ou sem internet, carregando do cache (getUsers):", error);
-
-    try {
-      const cachedData = await AsyncStorage.getItem(cacheKey);
-
-      if (cachedData) {
-        return JSON.parse(cachedData);
-      }
-    } catch (cacheError) {
-      console.error("Erro ao carregar dados do cache:", cacheError);
-    }
-
-    return {}; // Retorna objeto vazio se nada for encontrado
-  }
+  return getFromCacheOnError<IUsers>({
+    url,
+    cacheKey,
+    config: {
+      params,
+    },
+  });
 };

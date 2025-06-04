@@ -16,8 +16,9 @@ import type { ProtectedNavigation } from "@/routes/navigation";
 import { createOccasionalMaintenance } from "@/services/mutations/createOccasionalMaintenance";
 import { getCategories } from "@/services/queries/getCategories";
 import { getUsers } from "@/services/queries/getUsers";
-import type { IAuthUser } from "@/types/api/IAuthUser";
+import { IBuilding } from "@/types/api/IBuilding";
 import type { ICategory } from "@/types/api/ICategory";
+import { IUser } from "@/types/api/IUser";
 import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
@@ -49,9 +50,6 @@ const priorities = [
   },
 ];
 
-// TODO: refatorar
-type IBuilding = IAuthUser["UserBuildingsPermissions"][0];
-
 const formSchema = z.object({
   buildingId: z.string().min(1, { message: "Edificação é obrigatória." }),
   categoryId: z.string().min(1, { message: "Categoria é obrigatória." }),
@@ -74,7 +72,7 @@ export const Form = () => {
 
   const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
 
   useEffect(() => {
     const handleGetCategories = async () => {
@@ -87,7 +85,7 @@ export const Form = () => {
 
     const getBuildings = async () => {
       try {
-        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDINGS_LIST_KEY);
+        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
         if (!storageBuildings) {
           throw new Error("Nenhum prédio encontrado.");
@@ -129,10 +127,10 @@ export const Form = () => {
 
       setLoadingUsers(true);
 
-      const responseData = await getUsers(buildingId);
+      const users = await getUsers({ buildingId });
 
-      if (responseData?.users) {
-        setUsers(responseData.users);
+      if (users) {
+        setUsers(users.users);
       }
 
       setLoadingUsers(false);
@@ -206,10 +204,7 @@ export const Form = () => {
           <LabelInput label="Edificação *" error={form.formState.errors.buildingId?.message}>
             <Dropdown
               placeholder="Selecione a edificação"
-              data={buildings.map((building) => ({
-                id: building.Building.id,
-                name: building.Building.name,
-              }))}
+              data={buildings}
               labelField="name"
               valueField="id"
               value={field.value}

@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 
 import { recoverPassword } from "@/services/auth/recoverPassword";
 import { signIn } from "@/services/auth/signIn";
+import { IBuilding } from "@/types/api/IBuilding";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
@@ -29,9 +30,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const userId = await AsyncStorage.getItem(storageKeys.USER_ID_KEY);
         const authToken = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
-        const buildingsList = await AsyncStorage.getItem(storageKeys.BUILDINGS_LIST_KEY);
+        const buildingList = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
-        if (!userId || !authToken || !buildingsList) {
+        if (!userId || !authToken || !buildingList) {
           setIsAuthenticated(false);
           return;
         }
@@ -75,7 +76,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       await AsyncStorage.setItem(storageKeys.USER_ID_KEY, data.user.id);
       await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, data.authToken);
-      await AsyncStorage.setItem(storageKeys.BUILDINGS_LIST_KEY, JSON.stringify(data.user.UserBuildingsPermissions));
+
+      const buildingList: IBuilding[] = data.user.UserBuildingsPermissions.map((building) => building.Building);
+      await AsyncStorage.setItem(storageKeys.BUILDING_LIST_KEY, JSON.stringify(buildingList));
 
       setUserId(data.user.id);
       setIsAuthenticated(true);

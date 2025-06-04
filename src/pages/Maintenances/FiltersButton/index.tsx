@@ -5,16 +5,13 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { getUsers } from "@/services/queries/getUsers";
-import { IAuthUser } from "@/types/api/IAuthUser";
+import { IBuilding } from "@/types/api/IBuilding";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";
 import { storageKeys } from "@/utils/storageKeys";
 
 import { Filters } from "../Filters";
 import { styles } from "./styles";
-
-// TODO: refatorar
-type IBuilding = IAuthUser["UserBuildingsPermissions"][0];
 
 interface FiltersButtonProps {
   filters: Filter;
@@ -30,37 +27,32 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
 
   useEffect(() => {
     const getAvailableUsers = async () => {
-      // TODO: retirar try catch quando adicionar os tipos
-      try {
-        const responseData = await getUsers();
+      const users = await getUsers();
 
-        if (responseData?.users) {
-          setAvailableUsers(
-            responseData.users.map((user: { id: string; name: string }) => ({
-              value: user.id,
-              label: user.name,
-            })),
-          );
-        }
-      } catch (error) {
-        console.error("🚀 ~ getAvailableUsers ~ error:", error);
+      if (users) {
+        setAvailableUsers(
+          users.users.map((user) => ({
+            value: user.id,
+            label: user.name,
+          })),
+        );
       }
     };
 
     const getAvailableBuildings = async () => {
       try {
-        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDINGS_LIST_KEY);
+        const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
         if (!storageBuildings) {
           throw new Error("Nenhum prédio encontrado.");
         }
 
-        const availableBuildings = JSON.parse(storageBuildings) as IBuilding[];
+        const availableBuildings: IBuilding[] = JSON.parse(storageBuildings);
 
         setAvailableBuildings(
           availableBuildings.map((building) => ({
-            value: building.Building.id,
-            label: building.Building.name,
+            value: building.id,
+            label: building.name,
           })),
         );
       } catch (error) {
