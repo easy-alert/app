@@ -55,17 +55,15 @@ export const MaintenanceDetails = () => {
   };
 
   const handleGetMaintenanceReportProgress = async () => {
-    // TODO: retirar try catch quando adicionar os tipos
-    try {
-      const responseData = await getMaintenanceReportProgress({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const maintenanceReportProgress = await getMaintenanceReportProgress({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      setCost(String(responseData?.progress?.cost || 0 / 100).replace(".", ","));
-      setRemoteFiles(responseData?.progress?.ReportAnnexesProgress || []);
-      setRemoteImages(responseData?.progress?.ReportImagesProgress || []);
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
+    if (maintenanceReportProgress?.progress) {
+      const cost = String(maintenanceReportProgress.progress.cost / 100).replace(".", ",");
+      setCost(cost);
+      setRemoteFiles(maintenanceReportProgress.progress.ReportAnnexesProgress);
+      setRemoteImages(maintenanceReportProgress.progress.ReportImagesProgress);
     }
   };
 
@@ -92,6 +90,7 @@ export const MaintenanceDetails = () => {
   const loadData = async () => {
     setLoading(true);
 
+    // TODO: implantar em paralelo
     try {
       await handleGetMaintenanceReportProgress();
       await handleGetMaintenanceDetails();

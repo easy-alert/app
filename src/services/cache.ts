@@ -1,19 +1,26 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AxiosRequestConfig } from "axios";
 
 import { baseApi } from "./baseApi";
 
-export async function getFromCacheOnError<T>({ url }: { url: string }): Promise<T | null> {
-  try {
-    const response = await baseApi.get<T>(url);
+interface GetFromCacheOnErrorProps {
+  url: string;
+  cacheKey?: string;
+  config?: AxiosRequestConfig;
+}
 
-    await AsyncStorage.setItem(url, JSON.stringify(response.data));
+export async function getFromCacheOnError<T>({ url, cacheKey, config }: GetFromCacheOnErrorProps): Promise<T | null> {
+  try {
+    const response = await baseApi.get<T>(url, config);
+
+    await AsyncStorage.setItem(cacheKey || url, JSON.stringify(response.data));
 
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar os dados ou sem internet, carregando do cache.", error);
 
     try {
-      const cachedData = await AsyncStorage.getItem(url);
+      const cachedData = await AsyncStorage.getItem(cacheKey || url);
 
       if (cachedData) {
         return JSON.parse(cachedData) as T;

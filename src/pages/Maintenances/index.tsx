@@ -30,35 +30,31 @@ export const Maintenances = () => {
     const handleGetKanbanData = async () => {
       setLoading(true);
 
-      // TODO: retirar try catch quando adicionar os tipos
-      try {
-        const responseData = await getMaintenancesKanban({
-          userId,
-          filters: {
-            buildings: filters.selectedBuildings,
-            status: filters.selectedStatus,
-            categories: filters.selectedCategories,
-            users: filters.selectedUsers,
-            search: filters.search,
-            endDate: filters.endDate,
-            startDate: filters.startDate,
-          },
-        });
+      const maintenancesKanban = await getMaintenancesKanban({
+        userId,
+        filters: {
+          buildings: filters.selectedBuildings,
+          status: filters.selectedStatus,
+          categories: filters.selectedCategories,
+          users: filters.selectedUsers,
+          search: filters.search,
+          endDate: filters.endDate,
+          startDate: filters.startDate,
+        },
+      });
 
-        if (responseData) {
-          setLoading(false);
-          setAvailableCategories(
-            responseData.maintenanceCategoriesForSelect?.map((category: { id: string; name: string }) => ({
-              value: category.id,
-              label: category.name,
-            })) || [],
-          );
-          setKanbanData(responseData.kanban || []);
-        }
-      } catch (error) {
-        setLoading(false);
-        console.error("🚀 ~ handleGetKanbanData ~ error:", error);
+      if (maintenancesKanban) {
+        setKanbanData(maintenancesKanban.kanban);
+
+        const availableCategories = maintenancesKanban.maintenanceCategoriesForSelect.map((category) => ({
+          value: category.id,
+          label: category.name,
+        }));
+
+        setAvailableCategories(availableCategories);
       }
+
+      setLoading(false);
     };
 
     // Significa que uma navegação foi feita para a tela de manutenções.

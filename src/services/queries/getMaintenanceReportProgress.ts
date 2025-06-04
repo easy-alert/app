@@ -1,37 +1,15 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IMaintenanceReportProgress } from "@/types/api/IMaintenanceReportProgress";
 
-import { baseApi } from "../baseApi";
+import { getFromCacheOnError } from "../cache";
 
 interface IGetMaintenanceReportProgress {
   maintenanceHistoryId: string;
 }
 
-// TODO: add return types
-export const getMaintenanceReportProgress = async ({ maintenanceHistoryId }: IGetMaintenanceReportProgress) => {
-  const url = `/company/maintenances/list/report/progress/${maintenanceHistoryId}`;
-
-  try {
-    const response = await baseApi.get(url);
-
-    await AsyncStorage.setItem(url, JSON.stringify(response.data));
-
-    return response.data;
-  } catch (error: any) {
-    console.error(
-      "Erro ao buscar os dados ou sem internet, carregando do cache (getMaintenanceReportProgress):",
-      error,
-    );
-
-    try {
-      const cachedData = await AsyncStorage.getItem(url);
-
-      if (cachedData) {
-        return JSON.parse(cachedData);
-      }
-    } catch (cacheError) {
-      console.error("Erro ao carregar dados do cache:", cacheError);
-    }
-
-    return null;
-  }
+export const getMaintenanceReportProgress = ({
+  maintenanceHistoryId,
+}: IGetMaintenanceReportProgress): Promise<IMaintenanceReportProgress | null> => {
+  return getFromCacheOnError<IMaintenanceReportProgress>({
+    url: `/company/maintenances/list/report/progress/${maintenanceHistoryId}`,
+  });
 };
