@@ -1,7 +1,7 @@
 import { DefaultTheme, LinkingOptions, NavigationContainer, Theme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { PageLayout } from "@/components/PageLayout";
+import { MainLayout } from "@/components/MainLayout";
 import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
 import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
 import { Maintenances } from "@/pages/Maintenances";
@@ -38,7 +38,7 @@ export const MainRoutes = () => {
     <NavigationContainer linking={linking} theme={navigationTheme}>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        screenLayout={({ children }) => <PageLayout>{children}</PageLayout>}
+        screenLayout={({ children }) => <MainLayout>{children}</MainLayout>}
       >
         <Stack.Screen name="Maintenances" component={Maintenances} />
         <Stack.Screen name="CreateOccasionalMaintenance" component={CreateOccasionalMaintenance} />

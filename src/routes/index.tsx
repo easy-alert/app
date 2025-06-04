@@ -3,9 +3,9 @@ import * as Application from "expo-application";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 
-import { Splash } from "@/components/Splash";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppUpdate } from "@/pages/AppUpdate";
+import { Splash } from "@/pages/Splash";
 import { getAppStableVersion } from "@/services/queries/getAppStableVersion";
 
 import { AuthRoutes } from "./AuthRoutes";

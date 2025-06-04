@@ -4,12 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { OfflineBadge } from "../OfflineBadge";
 
-interface PageLayoutProps {
+interface MainLayoutProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 }
 
-export const PageLayout = ({ children, style }: PageLayoutProps) => {
+export const MainLayout = ({ children, style }: MainLayoutProps) => {
   return (
     <SafeAreaView style={[{ flex: 1 }, style]} edges={["top"]}>
       <OfflineBadge />

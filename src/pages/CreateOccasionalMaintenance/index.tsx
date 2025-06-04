@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
-import { PageWithHeader } from "@/components/PageWithHeader";
+import { PageWithHeaderLayout } from "@/components/PageWithHeaderLayout";
 import type { ProtectedNavigation } from "@/routes/navigation";
 
 import { Form } from "./Form";
@@ -11,9 +11,9 @@ export const CreateOccasionalMaintenance = () => {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <PageWithHeader title="Manutenção avulsa" onClose={() => navigation.goBack()} isScrollView>
+      <PageWithHeaderLayout title="Manutenção avulsa" onClose={() => navigation.goBack()} isScrollView>
         <Form />
-      </PageWithHeader>
+      </PageWithHeaderLayout>
     </KeyboardAvoidingView>
   );
 };

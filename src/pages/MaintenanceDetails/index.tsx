@@ -2,7 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
-import { PageWithHeader } from "@/components/PageWithHeader";
+import { PageWithHeaderLayout } from "@/components/PageWithHeaderLayout";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
 import { getMaintenanceDetails } from "@/services/queries/getMaintenanceDetails";
@@ -138,7 +138,7 @@ export const MaintenanceDetails = () => {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <PageWithHeader
+      <PageWithHeaderLayout
         title="Enviar relato"
         onClose={() => navigation.goBack()}
         isScrollView
@@ -184,7 +184,7 @@ export const MaintenanceDetails = () => {
             />
           </>
         )}
-      </PageWithHeader>
+      </PageWithHeaderLayout>
     </KeyboardAvoidingView>
   );
 };

@@ -3,7 +3,7 @@ import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "./styles";
 
-interface PageWithHeaderProps {
+interface PageWithHeaderLayoutProps {
   title: string;
   children: React.ReactNode;
   onClose?: () => void;
@@ -13,7 +13,7 @@ interface PageWithHeaderProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const PageWithHeader = ({
+export const PageWithHeaderLayout = ({
   title,
   children,
   onClose,
@@ -21,7 +21,7 @@ export const PageWithHeader = ({
   withPadding = true,
   isScrollView = false,
   style,
-}: PageWithHeaderProps) => {
+}: PageWithHeaderLayoutProps) => {
   return (
     <Container withPadding={withPadding} isScrollView={isScrollView} style={style}>
       <View style={[styles.header, !withPadding && styles.contentPadding]}>
