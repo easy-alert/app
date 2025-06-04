@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 
 import { commonStyles } from "@/components/common-styles";
-import type { IMaintenance } from "@/types/IMaintenance";
+import type { IMaintenance } from "@/types/api/IMaintenance";
 
 import { styles } from "./styles";
 

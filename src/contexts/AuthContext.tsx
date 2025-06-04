@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         os: Platform.OS,
       });
 
-      if (!response.user || !response.user.id) {
+      if (!response || !response.user || !response.user.id) {
         setIsAuthenticated(false);
         return;
       }

@@ -6,6 +6,7 @@ interface IGetMaintenanceHistorySupplier {
   maintenanceHistoryId: string;
 }
 
+// TODO: add return types
 export const getMaintenanceHistorySupplier = async ({ maintenanceHistoryId }: IGetMaintenanceHistorySupplier) => {
   const uri = `company/suppliers/selected/${maintenanceHistoryId}`;
 

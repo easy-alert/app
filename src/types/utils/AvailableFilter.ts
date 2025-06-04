@@ -1,4 +1,4 @@
-export interface IAvailableFilter {
+export interface AvailableFilter {
   value: string;
   label: string;
 }

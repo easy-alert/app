@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
+import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";
@@ -59,11 +59,7 @@ export const History = ({ historyActivities }: HistoryProps) => {
                       <View key={index} style={styles.imageItemContainer}>
                         <Image source={{ uri: image.url }} style={styles.previewImage} />
 
-                        <Text
-                          style={styles.imageNameLabel}
-                          numberOfLines={1} // Limita a uma linha
-                          ellipsizeMode="tail"
-                        >
+                        <Text style={styles.imageNameLabel} numberOfLines={1} ellipsizeMode="tail">
                           {image.name}
                         </Text>
                       </View>

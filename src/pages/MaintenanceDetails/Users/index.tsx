@@ -1,7 +1,7 @@
 import { Image, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import type { IMaintenance } from "@/types/IMaintenance";
+import type { IMaintenance } from "@/types/api/IMaintenance";
 
 import { styles } from "./styles";
 

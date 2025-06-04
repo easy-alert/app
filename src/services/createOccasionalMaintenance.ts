@@ -1,23 +1,49 @@
-import type { IError } from "@/types/IError";
-import type { IOccasionalMaintenanceData } from "@/types/IOccasionalMaintenanceData";
-import type { IOccasionalMaintenanceType } from "@/types/IOccasionalMaintenanceType";
-import { alertMessage, catchHandler } from "@/utils/handleAlerts";
+import type { ApiError } from "@/types/utils/ApiError";
+import { alertMessage, catchHandler } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
 import { baseApi } from "./baseApi";
 
+interface IOccasionalMaintenanceData {
+  buildingId: string;
+
+  element: string;
+  activity: string;
+  responsible: string;
+  executionDate: string;
+
+  inProgress: boolean;
+
+  priorityName: string;
+
+  categoryData: {
+    id: string;
+    name: string;
+  };
+
+  reportData: {
+    cost: string;
+    observation: string;
+  };
+
+  users: string[];
+}
+
 interface ICreateOccasionalMaintenance {
   origin: string;
   userId: string;
-  occasionalMaintenanceType: IOccasionalMaintenanceType;
-  occasionalMaintenanceBody: IOccasionalMaintenanceData;
+  occasionalMaintenanceType: "pending" | "finished";
+  occasionalMaintenanceData: IOccasionalMaintenanceData;
 }
 
+// TODO: add return types
 export const createOccasionalMaintenance = async ({
   origin,
   userId,
   occasionalMaintenanceType,
-  occasionalMaintenanceBody: {
+  occasionalMaintenanceData,
+}: ICreateOccasionalMaintenance) => {
+  const {
     buildingId,
     executionDate,
     categoryData,
@@ -28,8 +54,8 @@ export const createOccasionalMaintenance = async ({
     responsible,
     priorityName,
     users,
-  },
-}: ICreateOccasionalMaintenance) => {
+  } = occasionalMaintenanceData;
+
   const uri = "company/buildings/reports/occasional/create";
 
   const body = {
@@ -52,8 +78,8 @@ export const createOccasionalMaintenance = async ({
     reportData: {
       cost: unMaskBRL(reportData.cost) || null,
       observation: reportData.observation || null,
-      files: reportData.files || null,
-      images: reportData.images || null,
+      files: [],
+      images: [],
     },
 
     usersId: users,
@@ -69,7 +95,7 @@ export const createOccasionalMaintenance = async ({
 
     return response.data;
   } catch (error: any) {
-    const response = error.response as IError;
+    const response = error.response as ApiError;
 
     catchHandler({
       message: response?.data?.ServerMessage?.message,

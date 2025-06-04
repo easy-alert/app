@@ -1,1 +1,1 @@
-export const unMaskBRL = (value: string) => value.replace(/[^0-9]/g, "");
+export const unMaskBRL = (value: string): string => value.replace(/[^0-9]/g, "");

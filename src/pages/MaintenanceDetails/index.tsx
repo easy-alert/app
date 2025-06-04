@@ -10,11 +10,11 @@ import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IMaintenanceHistoryActivities } from "@/types/IMaintenanceHistoryActivities";
-import type { IRemoteFile } from "@/types/IRemoteFile";
-import type { ISupplier } from "@/types/ISupplier";
+import type { IMaintenance } from "@/types/api/IMaintenance";
+import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
+import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { ISupplier } from "@/types/api/ISupplier";
+import type { LocalFile } from "@/types/utils/LocalFile";
 
 import { Attachments } from "./Attachments";
 import { CallToActions } from "./CallToActions";
@@ -38,8 +38,11 @@ export const MaintenanceDetails = () => {
   const [supplier, setSupplier] = useState<ISupplier>();
   const [historyActivities, setHistoryActivities] = useState<IMaintenanceHistoryActivities>();
   const [cost, setCost] = useState("0,00");
-  const [files, setFiles] = useState<(IRemoteFile | ILocalFile)[]>([]);
-  const [images, setImages] = useState<(IRemoteFile | ILocalFile)[]>([]);
+
+  const [remoteFiles, setRemoteFiles] = useState<IRemoteFile[]>([]);
+  const [remoteImages, setRemoteImages] = useState<IRemoteFile[]>([]);
+  const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
+  const [localImages, setLocalImages] = useState<LocalFile[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleGetMaintenanceDetails = async () => {
@@ -48,7 +51,9 @@ export const MaintenanceDetails = () => {
         maintenanceHistoryId: maintenanceId,
       });
 
-      setMaintenanceDetails(responseData);
+      if (responseData) {
+        setMaintenanceDetails(responseData);
+      }
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceDetails ~ error:", error);
     }
@@ -61,8 +66,8 @@ export const MaintenanceDetails = () => {
       });
 
       setCost(String(responseData?.progress?.cost || 0 / 100).replace(".", ","));
-      setFiles(responseData?.progress?.ReportAnnexesProgress || []);
-      setImages(responseData?.progress?.ReportImagesProgress || []);
+      setRemoteFiles(responseData?.progress?.ReportAnnexesProgress || []);
+      setRemoteImages(responseData?.progress?.ReportImagesProgress || []);
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
     }
@@ -74,7 +79,9 @@ export const MaintenanceDetails = () => {
         maintenanceHistoryId: maintenanceId,
       });
 
-      setHistoryActivities(responseData);
+      if (responseData) {
+        setHistoryActivities(responseData);
+      }
     } catch (error) {
       console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
     }
@@ -158,20 +165,23 @@ export const MaintenanceDetails = () => {
               <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
               <Attachments
                 maintenanceDetails={maintenanceDetails}
-                files={files}
-                images={images}
-                setFiles={setFiles}
-                setImages={setImages}
+                remoteFiles={remoteFiles}
+                remoteImages={remoteImages}
+                setRemoteFiles={setRemoteFiles}
+                setRemoteImages={setRemoteImages}
+                localFiles={localFiles}
+                localImages={localImages}
+                setLocalFiles={setLocalFiles}
+                setLocalImages={setLocalImages}
               />
 
               <CallToActions
                 maintenanceDetails={maintenanceDetails}
-                files={files}
-                images={images}
+                localFiles={localFiles}
+                localImages={localImages}
+                remoteFiles={remoteFiles}
+                remoteImages={remoteImages}
                 cost={cost}
-                setFiles={setFiles}
-                setImages={setImages}
-                setCost={setCost}
                 setLoading={setLoading}
               />
             </>

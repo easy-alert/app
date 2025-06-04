@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { baseApi } from "./baseApi";
 
+// TODO: add return types
 export const getUsers = async (buildingId?: string) => {
   const params = {
     buildingId: buildingId || "",

@@ -1,109 +1,177 @@
-import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import type { ILocalFile } from "@/types/ILocalFile";
-import type { IMaintenance } from "@/types/IMaintenance";
-import type { IRemoteFile } from "@/types/IRemoteFile";
+import type { IMaintenance } from "@/types/api/IMaintenance";
+import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
+import { openFilePicker } from "@/utils/openFilePicker";
+import { removeItem } from "@/utils/removeItem";
 
-import { openFilePicker } from "../utils/openFilePicker";
-import { removeItem } from "../utils/removeItem";
 import { styles } from "./styles";
 
 interface AttachmentsProps {
   maintenanceDetails: IMaintenance;
-  files: (IRemoteFile | ILocalFile)[];
-  images: (IRemoteFile | ILocalFile)[];
-  setFiles: React.Dispatch<React.SetStateAction<(IRemoteFile | ILocalFile)[]>>;
-  setImages: React.Dispatch<React.SetStateAction<(IRemoteFile | ILocalFile)[]>>;
+  remoteFiles: IRemoteFile[];
+  remoteImages: IRemoteFile[];
+  setRemoteFiles: (files: IRemoteFile[]) => void;
+  setRemoteImages: (images: IRemoteFile[]) => void;
+  localFiles: LocalFile[];
+  localImages: LocalFile[];
+  setLocalFiles: React.Dispatch<React.SetStateAction<LocalFile[]>>;
+  setLocalImages: React.Dispatch<React.SetStateAction<LocalFile[]>>;
 }
 
-export const Attachments = ({ maintenanceDetails, files, images, setFiles, setImages }: AttachmentsProps) => {
-  const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker("file");
+export const Attachments = ({
+  maintenanceDetails,
+  remoteFiles,
+  remoteImages,
+  setRemoteFiles,
+  setRemoteImages,
+  localFiles,
+  localImages,
+  setLocalFiles,
+  setLocalImages,
+}: AttachmentsProps) => {
+  const [loadingImages, setLoadingImages] = useState(false);
+  const [loadingFiles, setLoadingFiles] = useState(false);
 
-    if (localFiles.length) {
-      setFiles((prev) => [...prev, ...localFiles]);
+  const handleOpenFilePicker = async () => {
+    try {
+      setLoadingFiles(true);
+
+      const localFiles = await openFilePicker({ mode: "document" });
+
+      if (localFiles.length) {
+        setLocalFiles((prev) => [...prev, ...localFiles]);
+      }
+    } finally {
+      setLoadingFiles(false);
     }
   };
 
   const handleOpenImagePicker = async () => {
-    const localFiles = await openFilePicker("image");
+    try {
+      setLoadingImages(true);
 
-    if (localFiles.length) {
-      setImages((prev) => [...prev, ...localFiles]);
+      const localImages = await openFilePicker({ mode: "image" });
+
+      if (localImages.length) {
+        setLocalImages((prev) => [...prev, ...localImages]);
+      }
+    } finally {
+      setLoadingImages(false);
     }
   };
 
-  const handleRemoveFile = (index: number) => {
-    const newFiles = removeItem(files, index);
-    setFiles(newFiles);
+  const handleRemoveRemoteFile = (index: number) => {
+    const newFiles = removeItem(remoteFiles, index);
+    setRemoteFiles(newFiles);
   };
 
-  const handleRemoveImage = (index: number) => {
-    const newImages = removeItem(images, index);
-    setImages(newImages);
+  const handleRemoveLocalFile = (index: number) => {
+    const newFiles = removeItem(localFiles, index);
+    setLocalFiles(newFiles);
+  };
+
+  const handleRemoveRemoteImage = (index: number) => {
+    const newImages = removeItem(remoteImages, index);
+    setRemoteImages(newImages);
+  };
+
+  const handleRemoveLocalImage = (index: number) => {
+    const newImages = removeItem(localImages, index);
+    setLocalImages(newImages);
   };
 
   const canBeEdited =
     maintenanceDetails.MaintenancesStatus.name !== "completed" &&
     maintenanceDetails.MaintenancesStatus.name !== "overdue";
 
-  const imagesToShow: string[] = canBeEdited
-    ? images.map((image) => image.url)
+  const remoteImagesToShow: string[] = canBeEdited
+    ? remoteImages.map((image) => image.url)
     : ((maintenanceDetails.MaintenanceReport[0]?.ReportImages.map((image) => image.url) ?? []).filter(
         Boolean,
       ) as string[]);
 
   return (
     <View>
-      {/* Botão de anexar arquivos */}
-      <Text style={styles.titleLabel}>Anexos</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleLabel}>Anexos</Text>
+
+        {loadingFiles && <ActivityIndicator size="small" color="#c62828" />}
+      </View>
 
       <View style={styles.contentContainer}>
         {canBeEdited && (
-          <TouchableOpacity onPress={handleOpenFilePicker}>
+          <TouchableOpacity onPress={handleOpenFilePicker} style={styles.pickerButton}>
             <Icon name="paperclip" size={24} color="#c62828" />
           </TouchableOpacity>
         )}
 
         <View style={styles.fileList}>
-          {files.map((file, index) => (
-            <TouchableOpacity key={index} onPress={() => Linking.openURL(file.url)}>
-              <View style={styles.fileItem}>
-                <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
-                  {file.originalName}
-                </Text>
+          {localFiles.map((file, index) => (
+            <View key={index} style={styles.fileItem}>
+              <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
+                {file.name}
+              </Text>
 
-                {canBeEdited && (
-                  <TouchableOpacity onPress={() => handleRemoveFile(index)}>
-                    <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
-                  </TouchableOpacity>
-                )}
-              </View>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleRemoveLocalFile(index)}>
+                <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {remoteFiles.map((file, index) => (
+            <View key={index} style={styles.fileItem}>
+              <TouchableOpacity onPress={() => Linking.openURL(file.url)}>
+                <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="tail">
+                  {file.name}
+                </Text>
+              </TouchableOpacity>
+
+              {canBeEdited && (
+                <TouchableOpacity onPress={() => handleRemoveRemoteFile(index)}>
+                  <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+                </TouchableOpacity>
+              )}
+            </View>
           ))}
         </View>
       </View>
 
-      {/* Botão de anexar imagens */}
-      <Text style={styles.titleLabel}>Imagens</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleLabel}>Imagens</Text>
+
+        {loadingImages && <ActivityIndicator size="small" color="#c62828" />}
+      </View>
 
       <View style={styles.contentContainer}>
         {canBeEdited && (
-          <TouchableOpacity onPress={handleOpenImagePicker}>
+          <TouchableOpacity onPress={handleOpenImagePicker} style={styles.pickerButton}>
             <Icon name="image" size={24} color="#c62828" />
           </TouchableOpacity>
         )}
 
         <View style={styles.fileList}>
-          {imagesToShow.map((image, index) => (
+          {localImages.map((image, index) => (
+            <View key={index} style={styles.fileItem}>
+              <Image source={{ uri: image.uri }} style={styles.previewImage} />
+
+              <TouchableOpacity onPress={() => handleRemoveLocalImage(index)}>
+                <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {remoteImagesToShow.map((image, index) => (
             <View key={index} style={styles.fileItem}>
               <TouchableOpacity onPress={() => Linking.openURL(image)}>
                 <Image source={{ uri: image }} style={styles.previewImage} />
               </TouchableOpacity>
 
               {canBeEdited && (
-                <TouchableOpacity onPress={() => handleRemoveImage(index)}>
+                <TouchableOpacity onPress={() => handleRemoveRemoteImage(index)}>
                   <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                 </TouchableOpacity>
               )}

@@ -9,13 +9,13 @@ interface IAlertMessage {
   message: string;
 }
 
-export const catchHandler = async ({ message }: ICatchHandler) => {
+export const catchHandler = async ({ message }: ICatchHandler): Promise<void> => {
   const errorMessage = message || "Erro ao realizar a operação";
 
   Alert.alert("Erro", errorMessage);
 };
 
-export const alertMessage = async ({ type, message }: IAlertMessage) => {
+export const alertMessage = async ({ type, message }: IAlertMessage): Promise<void> => {
   switch (type) {
     case "error":
       Alert.alert("Erro", message);
