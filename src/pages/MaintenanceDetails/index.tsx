@@ -2,8 +2,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
-import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
 import { getMaintenanceDetails } from "@/services/queries/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/queries/getMaintenanceHistoryActivities";

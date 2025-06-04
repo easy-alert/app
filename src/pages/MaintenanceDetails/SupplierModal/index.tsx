@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
+import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
 import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
 
 import { styles } from "./styles";
