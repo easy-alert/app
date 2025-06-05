@@ -7,17 +7,17 @@ import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { getUsers } from "@/services/getUsers";
 import { IUser } from "@/types/api/IUser";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
+import { Filter } from "@/types/utils/Filter";
 
 import { Filters } from "../Filters";
-import { IFilter } from "../utils";
 import { styles } from "./styles";
 
 // TODO: refatorar
 type IBuilding = IUser["UserBuildingsPermissions"][0];
 
 interface FiltersButtonProps {
-  filters: IFilter;
-  setFilters: (filters: IFilter) => void;
+  filters: Filter;
+  setFilters: (filters: Filter) => void;
   availableCategories: AvailableFilter[];
 }
 

@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 import { PendingSyncBadge } from "@/components/PendingSyncBadge";
+import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import { getStatus } from "@/utils/getStatus";
-import { getOfflineQueue } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
@@ -13,17 +12,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ maintenanceDetails }: HeaderProps) => {
-  const [pendingSync, setPendingSync] = useState(false);
-
-  useEffect(() => {
-    const handleGetPendingSync = async () => {
-      const offlineQueue = await getOfflineQueue();
-      const pendingSync = offlineQueue.some((item) => item.maintenanceId === maintenanceDetails.id);
-      setPendingSync(pendingSync);
-    };
-
-    handleGetPendingSync();
-  }, [maintenanceDetails.id]);
+  const { offlineQueue } = useOfflineQueue();
+  const pendingSync = offlineQueue.some((item) => item.maintenanceId === maintenanceDetails.id);
 
   return (
     <View style={styles.container}>

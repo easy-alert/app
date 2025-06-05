@@ -1,5 +1,3 @@
-import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { compare } from "compare-versions";
 import * as Application from "expo-application";
 import { useEffect, useState } from "react";
@@ -8,14 +6,10 @@ import { Platform } from "react-native";
 import { Splash } from "@/components/Splash";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppUpdate } from "@/pages/AppUpdate";
-import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
-import { ForgotPassword } from "@/pages/ForgotPassword";
-import { Login } from "@/pages/Login";
-import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
-import { Maintenances } from "@/pages/Maintenances";
 import { getAppStableVersion } from "@/services/getAppStableVersion";
 
-const Stack = createNativeStackNavigator();
+import { AuthRoutes } from "./AuthRoutes";
+import { MainRoutes } from "./MainRoutes";
 
 export const Routes = () => {
   const { isAuthenticated } = useAuth();
@@ -44,42 +38,10 @@ export const Routes = () => {
   }
 
   if (!isAuthenticated) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
+    return <AuthRoutes />;
   }
 
-  const linking: LinkingOptions<ReactNavigation.RootParamList> = {
-    prefixes: __DEV__
-      ? ["exp://127.0.0.1:8081/--/"] //
-      : ["easyalert://", "https://company.easyalert.com.br/"],
-    config: {
-      screens: {
-        Maintenances: {
-          path: "maintenances",
-          alias: ["*"],
-        },
-        CreateOccasionalMaintenance: "maintenances/new",
-        MaintenanceDetails: "maintenances/:maintenanceId",
-      },
-      initialRouteName: "Maintenances",
-    },
-  };
-
-  return (
-    <NavigationContainer linking={linking}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Maintenances" component={Maintenances} />
-        <Stack.Screen name="CreateOccasionalMaintenance" component={CreateOccasionalMaintenance} />
-        <Stack.Screen name="MaintenanceDetails" component={MaintenanceDetails} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  return <MainRoutes />;
 };
 
 const getIsStableVersion = async () => {

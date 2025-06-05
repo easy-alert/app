@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BottomSheetProvider } from "@/contexts/BottomSheetContext";
+import { OfflineQueueProvider } from "@/contexts/OfflineQueueContext";
 import { Routes } from "@/routes";
 import { requestPushNotificationPermissions, setNotificationHandler } from "@/utils/pushNotification";
 
@@ -24,7 +25,9 @@ export default function App() {
         <View style={styles.appContainer}>
           <BottomSheetProvider>
             <AuthProvider>
-              <Routes />
+              <OfflineQueueProvider>
+                <Routes />
+              </OfflineQueueProvider>
             </AuthProvider>
           </BottomSheetProvider>
         </View>
