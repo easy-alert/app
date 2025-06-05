@@ -79,44 +79,47 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded: IRemoteFile[] = [];
-    const imagesUploaded: IRemoteFile[] = [];
-
     try {
       if (isConnected) {
-        for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+        const filesUploaded: IRemoteFile[] = [];
+
+        const uploadFilesPromises = localFiles.map(async (file) => {
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
 
-        for (const image of localImages) {
-          const fileUrl = await uploadFile({
+        const imagesUploaded: IRemoteFile[] = [];
+
+        const uploadImagesPromises = localImages.map(async (image) => {
+          const { success, data } = await uploadFile({
             uri: image.uri,
             type: image.type,
             name: image.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           imagesUploaded.push({
             name: image.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
+
+        await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
         await updateMaintenance({
           maintenanceHistoryId: maintenanceDetails.id,
@@ -168,44 +171,47 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded: IRemoteFile[] = [];
-    const imagesUploaded: IRemoteFile[] = [];
-
     try {
       if (isConnected) {
-        for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+        const filesUploaded: IRemoteFile[] = [];
+
+        const uploadFilesPromises = localFiles.map(async (file) => {
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
 
-        for (const image of localImages) {
-          const fileUrl = await uploadFile({
+        const imagesUploaded: IRemoteFile[] = [];
+
+        const uploadImagesPromises = localImages.map(async (image) => {
+          const { success, data } = await uploadFile({
             uri: image.uri,
             type: image.type,
             name: image.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           imagesUploaded.push({
             name: image.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
+
+        await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
         await updateMaintenanceFinish({
           maintenanceHistoryId: maintenanceDetails.id,
