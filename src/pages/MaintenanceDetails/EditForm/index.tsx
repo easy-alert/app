@@ -11,7 +11,7 @@ import { LabelInput } from "@/components/LabelInput";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { updateMaintenanceDueDate } from "@/services/mutations/updateMaintenanceDueDate";
 import type { IMaintenance } from "@/types/api/IMaintenance";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";
@@ -55,7 +55,7 @@ export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps)
       closeBottomSheet();
       onFinishEditing();
     } else {
-      alertMessage({ type: "error", message });
+      alerts.error(message);
     }
   };
 

@@ -20,7 +20,7 @@ import { getUsers } from "@/services/queries/getUsers";
 import { IBuilding } from "@/types/api/IBuilding";
 import type { ICategory } from "@/types/api/ICategory";
 import { IUser } from "@/types/api/IUser";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
@@ -186,7 +186,7 @@ export const Form = () => {
         maintenanceId: responseData.maintenance.id,
       });
     } else {
-      alertMessage({ type: "error", message });
+      alerts.error(message);
     }
 
     setCreating(false);

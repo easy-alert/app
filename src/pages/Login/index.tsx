@@ -17,7 +17,7 @@ import { Keyboard } from "react-native";
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -60,18 +60,12 @@ export const Login = () => {
     Keyboard.dismiss();
 
     if (!phoneNumber || phoneNumber.length < 11) {
-      alertMessage({
-        type: "error",
-        message: "Por favor, insira um número de telefone válido.",
-      });
+      alerts.error("Por favor, insira um número de telefone válido.");
       return;
     }
 
     if (!password) {
-      alertMessage({
-        type: "error",
-        message: "Por favor, insira uma senha válida.",
-      });
+      alerts.error("Por favor, insira uma senha válida.");
       return;
     }
 

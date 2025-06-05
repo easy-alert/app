@@ -8,7 +8,7 @@ import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
 import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
 import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -34,7 +34,7 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
       toast.success(message);
       onClose();
     } else {
-      alertMessage({ type: "error", message });
+      alerts.error(message);
     }
   };
 

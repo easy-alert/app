@@ -17,7 +17,7 @@ import { toast } from "sonner-native";
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -33,20 +33,14 @@ export const ForgotPassword = () => {
     Keyboard.dismiss();
 
     if (!email) {
-      alertMessage({
-        type: "error",
-        message: "Por favor, insira um e-mail.",
-      });
+      alerts.error("Por favor, insira um e-mail.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
-      alertMessage({
-        type: "error",
-        message: "Por favor, insira um e-mail válido.",
-      });
+      alerts.error("Por favor, insira um e-mail válido.");
       return;
     }
 
@@ -58,7 +52,7 @@ export const ForgotPassword = () => {
       toast.success(message);
       navigation.goBack();
     } else {
-      alertMessage({ type: "error", message });
+      alerts.error(message);
     }
 
     setIsLoading(false);

@@ -13,7 +13,7 @@ import { uploadFile } from "@/services/mutations/uploadFile";
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 import { openFilePicker } from "@/utils/openFilePicker";
 
 import { styles } from "./styles";
@@ -77,7 +77,7 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
         setComment("");
         setLocalFiles([]);
       } else {
-        alertMessage({ type: "error", message });
+        alerts.error(message);
       }
     } else {
       const newEntry: OfflineQueueItem = {

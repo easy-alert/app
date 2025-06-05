@@ -15,7 +15,7 @@ import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 import { convertCostToInteger } from "@/utils/convertCostToInteger";
 
 import { styles } from "./styles";
@@ -61,7 +61,7 @@ export const CallToActions = ({
         toast.success(message);
         navigation.goBack();
       } else {
-        alertMessage({ type: "error", message });
+        alerts.error(message);
       }
     } else {
       const newEntry: OfflineQueueItem = {
@@ -151,7 +151,7 @@ export const CallToActions = ({
         toast.success(message);
         navigation.goBack();
       } else {
-        alertMessage({ type: "error", message });
+        alerts.error(message);
       }
     } else {
       const newEntry: OfflineQueueItem = {
@@ -245,7 +245,7 @@ export const CallToActions = ({
         toast.success(message);
         navigation.goBack();
       } else {
-        alertMessage({ type: "error", message });
+        alerts.error(message);
       }
     } else {
       const newEntry: OfflineQueueItem = {

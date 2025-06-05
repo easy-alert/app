@@ -6,7 +6,7 @@ import { toast } from "sonner-native";
 import { useAuth } from "@/contexts/AuthContext";
 import { unlinkMaintenanceSupplier } from "@/services/mutations/unlinkMaintenanceSupplier";
 import type { ISupplier } from "@/types/api/ISupplier";
-import { alertMessage } from "@/utils/alerts";
+import { alerts } from "@/utils/alerts";
 
 import { SupplierModal } from "../SupplierModal";
 import { styles } from "./styles";
@@ -42,7 +42,7 @@ export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: S
       toast.success(message);
       await getMaintenanceSupplier();
     } else {
-      alertMessage({ type: "error", message });
+      alerts.error(message);
     }
   };
 
