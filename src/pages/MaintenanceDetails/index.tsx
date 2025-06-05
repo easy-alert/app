@@ -2,7 +2,6 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
-import { PageLayout } from "@/components/PageLayout";
 import { PageWithHeader } from "@/components/PageWithHeader";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
@@ -138,56 +137,54 @@ export const MaintenanceDetails = () => {
     maintenanceDetails.MaintenancesStatus.name !== "overdue";
 
   return (
-    <PageLayout>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <PageWithHeader
-          title="Enviar relato"
-          onClose={() => navigation.goBack()}
-          isScrollView
-          onEdit={showEditFormButton ? openEditForm : undefined}
-        >
-          <Header maintenanceDetails={maintenanceDetails} />
-          <DataLabels maintenanceDetails={maintenanceDetails} />
-          <Users maintenanceDetails={maintenanceDetails} />
-          <Suppliers
-            supplier={supplier}
-            maintenanceId={maintenanceId}
-            getMaintenanceSupplier={handleGetMaintenanceSupplier}
-          />
-          <Comments
-            maintenanceId={maintenanceId}
-            setLoading={setLoading}
-            getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
-          />
-          <History historyActivities={historyActivities} />
-          {maintenanceDetails.canReport && (
-            <>
-              <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
-              <Attachments
-                maintenanceDetails={maintenanceDetails}
-                remoteFiles={remoteFiles}
-                remoteImages={remoteImages}
-                setRemoteFiles={setRemoteFiles}
-                setRemoteImages={setRemoteImages}
-                localFiles={localFiles}
-                localImages={localImages}
-                setLocalFiles={setLocalFiles}
-                setLocalImages={setLocalImages}
-              />
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <PageWithHeader
+        title="Enviar relato"
+        onClose={() => navigation.goBack()}
+        isScrollView
+        onEdit={showEditFormButton ? openEditForm : undefined}
+      >
+        <Header maintenanceDetails={maintenanceDetails} />
+        <DataLabels maintenanceDetails={maintenanceDetails} />
+        <Users maintenanceDetails={maintenanceDetails} />
+        <Suppliers
+          supplier={supplier}
+          maintenanceId={maintenanceId}
+          getMaintenanceSupplier={handleGetMaintenanceSupplier}
+        />
+        <Comments
+          maintenanceId={maintenanceId}
+          setLoading={setLoading}
+          getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
+        />
+        <History historyActivities={historyActivities} />
+        {maintenanceDetails.canReport && (
+          <>
+            <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
+            <Attachments
+              maintenanceDetails={maintenanceDetails}
+              remoteFiles={remoteFiles}
+              remoteImages={remoteImages}
+              setRemoteFiles={setRemoteFiles}
+              setRemoteImages={setRemoteImages}
+              localFiles={localFiles}
+              localImages={localImages}
+              setLocalFiles={setLocalFiles}
+              setLocalImages={setLocalImages}
+            />
 
-              <CallToActions
-                maintenanceDetails={maintenanceDetails}
-                localFiles={localFiles}
-                localImages={localImages}
-                remoteFiles={remoteFiles}
-                remoteImages={remoteImages}
-                cost={cost}
-                setLoading={setLoading}
-              />
-            </>
-          )}
-        </PageWithHeader>
-      </KeyboardAvoidingView>
-    </PageLayout>
+            <CallToActions
+              maintenanceDetails={maintenanceDetails}
+              localFiles={localFiles}
+              localImages={localImages}
+              remoteFiles={remoteFiles}
+              remoteImages={remoteImages}
+              cost={cost}
+              setLoading={setLoading}
+            />
+          </>
+        )}
+      </PageWithHeader>
+    </KeyboardAvoidingView>
   );
 };

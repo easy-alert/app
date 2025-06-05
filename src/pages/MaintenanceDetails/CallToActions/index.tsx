@@ -4,6 +4,7 @@ import { Alert, View } from "react-native";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
 import { updateMaintenance } from "@/services/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
@@ -14,7 +15,6 @@ import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
 import { convertCostToInteger } from "@/utils/convertCostToInteger";
-import { addItemToOfflineQueue } from "@/utils/offlineQueue";
 
 import { styles } from "./styles";
 
@@ -39,6 +39,7 @@ export const CallToActions = ({
 }: CallToActionsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
+  const { addItem } = useOfflineQueue();
 
   const handleChangeMaintenanceProgress = async () => {
     setLoading(true);
@@ -62,7 +63,7 @@ export const CallToActions = ({
           inProgressChange: !maintenanceDetails.inProgress,
         };
 
-        await addItemToOfflineQueue(newEntry);
+        await addItem(newEntry);
       }
     } finally {
       navigation.goBack();
@@ -78,44 +79,47 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded: IRemoteFile[] = [];
-    const imagesUploaded: IRemoteFile[] = [];
-
     try {
       if (isConnected) {
-        for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+        const filesUploaded: IRemoteFile[] = [];
+
+        const uploadFilesPromises = localFiles.map(async (file) => {
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
 
-        for (const image of localImages) {
-          const fileUrl = await uploadFile({
+        const imagesUploaded: IRemoteFile[] = [];
+
+        const uploadImagesPromises = localImages.map(async (image) => {
+          const { success, data } = await uploadFile({
             uri: image.uri,
             type: image.type,
             name: image.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           imagesUploaded.push({
             name: image.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
+
+        await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
         await updateMaintenance({
           maintenanceHistoryId: maintenanceDetails.id,
@@ -148,7 +152,7 @@ export const CallToActions = ({
           remoteImages,
         };
 
-        await addItemToOfflineQueue(newEntry);
+        await addItem(newEntry);
       }
 
       navigation.goBack();
@@ -167,44 +171,47 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    const filesUploaded: IRemoteFile[] = [];
-    const imagesUploaded: IRemoteFile[] = [];
-
     try {
       if (isConnected) {
-        for (const file of localFiles) {
-          const fileUrl = await uploadFile({
+        const filesUploaded: IRemoteFile[] = [];
+
+        const uploadFilesPromises = localFiles.map(async (file) => {
+          const { success, data } = await uploadFile({
             uri: file.uri,
             type: file.type,
             name: file.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           filesUploaded.push({
             name: file.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
 
-        for (const image of localImages) {
-          const fileUrl = await uploadFile({
+        const imagesUploaded: IRemoteFile[] = [];
+
+        const uploadImagesPromises = localImages.map(async (image) => {
+          const { success, data } = await uploadFile({
             uri: image.uri,
             type: image.type,
             name: image.name,
           });
 
-          if (!fileUrl) {
-            continue;
+          if (!success) {
+            return;
           }
 
           imagesUploaded.push({
             name: image.name,
-            url: fileUrl,
+            url: data.url,
           });
-        }
+        });
+
+        await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
         await updateMaintenanceFinish({
           maintenanceHistoryId: maintenanceDetails.id,
@@ -237,7 +244,7 @@ export const CallToActions = ({
           remoteImages,
         };
 
-        await addItemToOfflineQueue(newEntry);
+        await addItem(newEntry);
       }
 
       navigation.goBack();
