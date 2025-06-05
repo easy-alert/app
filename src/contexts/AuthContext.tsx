@@ -7,6 +7,7 @@ import { recoverPassword } from "@/services/auth/recoverPassword";
 import { signIn } from "@/services/auth/signIn";
 import { IBuilding } from "@/types/api/IBuilding";
 import { MutationResponse } from "@/types/utils/MutationResponse";
+import { alertMessage } from "@/utils/alerts";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
 import { storageKeys } from "@/utils/storageKeys";
@@ -61,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const pushNotificationToken = await getPushNotificationToken();
       const deviceId = await getDeviceId();
 
-      const { success, data } = await signIn({
+      const { success, message, data } = await signIn({
         phone,
         password,
         pushNotificationToken,
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!success) {
         setIsAuthenticated(false);
+        alertMessage({ type: "error", message });
         return;
       }
 

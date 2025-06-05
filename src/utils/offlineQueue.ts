@@ -98,6 +98,7 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
 
   await Promise.all(uploadPromises);
 
+  // TODO: verificar quando da erro
   await createMaintenanceHistoryActivity({
     maintenanceId: item.maintenanceId,
     userId: item.userId,
@@ -151,6 +152,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 
   await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
+  // TODO: verificar quando da erro
   await updateMaintenance({
     maintenanceHistoryId: item.maintenanceId,
     syndicNanoId: "",
@@ -173,6 +175,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 };
 
 const syncUpdateProgress = async (item: UpdateProgressQueueItem): Promise<void> => {
+  // TODO: verificar quando da erro
   await updateMaintenanceProgress({
     maintenanceHistoryId: item.maintenanceId,
     inProgressChange: item.inProgressChange,
@@ -222,6 +225,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
 
   await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
+  // TODO: verificar quando da erro
   await updateMaintenanceFinish({
     maintenanceHistoryId: item.maintenanceId,
     syndicNanoId: "",

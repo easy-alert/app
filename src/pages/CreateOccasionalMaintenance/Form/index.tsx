@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
+import { toast } from "sonner-native";
 import { z } from "zod";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
@@ -19,6 +20,7 @@ import { getUsers } from "@/services/queries/getUsers";
 import { IBuilding } from "@/types/api/IBuilding";
 import type { ICategory } from "@/types/api/ICategory";
 import { IUser } from "@/types/api/IUser";
+import { alertMessage } from "@/utils/alerts";
 import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
@@ -138,52 +140,57 @@ export const Form = () => {
     inProgress?: boolean;
     data: z.infer<typeof formSchema>;
   }) => {
-    try {
-      if (inProgress) {
-        setCreatingInProgress(true);
-      } else {
-        setCreating(true);
-      }
-
-      const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
-
-      const { success, data: responseData } = await createOccasionalMaintenance({
-        origin: "Mobile",
-        userId,
-        occasionalMaintenanceType: "pending",
-        occasionalMaintenanceData: {
-          buildingId,
-
-          element,
-          activity,
-          responsible,
-          executionDate,
-          inProgress,
-          priorityName: priority,
-
-          categoryData: {
-            id: categoryId,
-            name: categories.find((category) => category.id === categoryId)?.name!,
-          },
-
-          reportData: {
-            cost: "R$ 0,00",
-            observation: "",
-          },
-
-          users,
-        },
-      });
-
-      if (success) {
-        navigation.replace("MaintenanceDetails", {
-          maintenanceId: responseData.maintenance.id,
-        });
-      }
-    } finally {
-      setCreating(false);
-      setCreatingInProgress(false);
+    if (inProgress) {
+      setCreatingInProgress(true);
+    } else {
+      setCreating(true);
     }
+
+    const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
+
+    const {
+      success,
+      message,
+      data: responseData,
+    } = await createOccasionalMaintenance({
+      origin: "Mobile",
+      userId,
+      occasionalMaintenanceType: "pending",
+      occasionalMaintenanceData: {
+        buildingId,
+
+        element,
+        activity,
+        responsible,
+        executionDate,
+        inProgress,
+        priorityName: priority,
+
+        categoryData: {
+          id: categoryId,
+          name: categories.find((category) => category.id === categoryId)?.name!,
+        },
+
+        reportData: {
+          cost: "R$ 0,00",
+          observation: "",
+        },
+
+        users,
+      },
+    });
+
+    if (success) {
+      toast.success(message);
+      navigation.replace("MaintenanceDetails", {
+        maintenanceId: responseData.maintenance.id,
+      });
+    } else {
+      alertMessage({ type: "error", message });
+    }
+
+    setCreating(false);
+    setCreatingInProgress(false);
   };
 
   return (

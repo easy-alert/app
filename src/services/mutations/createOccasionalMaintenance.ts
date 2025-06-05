@@ -1,7 +1,6 @@
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { ApiMutationResponse } from "@/types/utils/ApiMutationResponse";
 import { MutationResponse } from "@/types/utils/MutationResponse";
-import { alertCatchMessage, alertMessage } from "@/utils/alerts";
 import { unMaskBRL } from "@/utils/unMaskBRL";
 
 import { baseApi } from "../baseApi";
@@ -96,24 +95,17 @@ export const createOccasionalMaintenance = async ({
       body,
     );
 
-    alertMessage({
-      type: "success",
-      message: response.data.ServerMessage.message,
-    });
-
     return {
       success: true,
+      message: response.data.ServerMessage.message,
       data: response.data,
     };
   } catch (error: any) {
     const response = error.response as ApiMutationError;
 
-    alertCatchMessage({
-      message: response.data.ServerMessage.message,
-    });
-
     return {
       success: false,
+      message: response.data.ServerMessage.message,
       data: null,
     };
   }

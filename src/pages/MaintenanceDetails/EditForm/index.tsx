@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
+import { toast } from "sonner-native";
 import { z } from "zod";
 
 import { PrimaryButton } from "@/components/Button";
@@ -10,6 +11,7 @@ import { LabelInput } from "@/components/LabelInput";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
 import { updateMaintenanceDueDate } from "@/services/mutations/updateMaintenanceDueDate";
 import type { IMaintenance } from "@/types/api/IMaintenance";
+import { alertMessage } from "@/utils/alerts";
 import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";
@@ -41,7 +43,7 @@ export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps)
   const { closeBottomSheet } = useBottomSheet();
 
   const handleSave = async ({ dueDate }: FormData) => {
-    const { success } = await updateMaintenanceDueDate({
+    const { success, message } = await updateMaintenanceDueDate({
       id: maintenanceDetails.id,
       dueDate: dueDate.toISOString(),
       status: maintenanceDetails.MaintenancesStatus.name,
@@ -49,8 +51,11 @@ export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps)
     });
 
     if (success) {
+      toast.success(message);
       closeBottomSheet();
       onFinishEditing();
+    } else {
+      alertMessage({ type: "error", message });
     }
   };
 

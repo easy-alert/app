@@ -1,3 +1,4 @@
+import { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { MutationResponse } from "@/types/utils/MutationResponse";
 
 import { baseApi } from "../baseApi";
@@ -34,15 +35,17 @@ export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<Muta
 
     return {
       success: true,
+      message: "Arquivo enviado com sucesso.",
       data: {
         url: response.data.Location,
       },
     };
-  } catch (error) {
-    console.error("Erro ao realizar upload do arquivo:", error);
+  } catch (error: any) {
+    const response = error.response as ApiMutationError;
 
     return {
       success: false,
+      message: response.data.ServerMessage.message,
       data: null,
     };
   }

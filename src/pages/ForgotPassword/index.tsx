@@ -52,11 +52,13 @@ export const ForgotPassword = () => {
 
     setIsLoading(true);
 
-    const { success } = await recoverPassword(email);
+    const { success, message } = await recoverPassword(email);
 
     if (success) {
-      toast.success("E-mail de recuperação de senha enviado com sucesso.");
+      toast.success(message);
       navigation.goBack();
+    } else {
+      alertMessage({ type: "error", message });
     }
 
     setIsLoading(false);

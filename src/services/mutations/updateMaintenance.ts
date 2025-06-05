@@ -1,7 +1,6 @@
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { ApiMutationResponse } from "@/types/utils/ApiMutationResponse";
 import { MutationResponse } from "@/types/utils/MutationResponse";
-import { alertCatchMessage, alertMessage } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
 
@@ -51,19 +50,16 @@ export const updateMaintenance = async ({
       params,
     });
 
-    alertMessage({
-      type: "success",
+    return {
+      success: true,
       message: response.data.ServerMessage.message,
-    });
-
-    return { success: true };
+    };
   } catch (error: any) {
     const response = error.response as ApiMutationError;
 
-    alertCatchMessage({
+    return {
+      success: false,
       message: response.data.ServerMessage.message,
-    });
-
-    return { success: false };
+    };
   }
 };

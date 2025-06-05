@@ -1,6 +1,5 @@
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { MutationResponse } from "@/types/utils/MutationResponse";
-import { alertCatchMessage } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
 
@@ -17,14 +16,16 @@ export const recoverPassword = async ({ email }: IRecoverPassword): Promise<Muta
 
     await baseApi.post("/company/passwordrecovery/sendemail", body);
 
-    return { success: true };
+    return {
+      success: true,
+      message: "E-mail de recuperação de senha enviado com sucesso.",
+    };
   } catch (error: any) {
     const response = error.response as ApiMutationError;
 
-    alertCatchMessage({
+    return {
+      success: false,
       message: response.data.ServerMessage.message,
-    });
-
-    return { success: false };
+    };
   }
 };

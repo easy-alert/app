@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
 import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
 import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
+import { alertMessage } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -22,13 +24,18 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
   const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers>();
 
   const handleLinkMaintenanceSupplier = async (supplierId: string) => {
-    await linkMaintenanceSupplier({
+    const { success, message } = await linkMaintenanceSupplier({
       maintenanceId,
       supplierId,
       userId,
     });
 
-    onClose();
+    if (success) {
+      toast.success(message);
+      onClose();
+    } else {
+      alertMessage({ type: "error", message });
+    }
   };
 
   useEffect(() => {

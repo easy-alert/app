@@ -1,6 +1,7 @@
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, View } from "react-native";
+import { toast } from "sonner-native";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +15,7 @@ import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
+import { alertMessage } from "@/utils/alerts";
 import { convertCostToInteger } from "@/utils/convertCostToInteger";
 
 import { styles } from "./styles";
@@ -47,28 +49,33 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    try {
-      if (isConnected) {
-        await updateMaintenanceProgress({
-          maintenanceHistoryId: maintenanceDetails.id,
-          inProgressChange: !maintenanceDetails.inProgress,
-          syndicNanoId: "",
-          userId,
-        });
-      } else {
-        const newEntry: OfflineQueueItem = {
-          type: "updateProgress",
-          userId,
-          maintenanceId: maintenanceDetails.id,
-          inProgressChange: !maintenanceDetails.inProgress,
-        };
+    if (isConnected) {
+      const { success, message } = await updateMaintenanceProgress({
+        maintenanceHistoryId: maintenanceDetails.id,
+        inProgressChange: !maintenanceDetails.inProgress,
+        syndicNanoId: "",
+        userId,
+      });
 
-        await addItem(newEntry);
+      if (success) {
+        toast.success(message);
+        navigation.goBack();
+      } else {
+        alertMessage({ type: "error", message });
       }
-    } finally {
+    } else {
+      const newEntry: OfflineQueueItem = {
+        type: "updateProgress",
+        userId,
+        maintenanceId: maintenanceDetails.id,
+        inProgressChange: !maintenanceDetails.inProgress,
+      };
+
+      await addItem(newEntry);
       navigation.goBack();
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   const handleSaveMaintenanceProgress = async () => {
@@ -79,88 +86,90 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    try {
-      if (isConnected) {
-        const filesUploaded: IRemoteFile[] = [];
+    if (isConnected) {
+      const filesUploaded: IRemoteFile[] = [];
 
-        const uploadFilesPromises = localFiles.map(async (file) => {
-          const { success, data } = await uploadFile({
-            uri: file.uri,
-            type: file.type,
-            name: file.name,
-          });
-
-          if (!success) {
-            return;
-          }
-
-          filesUploaded.push({
-            name: file.name,
-            url: data.url,
-          });
+      const uploadFilesPromises = localFiles.map(async (file) => {
+        const { success, data } = await uploadFile({
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
         });
 
-        const imagesUploaded: IRemoteFile[] = [];
+        if (!success) {
+          return;
+        }
 
-        const uploadImagesPromises = localImages.map(async (image) => {
-          const { success, data } = await uploadFile({
-            uri: image.uri,
-            type: image.type,
-            name: image.name,
-          });
+        filesUploaded.push({
+          name: file.name,
+          url: data.url,
+        });
+      });
 
-          if (!success) {
-            return;
-          }
+      const imagesUploaded: IRemoteFile[] = [];
 
-          imagesUploaded.push({
-            name: image.name,
-            url: data.url,
-          });
+      const uploadImagesPromises = localImages.map(async (image) => {
+        const { success, data } = await uploadFile({
+          uri: image.uri,
+          type: image.type,
+          name: image.name,
         });
 
-        await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
+        if (!success) {
+          return;
+        }
 
-        await updateMaintenance({
-          maintenanceHistoryId: maintenanceDetails.id,
-          syndicNanoId: "",
-          userId,
-          maintenanceReport: {
-            cost: formatedCost,
-            observation: "",
-          },
-          files: [...filesUploaded, ...remoteFiles].map((file) => ({
-            originalName: file.name,
-            name: file.name,
-            url: file.url,
-          })),
-          images: [...imagesUploaded, ...remoteImages].map((image) => ({
-            originalName: image.name,
-            name: image.name,
-            url: image.url,
-          })),
+        imagesUploaded.push({
+          name: image.name,
+          url: data.url,
         });
-      } else {
-        const newEntry: OfflineQueueItem = {
-          type: "saveProgress",
-          userId,
-          maintenanceId: maintenanceDetails.id,
+      });
+
+      await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
+
+      const { success, message } = await updateMaintenance({
+        maintenanceHistoryId: maintenanceDetails.id,
+        syndicNanoId: "",
+        userId,
+        maintenanceReport: {
           cost: formatedCost,
-          localFiles,
-          localImages,
-          remoteFiles,
-          remoteImages,
-        };
+          observation: "",
+        },
+        files: [...filesUploaded, ...remoteFiles].map((file) => ({
+          originalName: file.name,
+          name: file.name,
+          url: file.url,
+        })),
+        images: [...imagesUploaded, ...remoteImages].map((image) => ({
+          originalName: image.name,
+          name: image.name,
+          url: image.url,
+        })),
+      });
 
-        await addItem(newEntry);
+      if (success) {
+        toast.success(message);
+        navigation.goBack();
+      } else {
+        alertMessage({ type: "error", message });
       }
+    } else {
+      const newEntry: OfflineQueueItem = {
+        type: "saveProgress",
+        userId,
+        maintenanceId: maintenanceDetails.id,
+        cost: formatedCost,
+        localFiles,
+        localImages,
+        remoteFiles,
+        remoteImages,
+      };
 
+      await addItem(newEntry);
       navigation.goBack();
-    } catch (error) {
-      console.error("Error in saveProgress:", error);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   const handleFinishMaintenance = async () => {
@@ -171,88 +180,90 @@ export const CallToActions = ({
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    try {
-      if (isConnected) {
-        const filesUploaded: IRemoteFile[] = [];
+    if (isConnected) {
+      const filesUploaded: IRemoteFile[] = [];
 
-        const uploadFilesPromises = localFiles.map(async (file) => {
-          const { success, data } = await uploadFile({
-            uri: file.uri,
-            type: file.type,
-            name: file.name,
-          });
-
-          if (!success) {
-            return;
-          }
-
-          filesUploaded.push({
-            name: file.name,
-            url: data.url,
-          });
+      const uploadFilesPromises = localFiles.map(async (file) => {
+        const { success, data } = await uploadFile({
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
         });
 
-        const imagesUploaded: IRemoteFile[] = [];
+        if (!success) {
+          return;
+        }
 
-        const uploadImagesPromises = localImages.map(async (image) => {
-          const { success, data } = await uploadFile({
-            uri: image.uri,
-            type: image.type,
-            name: image.name,
-          });
+        filesUploaded.push({
+          name: file.name,
+          url: data.url,
+        });
+      });
 
-          if (!success) {
-            return;
-          }
+      const imagesUploaded: IRemoteFile[] = [];
 
-          imagesUploaded.push({
-            name: image.name,
-            url: data.url,
-          });
+      const uploadImagesPromises = localImages.map(async (image) => {
+        const { success, data } = await uploadFile({
+          uri: image.uri,
+          type: image.type,
+          name: image.name,
         });
 
-        await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
+        if (!success) {
+          return;
+        }
 
-        await updateMaintenanceFinish({
-          maintenanceHistoryId: maintenanceDetails.id,
-          syndicNanoId: "",
-          userId,
-          maintenanceReport: {
-            cost: formatedCost,
-            observation: "",
-          },
-          files: [...filesUploaded, ...remoteFiles].map((file) => ({
-            originalName: file.name,
-            name: file.name,
-            url: file.url,
-          })),
-          images: [...imagesUploaded, ...remoteImages].map((image) => ({
-            originalName: image.name,
-            name: image.name,
-            url: image.url,
-          })),
+        imagesUploaded.push({
+          name: image.name,
+          url: data.url,
         });
-      } else {
-        const newEntry: OfflineQueueItem = {
-          type: "finishMaintenance",
-          userId,
-          maintenanceId: maintenanceDetails.id,
+      });
+
+      await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
+
+      const { success, message } = await updateMaintenanceFinish({
+        maintenanceHistoryId: maintenanceDetails.id,
+        syndicNanoId: "",
+        userId,
+        maintenanceReport: {
           cost: formatedCost,
-          localFiles,
-          localImages,
-          remoteFiles,
-          remoteImages,
-        };
+          observation: "",
+        },
+        files: [...filesUploaded, ...remoteFiles].map((file) => ({
+          originalName: file.name,
+          name: file.name,
+          url: file.url,
+        })),
+        images: [...imagesUploaded, ...remoteImages].map((image) => ({
+          originalName: image.name,
+          name: image.name,
+          url: image.url,
+        })),
+      });
 
-        await addItem(newEntry);
+      if (success) {
+        toast.success(message);
+        navigation.goBack();
+      } else {
+        alertMessage({ type: "error", message });
       }
+    } else {
+      const newEntry: OfflineQueueItem = {
+        type: "finishMaintenance",
+        userId,
+        maintenanceId: maintenanceDetails.id,
+        cost: formatedCost,
+        localFiles,
+        localImages,
+        remoteFiles,
+        remoteImages,
+      };
 
+      await addItem(newEntry);
       navigation.goBack();
-    } catch (error) {
-      console.error("Error in handleFinishMaintenance:", error);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   const openFinishMaintenanceAlert = () => {

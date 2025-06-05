@@ -1,7 +1,6 @@
 import type { IAuthUser } from "@/types/api/IAuthUser";
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { MutationResponse } from "@/types/utils/MutationResponse";
-import { alertCatchMessage } from "@/utils/alerts";
 
 import { baseApi } from "../baseApi";
 
@@ -38,17 +37,15 @@ export const signIn = async ({
 
     return {
       success: true,
+      message: "Login realizado com sucesso.",
       data: response.data,
     };
   } catch (error: any) {
     const response = error.response as ApiMutationError;
 
-    alertCatchMessage({
-      message: response.data.ServerMessage.message,
-    });
-
     return {
       success: false,
+      message: response.data.ServerMessage.message,
       data: null,
     };
   }

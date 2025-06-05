@@ -1,7 +1,6 @@
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import { ApiMutationResponse } from "@/types/utils/ApiMutationResponse";
-import { MutationResponseWithMessage } from "@/types/utils/MutationResponse";
-import { alertCatchMessage } from "@/utils/alerts";
+import { MutationResponse } from "@/types/utils/MutationResponse";
 
 import { baseApi } from "../baseApi";
 
@@ -21,7 +20,7 @@ export const createMaintenanceHistoryActivity = async ({
   userId,
   content,
   filesUploaded,
-}: ICreateMaintenanceHistoryActivity): Promise<MutationResponseWithMessage> => {
+}: ICreateMaintenanceHistoryActivity): Promise<MutationResponse> => {
   try {
     const body = {
       maintenanceHistoryId: maintenanceId,
@@ -38,10 +37,6 @@ export const createMaintenanceHistoryActivity = async ({
     };
   } catch (error: any) {
     const response = error.response as ApiMutationError;
-
-    alertCatchMessage({
-      message: response.data.ServerMessage.message,
-    });
 
     return {
       success: false,

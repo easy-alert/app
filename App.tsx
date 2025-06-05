@@ -26,11 +26,11 @@ export default function App() {
           <AuthProvider>
             <OfflineQueueProvider>
               <Routes />
+
+              <Toaster closeButton richColors position="bottom-center" />
             </OfflineQueueProvider>
           </AuthProvider>
         </BottomSheetProvider>
-
-        <Toaster closeButton richColors position="bottom-center" />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
