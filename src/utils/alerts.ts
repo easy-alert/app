@@ -12,7 +12,7 @@ export const alertCatchMessage = ({ message = "Erro ao realizar a operação" }:
 };
 
 interface IAlertMessage {
-  type: "error" | "warning" | "info" | "success";
+  type: "error" | "success";
   message: string;
 }
 
@@ -20,14 +20,6 @@ export const alertMessage = ({ type, message }: IAlertMessage): void => {
   switch (type) {
     case "error":
       Alert.alert("Erro", message);
-      break;
-
-    case "warning":
-      Alert.alert("Atenção", message);
-      break;
-
-    case "info":
-      Alert.alert("Informação", message);
       break;
 
     case "success":

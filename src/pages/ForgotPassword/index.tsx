@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { Keyboard } from "react-native";
+import { toast } from "sonner-native";
 
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -54,11 +55,7 @@ export const ForgotPassword = () => {
     const { success } = await recoverPassword(email);
 
     if (success) {
-      alertMessage({
-        type: "success",
-        message: "E-mail de recuperação de senha enviado com sucesso.",
-      });
-
+      toast.success("E-mail de recuperação de senha enviado com sucesso.");
       navigation.goBack();
     }
 
