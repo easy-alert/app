@@ -17,6 +17,7 @@ interface IUploadFileResponse {
   url: string;
 }
 
+// TODO: verificar quando da erro
 export const uploadFile = async ({ uri, type, name }: IUploadFile): Promise<MutationResponse<IUploadFileResponse>> => {
   try {
     const formData = new FormData();
