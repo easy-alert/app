@@ -20,7 +20,7 @@ export const MainRoutes = () => {
   const linking: LinkingOptions<ReactNavigation.RootParamList> = {
     prefixes: __DEV__
       ? ["exp://127.0.0.1:8081/--/"] //
-      : ["easyalert://", "https://company.easyalert.com.br/"],
+      : ["easyalert://", "https://company.easyalert.com.br/maintenances"],
     config: {
       screens: {
         Maintenances: {
