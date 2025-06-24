@@ -2,13 +2,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 
-import { PageWithHeader } from "@/components/PageWithHeader";
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
-import { getMaintenanceDetails } from "@/services/getMaintenanceDetails";
-import { getMaintenanceHistoryActivities } from "@/services/getMaintenanceHistoryActivities";
-import { getMaintenanceHistorySupplier } from "@/services/getMaintenanceHistorySupplier";
-import { getMaintenanceReportProgress } from "@/services/getMaintenanceReportProgress";
+import { getMaintenanceDetails } from "@/services/queries/getMaintenanceDetails";
+import { getMaintenanceHistoryActivities } from "@/services/queries/getMaintenanceHistoryActivities";
+import { getMaintenanceHistorySupplier } from "@/services/queries/getMaintenanceHistorySupplier";
+import { getMaintenanceReportProgress } from "@/services/queries/getMaintenanceReportProgress";
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
@@ -45,67 +45,52 @@ export const MaintenanceDetails = () => {
   const [loading, setLoading] = useState(false);
 
   const handleGetMaintenanceDetails = async () => {
-    try {
-      const responseData = await getMaintenanceDetails({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const maintenanceDetails = await getMaintenanceDetails({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      if (responseData) {
-        setMaintenanceDetails(responseData);
-      }
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceDetails ~ error:", error);
+    if (maintenanceDetails) {
+      setMaintenanceDetails(maintenanceDetails);
     }
   };
 
   const handleGetMaintenanceReportProgress = async () => {
-    try {
-      const responseData = await getMaintenanceReportProgress({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const maintenanceReportProgress = await getMaintenanceReportProgress({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      setCost(String(responseData?.progress?.cost || 0 / 100).replace(".", ","));
-      setRemoteFiles(responseData?.progress?.ReportAnnexesProgress || []);
-      setRemoteImages(responseData?.progress?.ReportImagesProgress || []);
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
+    if (maintenanceReportProgress?.progress) {
+      const cost = String(maintenanceReportProgress.progress.cost / 100).replace(".", ",");
+      setCost(cost);
+      setRemoteFiles(maintenanceReportProgress.progress.ReportAnnexesProgress);
+      setRemoteImages(maintenanceReportProgress.progress.ReportImagesProgress);
     }
   };
 
   const handleGetMaintenanceHistoryActivities = async () => {
-    try {
-      const responseData = await getMaintenanceHistoryActivities({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const historyActivities = await getMaintenanceHistoryActivities({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      if (responseData) {
-        setHistoryActivities(responseData);
-      }
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceReportProgress ~ error:", error);
+    if (historyActivities) {
+      setHistoryActivities(historyActivities);
     }
   };
 
   const handleGetMaintenanceSupplier = async () => {
-    try {
-      const responseData = await getMaintenanceHistorySupplier({
-        maintenanceHistoryId: maintenanceId,
-      });
+    const suppliers = await getMaintenanceHistorySupplier({
+      maintenanceHistoryId: maintenanceId,
+    });
 
-      if (responseData?.suppliers?.length === 0) {
-        setSupplier(undefined);
-        return;
-      }
-
-      setSupplier(responseData?.suppliers[0]);
-    } catch (error) {
-      console.error("🚀 ~ handleGetMaintenanceSupplier ~ error:", error);
+    if (suppliers.length > 0) {
+      setSupplier(suppliers[0]);
     }
   };
 
   const loadData = async () => {
     setLoading(true);
 
+    // TODO: implantar em paralelo
     try {
       await handleGetMaintenanceReportProgress();
       await handleGetMaintenanceDetails();
@@ -138,7 +123,7 @@ export const MaintenanceDetails = () => {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <PageWithHeader
+      <PageWithHeaderLayout
         title="Enviar relato"
         onClose={() => navigation.goBack()}
         isScrollView
@@ -184,7 +169,7 @@ export const MaintenanceDetails = () => {
             />
           </>
         )}
-      </PageWithHeader>
+      </PageWithHeaderLayout>
     </KeyboardAvoidingView>
   );
 };

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
-import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
-import { getSuppliersForMaintenance } from "@/services/getSuppliersForMaintenance";
-import { linkMaintenanceSupplier } from "@/services/linkMaintenanceSupplier";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
+import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
+import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
 import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
+import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -22,29 +24,26 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
   const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers>();
 
   const handleLinkMaintenanceSupplier = async (supplierId: string) => {
-    try {
-      await linkMaintenanceSupplier({
-        maintenanceId,
-        supplierId,
-        userId,
-      });
-    } catch (error) {
-      console.error("Erro ao vincular o fornecedor:", error);
-    } finally {
+    const { success, message } = await linkMaintenanceSupplier({
+      maintenanceId,
+      supplierId,
+      userId,
+    });
+
+    if (success) {
+      toast.success(message);
       onClose();
+    } else {
+      alerts.error(message);
     }
   };
 
   useEffect(() => {
     const handleGetSuppliersForMaintenance = async () => {
-      try {
-        const responseData = await getSuppliersForMaintenance({ maintenanceId });
+      const suppliers = await getSuppliersForMaintenance({ maintenanceId });
 
-        if (responseData) {
-          setSuppliersData(responseData);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar os dados:", error);
+      if (suppliers) {
+        setSuppliersData(suppliers);
       }
     };
 
@@ -55,7 +54,7 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
     <Modal visible={visible} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
-          <PageWithHeader title="Vincular fornecedor" onClose={onClose} isScrollView>
+          <PageWithHeaderLayout title="Vincular fornecedor" onClose={onClose} isScrollView>
             <Text style={styles.subtitleLabel}>
               Clique em uma das opções abaixo para vincular o fornecedor desejado:
             </Text>
@@ -98,7 +97,7 @@ export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModal
                 Clique aqui para cadastrar!
               </Text>
             </Text>
-          </PageWithHeader>
+          </PageWithHeaderLayout>
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>

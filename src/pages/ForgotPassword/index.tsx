@@ -3,7 +3,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -13,10 +12,12 @@ import {
   View,
 } from "react-native";
 import { Keyboard } from "react-native";
+import { toast } from "sonner-native";
 
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
+import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
@@ -32,24 +33,26 @@ export const ForgotPassword = () => {
     Keyboard.dismiss();
 
     if (!email) {
-      Alert.alert("Erro", "Por favor, insira um e-mail.");
+      alerts.error("Por favor, insira um e-mail.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
-      Alert.alert("Erro", "Por favor, insira um e-mail válido.");
+      alerts.error("Por favor, insira um e-mail válido.");
       return;
     }
 
     setIsLoading(true);
 
-    const response = await recoverPassword(email);
+    const { success, message } = await recoverPassword(email);
 
-    if (response.success) {
-      Alert.alert("Sucesso", "E-mail de recuperação de senha enviado com sucesso.");
+    if (success) {
+      toast.success(message);
       navigation.goBack();
+    } else {
+      alerts.error(message);
     }
 
     setIsLoading(false);
