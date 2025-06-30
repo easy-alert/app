@@ -3,17 +3,21 @@ import { jwtDecode } from "jwt-decode";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
-import { recoverPassword } from "@/services/recoverPassword";
-import { userLogin } from "@/services/userLogin";
+import { recoverPassword } from "@/services/auth/recoverPassword";
+import { signIn } from "@/services/auth/signIn";
+import { IBuilding } from "@/types/api/IBuilding";
+import { MutationResponse } from "@/types/utils/MutationResponse";
+import { alerts } from "@/utils/alerts";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
+import { storageKeys } from "@/utils/storageKeys";
 
 interface AuthContextData {
   isAuthenticated: boolean | undefined;
   userId: string;
-  login: (phone: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  recoverPassword: (email: string) => Promise<{ success: boolean }>;
+  signIn: (phone: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  recoverPassword: (email: string) => Promise<MutationResponse>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -25,11 +29,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const verifyStorageAuth = async () => {
       try {
-        const userId = await AsyncStorage.getItem("userId");
-        const authToken = await AsyncStorage.getItem("authToken");
-        const buildingsList = await AsyncStorage.getItem("buildingsList");
+        const userId = await AsyncStorage.getItem(storageKeys.USER_ID_KEY);
+        const authToken = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
+        const buildingList = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
-        if (!userId || !authToken || !buildingsList) {
+        if (!userId || !authToken || !buildingList) {
           setIsAuthenticated(false);
           return;
         }
@@ -53,36 +57,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     verifyStorageAuth();
   }, []);
 
-  const login = async (phone: string, password: string) => {
+  const handleSignIn = async (phone: string, password: string) => {
     try {
       const pushNotificationToken = await getPushNotificationToken();
       const deviceId = await getDeviceId();
 
-      const response = await userLogin({
-        login: phone,
+      const { success, message, data } = await signIn({
+        phone,
         password,
         pushNotificationToken,
         deviceId,
         os: Platform.OS,
       });
 
-      if (!response || !response.user || !response.user.id) {
+      if (!success) {
         setIsAuthenticated(false);
+        alerts.error(message);
         return;
       }
 
-      await AsyncStorage.setItem("userId", response.user.id);
-      await AsyncStorage.setItem("authToken", response.authToken);
-      await AsyncStorage.setItem("buildingsList", JSON.stringify(response.user.UserBuildingsPermissions));
+      await AsyncStorage.setItem(storageKeys.USER_ID_KEY, data.user.id);
+      await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, data.authToken);
 
-      setUserId(response.user.id);
+      const buildingList: IBuilding[] = data.user.UserBuildingsPermissions.map((building) => building.Building);
+      await AsyncStorage.setItem(storageKeys.BUILDING_LIST_KEY, JSON.stringify(buildingList));
+
+      setUserId(data.user.id);
       setIsAuthenticated(true);
     } catch {
       setIsAuthenticated(false);
     }
   };
 
-  const logout = async () => {
+  const signOut = async () => {
     setIsAuthenticated(false);
     await AsyncStorage.clear();
   };
@@ -94,8 +101,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isAuthenticated,
         userId: userId || "",
-        login,
-        logout,
+        signIn: handleSignIn,
+        signOut,
         recoverPassword: handleRecoverPassword,
       }}
     >

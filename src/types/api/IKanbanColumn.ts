@@ -1,14 +1,14 @@
 export interface IKanbanColumn {
-  status: string; // Exemplo: 'Vencidas', 'Pendentes', etc.
+  status: string;
   maintenances: {
     id: string;
     element: string;
     activity: string;
-    status: string; // Pode ser 'expired', 'pending', 'completed', 'overdue', etc.
+    status: string;
     cantReportExpired?: boolean;
-    date: string; // ISO 8601 string
+    date: string;
     label: string;
-    type: string; // Exemplo: 'common'
+    type: string;
     buildingName: string;
   }[];
 }

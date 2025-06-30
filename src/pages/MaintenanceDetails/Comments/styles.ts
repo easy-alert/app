@@ -16,8 +16,8 @@ export const styles = StyleSheet.create({
     marginTop: 6,
     padding: 10,
     fontSize: 16,
-    textAlignVertical: "top", // Alinha o texto no topo
-    minHeight: 100, // Altura mínima
+    textAlignVertical: "top",
+    minHeight: 100,
     backgroundColor: "#fff",
   },
   buttonsContainer: {
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#B22222", // Vermelho
+    backgroundColor: "#B22222",
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 10,

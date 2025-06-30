@@ -14,13 +14,9 @@ interface CostsProps {
 
 export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
   const formatCurrency = (text: string) => {
-    // Remove todos os caracteres não numéricos
     const numericValue = text.replace(/[^0-9]/g, "");
-
-    // Converte para um número
     const value = parseFloat(numericValue) / 100;
 
-    // Formata no padrão brasileiro
     return value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",

@@ -3,7 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
+import { toast } from "sonner-native";
 import { z } from "zod";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
@@ -13,11 +14,14 @@ import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
-import { createOccasionalMaintenance } from "@/services/createOccasionalMaintenance";
-import { getCategories } from "@/services/getCategories";
-import { getUsers } from "@/services/getUsers";
+import { createOccasionalMaintenance } from "@/services/mutations/createOccasionalMaintenance";
+import { getCategories } from "@/services/queries/getCategories";
+import { getUsers } from "@/services/queries/getUsers";
+import { IBuilding } from "@/types/api/IBuilding";
 import type { ICategory } from "@/types/api/ICategory";
-import type { IUser } from "@/types/api/IUser";
+import { IUser } from "@/types/api/IUser";
+import { alerts } from "@/utils/alerts";
+import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
 
@@ -48,9 +52,6 @@ const priorities = [
   },
 ];
 
-// TODO: refatorar
-type IBuilding = IUser["UserBuildingsPermissions"][0];
-
 const formSchema = z.object({
   buildingId: z.string().min(1, { message: "Edificação é obrigatória." }),
   categoryId: z.string().min(1, { message: "Categoria é obrigatória." }),
@@ -73,33 +74,22 @@ export const Form = () => {
 
   const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
 
   useEffect(() => {
     const handleGetCategories = async () => {
-      try {
-        setLoadingCategories(true);
-        const categories = await getCategories();
+      setLoadingCategories(true);
+      const categories = await getCategories();
 
-        setCategories(categories);
-      } finally {
-        setLoadingCategories(false);
-      }
+      setCategories(categories);
+      setLoadingCategories(false);
     };
 
     const getBuildings = async () => {
-      try {
-        const storageBuildings = await AsyncStorage.getItem("buildingsList");
+      const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
-        if (!storageBuildings) {
-          throw new Error("Nenhum prédio encontrado.");
-        }
-
+      if (storageBuildings) {
         setBuildings(JSON.parse(storageBuildings));
-      } catch (error) {
-        console.error("Erro ao carregar a lista de prédios:", error);
-        Alert.alert("Erro", "Não foi possível carregar os prédios.");
-        navigation.goBack();
       }
     };
 
@@ -129,19 +119,15 @@ export const Form = () => {
         return;
       }
 
-      try {
-        setLoadingUsers(true);
+      setLoadingUsers(true);
 
-        const responseData = await getUsers(buildingId);
+      const users = await getUsers({ buildingId });
 
-        if (responseData?.users) {
-          setUsers(responseData.users);
-        }
-      } catch (error) {
-        console.error("🚀 ~ getAvailableUsers ~ error:", error);
-      } finally {
-        setLoadingUsers(false);
+      if (users) {
+        setUsers(users.users);
       }
+
+      setLoadingUsers(false);
     };
 
     handleGetUsers();
@@ -154,52 +140,57 @@ export const Form = () => {
     inProgress?: boolean;
     data: z.infer<typeof formSchema>;
   }) => {
-    try {
-      if (inProgress) {
-        setCreatingInProgress(true);
-      } else {
-        setCreating(true);
-      }
-
-      const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
-
-      const responseData = await createOccasionalMaintenance({
-        origin: "Mobile",
-        userId,
-        occasionalMaintenanceType: "pending",
-        occasionalMaintenanceData: {
-          buildingId,
-
-          element,
-          activity,
-          responsible,
-          executionDate,
-          inProgress,
-          priorityName: priority,
-
-          categoryData: {
-            id: categoryId,
-            name: categories.find((category) => category.id === categoryId)?.name!,
-          },
-
-          reportData: {
-            cost: "R$ 0,00",
-            observation: "",
-          },
-
-          users,
-        },
-      });
-
-      if (responseData?.ServerMessage.statusCode === 200) {
-        navigation.replace("MaintenanceDetails", {
-          maintenanceId: responseData.maintenance.id,
-        });
-      }
-    } finally {
-      setCreating(false);
-      setCreatingInProgress(false);
+    if (inProgress) {
+      setCreatingInProgress(true);
+    } else {
+      setCreating(true);
     }
+
+    const { buildingId, categoryId, element, activity, responsible, users, priority, executionDate } = data;
+
+    const {
+      success,
+      message,
+      data: responseData,
+    } = await createOccasionalMaintenance({
+      origin: "Mobile",
+      userId,
+      occasionalMaintenanceType: "pending",
+      occasionalMaintenanceData: {
+        buildingId,
+
+        element,
+        activity,
+        responsible,
+        executionDate,
+        inProgress,
+        priorityName: priority,
+
+        categoryData: {
+          id: categoryId,
+          name: categories.find((category) => category.id === categoryId)?.name!,
+        },
+
+        reportData: {
+          cost: "R$ 0,00",
+          observation: "",
+        },
+
+        users,
+      },
+    });
+
+    if (success) {
+      toast.success(message);
+      navigation.replace("MaintenanceDetails", {
+        maintenanceId: responseData.maintenance.id,
+      });
+    } else {
+      alerts.error(message);
+    }
+
+    setCreating(false);
+    setCreatingInProgress(false);
   };
 
   return (
@@ -211,10 +202,7 @@ export const Form = () => {
           <LabelInput label="Edificação *" error={form.formState.errors.buildingId?.message}>
             <Dropdown
               placeholder="Selecione a edificação"
-              data={buildings.map((building) => ({
-                id: building.Building.id,
-                name: building.Building.name,
-              }))}
+              data={buildings}
               labelField="name"
               valueField="id"
               value={field.value}
@@ -235,8 +223,8 @@ export const Form = () => {
             <Dropdown
               placeholder="Selecione a categoria"
               data={categories.map((category) => ({
-                id: category.id!,
-                name: category.name!,
+                id: category.id,
+                name: category.name,
               }))}
               labelField="name"
               valueField="id"

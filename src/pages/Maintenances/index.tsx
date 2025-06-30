@@ -4,7 +4,7 @@ import { ActivityIndicator, Text, View } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import type { RouteList } from "@/routes/navigation";
-import { getMaintenancesKanban } from "@/services/getMaintenancesKanban";
+import { getMaintenancesKanban } from "@/services/queries/getMaintenancesKanban";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";
@@ -18,7 +18,7 @@ import { styles } from "./styles";
 export const Maintenances = () => {
   const navigationState = useNavigationState((state) => state);
 
-  const { userId, logout } = useAuth();
+  const { userId } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
   const [filters, setFilters] = useState<Filter>(emptyFilters);
@@ -30,34 +30,31 @@ export const Maintenances = () => {
     const handleGetKanbanData = async () => {
       setLoading(true);
 
-      try {
-        const responseData = await getMaintenancesKanban({
-          userId,
-          filters: {
-            buildings: filters.selectedBuildings,
-            status: filters.selectedStatus,
-            categories: filters.selectedCategories,
-            users: filters.selectedUsers,
-            search: filters.search,
-            endDate: filters.endDate,
-            startDate: filters.startDate,
-          },
-        });
+      const maintenancesKanban = await getMaintenancesKanban({
+        userId,
+        filters: {
+          buildings: filters.selectedBuildings,
+          status: filters.selectedStatus,
+          categories: filters.selectedCategories,
+          users: filters.selectedUsers,
+          search: filters.search,
+          endDate: filters.endDate,
+          startDate: filters.startDate,
+        },
+      });
 
-        if (responseData) {
-          setLoading(false);
-          setAvailableCategories(
-            responseData.maintenanceCategoriesForSelect?.map((category: { id: string; name: string }) => ({
-              value: category.id,
-              label: category.name,
-            })) || [],
-          );
-          setKanbanData(responseData.kanban || []);
-        }
-      } catch (error) {
-        setLoading(false);
-        console.error("🚀 ~ handleGetKanbanData ~ error:", error);
+      if (maintenancesKanban) {
+        setKanbanData(maintenancesKanban.kanban);
+
+        const availableCategories = maintenancesKanban.maintenanceCategoriesForSelect.map((category) => ({
+          value: category.id,
+          label: category.name,
+        }));
+
+        setAvailableCategories(availableCategories);
       }
+
+      setLoading(false);
     };
 
     // Significa que uma navegação foi feita para a tela de manutenções.
@@ -66,7 +63,7 @@ export const Maintenances = () => {
     if (toRefreshData) {
       handleGetKanbanData();
     }
-  }, [logout, navigationState.index, navigationState.routes, userId, filters]);
+  }, [navigationState.index, navigationState.routes, userId, filters]);
 
   return (
     <View style={styles.container}>

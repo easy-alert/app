@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   statusContainer: {
-    width: Dimensions.get("window").width * 0.85, // Largura da coluna
+    width: Dimensions.get("window").width * 0.85,
     padding: 12,
     backgroundColor: "#FFF",
     borderRadius: 10,
@@ -20,6 +20,6 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   columnContainer: {
-    maxHeight: "100%", // Limita a altura da área de cartões, ajuste conforme necessário
+    maxHeight: "100%",
   },
 });
