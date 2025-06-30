@@ -32,26 +32,26 @@ export const styles = StyleSheet.create({
     marginLeft: 4,
     padding: 6,
     borderRadius: 16,
-    backgroundColor: "#D9534F", // Vermelho
+    backgroundColor: "#D9534F",
   },
   supplierContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5", // Fundo cinza claro
+    backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
   },
   avatarContainer: {
     width: 40,
     height: 40,
-    borderRadius: 20, // Deixa a imagem redonda
-    overflow: "hidden", // Garante que a borda redonda funcione corretamente
+    borderRadius: 20,
+    overflow: "hidden",
     marginRight: 12,
   },
   avatarImage: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover", // Mantém a proporção da imagem
+    resizeMode: "cover",
   },
   detailsContainer: {
     flex: 1,
