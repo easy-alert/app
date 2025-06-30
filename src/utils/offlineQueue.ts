@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
-import { updateMaintenance } from "@/services/updateMaintenance";
-import { updateMaintenanceFinish } from "@/services/updateMaintenanceFinish";
-import { updateMaintenanceProgress } from "@/services/updateMaintenanceProgress";
-import { uploadFile } from "@/services/uploadFile";
+import { createMaintenanceHistoryActivity } from "@/services/mutations/createMaintenanceHistoryActivity";
+import { updateMaintenance } from "@/services/mutations/updateMaintenance";
+import { updateMaintenanceFinish } from "@/services/mutations/updateMaintenanceFinish";
+import { updateMaintenanceProgress } from "@/services/mutations/updateMaintenanceProgress";
+import { uploadFile } from "@/services/mutations/uploadFile";
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type {
   AddHistoryActivityQueueItem,
@@ -15,34 +15,32 @@ import type {
 } from "@/types/utils/OfflineQueueItem";
 
 import { retry } from "./retry";
-
-const OFFLINE_QUEUE_KEY = "offline_queue";
+import { storageKeys } from "./storageKeys";
 
 let isSyncing = false;
 
 export const getOfflineQueue = async (): Promise<OfflineQueueItem[]> => {
-  const offlineQueueString = await AsyncStorage.getItem(OFFLINE_QUEUE_KEY);
+  const offlineQueueString = await AsyncStorage.getItem(storageKeys.OFFLINE_QUEUE_KEY);
   return offlineQueueString ? JSON.parse(offlineQueueString) : [];
 };
 
 export const addItemToOfflineQueue = async (item: OfflineQueueItem): Promise<void> => {
   const offlineQueue = await getOfflineQueue();
   offlineQueue.push(item);
-  await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+  await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
 };
 
 export const syncOfflineQueue = async (): Promise<void> => {
-  try {
-    if (isSyncing) {
-      return;
-    }
+  if (isSyncing) {
+    return;
+  }
 
+  try {
     isSyncing = true;
 
     const offlineQueue = await getOfflineQueue();
 
     while (offlineQueue.length > 0) {
-      // Get and remove the first item in the queue
       const currentItem = offlineQueue.shift()!;
 
       try {
@@ -63,15 +61,11 @@ export const syncOfflineQueue = async (): Promise<void> => {
           }
         });
 
-        // Save the updated queue after successful sync
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
       } catch (error) {
         console.error("Failed to sync offline queue item:", error);
-
-        // Re-add the item to the queue if it fails
         offlineQueue.push(currentItem);
-
-        await AsyncStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
+        await AsyncStorage.setItem(storageKeys.OFFLINE_QUEUE_KEY, JSON.stringify(offlineQueue));
         break;
       }
     }
@@ -104,6 +98,7 @@ const syncAddHistoryActivity = async (item: AddHistoryActivityQueueItem): Promis
 
   await Promise.all(uploadPromises);
 
+  // TODO: verificar quando da erro
   await createMaintenanceHistoryActivity({
     maintenanceId: item.maintenanceId,
     userId: item.userId,
@@ -157,6 +152,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 
   await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
+  // TODO: verificar quando da erro
   await updateMaintenance({
     maintenanceHistoryId: item.maintenanceId,
     syndicNanoId: "",
@@ -179,6 +175,7 @@ const syncSaveProgress = async (item: SaveProgressQueueItem): Promise<void> => {
 };
 
 const syncUpdateProgress = async (item: UpdateProgressQueueItem): Promise<void> => {
+  // TODO: verificar quando da erro
   await updateMaintenanceProgress({
     maintenanceHistoryId: item.maintenanceId,
     inProgressChange: item.inProgressChange,
@@ -228,6 +225,7 @@ const syncFinishMaintenance = async (item: FinishMaintenanceQueueItem): Promise<
 
   await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
 
+  // TODO: verificar quando da erro
   await updateMaintenanceFinish({
     maintenanceHistoryId: item.maintenanceId,
     syndicNanoId: "",

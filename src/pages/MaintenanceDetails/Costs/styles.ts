@@ -26,10 +26,10 @@ export const styles = StyleSheet.create({
   readonlyTitleLabel: {
     fontWeight: "bold",
     color: "#555",
-    flex: 1, // Garante que o texto da label não fique espremido
+    flex: 1,
   },
   readonlyValueLabel: {
     color: "#000",
-    flex: 2, // Dá mais espaço ao valor
+    flex: 2,
   },
 });

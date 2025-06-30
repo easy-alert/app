@@ -3,15 +3,17 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { ProtectedNavigation } from "@/routes/navigation";
-import { createMaintenanceHistoryActivity } from "@/services/createMaintenanceHistoryActivity";
-import { uploadFile } from "@/services/uploadFile";
+import { createMaintenanceHistoryActivity } from "@/services/mutations/createMaintenanceHistoryActivity";
+import { uploadFile } from "@/services/mutations/uploadFile";
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
+import { alerts } from "@/utils/alerts";
 import { openFilePicker } from "@/utils/openFilePicker";
 
 import { styles } from "./styles";
@@ -28,76 +30,69 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   const { addItem } = useOfflineQueue();
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
-  const [comment, setComment] = useState(" "); // TODO: remover espaço em branco.
+  const [comment, setComment] = useState("");
 
   const handleCreateMaintenanceActivity = async () => {
-    if (!comment) {
-      console.error("Comment está indefinido.");
-      return;
-    }
-
     setLoading(true);
 
     const networkState = await NetInfo.fetch();
     const isConnected = networkState.isConnected;
 
-    try {
-      if (isConnected) {
-        const filesUploaded: IRemoteFile[] = [];
+    if (isConnected) {
+      const filesUploaded: IRemoteFile[] = [];
 
-        const uploadPromises = localFiles.map(async (file) => {
-          const { success, data } = await uploadFile({
-            uri: file.uri,
-            type: file.type,
-            name: file.name,
-          });
-
-          if (!success) {
-            return;
-          }
-
-          filesUploaded.push({
-            name: file.name,
-            url: data.url,
-          });
+      const uploadPromises = localFiles.map(async (file) => {
+        const { success, data } = await uploadFile({
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
         });
 
-        await Promise.all(uploadPromises);
+        if (!success) {
+          return;
+        }
 
-        await createMaintenanceHistoryActivity({
-          maintenanceId,
-          userId,
-          content: comment,
-          filesUploaded: filesUploaded.map((file) => ({
-            originalName: file.name,
-            name: file.name,
-            url: file.url,
-          })),
+        filesUploaded.push({
+          name: file.name,
+          url: data.url,
         });
+      });
 
+      await Promise.all(uploadPromises);
+
+      const { success, message } = await createMaintenanceHistoryActivity({
+        maintenanceId,
+        userId,
+        content: comment,
+        filesUploaded: filesUploaded.map((file) => ({
+          originalName: file.name,
+          name: file.name,
+          url: file.url,
+        })),
+      });
+
+      if (success) {
+        toast.success(message);
         await getMaintenanceHistoryActivities();
+        setComment("");
+        setLocalFiles([]);
       } else {
-        const newEntry: OfflineQueueItem = {
-          type: "addHistoryActivity",
-          userId,
-          maintenanceId,
-          comment,
-          localFiles,
-        };
-
-        await addItem(newEntry);
-
-        navigation.goBack();
+        alerts.error(message);
       }
+    } else {
+      const newEntry: OfflineQueueItem = {
+        type: "addHistoryActivity",
+        userId,
+        maintenanceId,
+        comment,
+        localFiles,
+      };
 
-      // TODO: se da erro no createMaintenanceHistoryActivity, está limpando os comentários e arquivos
-      setComment("");
-      setLocalFiles([]);
-    } catch (error) {
-      console.error("Error in addHistoryActivity:", error);
-    } finally {
-      setLoading(false);
+      await addItem(newEntry);
+      navigation.goBack();
     }
+
+    setLoading(false);
   };
 
   const handleRemoveFile = (index: number) => {
