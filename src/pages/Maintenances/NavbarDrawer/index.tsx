@@ -1,4 +1,4 @@
-import { FlatList, Modal, Text, TouchableOpacity } from "react-native";
+import { FlatList, Linking, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,7 +19,20 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
     toggleOpen();
   };
 
+  const handleOpenWeb = async () => {
+    const url = "https://company.easyalert.com.br";
+
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+      toggleOpen();
+    } else {
+      console.warn(`Não foi possível abrir ${url}`);
+    }
+  };
+
   const buttons = [
+    { label: "Acesso web", action: handleOpenWeb },
     {
       label: "Sair",
       action: handleSignOut,
