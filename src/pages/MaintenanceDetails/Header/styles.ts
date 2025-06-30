@@ -17,10 +17,10 @@ export const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 4,
     borderRadius: 4,
-    alignSelf: "flex-start", // Ajusta o tamanho ao conteúdo
+    alignSelf: "flex-start",
   },
   tagLabel: {
-    color: "#ffffff", // Texto branco
+    color: "#ffffff",
     fontSize: 12,
     fontWeight: "bold",
   },

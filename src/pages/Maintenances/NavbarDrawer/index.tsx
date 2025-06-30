@@ -1,8 +1,8 @@
 import { FlatList, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { PageWithHeader } from "@/components/PageWithHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 
 import { styles } from "./styles";
 
@@ -12,25 +12,25 @@ interface NavbarDrawerProps {
 }
 
 export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
-  const handleLogout = async () => {
-    await logout();
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
     toggleOpen();
   };
 
   const buttons = [
     {
       label: "Sair",
-      action: handleLogout,
+      action: handleSignOut,
     },
   ];
-
-  const { logout } = useAuth();
 
   return (
     <Modal visible={open} animationType="slide" onRequestClose={toggleOpen} statusBarTranslucent>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
-          <PageWithHeader title="Opções" onClose={toggleOpen}>
+          <PageWithHeaderLayout title="Opções" onClose={toggleOpen}>
             <FlatList
               data={buttons}
               keyExtractor={(_, index) => index.toString()}
@@ -40,7 +40,7 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
                 </TouchableOpacity>
               )}
             />
-          </PageWithHeader>
+          </PageWithHeaderLayout>
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>

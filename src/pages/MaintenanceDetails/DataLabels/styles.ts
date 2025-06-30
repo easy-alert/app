@@ -14,10 +14,10 @@ export const styles = StyleSheet.create({
   titleLabel: {
     fontWeight: "bold",
     color: "#555",
-    flex: 1, // Garante que o texto da label não fique espremido
+    flex: 1,
   },
   valueLabel: {
     color: "#000",
-    flex: 2, // Dá mais espaço ao valor
+    flex: 2,
   },
 });

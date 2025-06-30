@@ -45,14 +45,14 @@ export const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
   },
-  loginButton: {
+  signInButton: {
     flex: 1,
     backgroundColor: "#c62828",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
   },
-  loginButtonText: {
+  signInButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",

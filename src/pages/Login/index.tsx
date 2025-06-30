@@ -4,7 +4,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -18,17 +17,18 @@ import { Keyboard } from "react-native";
 import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
+import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
 export const Login = () => {
   const navigation = useNavigation<PublicNavigation>();
-  const { login } = useAuth();
+  const { signIn } = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isSigninIn, setIsSigningIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const formatPhoneNumber = (value: string): string => {
@@ -56,25 +56,24 @@ export const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = async () => {
-    Keyboard.dismiss(); // Fecha o teclado ao clicar no botão
+  const handleSignIn = async () => {
+    Keyboard.dismiss();
 
     if (!phoneNumber || phoneNumber.length < 11) {
-      Alert.alert("Erro", "Por favor, insira um número de telefone válido.");
+      alerts.error("Por favor, insira um número de telefone válido.");
       return;
     }
 
-    setIsLoggingIn(true);
-
-    try {
-      const cleanedPhone = phoneNumber.replace(/\D/g, "");
-      await login(cleanedPhone, password);
-    } catch (error) {
-      console.error("Erro ao autenticar:", error);
-      Alert.alert("Erro", "Número inválido ou não cadastrado");
-    } finally {
-      setIsLoggingIn(false);
+    if (!password) {
+      alerts.error("Por favor, insira uma senha válida.");
+      return;
     }
+
+    const cleanedPhone = phoneNumber.replace(/\D/g, "");
+
+    setIsSigningIn(true);
+    await signIn(cleanedPhone, password);
+    setIsSigningIn(false);
   };
 
   return (
@@ -117,11 +116,11 @@ export const Login = () => {
           </View>
 
           <View style={styles.buttonContainer}>
-            {isLoggingIn ? (
+            {isSigninIn ? (
               <ActivityIndicator size="large" color="#ffffff" />
             ) : (
-              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Entrar</Text>
+              <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
+                <Text style={styles.signInButtonText}>Entrar</Text>
               </TouchableOpacity>
             )}
           </View>
