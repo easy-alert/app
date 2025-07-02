@@ -22,13 +22,8 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
   const handleOpenWeb = async () => {
     const url = "https://company.easyalert.com.br";
 
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-      toggleOpen();
-    } else {
-      console.warn(`Não foi possível abrir ${url}`);
-    }
+    await Linking.openURL(url);
+    toggleOpen();
   };
 
   const buttons = [
