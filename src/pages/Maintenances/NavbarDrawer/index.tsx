@@ -1,4 +1,4 @@
-import { FlatList, Linking, Modal, Text, TouchableOpacity } from "react-native";
+import { FlatList, Linking, Modal, Platform, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,7 +22,18 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
   const handleOpenWeb = async () => {
     const url = "https://company.easyalert.com.br";
 
-    Linking.openURL(url);
+    if (Platform.OS === "android") {
+      const browserIntent = `intent://${url.replace(/^https?:\/\//, "")}#Intent;scheme=https;package=com.android.chrome;end`;
+      const canOpen = await Linking.canOpenURL(browserIntent);
+
+      if (canOpen) {
+        await Linking.openURL(browserIntent);
+      } else {
+        await Linking.openURL(url);
+      }
+    } else {
+      await Linking.openURL(url);
+    }
     toggleOpen();
   };
 
