@@ -22,7 +22,7 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
   const handleOpenWeb = async () => {
     const url = "https://company.easyalert.com.br";
 
-    await Linking.openURL(url);
+    Linking.openURL(url);
     toggleOpen();
   };
 
