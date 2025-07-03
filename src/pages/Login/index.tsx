@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import * as Application from "expo-application";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -130,6 +131,10 @@ export const Login = () => {
             <Text style={styles.forgotPasswordTextLink} onPress={() => navigation.navigate("ForgotPassword")}>
               Recuperar senha
             </Text>
+          </Text>
+
+          <Text style={[styles.versionText]}>
+            Versão {Application.nativeApplicationVersion} - {Application.nativeBuildVersion}
           </Text>
         </View>
       </KeyboardAvoidingView>
