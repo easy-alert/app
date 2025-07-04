@@ -5,10 +5,16 @@ export interface IKanbanColumn {
     element: string;
     activity: string;
     status: string;
-    cantReportExpired?: boolean;
     date: string;
+    dueDate: string;
     label: string;
     type: string;
     buildingName: string;
+    inProgress: boolean;
+    priorityBackgroundColor: string;
+    priorityColor: string;
+    priorityLabel: string;
+    serviceOrderNumber: number;
+    cantReportExpired?: boolean;
   }[];
 }
