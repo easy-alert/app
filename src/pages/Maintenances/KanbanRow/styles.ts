@@ -23,8 +23,19 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       borderLeftColor: getStatus(columnStatus).color,
       gap: 6,
     },
+    cardHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
     buildingName: {
       fontSize: 18,
+      fontWeight: "bold",
+    },
+    serviceOrder: {
+      fontSize: 12,
+      fontWeight: "bold",
+      color: "#999999",
     },
     typeTagContainer: {
       paddingVertical: 2,
