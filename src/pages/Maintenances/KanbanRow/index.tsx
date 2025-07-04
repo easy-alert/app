@@ -41,8 +41,12 @@ export const KanbanRow = ({ maintenance, columnStatus, hasPendingSync }: KanbanR
         <Text style={styles.serviceOrder}>#{maintenance.serviceOrderNumber}</Text>
       </View>
 
-      <View style={styles.typeTagContainer}>
-        <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
+      <View style={styles.cardHeader}>
+        <View style={styles.typeTagContainer}>
+          <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
+        </View>
+
+        <Text style={styles.priorityName}>{maintenance.priorityLabel}</Text>
       </View>
 
       {maintenance.status === "overdue" && (

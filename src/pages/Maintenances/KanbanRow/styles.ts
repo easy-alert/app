@@ -56,6 +56,11 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       fontSize: 12,
       fontWeight: "bold",
     },
+    priorityName: {
+      fontSize: 12,
+      fontWeight: "bold",
+      color: "#999999",
+    },
     cardTitle: {
       fontSize: 14,
       fontWeight: "bold",
