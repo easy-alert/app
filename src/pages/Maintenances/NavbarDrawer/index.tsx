@@ -1,5 +1,6 @@
-import { FlatList, Linking, Modal, Platform, Text, TouchableOpacity } from "react-native";
+import { FlatList, Linking, Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
@@ -20,19 +21,14 @@ export const NavbarDrawer = ({ open, toggleOpen }: NavbarDrawerProps) => {
   };
 
   const handleOpenWeb = async () => {
-    const url = "https://company.easyalert.com.br";
-
-    if (Platform.OS === "android") {
-      const browserIntent = `intent://${url.replace(/^https?:\/\//, "")}#Intent;scheme=https;package=com.android.chrome;end`;
-      const canOpen = await Linking.canOpenURL(browserIntent);
-
-      if (canOpen) {
-        await Linking.openURL(browserIntent);
-      } else {
-        await Linking.openURL(url);
-      }
-    } else {
+    const url = "https://company.easyalert.com.br/login";
+    try {
       await Linking.openURL(url);
+    } catch (e) {
+      toast.error("Não foi possível abrir o link. Verifique sua conexão com a internet.");
+      console.error("Failed to open URL:", e);
+
+      // Optionally, show an error message to the user
     }
     toggleOpen();
   };
