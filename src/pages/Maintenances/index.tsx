@@ -7,7 +7,7 @@ import type { RouteList } from "@/routes/navigation";
 import { getMaintenancesKanban } from "@/services/queries/getMaintenancesKanban";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import { Filter } from "@/types/utils/Filter";
+import { KanbanFilter } from "@/types/utils/Filter";
 import { emptyFilters } from "@/utils/filters";
 
 import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
@@ -21,7 +21,7 @@ export const Maintenances = () => {
   const { userId } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
-  const [filters, setFilters] = useState<Filter>(emptyFilters);
+  const [filters, setFilters] = useState<KanbanFilter>(emptyFilters);
   const [availableCategories, setAvailableCategories] = useState<AvailableFilter[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -38,6 +38,8 @@ export const Maintenances = () => {
           categories: filters.selectedCategories,
           users: filters.selectedUsers,
           search: filters.search,
+          priorityNames: filters.selectedPriorityNames,
+          types: filters.selectedTypes,
           endDate: filters.endDate,
           startDate: filters.startDate,
         },

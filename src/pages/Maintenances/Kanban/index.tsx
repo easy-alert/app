@@ -2,8 +2,8 @@ import { ScrollView, Text, View } from "react-native";
 
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
-import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import { Filter } from "@/types/utils/Filter";
+import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import type { KanbanFilter } from "@/types/utils/Filter";
 
 import { KanbanHeader } from "../KanbanHeader";
 import { KanbanRow } from "../KanbanRow";
@@ -11,9 +11,9 @@ import { styles } from "./styles";
 
 interface KanbanProps {
   kanbanData: IKanbanColumn[];
-  filters: Filter;
-  setFilters: (filters: Filter) => void;
+  filters: KanbanFilter;
   availableCategories: AvailableFilter[];
+  setFilters: (filters: KanbanFilter) => void;
 }
 
 export const Kanban = ({ kanbanData, filters, setFilters, availableCategories }: KanbanProps) => {
