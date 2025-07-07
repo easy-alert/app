@@ -11,5 +11,5 @@
     }
   },
 
-  "include": ["App.tsx", "src/**/*", ".eslintrc.js", "babel.config.js", "metro.config.js"]
+  "include": ["App.tsx", "src/**/*", ".eslintrc.js", "babel.config.js", "metro.config.js", "ReactotronConfig.ts"]
 }
