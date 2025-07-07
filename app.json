@@ -3,7 +3,7 @@
     "name": "Easy Alert",
     "slug": "app",
     "owner": "easy-alert",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,9 +25,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.easyalert.app",
-      "associatedDomains": [
-        "applinks:company.easyalert.com.br"
-      ],
+      "associatedDomains": ["applinks:company.easyalert.com.br"],
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to register a maintenance that was done.",
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select pictures of done maintenances.",
@@ -51,10 +49,7 @@
               "pathPattern": "/maintenances"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         },
         {
           "action": "VIEW",
@@ -66,10 +61,7 @@
               "pathPattern": "/maintenances/new"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         },
         {
           "action": "VIEW",
@@ -81,10 +73,7 @@
               "pathPattern": "/maintenances/.*"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "googleServicesFile": "./credentials/firebase.json"
@@ -103,8 +92,6 @@
     "updates": {
       "url": "https://u.expo.dev/27517197-dbbd-4bac-ac20-ae03ee07310c"
     },
-    "plugins": [
-      "react-native-compressor"
-    ]
+    "plugins": ["react-native-compressor"]
   }
 }
