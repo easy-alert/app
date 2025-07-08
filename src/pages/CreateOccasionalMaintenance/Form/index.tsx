@@ -24,6 +24,7 @@ import { PRIORITY_NAME } from "@/types/utils/PriorityName";
 import { RESPONSIBLE } from "@/types/utils/Responsible";
 import { alerts } from "@/utils/alerts";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { normalizeString } from "@/utils/normalizeString";
 import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
@@ -51,27 +52,6 @@ export const Form = () => {
   const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
-
-  useEffect(() => {
-    const handleGetCategories = async () => {
-      setLoadingCategories(true);
-      const categories = await getCategories();
-
-      setCategories(categories);
-      setLoadingCategories(false);
-    };
-
-    const getBuildings = async () => {
-      const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
-
-      if (storageBuildings) {
-        setBuildings(JSON.parse(storageBuildings));
-      }
-    };
-
-    handleGetCategories();
-    getBuildings();
-  }, [navigation]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -150,6 +130,27 @@ export const Form = () => {
   };
 
   useEffect(() => {
+    const handleGetCategories = async () => {
+      setLoadingCategories(true);
+      const categories = await getCategories();
+
+      setCategories(categories);
+      setLoadingCategories(false);
+    };
+
+    const getBuildings = async () => {
+      const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
+
+      if (storageBuildings) {
+        setBuildings(JSON.parse(storageBuildings));
+      }
+    };
+
+    handleGetCategories();
+    getBuildings();
+  }, [navigation]);
+
+  useEffect(() => {
     const handleGetUsers = async () => {
       if (!buildingId) return;
 
@@ -180,9 +181,27 @@ export const Form = () => {
     const selectedBuildingName = buildings.find((building) => building.id === buildingId)?.name;
     if (!selectedBuildingName) return;
 
-    const categoryInBuilding = categories.find((category) => category.name.includes(selectedBuildingName));
-    if (categoryInBuilding) {
-      form.setValue("categoryId", categoryInBuilding.id);
+    const buildingWords = normalizeString(selectedBuildingName).split(/\s+/).filter(Boolean);
+    console.log("🚀 ~ useEffect ~ buildingWords:", buildingWords);
+
+    let bestCategory: ICategory | null = null;
+    let bestScore = 0;
+
+    categories.forEach((category) => {
+      if (!category.name) return;
+
+      const normalizedCategory = normalizeString(category.name);
+      const categoryWords = normalizedCategory.split(/\s+/).filter(Boolean);
+      const score = buildingWords.reduce((acc, word) => acc + (categoryWords.includes(word) ? 1 : 0), 0);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestCategory = category;
+      }
+    });
+
+    if (bestCategory && bestScore > 0) {
+      form.setValue("categoryId", (bestCategory as ICategory).id);
     } else {
       form.setValue("categoryId", "");
     }
