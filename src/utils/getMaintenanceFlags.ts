@@ -5,7 +5,8 @@ interface IGetMaintenanceFlagsProps {
   maintenanceStatus?: TMaintenanceStatus;
   maintenanceType?: TMaintenanceType;
   maintenanceInProgress?: boolean;
-  maintenanceDate?: string | Date;
+  notificationDate?: string | Date;
+  isFuture?: boolean;
   canReport?: boolean;
   canReportExpired?: boolean;
 }
@@ -14,7 +15,8 @@ export function getMaintenanceFlags({
   maintenanceStatus,
   maintenanceType,
   maintenanceInProgress,
-  maintenanceDate,
+  notificationDate,
+  isFuture,
   canReport,
   canReportExpired,
 }: IGetMaintenanceFlagsProps) {
@@ -26,8 +28,11 @@ export function getMaintenanceFlags({
   const inProgress = maintenanceInProgress;
 
   const isOldExpired = isExpired && canReportExpired;
-  const isFuture =
-    maintenanceDate !== undefined ? new Date(maintenanceDate) > new Date(new Date().setHours(0, 0, 0, 0)) : false;
+
+  if (isFuture === undefined) {
+    isFuture =
+      notificationDate !== undefined ? new Date(notificationDate) > new Date(new Date().setHours(0, 0, 0, 0)) : false;
+  }
 
   const showExpiredOccasional = maintenanceType === "occasional" && isExpired;
 
