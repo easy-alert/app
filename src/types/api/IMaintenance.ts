@@ -1,5 +1,6 @@
 import type { ICategory } from "./ICategory";
 import type { TMaintenanceStatus } from "./TMaintenanceStatus";
+import type { TMaintenanceType } from "./TMaintenanceType";
 
 interface IMaintenanceData {
   Category: ICategory;
@@ -17,7 +18,7 @@ interface IMaintenanceData {
   };
 
   MaintenanceType: {
-    name: string;
+    name: TMaintenanceType;
   };
 
   instructions: {
