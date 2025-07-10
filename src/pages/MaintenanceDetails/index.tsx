@@ -88,6 +88,8 @@ export const MaintenanceDetails = () => {
 
     if (suppliers.length > 0) {
       setSupplier(suppliers[0]);
+    } else {
+      setSupplier(undefined);
     }
   };
 
