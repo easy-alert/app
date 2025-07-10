@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
 
 import { alerts } from "@/utils/alerts";
+import { formatPhoneBR } from "@/utils/formatPhoneBR";
 import { isEmail } from "@/utils/isEmail";
 import { isPhone } from "@/utils/isPhone";
 
@@ -38,13 +39,6 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Format as phone if not email, else keep as is
-  const formatPhoneBR = (value: string) => {
-    const digits = value.replace(/\D/g, "");
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    if (digits.length <= 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
-  };
 
   const handleLoginChange = (value: string) => {
     // If user types @ or any letter, treat as email

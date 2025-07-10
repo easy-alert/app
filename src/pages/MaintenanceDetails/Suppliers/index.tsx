@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { unlinkMaintenanceSupplier } from "@/services/mutations/unlinkMaintenanceSupplier";
 
 import { alerts } from "@/utils/alerts";
+import { formatPhoneBR } from "@/utils/formatPhoneBR";
 
 import type { ISupplier } from "@/types/api/ISupplier";
 
@@ -54,8 +55,13 @@ export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: S
       <SupplierModal maintenanceId={maintenanceId} visible={showSupplierModal} onClose={toggleSupplierModal} />
 
       <View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleLabel}>Fornecedor</Text>
+        <View
+          style={[
+            styles.titleContainer,
+            { justifyContent: supplier ? "space-between" : "flex-end", marginBottom: supplier ? 12 : 0 },
+          ]}
+        >
+          {supplier && <Text style={styles.titleLabel}>Prestador de serviço</Text>}
 
           {supplier ? (
             <TouchableOpacity onPress={handleUnlinkMaintenanceSupplier} style={styles.unlinkButton}>
@@ -64,13 +70,13 @@ export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: S
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.addButton} onPress={toggleSupplierModal}>
-              <Text style={styles.buttonLabel}>Vincular</Text>
-              <Icon name="link" size={16} color="#fff" style={styles.buttonIcon} />
+              <Text style={styles.buttonLabel}>Adicionar prestador de serviço </Text>
+              <Icon name="plus" size={16} color="#fff" style={styles.buttonIcon} />
             </TouchableOpacity>
           )}
         </View>
 
-        {supplier ? (
+        {supplier && (
           <View style={styles.supplierContainer}>
             <View style={styles.avatarContainer}>
               <Image
@@ -87,14 +93,8 @@ export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: S
                 <Icon name="mail" size={12} /> {supplier.email || "-"}
               </Text>
               <Text style={styles.websiteLabel}>
-                <Icon name="phone" size={12} /> {supplier.phone || "-"}
+                <Icon name="phone" size={12} /> {formatPhoneBR(supplier.phone || "-")}
               </Text>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.supplierContainer}>
-            <View style={styles.detailsContainer}>
-              <Text style={styles.emailLabel}>Nenhum fornecedor encontrado.</Text>
             </View>
           </View>
         )}
