@@ -1,16 +1,16 @@
 export const PRIORITY_NAME = [
   {
-    value: "low",
+    name: "low",
     label: "baixa",
   },
   {
-    value: "medium",
+    name: "medium",
     label: "média",
   },
   {
-    value: "high",
+    name: "high",
     label: "alta",
   },
 ] as const;
-export type TPriorityName = (typeof PRIORITY_NAME)[number]["value"];
+export type TPriorityName = (typeof PRIORITY_NAME)[number]["name"];
 export type TPriorityNameLabel = (typeof PRIORITY_NAME)[number]["label"];

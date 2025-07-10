@@ -19,6 +19,8 @@ import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { PublicNavigation } from "@/routes/navigation";
 import { alerts } from "@/utils/alerts";
+import { isEmail } from "@/utils/isEmail";
+import { isPhone } from "@/utils/isPhone";
 
 import { styles } from "./styles";
 
@@ -26,31 +28,28 @@ export const Login = () => {
   const navigation = useNavigation<PublicNavigation>();
   const { signIn } = useAuth();
 
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [login, setLogin] = useState(""); // email or phone
   const [password, setPassword] = useState("");
 
   const [isSigninIn, setIsSigningIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const formatPhoneNumber = (value: string): string => {
-    const onlyNumbers = value.replace(/\D/g, "");
-
-    if (onlyNumbers.length > 10) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
-        2,
-        3,
-      )} ${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7)}`;
-    } else if (onlyNumbers.length > 6) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2, 6)}-${onlyNumbers.slice(6)}`;
-    } else if (onlyNumbers.length > 2) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2)}`;
-    } else {
-      return onlyNumbers;
-    }
+  // Format as phone if not email, else keep as is
+  const formatPhoneBR = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
   };
 
-  const handlePhoneNumberChange = (value: string) => {
-    setPhoneNumber(formatPhoneNumber(value));
+  const handleLoginChange = (value: string) => {
+    // If user types @ or any letter, treat as email
+    if (/[@a-zA-Z]/.test(value)) {
+      setLogin(value);
+    } else {
+      setLogin(formatPhoneBR(value));
+    }
   };
 
   const toggleShowPassword = () => {
@@ -60,8 +59,13 @@ export const Login = () => {
   const handleSignIn = async () => {
     Keyboard.dismiss();
 
-    if (!phoneNumber || phoneNumber.length < 11) {
-      alerts.error("Por favor, insira um número de telefone válido.");
+    if (!login) {
+      alerts.error("Por favor, insira seu e-mail ou número de telefone.");
+      return;
+    }
+
+    if (!isEmail(login) && !isPhone(login)) {
+      alerts.error("Por favor, insira um e-mail ou número de telefone válido.");
       return;
     }
 
@@ -70,10 +74,11 @@ export const Login = () => {
       return;
     }
 
-    const cleanedPhone = phoneNumber.replace(/\D/g, "");
+    // If phone, clean it, else send as is
+    const loginValue = isPhone(login) ? login.replace(/\D/g, "") : login;
 
     setIsSigningIn(true);
-    await signIn(cleanedPhone, password);
+    await signIn(loginValue, password);
     setIsSigningIn(false);
   };
 
@@ -89,12 +94,14 @@ export const Login = () => {
 
           <TextInput
             style={styles.input}
-            placeholder="Digite seu número de telefone"
+            placeholder="Digite seu e-mail ou número de telefone"
             placeholderTextColor="#aaa"
-            keyboardType="phone-pad"
-            value={phoneNumber}
-            onChangeText={handlePhoneNumberChange}
-            maxLength={16}
+            keyboardType="email-address"
+            value={login}
+            onChangeText={handleLoginChange}
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={50}
           />
 
           <View style={styles.passwordContainer}>
