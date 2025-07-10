@@ -1,5 +1,5 @@
-import { IRemoteFile } from "../api/IRemoteFile";
-import { LocalFile } from "./LocalFile";
+import type { IRemoteFile } from "../api/IRemoteFile";
+import type { LocalFile } from "./LocalFile";
 
 interface OfflineQueueItemBase {
   userId: string;

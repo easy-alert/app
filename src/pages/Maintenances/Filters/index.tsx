@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { View } from "react-native";
 
+import { useBottomSheet } from "@/contexts/BottomSheetContext";
+
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
-import { useBottomSheet } from "@/contexts/BottomSheetContext";
+
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { emptyFilters } from "@/utils/filters";
+import { maintenanceStatus } from "@/utils/getStatus";
+
 import { MAINTENANCE_TYPE } from "@/types/api/TMaintenanceType";
 import { PRIORITY_NAME } from "@/types/api/TPriorityName";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
 import type { KanbanFilter } from "@/types/utils/Filter";
-import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
-import { emptyFilters } from "@/utils/filters";
-import { maintenanceStatus } from "@/utils/getStatus";
 
 import { styles } from "./styles";
 

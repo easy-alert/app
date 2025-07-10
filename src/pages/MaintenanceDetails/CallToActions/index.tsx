@@ -1,22 +1,27 @@
+import { Alert, View } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, View } from "react-native";
 import { toast } from "sonner-native";
 
-import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
+
+import { PrimaryButton, SecondaryButton } from "@/components/Button";
+
 import type { ProtectedNavigation } from "@/routes/navigation";
+
 import { updateMaintenance } from "@/services/mutations/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/mutations/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/mutations/updateMaintenanceProgress";
 import { uploadFile } from "@/services/mutations/uploadFile";
+
+import { alerts } from "@/utils/alerts";
+import { convertCostToInteger } from "@/utils/convertCostToInteger";
+
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { alerts } from "@/utils/alerts";
-import { convertCostToInteger } from "@/utils/convertCostToInteger";
 
 import { styles } from "./styles";
 

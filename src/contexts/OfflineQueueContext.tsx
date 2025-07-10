@@ -1,8 +1,9 @@
-import NetInfo from "@react-native-community/netinfo";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import NetInfo from "@react-native-community/netinfo";
+
+import { addItemToOfflineQueue, getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
 
 import { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { addItemToOfflineQueue, getOfflineQueue, syncOfflineQueue } from "@/utils/offlineQueue";
 
 interface OfflineQueueContextData {
   offlineQueue: OfflineQueueItem[];

@@ -3,6 +3,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
+
 import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
 
 import { styles } from "./styles";

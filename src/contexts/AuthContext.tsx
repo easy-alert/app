@@ -1,16 +1,18 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { jwtDecode } from "jwt-decode";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 import { recoverPassword } from "@/services/auth/recoverPassword";
 import { signIn } from "@/services/auth/signIn";
-import { IBuilding } from "@/types/api/IBuilding";
-import { MutationResponse } from "@/types/utils/MutationResponse";
+
 import { alerts } from "@/utils/alerts";
 import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
 import { storageKeys } from "@/utils/storageKeys";
+
+import { IBuilding } from "@/types/api/IBuilding";
+import { MutationResponse } from "@/types/utils/MutationResponse";
 
 interface AuthContextData {
   isAuthenticated: boolean | undefined;

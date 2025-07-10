@@ -1,5 +1,5 @@
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 
 import { commonStyles } from "../common-styles";
 import { styles } from "./styles";

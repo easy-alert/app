@@ -4,11 +4,15 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
+
 import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
+
 import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
 import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
-import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
+
 import { alerts } from "@/utils/alerts";
+
+import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
 
 import { styles } from "./styles";
 

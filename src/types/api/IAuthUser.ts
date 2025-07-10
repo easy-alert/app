@@ -1,4 +1,4 @@
-import { IBuilding } from "./IBuilding";
+import type { IBuilding } from "./IBuilding";
 
 export interface IAuthUser {
   id: string;

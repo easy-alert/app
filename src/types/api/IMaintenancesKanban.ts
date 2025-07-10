@@ -1,4 +1,4 @@
-import { IKanbanColumn } from "./IKanbanColumn";
+import type { IKanbanColumn } from "./IKanbanColumn";
 
 export interface IMaintenancesKanban {
   kanban: IKanbanColumn[];

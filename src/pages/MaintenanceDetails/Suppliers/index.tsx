@@ -4,9 +4,12 @@ import Icon from "react-native-vector-icons/Feather";
 import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
+
 import { unlinkMaintenanceSupplier } from "@/services/mutations/unlinkMaintenanceSupplier";
-import type { ISupplier } from "@/types/api/ISupplier";
+
 import { alerts } from "@/utils/alerts";
+
+import type { ISupplier } from "@/types/api/ISupplier";
 
 import { SupplierModal } from "../SupplierModal";
 import { styles } from "./styles";

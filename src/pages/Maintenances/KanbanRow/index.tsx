@@ -1,12 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { PendingSyncBadge } from "@/components/PendingSyncBadge";
+
 import type { ProtectedNavigation } from "@/routes/navigation";
-import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
+
 import { formatDate } from "@/utils/formatDate";
 import { getMaintenanceFlags } from "@/utils/getMaintenanceFlags";
 import { getStatus } from "@/utils/getStatus";
+
+import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 
 import { createStyle } from "./styles";
 

@@ -1,20 +1,24 @@
-import NetInfo from "@react-native-community/netinfo";
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import NetInfo from "@react-native-community/netinfo";
+import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
+
 import type { ProtectedNavigation } from "@/routes/navigation";
+
 import { createMaintenanceHistoryActivity } from "@/services/mutations/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/mutations/uploadFile";
+
+import { alerts } from "@/utils/alerts";
+import { openFilePicker } from "@/utils/openFilePicker";
+
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { alerts } from "@/utils/alerts";
-import { openFilePicker } from "@/utils/openFilePicker";
 
 import { styles } from "./styles";
 
