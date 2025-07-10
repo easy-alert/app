@@ -37,12 +37,14 @@ module.exports = {
           ["^@/services/", "^type:@/services/"],
           // @/utils and its types
           ["^@/utils/", "^type:@/utils/"],
-          // @/types (shared types)
-          ["^@/types/"],
+          // @/types (shared types and their types)
+          ["^@/types/", "^type:@/types/"],
           // Other internal aliases
           ["^@/"],
-          // Relative imports
+          // Relative imports and their types
           ["^\\.", "^type:\\."],
+          // Catch-all for any other type-only imports
+          ["^type:"],
         ],
       },
     ],
