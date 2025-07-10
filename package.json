@@ -51,7 +51,8 @@
     "react-native-svg-transformer": "^1.5.0",
     "react-native-vector-icons": "^10.2.0",
     "sonner-native": "^0.20.0",
-    "zod": "^3.24.3"
+    "zod": "^3.24.3",
+    "expo-checkbox": "~4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
