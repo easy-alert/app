@@ -24,17 +24,27 @@ import { styles } from "./styles";
 
 interface CommentsProps {
   maintenanceId: string;
+  enableComments?: boolean;
   setLoading: (loading: boolean) => void;
   getMaintenanceHistoryActivities: () => Promise<void>;
 }
 
-export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActivities }: CommentsProps) => {
+export const Comments = ({
+  maintenanceId,
+  enableComments = true,
+  setLoading,
+  getMaintenanceHistoryActivities,
+}: CommentsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
   const { userId } = useAuth();
   const { addItem } = useOfflineQueue();
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [comment, setComment] = useState("");
+
+  if (!enableComments) {
+    return null;
+  }
 
   const handleCreateMaintenanceActivity = async () => {
     setLoading(true);

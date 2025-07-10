@@ -18,10 +18,16 @@ import { styles } from "./styles";
 interface SuppliersProps {
   supplier?: ISupplier;
   maintenanceId: string;
+  enableSupplierButton?: boolean;
   getMaintenanceSupplier: () => Promise<void>;
 }
 
-export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: SuppliersProps) => {
+export const Suppliers = ({
+  supplier,
+  maintenanceId,
+  enableSupplierButton = true,
+  getMaintenanceSupplier,
+}: SuppliersProps) => {
   const { userId } = useAuth();
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
@@ -63,20 +69,21 @@ export const Suppliers = ({ supplier, maintenanceId, getMaintenanceSupplier }: S
         >
           {supplier && <Text style={styles.titleLabel}>Prestador de serviço</Text>}
 
-          {supplier ? (
-            <TouchableOpacity onPress={handleUnlinkMaintenanceSupplier} style={styles.unlinkButton}>
-              <Text style={styles.buttonLabel}>Desvincular</Text>
-              <Icon name="link" size={16} color="#fff" style={styles.buttonIcon} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.addButton} onPress={toggleSupplierModal}>
-              <Text style={styles.buttonLabel}>Adicionar prestador de serviço </Text>
-              <Icon name="plus" size={16} color="#fff" style={styles.buttonIcon} />
-            </TouchableOpacity>
-          )}
+          {enableSupplierButton &&
+            (supplier ? (
+              <TouchableOpacity onPress={handleUnlinkMaintenanceSupplier} style={styles.unlinkButton}>
+                <Text style={styles.buttonLabel}>Desvincular</Text>
+                <Icon name="link" size={16} color="#fff" style={styles.buttonIcon} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={styles.addButton} onPress={toggleSupplierModal}>
+                <Text style={styles.buttonLabel}>Adicionar prestador de serviço </Text>
+                <Icon name="plus" size={16} color="#fff" style={styles.buttonIcon} />
+              </TouchableOpacity>
+            ))}
         </View>
 
-        {supplier && (
+        {supplier && enableSupplierButton && (
           <View style={styles.supplierContainer}>
             <View style={styles.avatarContainer}>
               <Image

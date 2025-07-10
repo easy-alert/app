@@ -13,6 +13,8 @@ import { getMaintenanceHistoryActivities } from "@/services/queries/getMaintenan
 import { getMaintenanceHistorySupplier } from "@/services/queries/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/queries/getMaintenanceReportProgress";
 
+import { getMaintenanceFlags } from "@/utils/getMaintenanceFlags";
+
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
@@ -47,6 +49,10 @@ export const MaintenanceDetails = () => {
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [localImages, setLocalImages] = useState<LocalFile[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const { isCompleted, isOverdue, canReport } = getMaintenanceFlags({
+    canReport: maintenanceDetails?.canReport,
+  });
 
   const handleGetMaintenanceDetails = async () => {
     const maintenanceDetails = await getMaintenanceDetails({
@@ -142,11 +148,13 @@ export const MaintenanceDetails = () => {
           supplier={supplier}
           maintenanceId={maintenanceId}
           getMaintenanceSupplier={handleGetMaintenanceSupplier}
+          enableSupplierButton={canReport && (!isCompleted || !isOverdue)}
         />
         <Comments
           maintenanceId={maintenanceId}
           setLoading={setLoading}
           getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
+          enableComments={canReport && (!isCompleted || !isOverdue)}
         />
         <History historyActivities={historyActivities} />
         {maintenanceDetails.canReport && (
