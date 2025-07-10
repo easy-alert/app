@@ -103,7 +103,7 @@ export const Filters = ({
         <MultiSelect
           data={PRIORITY_NAME.map((priority) => ({
             label: capitalizeFirstLetter(priority.label),
-            value: priority.value,
+            value: priority.name,
           }))}
           value={filtersCache.selectedPriorityNames}
           onChange={(selectedPriorityNames) => setFiltersCache({ ...filtersCache, selectedPriorityNames })}
