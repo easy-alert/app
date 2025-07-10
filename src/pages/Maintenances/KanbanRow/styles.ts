@@ -37,6 +37,11 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       fontWeight: "bold",
       color: "#999999",
     },
+    tagsContainer: {
+      flexDirection: "row",
+      gap: 4,
+      alignItems: "center",
+    },
     typeTagContainer: {
       paddingVertical: 2,
       paddingHorizontal: 4,
@@ -50,6 +55,13 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       borderRadius: 4,
       alignSelf: "flex-start",
       backgroundColor: getStatus(maintenanceStatus).color,
+    },
+    futureTagContainer: {
+      paddingVertical: 2,
+      paddingHorizontal: 4,
+      borderRadius: 4,
+      alignSelf: "flex-start",
+      backgroundColor: getStatus("Futura").color,
     },
     tagText: {
       color: "#ffffff",

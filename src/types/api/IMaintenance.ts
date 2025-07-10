@@ -1,4 +1,5 @@
 import type { ICategory } from "./ICategory";
+import type { TMaintenanceStatus } from "./TMaintenanceStatus";
 
 interface IMaintenanceData {
   Category: ICategory;
@@ -27,9 +28,11 @@ interface IMaintenanceData {
 
 export interface IMaintenance {
   id: string;
+
   dueDate: string;
   resolutionDate: string;
   notificationDate: string;
+
   MaintenanceReport: {
     id: string;
     cost: number;
@@ -38,14 +41,18 @@ export interface IMaintenance {
       url: string;
     }[];
   }[];
+
   MaintenancesStatus: {
-    name: "expired" | "pending" | "completed" | "overdue";
+    name: TMaintenanceStatus;
   };
+
   Building: {
     id?: string;
     name?: string;
   };
+
   Maintenance: IMaintenanceData;
+
   Users: {
     User: {
       name: string;
@@ -53,6 +60,7 @@ export interface IMaintenance {
       email: string;
     };
   }[];
+
   canReport: boolean;
   inProgress: boolean;
   showToResident: boolean;
