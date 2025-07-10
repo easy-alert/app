@@ -40,8 +40,8 @@ export const Maintenances = () => {
           search: filters.search,
           priorityNames: filters.selectedPriorityNames,
           types: filters.selectedTypes,
-          endDate: filters.endDate,
-          startDate: filters.startDate,
+          startDate: filters.startDate.split("T")[0],
+          endDate: filters.endDate.split("T")[0],
         },
       });
 
