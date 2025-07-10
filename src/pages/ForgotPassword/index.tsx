@@ -1,5 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,12 +10,17 @@ import {
   View,
 } from "react-native";
 import { Keyboard } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 import { toast } from "sonner-native";
 
-import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
+
 import { PublicNavigation } from "@/routes/navigation";
+
 import { alerts } from "@/utils/alerts";
+
+import Logo from "@/assets/logo.png";
 
 import { styles } from "./styles";
 

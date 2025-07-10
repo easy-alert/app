@@ -1,31 +1,36 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
+import { zodResolver } from "@hookform/resolvers/zod";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 import { z } from "zod";
+
+import { useAuth } from "@/contexts/AuthContext";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { Dropdown } from "@/components/Dropdown";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
-import { useAuth } from "@/contexts/AuthContext";
+
 import type { ProtectedNavigation } from "@/routes/navigation";
+
 import { createOccasionalMaintenance } from "@/services/mutations/createOccasionalMaintenance";
 import { getCategories } from "@/services/queries/getCategories";
 import { getUsers } from "@/services/queries/getUsers";
+
+import { alerts } from "@/utils/alerts";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { normalizeString } from "@/utils/normalizeString";
+import { storageKeys } from "@/utils/storageKeys";
+
 import type { IBuilding } from "@/types/api/IBuilding";
 import type { ICategory } from "@/types/api/ICategory";
 import type { IUser } from "@/types/api/IUser";
 import { PRIORITY_NAME } from "@/types/api/TPriorityName";
 import { RESPONSIBLE } from "@/types/api/TResponsible";
-import { alerts } from "@/utils/alerts";
-import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
-import { normalizeString } from "@/utils/normalizeString";
-import { storageKeys } from "@/utils/storageKeys";
 
 import { styles } from "./styles";
 
@@ -182,7 +187,6 @@ export const Form = () => {
     if (!selectedBuildingName) return;
 
     const buildingWords = normalizeString(selectedBuildingName).split(/\s+/).filter(Boolean);
-    console.log("🚀 ~ useEffect ~ buildingWords:", buildingWords);
 
     let bestCategory: ICategory | null = null;
     let bestScore = 0;

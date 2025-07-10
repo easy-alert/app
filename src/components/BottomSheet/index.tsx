@@ -1,3 +1,5 @@
+import { ForwardedRef, forwardRef, ReactNode, useCallback } from "react";
+import { useWindowDimensions } from "react-native";
 import BottomSheetComponent, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -5,8 +7,6 @@ import BottomSheetComponent, {
   BottomSheetFooterProps,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { ForwardedRef, forwardRef, ReactNode, useCallback } from "react";
-import { useWindowDimensions } from "react-native";
 
 import { styles } from "./styles";
 

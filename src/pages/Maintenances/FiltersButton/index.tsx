@@ -1,14 +1,17 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
+
 import { getUsers } from "@/services/queries/getUsers";
+
+import { storageKeys } from "@/utils/storageKeys";
+
 import { IBuilding } from "@/types/api/IBuilding";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { Filter } from "@/types/utils/Filter";
-import { storageKeys } from "@/utils/storageKeys";
 
 import { Filters } from "../Filters";
 import { styles } from "./styles";

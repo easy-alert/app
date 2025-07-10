@@ -1,14 +1,18 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
+
 import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
+
 import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/navigation";
+
 import { getMaintenanceDetails } from "@/services/queries/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/queries/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/queries/getMaintenanceHistorySupplier";
 import { getMaintenanceReportProgress } from "@/services/queries/getMaintenanceReportProgress";
+
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";

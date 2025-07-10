@@ -2,11 +2,12 @@ import { useState } from "react";
 import { ActivityIndicator, Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
+import { openFilePicker } from "@/utils/openFilePicker";
+import { removeItem } from "@/utils/removeItem";
+
 import type { IMaintenance } from "@/types/api/IMaintenance";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
-import { openFilePicker } from "@/utils/openFilePicker";
-import { removeItem } from "@/utils/removeItem";
 
 import { styles } from "./styles";
 

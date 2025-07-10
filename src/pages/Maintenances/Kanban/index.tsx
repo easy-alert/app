@@ -1,8 +1,9 @@
-import Checkbox from "expo-checkbox";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import Checkbox from "expo-checkbox";
 
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
+
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
 import type { KanbanFilter } from "@/types/utils/Filter";

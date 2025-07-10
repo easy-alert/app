@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 import { formatDate } from "@/utils/formatDate";
+
+import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
 
 import { styles } from "./styles";
 

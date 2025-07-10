@@ -1,14 +1,18 @@
-import { useNavigationState } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
+import { useNavigationState } from "@react-navigation/native";
 
 import { useAuth } from "@/contexts/AuthContext";
+
 import type { RouteList } from "@/routes/navigation";
+
 import { getMaintenancesKanban } from "@/services/queries/getMaintenancesKanban";
+
+import { emptyFilters } from "@/utils/filters";
+
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import { AvailableFilter } from "@/types/utils/AvailableFilter";
 import { KanbanFilter } from "@/types/utils/Filter";
-import { emptyFilters } from "@/utils/filters";
 
 import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 import { Kanban } from "./Kanban";

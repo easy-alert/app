@@ -13,7 +13,41 @@ module.exports = {
   rules: {
     camelcase: 2,
 
-    "simple-import-sort/imports": "error",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        groups: [
+          // Side effect imports
+          ["^\\u0000"],
+          // Node.js builtins
+          ["^node:"],
+          // Packages
+          ["^react", "^@?\\w"],
+          // @/contexts and its types
+          ["^@/contexts/", "^type:@/contexts/"],
+          // @/components and its types
+          ["^@/components/", "^type:@/components/"],
+          // @/layouts and its types
+          ["^@/layouts/", "^type:@/layouts/"],
+          // @/pages and its types
+          ["^@/pages/", "^type:@/pages/"],
+          // @/routes and its types
+          ["^@/routes/", "^type:@/routes/"],
+          // @/services and its types
+          ["^@/services/", "^type:@/services/"],
+          // @/utils and its types
+          ["^@/utils/", "^type:@/utils/"],
+          // @/types (shared types and their types)
+          ["^@/types/", "^type:@/types/"],
+          // Other internal aliases
+          ["^@/"],
+          // Relative imports and their types
+          ["^\\.", "^type:\\."],
+          // Catch-all for any other type-only imports
+          ["^type:"],
+        ],
+      },
+    ],
     "simple-import-sort/exports": "error",
 
     "@typescript-eslint/no-unused-vars": "warn",

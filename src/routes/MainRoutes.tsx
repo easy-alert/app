@@ -2,6 +2,7 @@ import { DefaultTheme, LinkingOptions, NavigationContainer, Theme } from "@react
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { MainLayout } from "@/layouts/MainLayout";
+
 import { CreateOccasionalMaintenance } from "@/pages/CreateOccasionalMaintenance";
 import { MaintenanceDetails } from "@/pages/MaintenanceDetails";
 import { Maintenances } from "@/pages/Maintenances";

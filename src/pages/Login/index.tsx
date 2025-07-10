@@ -1,7 +1,3 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import * as Application from "expo-application";
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -14,13 +10,20 @@ import {
   View,
 } from "react-native";
 import { Keyboard } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import * as Application from "expo-application";
+import { StatusBar } from "expo-status-bar";
 
-import Logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
+
 import { PublicNavigation } from "@/routes/navigation";
+
 import { alerts } from "@/utils/alerts";
 import { isEmail } from "@/utils/isEmail";
 import { isPhone } from "@/utils/isPhone";
+
+import Logo from "@/assets/logo.png";
 
 import { styles } from "./styles";
 
