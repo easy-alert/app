@@ -34,7 +34,7 @@ export const KanbanRow = ({
     maintenanceType: maintenance.type,
     maintenanceStatus: maintenance.status,
     maintenanceInProgress: maintenance.inProgress,
-    maintenanceDate: maintenance.date,
+    notificationDate: maintenance.date,
     canReportExpired: maintenance.cantReportExpired,
   });
 
@@ -79,6 +79,12 @@ export const KanbanRow = ({
             <Text style={styles.tagText}>{getStatus(maintenance.type).label}</Text>
           </View>
 
+          {maintenance.status === "overdue" && (
+            <View style={styles.statusTagContainer}>
+              <Text style={styles.tagText}>{getStatus(maintenance.status).label}</Text>
+            </View>
+          )}
+
           {isPending && isFuture && (
             <View style={styles.futureTagContainer}>
               <Text style={styles.tagText}>{getStatus("Futura").label}</Text>
@@ -88,12 +94,6 @@ export const KanbanRow = ({
 
         <Text style={styles.priorityName}>{maintenance.priorityLabel}</Text>
       </View>
-
-      {maintenance.status === "overdue" && (
-        <View style={styles.statusTagContainer}>
-          <Text style={styles.tagText}>{getStatus(maintenance.status).label}</Text>
-        </View>
-      )}
 
       <Text style={styles.cardTitle}>{maintenance.element}</Text>
 
