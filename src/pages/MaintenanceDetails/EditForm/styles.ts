@@ -17,4 +17,10 @@ export const styles = StyleSheet.create({
   dueDate: {
     fontWeight: "bold",
   },
+  showToResidentLabel: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
 });
