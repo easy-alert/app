@@ -187,7 +187,6 @@ export const Form = () => {
     if (!selectedBuildingName) return;
 
     const buildingWords = normalizeString(selectedBuildingName).split(/\s+/).filter(Boolean);
-    console.log("🚀 ~ useEffect ~ buildingWords:", buildingWords);
 
     let bestCategory: ICategory | null = null;
     let bestScore = 0;
