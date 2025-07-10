@@ -129,17 +129,13 @@ export const MaintenanceDetails = () => {
     });
   };
 
-  const showEditFormButton =
-    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-    maintenanceDetails.MaintenancesStatus.name !== "overdue";
-
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <PageWithHeaderLayout
         title="Enviar relato"
         onClose={() => navigation.goBack()}
         isScrollView
-        onEdit={showEditFormButton ? openEditForm : undefined}
+        onEdit={openEditForm}
       >
         <Header maintenanceDetails={maintenanceDetails} />
         <DataLabels maintenanceDetails={maintenanceDetails} />
