@@ -10,6 +10,7 @@ export const getStatus = (status: string): { color: string; label: string } => {
     overdue: { color: "#E15A5D", label: "Feita em atraso" },
     common: { color: "#1074A8", label: "Preventiva" },
     occasional: { color: "#7D29D5", label: "Avulsa" },
+    Futura: { color: "#999999", label: "Manutenção futura" },
   };
 
   return statusMap[status] || { color: "gray", label: "Desconhecido" };
