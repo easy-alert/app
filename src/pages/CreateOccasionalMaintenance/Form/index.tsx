@@ -186,29 +186,17 @@ export const Form = () => {
     const selectedBuildingName = buildings.find((building) => building.id === buildingId)?.name;
     if (!selectedBuildingName) return;
 
-    const buildingWords = normalizeString(selectedBuildingName).split(/\s+/).filter(Boolean);
-
-    let bestCategory: ICategory | null = null;
-    let bestScore = 0;
+    const normalizedBuildingName = normalizeString(selectedBuildingName);
 
     categories.forEach((category) => {
       if (!category.name) return;
 
       const normalizedCategory = normalizeString(category.name);
-      const categoryWords = normalizedCategory.split(/\s+/).filter(Boolean);
-      const score = buildingWords.reduce((acc, word) => acc + (categoryWords.includes(word) ? 1 : 0), 0);
 
-      if (score > bestScore) {
-        bestScore = score;
-        bestCategory = category;
+      if (normalizedCategory.includes(normalizedBuildingName)) {
+        form.setValue("categoryId", category.id);
       }
     });
-
-    if (bestCategory && bestScore > 0) {
-      form.setValue("categoryId", (bestCategory as ICategory).id);
-    } else {
-      form.setValue("categoryId", "");
-    }
   }, [buildingId, categories, buildings]);
 
   return (
