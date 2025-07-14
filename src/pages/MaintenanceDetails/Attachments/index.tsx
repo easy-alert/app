@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ActivityIndicator, Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
+import { useRequiredAuth } from "@/contexts/AuthContext";
+
 import { openFilePicker } from "@/utils/openFilePicker";
 import { removeItem } from "@/utils/removeItem";
 
@@ -34,6 +36,8 @@ export const Attachments = ({
   setLocalFiles,
   setLocalImages,
 }: AttachmentsProps) => {
+  const { hasPermission } = useRequiredAuth();
+
   const [loadingImages, setLoadingImages] = useState(false);
   const [loadingFiles, setLoadingFiles] = useState(false);
 
@@ -55,7 +59,7 @@ export const Attachments = ({
     try {
       setLoadingImages(true);
 
-      const localImages = await openFilePicker({ mode: "image" });
+      const localImages = await openFilePicker({ mode: "image", forceCamera: hasPermission("maintenances:livePhoto") });
 
       if (localImages.length) {
         setLocalImages((prev) => [...prev, ...localImages]);
