@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useNavigationState } from "@react-navigation/native";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
 
 import type { RouteList } from "@/routes/navigation";
 
@@ -22,7 +22,9 @@ import { styles } from "./styles";
 export const Maintenances = () => {
   const navigationState = useNavigationState((state) => state);
 
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+  } = useRequiredAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
   const [filters, setFilters] = useState<KanbanFilter>(emptyFilters);

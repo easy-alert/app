@@ -3,7 +3,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { toast } from "sonner-native";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
 
 import { unlinkMaintenanceSupplier } from "@/services/mutations/unlinkMaintenanceSupplier";
 
@@ -28,7 +28,9 @@ export const Suppliers = ({
   enableSupplierButton = true,
   getMaintenanceSupplier,
 }: SuppliersProps) => {
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+  } = useRequiredAuth();
 
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 

@@ -3,7 +3,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
@@ -45,7 +45,9 @@ export const CallToActions = ({
   setLoading,
 }: CallToActionsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+  } = useRequiredAuth();
   const { addItem } = useOfflineQueue();
 
   const handleChangeMaintenanceProgress = async () => {
