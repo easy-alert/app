@@ -11,54 +11,63 @@ import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
 import { storageKeys } from "@/utils/storageKeys";
 
-import { IBuilding } from "@/types/api/IBuilding";
-import { MutationResponse } from "@/types/utils/MutationResponse";
+import type { IAuthUser } from "@/types/api/IAuthUser";
+import type { IUserBuildingPermission } from "@/types/api/IUserBuildingPermission";
+import type { MutationResponse } from "@/types/utils/MutationResponse";
 
 interface AuthContextData {
-  isAuthenticated: boolean | undefined;
-  userId: string;
+  isAuthenticated: boolean;
+  user: IAuthUser | null;
+  isAdmin: () => boolean;
+  hasPermission: (permission: string) => boolean;
+  hasAnyPermission: (permissions: string[]) => boolean;
+  hasAllPermissions: (permissions: string[]) => boolean;
+  getBuildingPermissions: () => { id: string; name: string; nanoId: string }[];
   signIn: (phone: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  recoverPassword: (email: string) => Promise<MutationResponse>;
+  handleRecoverPassword: (email: string) => Promise<MutationResponse>;
 }
+const ADMIN_PERMISSION = "admin:company";
 
 const AuthContext = createContext({} as AuthContextData);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
-  const [userId, setUserId] = useState<string>();
+  const [user, setUser] = useState<IAuthUser | null>(null);
 
-  useEffect(() => {
-    const verifyStorageAuth = async () => {
-      try {
-        const userId = await AsyncStorage.getItem(storageKeys.USER_ID_KEY);
-        const authToken = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
-        const buildingList = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
+  // Helper function to check permissions
+  const isAdmin = (): boolean => {
+    return user?.Permissions.some((p) => p.Permission.name === ADMIN_PERMISSION) ?? false;
+  };
 
-        if (!userId || !authToken || !buildingList) {
-          setIsAuthenticated(false);
-          return;
-        }
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    if (isAdmin()) return true;
+    return user.Permissions.some((p) => p.Permission.name === permission);
+  };
 
-        const { exp: jwtExpiration } = jwtDecode(authToken);
+  const hasAnyPermission = (permissions: string[]): boolean => {
+    if (!user) return false;
+    if (isAdmin()) return true;
+    return user.Permissions.some((p) => permissions.includes(p.Permission.name));
+  };
 
-        const isValidJwt = !!jwtExpiration && jwtExpiration * 1_000 > Date.now();
+  const hasAllPermissions = (permissions: string[]): boolean => {
+    if (!user) return false;
+    if (isAdmin()) return true;
+    return permissions.every((permission) => user.Permissions.some((p) => p.Permission.name === permission));
+  };
 
-        if (!isValidJwt) {
-          setIsAuthenticated(false);
-          return;
-        }
+  const getBuildingPermissions = (): { id: string; name: string; nanoId: string }[] => {
+    if (!user) return [];
+    return user.UserBuildingsPermissions.map((bp) => ({
+      id: bp.Building.id,
+      name: bp.Building.name,
+      nanoId: bp.Building.nanoId,
+    }));
+  };
 
-        setUserId(userId);
-        setIsAuthenticated(true);
-      } catch {
-        setIsAuthenticated(false);
-      }
-    };
-
-    verifyStorageAuth();
-  }, []);
-
+  // Helper function to sign in
   const handleSignIn = async (phone: string, password: string) => {
     try {
       const pushNotificationToken = await getPushNotificationToken();
@@ -81,16 +90,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await AsyncStorage.setItem(storageKeys.USER_ID_KEY, data.user.id);
       await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, data.authToken);
 
-      const buildingList: IBuilding[] = data.user.UserBuildingsPermissions.map((building) => building.Building);
+      const buildingList: IUserBuildingPermission[] = data.user.UserBuildingsPermissions;
       await AsyncStorage.setItem(storageKeys.BUILDING_LIST_KEY, JSON.stringify(buildingList));
 
-      setUserId(data.user.id);
+      setUser(data.user);
       setIsAuthenticated(true);
     } catch {
       setIsAuthenticated(false);
     }
   };
 
+  // Helper function to sign out
   const signOut = async () => {
     setIsAuthenticated(false);
     await AsyncStorage.clear();
@@ -98,19 +108,78 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRecoverPassword = (email: string) => recoverPassword({ email });
 
-  return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        userId: userId || "",
-        signIn: handleSignIn,
-        signOut,
-        recoverPassword: handleRecoverPassword,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const contextValue = {
+    isAuthenticated: !!isAuthenticated,
+    user,
+    isAdmin,
+    hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
+    getBuildingPermissions,
+    signIn: handleSignIn,
+    signOut,
+    handleRecoverPassword,
+  };
+
+  useEffect(() => {
+    const verifyStorageAuth = async () => {
+      try {
+        const userId = await AsyncStorage.getItem(storageKeys.USER_ID_KEY);
+        const authToken = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
+        const buildingList = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
+
+        if (!userId || !authToken || !buildingList) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const { exp: jwtExpiration } = jwtDecode(authToken);
+
+        const isValidJwt = !!jwtExpiration && jwtExpiration * 1_000 > Date.now();
+
+        if (!isValidJwt) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        setUser({
+          id: userId,
+          name: "",
+          email: "",
+          phoneNumber: "",
+          isBlocked: false,
+          isCompanyOwner: false,
+          Permissions: [],
+          UserBuildingsPermissions: [],
+        });
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+
+    verifyStorageAuth();
+  }, []);
+
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = (): AuthContextData => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return context;
+};
+
+export const useRequiredAuth = () => {
+  const { isAuthenticated, user, ...rest } = useAuth();
+
+  if (!isAuthenticated || !user) {
+    throw new Error("User must be authenticated");
+  }
+
+  return { user, isAuthenticated, ...rest };
+};
