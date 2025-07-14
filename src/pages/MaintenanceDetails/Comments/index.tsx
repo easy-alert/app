@@ -5,7 +5,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 
 import type { ProtectedNavigation } from "@/routes/navigation";
@@ -36,7 +36,10 @@ export const Comments = ({
   getMaintenanceHistoryActivities,
 }: CommentsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+    hasPermission,
+  } = useRequiredAuth();
   const { addItem } = useOfflineQueue();
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
@@ -114,7 +117,10 @@ export const Comments = ({
   };
 
   const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker({ mode: "request_user_choice" });
+    const localFiles = await openFilePicker({
+      mode: "request_user_choice",
+      forceCamera: hasPermission("maintenances:livePhoto"),
+    });
 
     if (localFiles.length) {
       setLocalFiles((prev) => [...prev, ...localFiles]);
