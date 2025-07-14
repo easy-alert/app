@@ -1,8 +1,13 @@
-import type { IBuilding } from "./IBuilding";
+import type { IUserBuildingPermission } from "./IUserBuildingPermission";
+import type { IUserPermission } from "./IUserPermission";
 
 export interface IAuthUser {
   id: string;
-  UserBuildingsPermissions: {
-    Building: IBuilding;
-  }[];
+  name: string;
+  email: string;
+  phoneNumber: string;
+  isBlocked: boolean;
+  isCompanyOwner: boolean;
+  Permissions: { Permission: IUserPermission }[];
+  UserBuildingsPermissions: IUserBuildingPermission[];
 }
