@@ -9,9 +9,10 @@ type FilePickerMode = "document" | "image" | "request_user_choice";
 
 interface OpenFilePickerProps {
   mode: FilePickerMode;
+  forceCamera?: boolean;
 }
 
-export const openFilePicker = async ({ mode }: OpenFilePickerProps): Promise<LocalFile[]> => {
+export const openFilePicker = async ({ mode, forceCamera }: OpenFilePickerProps): Promise<LocalFile[]> => {
   try {
     let files: LocalFile[] = [];
 
@@ -29,7 +30,7 @@ export const openFilePicker = async ({ mode }: OpenFilePickerProps): Promise<Loc
     if (mode === "document") {
       files = await pickDocuments();
     } else if (mode === "image") {
-      const choiceImageMode = await requestUserImageModeChoice();
+      const choiceImageMode = await requestUserImageModeChoice({ forceCamera });
 
       if (choiceImageMode === "cancel") {
         console.log("Ação cancelada pelo usuário.");
@@ -87,7 +88,15 @@ const pickDocuments = async (): Promise<LocalFile[]> => {
   }));
 };
 
-const requestUserImageModeChoice = (): Promise<"camera" | "gallery" | "cancel"> => {
+const requestUserImageModeChoice = ({
+  forceCamera,
+}: {
+  forceCamera?: boolean;
+}): Promise<"camera" | "gallery" | "cancel"> => {
+  if (forceCamera) {
+    return Promise.resolve("camera");
+  }
+
   return new Promise<"camera" | "gallery" | "cancel">((resolve) => {
     Alert.alert(
       "Selecionar Imagem",
