@@ -11,6 +11,7 @@ import { getDeviceId } from "@/utils/deviceId";
 import { getPushNotificationToken } from "@/utils/pushNotification";
 import { storageKeys } from "@/utils/storageKeys";
 
+import type { IAuthCompany } from "@/types/api/IAuthCompany";
 import type { IAuthUser } from "@/types/api/IAuthUser";
 import type { IUserBuildingPermission } from "@/types/api/IUserBuildingPermission";
 import type { MutationResponse } from "@/types/utils/MutationResponse";
@@ -18,6 +19,7 @@ import type { MutationResponse } from "@/types/utils/MutationResponse";
 interface AuthContextData {
   isAuthenticated: boolean;
   user: IAuthUser | null;
+  company: IAuthCompany | null;
   isAdmin: () => boolean;
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
@@ -32,8 +34,9 @@ const ADMIN_PERMISSION = "admin:company";
 const AuthContext = createContext({} as AuthContextData);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
   const [user, setUser] = useState<IAuthUser | null>(null);
+  const [company, setCompany] = useState<IAuthCompany | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
   // Helper function to check permissions
   const isAdmin = (): boolean => {
@@ -68,13 +71,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Helper function to sign in
-  const handleSignIn = async (phone: string, password: string) => {
+  const handleSignIn = async (login: string, password: string) => {
     try {
       const pushNotificationToken = await getPushNotificationToken();
       const deviceId = await getDeviceId();
 
       const { success, message, data } = await signIn({
-        phone,
+        login,
         password,
         pushNotificationToken,
         deviceId,
@@ -87,13 +90,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      await AsyncStorage.setItem(storageKeys.USER_ID_KEY, data.user.id);
+      const user = data.user;
+      const company = data.company;
+
+      await AsyncStorage.setItem(storageKeys.USER_KEY, JSON.stringify(user));
+      await AsyncStorage.setItem(storageKeys.COMPANY_KEY, JSON.stringify(company));
+
+      await AsyncStorage.setItem(storageKeys.USER_ID_KEY, user.id);
+      await AsyncStorage.setItem(storageKeys.COMPANY_ID_KEY, company.id);
       await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, data.authToken);
 
       const buildingList: IUserBuildingPermission[] = data.user.UserBuildingsPermissions;
       await AsyncStorage.setItem(storageKeys.BUILDING_LIST_KEY, JSON.stringify(buildingList));
 
       setUser(data.user);
+      setCompany(company);
       setIsAuthenticated(true);
     } catch {
       setIsAuthenticated(false);
@@ -111,6 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const contextValue = {
     isAuthenticated: !!isAuthenticated,
     user,
+    company,
     isAdmin,
     hasPermission,
     hasAnyPermission,
@@ -125,10 +137,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const verifyStorageAuth = async () => {
       try {
         const userId = await AsyncStorage.getItem(storageKeys.USER_ID_KEY);
+        const companyId = await AsyncStorage.getItem(storageKeys.COMPANY_ID_KEY);
         const authToken = await AsyncStorage.getItem(storageKeys.AUTH_TOKEN_KEY);
         const buildingList = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
 
-        if (!userId || !authToken || !buildingList) {
+        if (!userId || !companyId || !authToken || !buildingList) {
           setIsAuthenticated(false);
           return;
         }
@@ -142,16 +155,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
 
-        setUser({
-          id: userId,
-          name: "",
-          email: "",
-          phoneNumber: "",
-          isBlocked: false,
-          isCompanyOwner: false,
-          Permissions: [],
-          UserBuildingsPermissions: [],
-        });
+        const user = JSON.parse((await AsyncStorage.getItem(storageKeys.USER_KEY)) || "{}");
+        const company = JSON.parse((await AsyncStorage.getItem(storageKeys.COMPANY_KEY)) || "{}");
+
+        setUser(user);
+        setCompany(company);
         setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);
@@ -175,11 +183,11 @@ export const useAuth = () => {
 };
 
 export const useRequiredAuth = () => {
-  const { isAuthenticated, user, ...rest } = useAuth();
+  const { isAuthenticated, user, company, ...rest } = useAuth();
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || !user || !company) {
     throw new Error("User must be authenticated");
   }
 
-  return { user, isAuthenticated, ...rest };
+  return { user, company, isAuthenticated, ...rest };
 };
