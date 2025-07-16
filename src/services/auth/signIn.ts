@@ -1,11 +1,12 @@
+import type { IAuthCompany } from "@/types/api/IAuthCompany";
 import type { IAuthUser } from "@/types/api/IAuthUser";
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
-import { MutationResponse } from "@/types/utils/MutationResponse";
+import type { MutationResponse } from "@/types/utils/MutationResponse";
 
 import { baseApi } from "../baseApi";
 
 interface ISignIn {
-  phone: string;
+  login: string;
   password: string;
   pushNotificationToken: string | null;
   deviceId: string | null;
@@ -13,12 +14,13 @@ interface ISignIn {
 }
 
 interface ISignInResponse {
-  user: IAuthUser;
   authToken: string;
+  company: IAuthCompany;
+  user: IAuthUser;
 }
 
 export const signIn = async ({
-  phone,
+  login,
   password,
   pushNotificationToken,
   deviceId,
@@ -26,7 +28,7 @@ export const signIn = async ({
 }: ISignIn): Promise<MutationResponse<ISignInResponse>> => {
   try {
     const body = {
-      login: phone,
+      login,
       password,
       pushNotificationToken,
       deviceId,
