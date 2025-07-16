@@ -11,8 +11,8 @@ import { getMaintenancesKanban } from "@/services/queries/getMaintenancesKanban"
 import { emptyFilters } from "@/utils/filters";
 
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
-import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import { KanbanFilter } from "@/types/utils/Filter";
+import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 import { Kanban } from "./Kanban";

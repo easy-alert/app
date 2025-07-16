@@ -6,7 +6,7 @@ import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
 
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
-import type { KanbanFilter } from "@/types/utils/Filter";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { KanbanHeader } from "../KanbanHeader";
 import { KanbanRow } from "../KanbanRow";
