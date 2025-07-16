@@ -23,6 +23,7 @@ import { alerts } from "@/utils/alerts";
 import { formatPhoneBR } from "@/utils/formatPhoneBR";
 import { isEmail } from "@/utils/isEmail";
 import { isPhone } from "@/utils/isPhone";
+import { unMaskPhone } from "@/utils/unMask";
 
 import Logo from "@/assets/logo.png";
 
@@ -41,9 +42,8 @@ export const Login = () => {
   // Format as phone if not email, else keep as is
 
   const handleLoginChange = (value: string) => {
-    // If user types @ or any letter, treat as email
-    if (/[@a-zA-Z]/.test(value)) {
-      setLogin(value);
+    if (value.includes("@") || /[a-zA-Z]/.test(value)) {
+      setLogin(unMaskPhone(value));
     } else {
       setLogin(formatPhoneBR(value));
     }
