@@ -13,6 +13,7 @@ import { emptyFilters } from "@/utils/filters";
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
 import type { KanbanFilter } from "@/types/utils/KanbanFilter";
+import type { IMaintenancesLength } from "@/types/utils/IMaintenancesLength";
 
 import { CreateOccasionalMaintenanceButton } from "./CreateOccasionalMaintenanceButton";
 import { Kanban } from "./Kanban";
@@ -25,10 +26,43 @@ export const Maintenances = () => {
   const { userId } = useAuth();
 
   const [kanbanData, setKanbanData] = useState<IKanbanColumn[]>([]);
+  const [maintenancesLength, setMaintenancesLength] = useState<IMaintenancesLength>({
+    pending: 0,
+    inProgress: 0,
+    completed: 0,
+    expired: 0,
+    future: 0,
+  });
   const [filters, setFilters] = useState<KanbanFilter>(emptyFilters);
   const [availableCategories, setAvailableCategories] = useState<AvailableFilter[]>([]);
 
   const [loading, setLoading] = useState(true);
+
+  const handleMaintenancesLength = (kanbanToLength: IKanbanColumn[]) => {
+    const pendingLength = kanbanToLength.find((k) => k.status === "Pendentes")?.maintenances.length || 0;
+    const completedLength = kanbanToLength.find((k) => k.status === "Concluídas")?.maintenances.length || 0;
+    const inProgressLength = kanbanToLength.find((k) => k.status === "Em execução")?.maintenances.length || 0;
+    const expiredLength = kanbanToLength.find((k) => k.status === "Vencidas")?.maintenances.length || 0;
+    const futureLength =
+      kanbanToLength
+        .find((k) => k.status === "Pendentes")
+        ?.maintenances.filter((m) => new Date(m.date) > new Date(new Date().setHours(0, 0, 0, 0))).length || 0;
+
+    setMaintenancesLength({
+      pending: pendingLength - futureLength,
+      completed: completedLength,
+      inProgress: inProgressLength,
+      expired: expiredLength,
+      future: futureLength,
+    });
+  };
+
+  const handleChangeMaintenancesLength = (key: string, value: number) => {
+    setMaintenancesLength((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
 
   useEffect(() => {
     const handleGetKanbanData = async () => {
@@ -51,6 +85,7 @@ export const Maintenances = () => {
 
       if (maintenancesKanban) {
         setKanbanData(maintenancesKanban.kanban);
+        handleMaintenancesLength(maintenancesKanban.kanban);
 
         const availableCategories = maintenancesKanban.maintenanceCategoriesForSelect.map((category) => ({
           value: category.id,
@@ -83,8 +118,10 @@ export const Maintenances = () => {
         <Kanban
           kanbanData={kanbanData}
           filters={filters}
-          setFilters={setFilters}
           availableCategories={availableCategories}
+          maintenancesLength={maintenancesLength}
+          setFilters={setFilters}
+          handleChangeMaintenancesLength={handleChangeMaintenancesLength}
         />
       )}
       {!loading && <CreateOccasionalMaintenanceButton />}

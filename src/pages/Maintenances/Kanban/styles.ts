@@ -21,17 +21,16 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   statusTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 10,
   },
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    gap: 8,
   },
   checkboxText: {
-    fontSize: 14,
+    fontSize: 12,
     fontStyle: "italic",
   },
   checkbox: {
