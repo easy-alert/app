@@ -9,8 +9,8 @@ import { getUsers } from "@/services/queries/getUsers";
 
 import { storageKeys } from "@/utils/storageKeys";
 
-import type { IBuilding } from "@/types/api/IBuilding";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import type { IListBuilding } from "@/types/utils/IListBuilding";
 import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { Filters } from "../Filters";
@@ -30,11 +30,11 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
 
   useEffect(() => {
     const getAvailableUsers = async () => {
-      const users = await getUsers();
+      const responseData = await getUsers();
 
-      if (users) {
+      if (responseData) {
         setAvailableUsers(
-          users.users.map((user) => ({
+          responseData.users.map((user) => ({
             value: user.id,
             label: user.name,
           })),
@@ -50,12 +50,11 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
           throw new Error("Nenhum prédio encontrado.");
         }
 
-        const availableBuildings: IBuilding[] = JSON.parse(storageBuildings);
-
+        const availableBuildings: IListBuilding[] = JSON.parse(storageBuildings);
         setAvailableBuildings(
-          availableBuildings.map((building) => ({
-            value: building.id,
-            label: building.name,
+          availableBuildings.map(({ id, name }) => ({
+            value: id,
+            label: name,
           })),
         );
       } catch (error) {
