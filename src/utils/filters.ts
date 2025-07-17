@@ -1,4 +1,4 @@
-import type { KanbanFilter } from "@/types/utils/Filter";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 export const emptyFilters: KanbanFilter = {
   selectedBuildings: [],

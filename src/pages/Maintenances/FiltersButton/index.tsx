@@ -9,17 +9,17 @@ import { getUsers } from "@/services/queries/getUsers";
 
 import { storageKeys } from "@/utils/storageKeys";
 
-import { IBuilding } from "@/types/api/IBuilding";
-import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import { Filter } from "@/types/utils/Filter";
+import type { IBuilding } from "@/types/api/IBuilding";
+import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { Filters } from "../Filters";
 import { styles } from "./styles";
 
 interface FiltersButtonProps {
-  filters: Filter;
-  setFilters: (filters: Filter) => void;
+  filters: KanbanFilter;
   availableCategories: AvailableFilter[];
+  setFilters: (filters: KanbanFilter) => void;
 }
 
 export const FiltersButton = ({ filters, setFilters, availableCategories }: FiltersButtonProps) => {

@@ -15,7 +15,7 @@ import { maintenanceStatus } from "@/utils/getStatus";
 import { MAINTENANCE_TYPE } from "@/types/api/TMaintenanceType";
 import { PRIORITY_NAME } from "@/types/api/TPriorityName";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
-import type { KanbanFilter } from "@/types/utils/Filter";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { styles } from "./styles";
 
