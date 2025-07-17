@@ -29,6 +29,7 @@ import { DataLabels } from "./DataLabels";
 import { EditForm } from "./EditForm";
 import { Header } from "./Header";
 import { History } from "./History";
+import { ShareMaintenance } from "./ShareMaintenance";
 import { styles } from "./styles";
 import { Suppliers } from "./Suppliers";
 import { Users } from "./Users";
@@ -129,6 +130,12 @@ export const MaintenanceDetails = () => {
     });
   };
 
+  const openShareMaintenance = () => {
+    openBottomSheet({
+      content: <ShareMaintenance maintenanceId={maintenanceId} />,
+    });
+  };
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <PageWithHeaderLayout
@@ -136,6 +143,7 @@ export const MaintenanceDetails = () => {
         onClose={() => navigation.goBack()}
         isScrollView
         onEdit={openEditForm}
+        onShare={openShareMaintenance}
       >
         <Header maintenanceDetails={maintenanceDetails} />
         <DataLabels maintenanceDetails={maintenanceDetails} />
