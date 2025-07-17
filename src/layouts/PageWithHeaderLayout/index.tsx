@@ -6,8 +6,9 @@ import { styles } from "./styles";
 interface PageWithHeaderLayoutProps {
   title: string;
   children: React.ReactNode;
-  onClose?: () => void;
   onEdit?: () => void;
+  onShare?: () => void;
+  onClose?: () => void;
   withPadding?: boolean;
   isScrollView?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -16,8 +17,9 @@ interface PageWithHeaderLayoutProps {
 export const PageWithHeaderLayout = ({
   title,
   children,
-  onClose,
   onEdit,
+  onShare,
+  onClose,
   withPadding = true,
   isScrollView = false,
   style,
@@ -31,6 +33,12 @@ export const PageWithHeaderLayout = ({
           {onEdit && (
             <TouchableOpacity onPress={onEdit} style={styles.button}>
               <Icon name="edit-2" size={20} color="#b21d1d" />
+            </TouchableOpacity>
+          )}
+
+          {onShare && (
+            <TouchableOpacity onPress={onShare} style={styles.button}>
+              <Icon name="share-2" size={20} color="#b21d1d" />
             </TouchableOpacity>
           )}
 
