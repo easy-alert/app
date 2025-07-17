@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 import { z } from "zod";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
@@ -46,7 +46,9 @@ const formSchema = z.object({
 });
 
 export const Form = () => {
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+  } = useRequiredAuth();
   const navigation = useNavigation<ProtectedNavigation>();
 
   const [loadingCategories, setLoadingCategories] = useState(false);
