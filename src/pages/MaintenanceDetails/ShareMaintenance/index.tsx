@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, TextInput, View } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import * as Clipboard from 'expo-clipboard';
 import { toast } from "sonner-native";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
@@ -16,10 +16,10 @@ interface ShareMaintenanceProps {
 export const ShareMaintenance = ({ maintenanceId }: ShareMaintenanceProps) => {
   const { closeBottomSheet } = useBottomSheet();
 
-  const maintenanceLink = `${process.env.EXPO_CLIENT_URL}/guest-maintenance-history/${maintenanceId}`;
+  const maintenanceLink = `${process.env.EXPO_PUBLIC_CLIENT_URL}/guest-maintenance-history/${maintenanceId}`;
 
-  const copyToClipboard = () => {
-    Clipboard.setString(maintenanceLink);
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(maintenanceLink);
     closeBottomSheet();
     toast.success("Link copiado para a área de transferência");
   };
