@@ -10,8 +10,8 @@ import { handleTranslate } from "@/utils/handleTranslate";
 
 import type { IKanbanColumn } from "@/types/api/IKanbanColumn";
 import type { AvailableFilter } from "@/types/utils/AvailableFilter";
-import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 import type { IMaintenancesLength } from "@/types/utils/IMaintenancesLength";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { KanbanHeader } from "../KanbanHeader";
 import { KanbanRow } from "../KanbanRow";

@@ -17,7 +17,7 @@ import { StatusBar } from "expo-status-bar";
 
 import { useAuth } from "@/contexts/AuthContext";
 
-import { PublicNavigation } from "@/routes/navigation";
+import { PublicNavigation, PublicRoutesParams } from "@/routes/navigation";
 
 import { alerts } from "@/utils/alerts";
 import { formatPhoneBR } from "@/utils/formatPhoneBR";
@@ -29,7 +29,13 @@ import Logo from "@/assets/logo.png";
 
 import { styles } from "./styles";
 
-export const Login = () => {
+interface LoginProps {
+  route?: {
+    params?: PublicRoutesParams["Login"];
+  };
+}
+
+export const Login = ({ route }: LoginProps) => {
   const navigation = useNavigation<PublicNavigation>();
   const { signIn } = useAuth();
 
@@ -75,8 +81,16 @@ export const Login = () => {
     const loginValue = isPhone(login) ? login.replace(/\D/g, "") : login;
 
     setIsSigningIn(true);
-    await signIn(loginValue, password);
+    const result = await signIn(loginValue, password, route?.params?.companyId);
     setIsSigningIn(false);
+
+    if (result?.requiresCompanySelection && result.companies) {
+      navigation.navigate("LoginCompanySelection", {
+        companies: result.companies,
+        login: loginValue,
+        password,
+      });
+    }
   };
 
   return (

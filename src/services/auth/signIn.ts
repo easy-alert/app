@@ -1,5 +1,6 @@
 import type { IAuthCompany } from "@/types/api/IAuthCompany";
 import type { IAuthUser } from "@/types/api/IAuthUser";
+import type { ISelectCompany } from "@/types/api/ISelectCompany";
 import type { ApiMutationError } from "@/types/utils/ApiMutationError";
 import type { MutationResponse } from "@/types/utils/MutationResponse";
 
@@ -8,6 +9,7 @@ import { baseApi } from "../baseApi";
 interface ISignIn {
   login: string;
   password: string;
+  companyId?: string;
   pushNotificationToken: string | null;
   deviceId: string | null;
   os: string;
@@ -16,12 +18,14 @@ interface ISignIn {
 interface ISignInResponse {
   authToken: string;
   company: IAuthCompany;
+  companies?: ISelectCompany[];
   user: IAuthUser;
 }
 
 export const signIn = async ({
   login,
   password,
+  companyId,
   pushNotificationToken,
   deviceId,
   os,
@@ -30,6 +34,7 @@ export const signIn = async ({
     const body = {
       login,
       password,
+      companyId,
       pushNotificationToken,
       deviceId,
       os,

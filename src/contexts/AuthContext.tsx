@@ -13,7 +13,8 @@ import { storageKeys } from "@/utils/storageKeys";
 
 import type { IAuthCompany } from "@/types/api/IAuthCompany";
 import type { IAuthUser } from "@/types/api/IAuthUser";
-import type { IUserBuildingPermission } from "@/types/api/IUserBuildingPermission";
+import type { ISelectCompany } from "@/types/api/ISelectCompany";
+import type { IListBuilding } from "@/types/utils/IListBuilding";
 import type { MutationResponse } from "@/types/utils/MutationResponse";
 
 interface AuthContextData {
@@ -25,9 +26,19 @@ interface AuthContextData {
   hasAnyPermission: (permissions: string[]) => boolean;
   hasAllPermissions: (permissions: string[]) => boolean;
   getBuildingPermissions: () => { id: string; name: string; nanoId: string }[];
-  signIn: (phone: string, password: string) => Promise<void>;
+  signIn: (
+    login: string,
+    password: string,
+    companyId?: string,
+  ) => Promise<{
+    success: boolean;
+    requiresCompanySelection: boolean;
+    companies?: ISelectCompany[];
+    login?: string;
+    password?: string;
+  }>;
   signOut: () => Promise<void>;
-  handleRecoverPassword: (email: string) => Promise<MutationResponse>;
+  recoverPassword: (email: string) => Promise<MutationResponse>;
 }
 const ADMIN_PERMISSION = "admin:company";
 
@@ -63,15 +74,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const getBuildingPermissions = (): { id: string; name: string; nanoId: string }[] => {
     if (!user) return [];
-    return user.UserBuildingsPermissions.map((bp) => ({
-      id: bp.Building.id,
-      name: bp.Building.name,
-      nanoId: bp.Building.nanoId,
+    return user.UserBuildingsPermissions.map(({ Building }) => ({
+      id: Building.id,
+      name: Building.name,
+      nanoId: Building.nanoId,
     }));
   };
 
   // Helper function to sign in
-  const handleSignIn = async (login: string, password: string) => {
+  const handleSignIn = async (login: string, password: string, companyId?: string) => {
     try {
       const pushNotificationToken = await getPushNotificationToken();
       const deviceId = await getDeviceId();
@@ -79,6 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { success, message, data } = await signIn({
         login,
         password,
+        companyId,
         pushNotificationToken,
         deviceId,
         os: Platform.OS,
@@ -87,27 +99,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!success) {
         setIsAuthenticated(false);
         alerts.error(message);
-        return;
+        return { success: false, requiresCompanySelection: false };
+      }
+
+      if ((data.companies?.length ?? 0) > 1 && !companyId) {
+        return {
+          success: true,
+          requiresCompanySelection: true,
+          companies: data.companies,
+          login,
+          password,
+        };
       }
 
       const user = data.user;
       const company = data.company;
+      const authToken = data.authToken;
+
+      if (!company) {
+        alerts.error("Nenhuma empresa encontrada para este usuário.");
+        return { success: false, requiresCompanySelection: false };
+      }
 
       await AsyncStorage.setItem(storageKeys.USER_KEY, JSON.stringify(user));
       await AsyncStorage.setItem(storageKeys.COMPANY_KEY, JSON.stringify(company));
 
       await AsyncStorage.setItem(storageKeys.USER_ID_KEY, user.id);
       await AsyncStorage.setItem(storageKeys.COMPANY_ID_KEY, company.id);
-      await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, data.authToken);
+      await AsyncStorage.setItem(storageKeys.AUTH_TOKEN_KEY, authToken);
 
-      const buildingList: IUserBuildingPermission[] = data.user.UserBuildingsPermissions;
+      const buildingList: IListBuilding[] = user.UserBuildingsPermissions.map(({ Building }) => ({
+        id: Building.id,
+        name: Building.name,
+        nanoId: Building.nanoId,
+      }));
+
       await AsyncStorage.setItem(storageKeys.BUILDING_LIST_KEY, JSON.stringify(buildingList));
 
-      setUser(data.user);
+      setUser(user);
       setCompany(company);
       setIsAuthenticated(true);
-    } catch {
+
+      return { success: true, requiresCompanySelection: false };
+    } catch (error) {
+      console.error("Sign in error:", error);
       setIsAuthenticated(false);
+      alerts.error("Ocorreu um erro ao fazer login. Tente novamente.");
+      return { success: false, requiresCompanySelection: false };
     }
   };
 
@@ -130,7 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     getBuildingPermissions,
     signIn: handleSignIn,
     signOut,
-    handleRecoverPassword,
+    recoverPassword: handleRecoverPassword,
   };
 
   useEffect(() => {

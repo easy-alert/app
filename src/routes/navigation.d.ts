@@ -1,5 +1,7 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import type { ISelectCompany } from "@/types/api/ISelectCompany";
+
 export interface MaintenanceDetailsParams {
   maintenanceId: string;
 }
@@ -11,7 +13,16 @@ interface ProtectedRoutesParams {
 }
 
 interface PublicRoutesParams {
-  Login: undefined;
+  Login?: {
+    companyId?: string;
+    login?: string;
+    password?: string;
+  };
+  LoginCompanySelection: {
+    companies: ISelectCompany[];
+    login: string;
+    password: string;
+  };
   ForgotPassword: undefined;
 }
 
