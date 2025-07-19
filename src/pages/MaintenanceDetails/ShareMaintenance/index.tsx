@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, TextInput, View } from "react-native";
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 import { toast } from "sonner-native";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
