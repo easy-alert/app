@@ -17,7 +17,6 @@
     "@gorhom/bottom-sheet": "^5.1.2",
     "@hookform/resolvers": "^5.0.1",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-clipboard/clipboard": "^1.16.3",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-native-picker/picker": "2.9.0",
@@ -53,7 +52,8 @@
     "react-native-svg-transformer": "^1.5.0",
     "react-native-vector-icons": "^10.2.0",
     "sonner-native": "^0.20.0",
-    "zod": "^3.24.3"
+    "zod": "^3.24.3",
+    "expo-clipboard": "~7.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
