@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Add type for console.tron
 declare global {
   interface Console {
-    tron?: typeof Reactotron;
+    tron: typeof Reactotron;
   }
 }
 

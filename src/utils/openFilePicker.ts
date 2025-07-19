@@ -2,6 +2,7 @@ import { Alert } from "react-native";
 import { Image as ImageCompressor } from "react-native-compressor";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
+import { toast } from "sonner-native";
 
 import type { LocalFile } from "@/types/utils/LocalFile";
 
@@ -11,6 +12,9 @@ interface OpenFilePickerProps {
   mode: FilePickerMode;
   forceCamera?: boolean;
 }
+
+const DOCUMENT_SIZE_LIMIT = process.env.EXPO_PUBLIC_DOCUMENT_FILE_SIZE * 1024 * 1024;
+const IMAGE_SIZE_LIMIT = process.env.EXPO_PUBLIC_IMAGE_FILE_SIZE * 1024 * 1024;
 
 export const openFilePicker = async ({ mode, forceCamera }: OpenFilePickerProps): Promise<LocalFile[]> => {
   try {
@@ -81,6 +85,11 @@ const pickDocuments = async (): Promise<LocalFile[]> => {
     return [];
   }
 
+  if (documents.assets.some((file) => file.size && file.size > DOCUMENT_SIZE_LIMIT)) {
+    toast.error(`Arquivo maior do que ${DOCUMENT_SIZE_LIMIT / 1024 / 1024}MB.`);
+    return [];
+  }
+
   return documents.assets.map((file) => ({
     uri: file.uri,
     name: file.name,
@@ -145,6 +154,13 @@ const pickImagesFromGallery = async (): Promise<LocalFile[]> => {
     allowsEditing: false,
     allowsMultipleSelection: true,
   });
+
+  console.log(images);
+
+  if (images.assets?.some((image) => image.fileSize && image.fileSize > IMAGE_SIZE_LIMIT)) {
+    toast.error(`Imagem maior do que ${IMAGE_SIZE_LIMIT / 1024 / 1024}MB.`);
+    return [];
+  }
 
   return compressImages(images);
 };
