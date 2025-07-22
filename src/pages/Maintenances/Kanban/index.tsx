@@ -67,7 +67,7 @@ export const Kanban = ({
                   containerOnTouchEnd={() => setShowOldExpired(!showOldExpired)}
                   style={styles.checkboxContainer}
                 >
-                  <Text style={styles.checkboxText}>Mostrar expiradas</Text>
+                  <Text style={styles.checkboxText}>Expiradas</Text>
                   <Checkbox value={showOldExpired} color={showOldExpired ? "#ff3535" : undefined} />
                 </LabelInput>
               )}
@@ -78,7 +78,7 @@ export const Kanban = ({
                   containerOnTouchEnd={() => handleFutureCheckboxChange(!showFuture)}
                   style={styles.checkboxContainer}
                 >
-                  <Text style={styles.checkboxText}>Mostrar futuras</Text>
+                  <Text style={styles.checkboxText}>Futuras</Text>
                   <Checkbox value={showFuture} color={showFuture ? "#FEA628" : undefined} />
                 </LabelInput>
               )}
