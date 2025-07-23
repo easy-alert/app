@@ -119,7 +119,7 @@ export const Comments = ({
   const handleOpenFilePicker = async () => {
     const localFiles = await openFilePicker({
       mode: "request_user_choice",
-      forceCamera: hasPermission("maintenances:livePhoto"),
+      forceCamera: hasPermission("maintenances:livePhoto", false),
     });
 
     if (localFiles.length) {
