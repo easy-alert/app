@@ -92,6 +92,18 @@
     "updates": {
       "url": "https://u.expo.dev/27517197-dbbd-4bac-ac20-ae03ee07310c"
     },
-    "plugins": ["react-native-compressor"]
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+      ],
+      "react-native-compressor"
+    ]
   }
 }
