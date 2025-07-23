@@ -22,9 +22,9 @@ interface AuthContextData {
   user: IAuthUser | null;
   company: IAuthCompany | null;
   isAdmin: () => boolean;
-  hasPermission: (permission: string) => boolean;
-  hasAnyPermission: (permissions: string[]) => boolean;
-  hasAllPermissions: (permissions: string[]) => boolean;
+  hasPermission: (permission: string, adminOverride?: boolean) => boolean;
+  hasAnyPermission: (permissions: string[], adminOverride?: boolean) => boolean;
+  hasAllPermissions: (permissions: string[], adminOverride?: boolean) => boolean;
   getBuildingPermissions: () => { id: string; name: string; nanoId: string }[];
   signIn: (
     login: string,
@@ -54,21 +54,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return user?.Permissions.some((p) => p.Permission.name === ADMIN_PERMISSION) ?? false;
   };
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = (permission: string, adminOverride = true): boolean => {
     if (!user) return false;
-    if (isAdmin()) return true;
+    if (isAdmin() && adminOverride) return true;
     return user.Permissions.some((p) => p.Permission.name === permission);
   };
 
-  const hasAnyPermission = (permissions: string[]): boolean => {
+  const hasAnyPermission = (permissions: string[], adminOverride = true): boolean => {
     if (!user) return false;
-    if (isAdmin()) return true;
+    if (isAdmin() && adminOverride) return true;
     return user.Permissions.some((p) => permissions.includes(p.Permission.name));
   };
 
-  const hasAllPermissions = (permissions: string[]): boolean => {
+  const hasAllPermissions = (permissions: string[], adminOverride = true): boolean => {
     if (!user) return false;
-    if (isAdmin()) return true;
+    if (isAdmin() && adminOverride) return true;
     return permissions.every((permission) => user.Permissions.some((p) => p.Permission.name === permission));
   };
 

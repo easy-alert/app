@@ -59,7 +59,10 @@ export const Attachments = ({
     try {
       setLoadingImages(true);
 
-      const localImages = await openFilePicker({ mode: "image", forceCamera: hasPermission("maintenances:livePhoto") });
+      const localImages = await openFilePicker({
+        mode: "image",
+        forceCamera: hasPermission("maintenances:livePhoto", false),
+      });
 
       if (localImages.length) {
         setLocalImages((prev) => [...prev, ...localImages]);
