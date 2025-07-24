@@ -34,11 +34,33 @@ export interface IMaintenance {
   resolutionDate: string;
   notificationDate: string;
 
-  MaintenanceReport: {
+  MaintenanceReport?: {
     id: string;
     cost: number;
     observation: string;
+    ReportAnnexes: {
+      name: string;
+      url: string;
+    }[];
     ReportImages: {
+      name: string;
+      originalName: string;
+      url: string;
+    }[];
+  }[];
+
+  MaintenanceReportProgress?: {
+    id: string;
+    cost: number;
+    observation: string;
+    ReportAnnexesProgress: {
+      name: string;
+      originalName: string;
+      url: string;
+    }[];
+    ReportImagesProgress: {
+      name: string;
+      originalName: string;
       url: string;
     }[];
   }[];
