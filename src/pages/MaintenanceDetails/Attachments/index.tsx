@@ -23,7 +23,7 @@ interface AttachmentsProps {
   localImages: LocalFile[];
   setLocalFiles: React.Dispatch<React.SetStateAction<LocalFile[]>>;
   setLocalImages: React.Dispatch<React.SetStateAction<LocalFile[]>>;
-  isEditable?: boolean;
+  enableAttachments: boolean;
 }
 
 export const Attachments = ({
@@ -36,7 +36,7 @@ export const Attachments = ({
   localImages,
   setLocalFiles,
   setLocalImages,
-  isEditable = false,
+  enableAttachments,
 }: AttachmentsProps) => {
   const { hasPermission } = useRequiredAuth();
 
@@ -94,7 +94,7 @@ export const Attachments = ({
     setLocalImages(newImages);
   };
 
-  const remoteImagesToShow: string[] = isEditable
+  const remoteImagesToShow: string[] = enableAttachments
     ? remoteImages.map((image) => image.url)
     : ((maintenanceDetails.MaintenanceReport[0]?.ReportImages.map((image) => image.url) ?? []).filter(
         Boolean,
@@ -109,7 +109,7 @@ export const Attachments = ({
       </View>
 
       <View style={styles.contentContainer}>
-        {isEditable && (
+        {enableAttachments && (
           <TouchableOpacity onPress={handleOpenFilePicker} style={styles.pickerButton}>
             <Icon name="paperclip" size={24} color="#c62828" />
           </TouchableOpacity>
@@ -136,7 +136,7 @@ export const Attachments = ({
                 </Text>
               </TouchableOpacity>
 
-              {isEditable && (
+              {enableAttachments && (
                 <TouchableOpacity onPress={() => handleRemoveRemoteFile(index)}>
                   <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                 </TouchableOpacity>
@@ -153,7 +153,7 @@ export const Attachments = ({
       </View>
 
       <View style={styles.contentContainer}>
-        {isEditable && (
+        {enableAttachments && (
           <TouchableOpacity onPress={handleOpenImagePicker} style={styles.pickerButton}>
             <Icon name="image" size={24} color="#c62828" />
           </TouchableOpacity>
@@ -176,7 +176,7 @@ export const Attachments = ({
                 <Image source={{ uri: image }} style={styles.previewImage} />
               </TouchableOpacity>
 
-              {isEditable && (
+              {enableAttachments && (
                 <TouchableOpacity onPress={() => handleRemoveRemoteImage(index)}>
                   <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                 </TouchableOpacity>

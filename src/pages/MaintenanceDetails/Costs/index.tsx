@@ -10,11 +10,11 @@ import { styles } from "./styles";
 interface CostsProps {
   maintenanceDetails: IMaintenance;
   cost: string;
-  isEditable?: boolean;
+  enableCost?: boolean;
   setCost: (cost: string) => void;
 }
 
-export const Costs = ({ maintenanceDetails, cost, isEditable, setCost }: CostsProps) => {
+export const Costs = ({ maintenanceDetails, cost, enableCost, setCost }: CostsProps) => {
   const formatCurrency = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, "");
     const value = parseFloat(numericValue) / 100;
@@ -32,24 +32,24 @@ export const Costs = ({ maintenanceDetails, cost, isEditable, setCost }: CostsPr
 
   return (
     <View style={styles.container}>
-      {isEditable && (
+      {enableCost && (
         <>
           <Text style={styles.titleLabel}>Custo</Text>
           <TextInput
             style={[commonStyles.input, styles.input]}
             placeholder="R$ 0,00"
-            value={cost}
+            value={formatCurrency(cost)}
             onChangeText={(text) => handleChangeCost(text)}
             keyboardType="numeric"
           />
         </>
       )}
 
-      {!isEditable && (
+      {!enableCost && (
         <View style={styles.readonlyContainer}>
           <Text style={styles.readonlyTitleLabel}>Custo</Text>
           <Text style={styles.readonlyValueLabel}>
-            {formatCurrency(maintenanceDetails.MaintenanceReport[0].cost.toString())}
+            {formatCurrency(maintenanceDetails.MaintenanceReport?.[0].cost.toString() || "0")}
           </Text>
         </View>
       )}
