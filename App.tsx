@@ -26,15 +26,15 @@ export default function App() {
       <StatusBar translucent style="dark" />
 
       <SafeAreaProvider>
-        <BottomSheetProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <BottomSheetProvider>
             <OfflineQueueProvider>
               <Routes />
 
               <Toaster closeButton richColors position="bottom-center" />
             </OfflineQueueProvider>
-          </AuthProvider>
-        </BottomSheetProvider>
+          </BottomSheetProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
