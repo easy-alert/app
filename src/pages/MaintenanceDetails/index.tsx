@@ -26,7 +26,8 @@ import { CallToActions } from "./CallToActions";
 import { Comments } from "./Comments";
 import { Costs } from "./Costs";
 import { DataLabels } from "./DataLabels";
-import { EditForm } from "./EditForm";
+import { EditMaintenanceHistory } from "./EditMaintenanceHistory";
+import { EditMaintenanceReport } from "./EditMaintenanceReport";
 import { Header } from "./Header";
 import { History } from "./History";
 import { ShareMaintenance } from "./ShareMaintenance";
@@ -49,11 +50,18 @@ export const MaintenanceDetails = () => {
   const [remoteImages, setRemoteImages] = useState<IRemoteFile[]>([]);
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [localImages, setLocalImages] = useState<LocalFile[]>([]);
+
+  const [isEditingReport, setIsEditingReport] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { isCompleted, isOverdue, canReport } = getMaintenanceFlags({
+    maintenanceStatus: maintenanceDetails?.MaintenancesStatus.name,
     canReport: maintenanceDetails?.canReport,
   });
+
+  const handleChangeEditingReport = (state: boolean) => {
+    setIsEditingReport(state);
+  };
 
   const handleGetMaintenanceDetails = async () => {
     const maintenanceDetails = await getMaintenanceDetails({
@@ -124,9 +132,9 @@ export const MaintenanceDetails = () => {
     return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
   }
 
-  const openEditForm = () => {
+  const openEditMaintenanceHistory = () => {
     openBottomSheet({
-      content: <EditForm maintenanceDetails={maintenanceDetails} onFinishEditing={loadData} />,
+      content: <EditMaintenanceHistory maintenanceDetails={maintenanceDetails} onFinishEditing={loadData} />,
     });
   };
 
@@ -136,13 +144,21 @@ export const MaintenanceDetails = () => {
     });
   };
 
+  const openEditMaintenanceReport = async () => {
+    openBottomSheet({
+      content: <EditMaintenanceReport maintenanceDetails={maintenanceDetails} onFinishEditing={loadData} />,
+    });
+  };
+
+  const isEditable = isCompleted || isOverdue;
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <PageWithHeaderLayout
         title="Enviar relato"
         onClose={() => navigation.goBack()}
         isScrollView
-        onEdit={openEditForm}
+        onEdit={openEditMaintenanceHistory}
         onShare={openShareMaintenance}
       >
         <Header maintenanceDetails={maintenanceDetails} />
@@ -161,9 +177,9 @@ export const MaintenanceDetails = () => {
           enableComments={canReport && (!isCompleted || !isOverdue)}
         />
         <History historyActivities={historyActivities} />
-        {maintenanceDetails.canReport && (
+        {canReport && (
           <>
-            <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
+            <Costs maintenanceDetails={maintenanceDetails} cost={cost} isEditable={isEditable} setCost={setCost} />
             <Attachments
               maintenanceDetails={maintenanceDetails}
               remoteFiles={remoteFiles}
@@ -174,6 +190,7 @@ export const MaintenanceDetails = () => {
               localImages={localImages}
               setLocalFiles={setLocalFiles}
               setLocalImages={setLocalImages}
+              isEditable={isEditable}
             />
 
             <CallToActions
@@ -183,7 +200,11 @@ export const MaintenanceDetails = () => {
               remoteFiles={remoteFiles}
               remoteImages={remoteImages}
               cost={cost}
+              isEditable={isEditable}
+              isEditingReport={isEditingReport}
+              handleChangeEditingReport={handleChangeEditingReport}
               setLoading={setLoading}
+              openEditMaintenanceReport={openEditMaintenanceReport}
             />
           </>
         )}
