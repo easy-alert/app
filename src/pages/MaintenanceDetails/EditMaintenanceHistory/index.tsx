@@ -22,7 +22,7 @@ import type { IMaintenance } from "@/types/api/IMaintenance";
 
 import { styles } from "./styles";
 
-interface EditFormProps {
+interface EditMaintenanceHistoryProps {
   maintenanceDetails: IMaintenance;
   onFinishEditing: () => void;
 }
@@ -46,7 +46,7 @@ const formSchema = (notificationDate: Date, limitDate: Date) =>
 
 type FormData = z.infer<ReturnType<typeof formSchema>>;
 
-export const EditForm = ({ maintenanceDetails, onFinishEditing }: EditFormProps) => {
+export const EditMaintenanceHistory = ({ maintenanceDetails, onFinishEditing }: EditMaintenanceHistoryProps) => {
   const { closeBottomSheet } = useBottomSheet();
 
   const { isCompleted, isOverdue, isCommon, canReport } = getMaintenanceFlags({
