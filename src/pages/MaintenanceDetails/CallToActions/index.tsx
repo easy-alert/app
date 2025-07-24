@@ -32,7 +32,11 @@ interface CallToActionsProps {
   remoteFiles: IRemoteFile[];
   remoteImages: IRemoteFile[];
   cost: string;
+  isEditable?: boolean;
+  isEditingReport: boolean;
   setLoading: (loading: boolean) => void;
+  openEditMaintenanceReport: () => void;
+  handleChangeEditingReport: (state: boolean) => void;
 }
 
 export const CallToActions = ({
@@ -42,7 +46,11 @@ export const CallToActions = ({
   remoteFiles,
   remoteImages,
   cost,
+  isEditable = false,
+  isEditingReport,
   setLoading,
+  openEditMaintenanceReport,
+  handleChangeEditingReport,
 }: CallToActionsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
   const {
@@ -286,24 +294,24 @@ export const CallToActions = ({
     ]);
   };
 
-  const canBeEdited =
-    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-    maintenanceDetails.MaintenancesStatus.name !== "overdue";
-
-  if (!canBeEdited) {
-    return null;
-  }
-
   return (
-    <View style={styles.container}>
-      <SecondaryButton
-        label={maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
-        onPress={handleChangeMaintenanceProgress}
-      />
+    <View style={[styles.container, isEditable && { justifyContent: "center" }]}>
+      {isEditable ? (
+        <PrimaryButton
+          label={isEditingReport ? "Atualizar relato" : "Editar relato"}
+          onPress={() => handleChangeEditingReport(true)}
+        />
+      ) : (
+        <>
+          <SecondaryButton
+            label={maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
+            onPress={handleChangeMaintenanceProgress}
+          />
+          <SecondaryButton label="Salvar" onPress={handleSaveMaintenanceProgress} />
 
-      <SecondaryButton label="Salvar" onPress={handleSaveMaintenanceProgress} />
-
-      <PrimaryButton label="Finalizar manutenção" onPress={openFinishMaintenanceAlert} />
+          <PrimaryButton label="Finalizar manutenção" onPress={openFinishMaintenanceAlert} />
+        </>
+      )}
     </View>
   );
 };

@@ -23,6 +23,7 @@ interface AttachmentsProps {
   localImages: LocalFile[];
   setLocalFiles: React.Dispatch<React.SetStateAction<LocalFile[]>>;
   setLocalImages: React.Dispatch<React.SetStateAction<LocalFile[]>>;
+  isEditable?: boolean;
 }
 
 export const Attachments = ({
@@ -35,6 +36,7 @@ export const Attachments = ({
   localImages,
   setLocalFiles,
   setLocalImages,
+  isEditable = false,
 }: AttachmentsProps) => {
   const { hasPermission } = useRequiredAuth();
 
@@ -92,11 +94,7 @@ export const Attachments = ({
     setLocalImages(newImages);
   };
 
-  const canBeEdited =
-    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-    maintenanceDetails.MaintenancesStatus.name !== "overdue";
-
-  const remoteImagesToShow: string[] = canBeEdited
+  const remoteImagesToShow: string[] = isEditable
     ? remoteImages.map((image) => image.url)
     : ((maintenanceDetails.MaintenanceReport[0]?.ReportImages.map((image) => image.url) ?? []).filter(
         Boolean,
@@ -111,7 +109,7 @@ export const Attachments = ({
       </View>
 
       <View style={styles.contentContainer}>
-        {canBeEdited && (
+        {isEditable && (
           <TouchableOpacity onPress={handleOpenFilePicker} style={styles.pickerButton}>
             <Icon name="paperclip" size={24} color="#c62828" />
           </TouchableOpacity>
@@ -138,7 +136,7 @@ export const Attachments = ({
                 </Text>
               </TouchableOpacity>
 
-              {canBeEdited && (
+              {isEditable && (
                 <TouchableOpacity onPress={() => handleRemoveRemoteFile(index)}>
                   <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                 </TouchableOpacity>
@@ -155,7 +153,7 @@ export const Attachments = ({
       </View>
 
       <View style={styles.contentContainer}>
-        {canBeEdited && (
+        {isEditable && (
           <TouchableOpacity onPress={handleOpenImagePicker} style={styles.pickerButton}>
             <Icon name="image" size={24} color="#c62828" />
           </TouchableOpacity>
@@ -178,7 +176,7 @@ export const Attachments = ({
                 <Image source={{ uri: image }} style={styles.previewImage} />
               </TouchableOpacity>
 
-              {canBeEdited && (
+              {isEditable && (
                 <TouchableOpacity onPress={() => handleRemoveRemoteImage(index)}>
                   <Icon name="x" size={16} color="#fff" style={styles.deleteIcon} />
                 </TouchableOpacity>

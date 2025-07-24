@@ -10,10 +10,11 @@ import { styles } from "./styles";
 interface CostsProps {
   maintenanceDetails: IMaintenance;
   cost: string;
+  isEditable?: boolean;
   setCost: (cost: string) => void;
 }
 
-export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
+export const Costs = ({ maintenanceDetails, cost, isEditable, setCost }: CostsProps) => {
   const formatCurrency = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, "");
     const value = parseFloat(numericValue) / 100;
@@ -29,13 +30,9 @@ export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
     setCost(formatted);
   };
 
-  const canBeEdited =
-    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-    maintenanceDetails.MaintenancesStatus.name !== "overdue";
-
   return (
     <View style={styles.container}>
-      {canBeEdited && (
+      {isEditable && (
         <>
           <Text style={styles.titleLabel}>Custo</Text>
           <TextInput
@@ -48,7 +45,7 @@ export const Costs = ({ maintenanceDetails, cost, setCost }: CostsProps) => {
         </>
       )}
 
-      {!canBeEdited && (
+      {!isEditable && (
         <View style={styles.readonlyContainer}>
           <Text style={styles.readonlyTitleLabel}>Custo</Text>
           <Text style={styles.readonlyValueLabel}>
