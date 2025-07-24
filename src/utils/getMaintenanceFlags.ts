@@ -24,6 +24,7 @@ export function getMaintenanceFlags({
   const isExpired = maintenanceStatus === "expired";
   const isCompleted = maintenanceStatus === "completed";
   const isOverdue = maintenanceStatus === "overdue";
+  const isFinished = isCompleted || isOverdue;
 
   const isCommon = maintenanceType === "common";
   const isOccasional = maintenanceType === "occasional";
@@ -44,6 +45,7 @@ export function getMaintenanceFlags({
     isExpired,
     isCompleted,
     isOverdue,
+    isFinished,
     isCommon,
     isOccasional,
     inProgress,
