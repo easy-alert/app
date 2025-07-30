@@ -35,8 +35,20 @@ export interface FinishMaintenanceQueueItem extends OfflineQueueItemBase {
   remoteImages: IRemoteFile[];
 }
 
+export interface UpdateMaintenanceReportQueueItem extends OfflineQueueItemBase {
+  type: "updateMaintenanceReport";
+  maintenanceId: string;
+  maintenanceReportId: string;
+  cost: number;
+  localFiles: LocalFile[];
+  localImages: LocalFile[];
+  remoteFiles: IRemoteFile[];
+  remoteImages: IRemoteFile[];
+}
+
 export type OfflineQueueItem =
   | AddHistoryActivityQueueItem
   | SaveProgressQueueItem
   | UpdateProgressQueueItem
-  | FinishMaintenanceQueueItem;
+  | FinishMaintenanceQueueItem
+  | UpdateMaintenanceReportQueueItem;

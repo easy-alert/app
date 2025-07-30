@@ -62,7 +62,7 @@ export const Suppliers = ({
     <>
       <SupplierModal maintenanceId={maintenanceId} visible={showSupplierModal} onClose={toggleSupplierModal} />
 
-      <View>
+      <View style={styles.container}>
         <View
           style={[
             styles.titleContainer,
@@ -85,7 +85,7 @@ export const Suppliers = ({
             ))}
         </View>
 
-        {supplier && enableSupplierButton && (
+        {supplier && (
           <View style={styles.supplierContainer}>
             <View style={styles.avatarContainer}>
               <Image

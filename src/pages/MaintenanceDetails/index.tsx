@@ -11,7 +11,6 @@ import type { MaintenanceDetailsParams, ProtectedNavigation } from "@/routes/nav
 import { getMaintenanceDetails } from "@/services/queries/getMaintenanceDetails";
 import { getMaintenanceHistoryActivities } from "@/services/queries/getMaintenanceHistoryActivities";
 import { getMaintenanceHistorySupplier } from "@/services/queries/getMaintenanceHistorySupplier";
-import { getMaintenanceReportProgress } from "@/services/queries/getMaintenanceReportProgress";
 
 import { getMaintenanceFlags } from "@/utils/getMaintenanceFlags";
 
@@ -26,7 +25,7 @@ import { CallToActions } from "./CallToActions";
 import { Comments } from "./Comments";
 import { Costs } from "./Costs";
 import { DataLabels } from "./DataLabels";
-import { EditForm } from "./EditForm";
+import { EditMaintenanceHistory } from "./EditMaintenanceHistory";
 import { Header } from "./Header";
 import { History } from "./History";
 import { ShareMaintenance } from "./ShareMaintenance";
@@ -49,11 +48,22 @@ export const MaintenanceDetails = () => {
   const [remoteImages, setRemoteImages] = useState<IRemoteFile[]>([]);
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [localImages, setLocalImages] = useState<LocalFile[]>([]);
+
+  const [isEditingReport, setIsEditingReport] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { isCompleted, isOverdue, canReport } = getMaintenanceFlags({
+  const { isFinished, canReport } = getMaintenanceFlags({
+    maintenanceStatus: maintenanceDetails?.MaintenancesStatus.name,
     canReport: maintenanceDetails?.canReport,
   });
+
+  const handleChangeEditingReport = (state: boolean) => {
+    if (!state) {
+      loadData();
+    }
+
+    setIsEditingReport(state);
+  };
 
   const handleGetMaintenanceDetails = async () => {
     const maintenanceDetails = await getMaintenanceDetails({
@@ -62,19 +72,27 @@ export const MaintenanceDetails = () => {
 
     if (maintenanceDetails) {
       setMaintenanceDetails(maintenanceDetails);
-    }
-  };
 
-  const handleGetMaintenanceReportProgress = async () => {
-    const maintenanceReportProgress = await getMaintenanceReportProgress({
-      maintenanceHistoryId: maintenanceId,
-    });
+      if (
+        maintenanceDetails.MaintenancesStatus.name === "completed" ||
+        maintenanceDetails.MaintenancesStatus.name === "overdue"
+      ) {
+        const maintenanceReport =
+          (maintenanceDetails.MaintenanceReport?.length || 0) > 0 ? maintenanceDetails.MaintenanceReport?.[0] : null;
 
-    if (maintenanceReportProgress?.progress) {
-      const cost = String(maintenanceReportProgress.progress.cost / 100).replace(".", ",");
-      setCost(cost);
-      setRemoteFiles(maintenanceReportProgress.progress.ReportAnnexesProgress);
-      setRemoteImages(maintenanceReportProgress.progress.ReportImagesProgress);
+        setCost(maintenanceReport?.cost.toString() || "0,00");
+        setRemoteFiles(maintenanceReport?.ReportAnnexes || []);
+        setRemoteImages(maintenanceReport?.ReportImages || []);
+      } else {
+        const maintenanceReportProgress =
+          (maintenanceDetails.MaintenanceReport?.length || 0) > 0
+            ? maintenanceDetails.MaintenanceReportProgress?.[0]
+            : null;
+
+        setCost(maintenanceReportProgress?.cost.toString() || "0,00");
+        setRemoteFiles(maintenanceReportProgress?.ReportAnnexesProgress || []);
+        setRemoteImages(maintenanceReportProgress?.ReportImagesProgress || []);
+      }
     }
   };
 
@@ -105,7 +123,6 @@ export const MaintenanceDetails = () => {
 
     // TODO: implantar em paralelo
     try {
-      await handleGetMaintenanceReportProgress();
       await handleGetMaintenanceDetails();
       await handleGetMaintenanceSupplier();
       await handleGetMaintenanceHistoryActivities();
@@ -124,9 +141,9 @@ export const MaintenanceDetails = () => {
     return <ActivityIndicator size="large" color="#ff3535" style={styles.loading} />;
   }
 
-  const openEditForm = () => {
+  const openEditMaintenanceHistory = () => {
     openBottomSheet({
-      content: <EditForm maintenanceDetails={maintenanceDetails} onFinishEditing={loadData} />,
+      content: <EditMaintenanceHistory maintenanceDetails={maintenanceDetails} onFinishEditing={loadData} />,
     });
   };
 
@@ -142,7 +159,7 @@ export const MaintenanceDetails = () => {
         title="Enviar relato"
         onClose={() => navigation.goBack()}
         isScrollView
-        onEdit={openEditForm}
+        onEdit={openEditMaintenanceHistory}
         onShare={openShareMaintenance}
       >
         <Header maintenanceDetails={maintenanceDetails} />
@@ -152,18 +169,23 @@ export const MaintenanceDetails = () => {
           supplier={supplier}
           maintenanceId={maintenanceId}
           getMaintenanceSupplier={handleGetMaintenanceSupplier}
-          enableSupplierButton={canReport && (!isCompleted || !isOverdue)}
+          enableSupplierButton={canReport && (isEditingReport || !isFinished)}
         />
         <Comments
           maintenanceId={maintenanceId}
           setLoading={setLoading}
           getMaintenanceHistoryActivities={handleGetMaintenanceHistoryActivities}
-          enableComments={canReport && (!isCompleted || !isOverdue)}
+          enableComments={canReport && (isEditingReport || !isFinished)}
         />
         <History historyActivities={historyActivities} />
-        {maintenanceDetails.canReport && (
+        {canReport && (
           <>
-            <Costs maintenanceDetails={maintenanceDetails} cost={cost} setCost={setCost} />
+            <Costs
+              maintenanceDetails={maintenanceDetails}
+              cost={cost}
+              setCost={setCost}
+              enableCost={canReport && (isEditingReport || !isFinished)}
+            />
             <Attachments
               maintenanceDetails={maintenanceDetails}
               remoteFiles={remoteFiles}
@@ -174,6 +196,7 @@ export const MaintenanceDetails = () => {
               localImages={localImages}
               setLocalFiles={setLocalFiles}
               setLocalImages={setLocalImages}
+              enableAttachments={canReport && (isEditingReport || !isFinished)}
             />
 
             <CallToActions
@@ -184,6 +207,9 @@ export const MaintenanceDetails = () => {
               remoteImages={remoteImages}
               cost={cost}
               setLoading={setLoading}
+              isFinished={isFinished}
+              isEditingReport={isEditingReport}
+              handleChangeEditingReport={handleChangeEditingReport}
             />
           </>
         )}

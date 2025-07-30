@@ -13,6 +13,7 @@ import type { ProtectedNavigation } from "@/routes/navigation";
 import { updateMaintenance } from "@/services/mutations/updateMaintenance";
 import { updateMaintenanceFinish } from "@/services/mutations/updateMaintenanceFinish";
 import { updateMaintenanceProgress } from "@/services/mutations/updateMaintenanceProgress";
+import { updateMaintenanceReport } from "@/services/mutations/updateMaintenanceReport";
 import { uploadFile } from "@/services/mutations/uploadFile";
 
 import { alerts } from "@/utils/alerts";
@@ -33,6 +34,9 @@ interface CallToActionsProps {
   remoteImages: IRemoteFile[];
   cost: string;
   setLoading: (loading: boolean) => void;
+  isFinished: boolean;
+  isEditingReport: boolean;
+  handleChangeEditingReport: (state: boolean) => void;
 }
 
 export const CallToActions = ({
@@ -43,6 +47,9 @@ export const CallToActions = ({
   remoteImages,
   cost,
   setLoading,
+  isFinished,
+  isEditingReport,
+  handleChangeEditingReport,
 }: CallToActionsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
   const {
@@ -273,6 +280,102 @@ export const CallToActions = ({
     setLoading(false);
   };
 
+  const handleUpdateMaintenanceReport = async () => {
+    setLoading(true);
+
+    const formatedCost = convertCostToInteger(cost);
+
+    const networkState = await NetInfo.fetch();
+    const isConnected = networkState.isConnected;
+
+    if (isConnected) {
+      const filesUploaded: IRemoteFile[] = [];
+
+      const uploadFilesPromises = localFiles.map(async (file) => {
+        const { success, data } = await uploadFile({
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
+        });
+
+        if (!success) {
+          return;
+        }
+
+        filesUploaded.push({
+          name: file.name,
+          url: data.url,
+        });
+      });
+
+      const imagesUploaded: IRemoteFile[] = [];
+
+      const uploadImagesPromises = localImages.map(async (image) => {
+        const { success, data } = await uploadFile({
+          uri: image.uri,
+          type: image.type,
+          name: image.name,
+        });
+
+        if (!success) {
+          return;
+        }
+
+        imagesUploaded.push({
+          name: image.name,
+          url: data.url,
+        });
+      });
+
+      await Promise.all([...uploadFilesPromises, ...uploadImagesPromises]);
+
+      const { success, message } = await updateMaintenanceReport({
+        maintenanceHistoryId: maintenanceDetails.id,
+        maintenanceReport: {
+          id: maintenanceDetails.MaintenanceReport?.[0].id || "",
+          cost: formatedCost,
+          observation: "",
+        },
+        files: [...filesUploaded, ...remoteFiles].map((file) => ({
+          originalName: file.name,
+          name: file.name,
+          url: file.url,
+        })),
+        images: [...imagesUploaded, ...remoteImages].map((image) => ({
+          originalName: image.name,
+          name: image.name,
+          url: image.url,
+        })),
+      });
+
+      if (success) {
+        toast.success(message);
+        navigation.goBack();
+      } else {
+        alerts.error(message);
+      }
+    } else {
+      const newEntry: OfflineQueueItem = {
+        type: "updateMaintenanceReport",
+        userId,
+        maintenanceId: maintenanceDetails.id,
+        maintenanceReportId: maintenanceDetails.MaintenanceReport?.[0].id || "",
+        cost: formatedCost,
+        localFiles,
+        localImages,
+        remoteFiles,
+        remoteImages,
+      };
+
+      await addItem(newEntry);
+      navigation.goBack();
+    }
+
+    setLoading(false);
+
+    handleChangeEditingReport(!isEditingReport);
+  };
+
   const openFinishMaintenanceAlert = () => {
     Alert.alert("Confirmar Ação", "Tem certeza de que deseja finalizar a manutenção?", [
       {
@@ -286,24 +389,50 @@ export const CallToActions = ({
     ]);
   };
 
-  const canBeEdited =
-    maintenanceDetails.MaintenancesStatus.name !== "completed" &&
-    maintenanceDetails.MaintenancesStatus.name !== "overdue";
-
-  if (!canBeEdited) {
-    return null;
-  }
+  const openUpdateMaintenanceReportAlert = () => {
+    Alert.alert("Confirmar Ação", "Tem certeza de que deseja atualizar o relatório?", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Sim",
+        onPress: handleUpdateMaintenanceReport,
+      },
+    ]);
+  };
 
   return (
-    <View style={styles.container}>
-      <SecondaryButton
-        label={maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
-        onPress={handleChangeMaintenanceProgress}
-      />
+    <View style={[styles.container, isFinished && !isEditingReport && { justifyContent: "center" }]}>
+      {isFinished ? (
+        <>
+          {isEditingReport && (
+            <SecondaryButton label="Voltar" onPress={() => handleChangeEditingReport(!isEditingReport)} />
+          )}
 
-      <SecondaryButton label="Salvar" onPress={handleSaveMaintenanceProgress} />
+          <PrimaryButton
+            label={isEditingReport ? "Atualizar relatório" : "Editar relatório"}
+            onPress={() => {
+              if (isEditingReport) {
+                openUpdateMaintenanceReportAlert();
+              } else {
+                handleChangeEditingReport(!isEditingReport);
+                Alert.alert("Editar relatório", "A seguir você conseguira editar o relatório da manutenção.");
+              }
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <SecondaryButton
+            label={maintenanceDetails.inProgress ? "Parar" : "Iniciar"}
+            onPress={handleChangeMaintenanceProgress}
+          />
+          <SecondaryButton label="Salvar" onPress={handleSaveMaintenanceProgress} />
 
-      <PrimaryButton label="Finalizar manutenção" onPress={openFinishMaintenanceAlert} />
+          <PrimaryButton label="Finalizar manutenção" onPress={openFinishMaintenanceAlert} />
+        </>
+      )}
     </View>
   );
 };
