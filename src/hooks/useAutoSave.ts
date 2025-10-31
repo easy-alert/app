@@ -1,13 +1,17 @@
-import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import NetInfo from "@react-native-community/netinfo";
+import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import { toast } from "sonner-native";
 
 import { uploadFile } from "@/services/mutations/uploadFile";
 
-import type { LocalFile } from "@/types/utils/LocalFile";
+import { useRequiredAuth } from "@/contexts/AuthContext";
+import { updateMaintenance } from "@/services/mutations/updateMaintenance";
 import type { IRemoteFile } from "@/types/api/IRemoteFile";
+import type { LocalFile } from "@/types/utils/LocalFile";
+import { alerts } from "@/utils/alerts";
 
 interface Params {
+  maintenanceHistoryId: string;
   enable: boolean;
   localFiles: LocalFile[];
   setLocalFiles: Dispatch<SetStateAction<LocalFile[]>>;
@@ -20,6 +24,7 @@ interface Params {
 }
 
 export function useAutoSave({
+  maintenanceHistoryId,
   enable,
   localFiles,
   setLocalFiles,
@@ -31,6 +36,7 @@ export function useAutoSave({
   setRemoteImages,
 }: Params) {
   const isUploadingRef = useRef(false);
+  const auth = useRequiredAuth();
 
   useEffect(() => {
     if (!enable) return;
@@ -90,9 +96,31 @@ export function useAutoSave({
             setLocalImages((prev) => prev.filter((img) => !uploadedImageUris.has(img.uri)));
           }
 
-          toast.success(
-            `Anexos salvos com sucesso!`,
-          );
+          const { success, message } = await updateMaintenance({
+            maintenanceHistoryId,
+            syndicNanoId: "",
+            userId: auth.user.id,
+            maintenanceReport: {
+              cost: 0,
+              observation: "",
+            },
+            files: [...remoteFiles, ...filesUploaded].map((file) => ({
+              originalName: file.name,
+              name: file.name,
+              url: file.url,
+            })),
+            images: [...remoteImages, ...imagesUploaded].map((image) => ({
+              originalName: image.name,
+              name: image.name,
+              url: image.url,
+            })),
+          });
+
+          if (!success) {
+            alerts.error(message);
+          }
+          
+          toast.success(message);
         }
       } finally {
         isUploadingRef.current = false;
