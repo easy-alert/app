@@ -12,6 +12,7 @@ import type { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 
 import { styles } from "./styles";
+import { useAutoSave } from "@/hooks/useAutoSave";
 
 interface AttachmentsProps {
   maintenanceDetails: IMaintenance;
@@ -42,6 +43,19 @@ export const Attachments = ({
 
   const [loadingImages, setLoadingImages] = useState(false);
   const [loadingFiles, setLoadingFiles] = useState(false);
+
+  useAutoSave({
+    maintenanceHistoryId: maintenanceDetails.id,
+    enable: enableAttachments,
+    localFiles,
+    setLocalFiles,
+    localImages,
+    setLocalImages,
+    remoteFiles,
+    setRemoteFiles,
+    remoteImages,
+    setRemoteImages,
+  });
 
   const handleOpenFilePicker = async () => {
     try {
@@ -96,7 +110,7 @@ export const Attachments = ({
 
   const remoteImagesToShow: string[] = enableAttachments
     ? remoteImages.map((image) => image.url)
-    : ((maintenanceDetails.MaintenanceReport[0]?.ReportImages.map((image) => image.url) ?? []).filter(
+    : ((maintenanceDetails.MaintenanceReport?.[0]?.ReportImages.map((image) => image.url) ?? []).filter(
         Boolean,
       ) as string[]);
 

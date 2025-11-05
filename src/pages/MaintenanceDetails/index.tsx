@@ -85,7 +85,7 @@ export const MaintenanceDetails = () => {
         setRemoteImages(maintenanceReport?.ReportImages || []);
       } else {
         const maintenanceReportProgress =
-          (maintenanceDetails.MaintenanceReport?.length || 0) > 0
+          (maintenanceDetails.MaintenanceReportProgress?.length || 0) > 0
             ? maintenanceDetails.MaintenanceReportProgress?.[0]
             : null;
 
