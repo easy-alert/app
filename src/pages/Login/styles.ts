@@ -65,4 +65,14 @@ export const styles = StyleSheet.create({
   forgotPasswordTextLink: {
     fontWeight: "bold",
   },
+  versionText: {
+    width: "100%",
+    position: "absolute",
+    bottom: 10,
+    right: 20,
+    marginTop: 16,
+    color: "#aaa",
+    fontSize: 14,
+    textAlign: "right",
+  },
 });

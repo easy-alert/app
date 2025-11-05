@@ -9,7 +9,8 @@ interface IGetMaintenancesKanban {
     status?: string[];
     categories?: string[];
     users?: string[];
-    priorityName?: string;
+    priorityNames?: string[];
+    types?: string[];
     search?: string;
     startDate: string;
     endDate: string;
@@ -26,7 +27,8 @@ export const getMaintenancesKanban = ({
     status: filters.status?.join(",") || "",
     category: filters.categories?.join(",") || "",
     user: filters.users?.join(",") || "",
-    priorityName: filters.priorityName || "",
+    priorityName: filters.priorityNames?.join(",") || "",
+    type: filters.types?.join(",") || "",
     search: filters.search || "",
     startDate: filters.startDate,
     endDate: filters.endDate,

@@ -14,10 +14,27 @@ export const styles = StyleSheet.create({
     marginBottom: 30,
     justifyContent: "flex-start",
   },
-  statusTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+  statusHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
+  },
+  statusTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  checkboxText: {
+    fontSize: 12,
+    fontStyle: "italic",
+  },
+  checkbox: {
+    marginLeft: 8,
   },
   columnContainer: {
     maxHeight: "100%",

@@ -1,5 +1,5 @@
-import { IRemoteFile } from "../api/IRemoteFile";
-import { LocalFile } from "./LocalFile";
+import type { IRemoteFile } from "../api/IRemoteFile";
+import type { LocalFile } from "./LocalFile";
 
 interface OfflineQueueItemBase {
   userId: string;
@@ -35,8 +35,20 @@ export interface FinishMaintenanceQueueItem extends OfflineQueueItemBase {
   remoteImages: IRemoteFile[];
 }
 
+export interface UpdateMaintenanceReportQueueItem extends OfflineQueueItemBase {
+  type: "updateMaintenanceReport";
+  maintenanceId: string;
+  maintenanceReportId: string;
+  cost: number;
+  localFiles: LocalFile[];
+  localImages: LocalFile[];
+  remoteFiles: IRemoteFile[];
+  remoteImages: IRemoteFile[];
+}
+
 export type OfflineQueueItem =
   | AddHistoryActivityQueueItem
   | SaveProgressQueueItem
   | UpdateProgressQueueItem
-  | FinishMaintenanceQueueItem;
+  | FinishMaintenanceQueueItem
+  | UpdateMaintenanceReportQueueItem;

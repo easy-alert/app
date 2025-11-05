@@ -1,36 +1,42 @@
 import { useState } from "react";
 import { View } from "react-native";
 
+import { useBottomSheet } from "@/contexts/BottomSheetContext";
+
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
-import { useBottomSheet } from "@/contexts/BottomSheetContext";
-import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import { Filter } from "@/types/utils/Filter";
+
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import { emptyFilters } from "@/utils/filters";
 import { maintenanceStatus } from "@/utils/getStatus";
+
+import { MAINTENANCE_TYPE } from "@/types/api/TMaintenanceType";
+import { PRIORITY_NAME } from "@/types/api/TPriorityName";
+import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { styles } from "./styles";
 
 interface FiltersProps {
-  filters: Filter;
-  setFilters: (filters: Filter) => void;
+  filters: KanbanFilter;
   availableBuildings: AvailableFilter[];
   availableUsers: AvailableFilter[];
   availableCategories: AvailableFilter[];
+  setFilters: (filters: KanbanFilter) => void;
 }
 
 export const Filters = ({
   filters,
-  setFilters,
   availableBuildings,
   availableUsers,
   availableCategories,
+  setFilters,
 }: FiltersProps) => {
   const { closeBottomSheet } = useBottomSheet();
 
-  const [filtersCache, setFiltersCache] = useState<Filter>(filters);
+  const [filtersCache, setFiltersCache] = useState<KanbanFilter>(filters);
 
   const handleClearFilters = () => {
     setFilters(emptyFilters);
@@ -90,6 +96,34 @@ export const Filters = ({
           data={availableCategories}
           value={filtersCache.selectedCategories}
           onChange={(selectedCategories) => setFiltersCache({ ...filtersCache, selectedCategories })}
+          placeholder="Selecione"
+          labelField="label"
+          valueField="value"
+        />
+      </LabelInput>
+
+      <LabelInput label="Prioridade">
+        <MultiSelect
+          data={PRIORITY_NAME.map((priority) => ({
+            label: capitalizeFirstLetter(priority.label),
+            value: priority.name,
+          }))}
+          value={filtersCache.selectedPriorityNames}
+          onChange={(selectedPriorityNames) => setFiltersCache({ ...filtersCache, selectedPriorityNames })}
+          placeholder="Selecione"
+          labelField="label"
+          valueField="value"
+        />
+      </LabelInput>
+
+      <LabelInput label="Tipo">
+        <MultiSelect
+          data={MAINTENANCE_TYPE.map((type) => ({
+            label: capitalizeFirstLetter(type.label),
+            value: type.value,
+          }))}
+          value={filtersCache.selectedTypes}
+          onChange={(selectedTypes) => setFiltersCache({ ...filtersCache, selectedTypes })}
           placeholder="Selecione"
           labelField="label"
           valueField="value"

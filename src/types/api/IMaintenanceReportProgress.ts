@@ -1,4 +1,4 @@
-import { IRemoteFile } from "./IRemoteFile";
+import type { IRemoteFile } from "./IRemoteFile";
 
 export interface IMaintenanceReportProgress {
   progress: {

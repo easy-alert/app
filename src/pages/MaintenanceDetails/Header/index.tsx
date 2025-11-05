@@ -1,9 +1,12 @@
 import { Text, View } from "react-native";
 
-import { PendingSyncBadge } from "@/components/PendingSyncBadge";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
-import type { IMaintenance } from "@/types/api/IMaintenance";
+
+import { PendingSyncBadge } from "@/components/PendingSyncBadge";
+
 import { getStatus } from "@/utils/getStatus";
+
+import type { IMaintenance } from "@/types/api/IMaintenance";
 
 import { styles } from "./styles";
 

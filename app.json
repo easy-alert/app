@@ -3,7 +3,7 @@
     "name": "Easy Alert",
     "slug": "app",
     "owner": "easy-alert",
-    "version": "1.1.8",
+    "version": "1.1.14",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -45,7 +45,32 @@
           "data": [
             {
               "scheme": "https",
-              "host": "company.easyalert.com.br"
+              "host": "company.easyalert.com.br",
+              "pathPattern": "/maintenances"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "company.easyalert.com.br",
+              "pathPattern": "/maintenances/new"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "company.easyalert.com.br",
+              "pathPattern": "/maintenances/.*"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
@@ -67,6 +92,18 @@
     "updates": {
       "url": "https://u.expo.dev/27517197-dbbd-4bac-ac20-ae03ee07310c"
     },
-    "plugins": ["react-native-compressor"]
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+      ],
+      "react-native-compressor"
+    ]
   }
 }

@@ -1,22 +1,25 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useBottomSheet } from "@/contexts/BottomSheetContext";
+
 import { getUsers } from "@/services/queries/getUsers";
-import { IBuilding } from "@/types/api/IBuilding";
-import { AvailableFilter } from "@/types/utils/AvailableFilter";
-import { Filter } from "@/types/utils/Filter";
+
 import { storageKeys } from "@/utils/storageKeys";
+
+import type { AvailableFilter } from "@/types/utils/AvailableFilter";
+import type { IListBuilding } from "@/types/utils/IListBuilding";
+import type { KanbanFilter } from "@/types/utils/KanbanFilter";
 
 import { Filters } from "../Filters";
 import { styles } from "./styles";
 
 interface FiltersButtonProps {
-  filters: Filter;
-  setFilters: (filters: Filter) => void;
+  filters: KanbanFilter;
   availableCategories: AvailableFilter[];
+  setFilters: (filters: KanbanFilter) => void;
 }
 
 export const FiltersButton = ({ filters, setFilters, availableCategories }: FiltersButtonProps) => {
@@ -27,11 +30,11 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
 
   useEffect(() => {
     const getAvailableUsers = async () => {
-      const users = await getUsers();
+      const responseData = await getUsers();
 
-      if (users) {
+      if (responseData) {
         setAvailableUsers(
-          users.users.map((user) => ({
+          responseData.users.map((user) => ({
             value: user.id,
             label: user.name,
           })),
@@ -47,12 +50,11 @@ export const FiltersButton = ({ filters, setFilters, availableCategories }: Filt
           throw new Error("Nenhum prédio encontrado.");
         }
 
-        const availableBuildings: IBuilding[] = JSON.parse(storageBuildings);
-
+        const availableBuildings: IListBuilding[] = JSON.parse(storageBuildings);
         setAvailableBuildings(
-          availableBuildings.map((building) => ({
-            value: building.id,
-            label: building.name,
+          availableBuildings.map(({ id, name }) => ({
+            value: id,
+            label: name,
           })),
         );
       } catch (error) {

@@ -1,14 +1,18 @@
-import { StatusBar } from "expo-status-bar";
+import "./ReactotronConfig";
+
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { Toaster } from "sonner-native";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BottomSheetProvider } from "@/contexts/BottomSheetContext";
 import { OfflineQueueProvider } from "@/contexts/OfflineQueueContext";
-import { Routes } from "@/routes";
+
 import { requestPushNotificationPermissions, setNotificationHandler } from "@/utils/pushNotification";
+
+import { Routes } from "@/routes";
 
 setNotificationHandler();
 
@@ -22,15 +26,15 @@ export default function App() {
       <StatusBar translucent style="dark" />
 
       <SafeAreaProvider>
-        <BottomSheetProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <BottomSheetProvider>
             <OfflineQueueProvider>
               <Routes />
 
               <Toaster closeButton richColors position="bottom-center" />
             </OfflineQueueProvider>
-          </AuthProvider>
-        </BottomSheetProvider>
+          </BottomSheetProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

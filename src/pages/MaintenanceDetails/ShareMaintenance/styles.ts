@@ -8,13 +8,12 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  buildingName: {
-    fontSize: 18,
-  },
-  dueDateLabel: {
-    fontSize: 16,
-  },
-  dueDate: {
-    fontWeight: "bold",
+  textArea: {
+    height: "auto",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 12,
   },
 });

@@ -1,56 +1,38 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
+import { zodResolver } from "@hookform/resolvers/zod";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 import { z } from "zod";
+
+import { useRequiredAuth } from "@/contexts/AuthContext";
 
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { DateTimeInput } from "@/components/DateTimeInput";
 import { Dropdown } from "@/components/Dropdown";
 import { LabelInput } from "@/components/LabelInput";
 import { MultiSelect } from "@/components/MultiSelect";
-import { useAuth } from "@/contexts/AuthContext";
+
 import type { ProtectedNavigation } from "@/routes/navigation";
+
 import { createOccasionalMaintenance } from "@/services/mutations/createOccasionalMaintenance";
 import { getCategories } from "@/services/queries/getCategories";
 import { getUsers } from "@/services/queries/getUsers";
-import { IBuilding } from "@/types/api/IBuilding";
-import type { ICategory } from "@/types/api/ICategory";
-import { IUser } from "@/types/api/IUser";
+
 import { alerts } from "@/utils/alerts";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { normalizeString } from "@/utils/normalizeString";
 import { storageKeys } from "@/utils/storageKeys";
 
+import type { IBuilding } from "@/types/api/IBuilding";
+import type { ICategory } from "@/types/api/ICategory";
+import type { IUser } from "@/types/api/IUser";
+import { PRIORITY_NAME } from "@/types/api/TPriorityName";
+import { RESPONSIBLE } from "@/types/api/TResponsible";
+
 import { styles } from "./styles";
-
-const responsibles = [
-  {
-    name: "Equipe de manutenção local",
-  },
-  {
-    name: "Equipe capacitada",
-  },
-  {
-    name: "Equipe Especializada",
-  },
-];
-
-const priorities = [
-  {
-    id: "low",
-    name: "Baixa",
-  },
-  {
-    id: "medium",
-    name: "Média",
-  },
-  {
-    id: "high",
-    name: "Alta",
-  },
-];
 
 const formSchema = z.object({
   buildingId: z.string().min(1, { message: "Edificação é obrigatória." }),
@@ -64,7 +46,9 @@ const formSchema = z.object({
 });
 
 export const Form = () => {
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+  } = useRequiredAuth();
   const navigation = useNavigation<ProtectedNavigation>();
 
   const [loadingCategories, setLoadingCategories] = useState(false);
@@ -76,27 +60,6 @@ export const Form = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
 
-  useEffect(() => {
-    const handleGetCategories = async () => {
-      setLoadingCategories(true);
-      const categories = await getCategories();
-
-      setCategories(categories);
-      setLoadingCategories(false);
-    };
-
-    const getBuildings = async () => {
-      const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
-
-      if (storageBuildings) {
-        setBuildings(JSON.parse(storageBuildings));
-      }
-    };
-
-    handleGetCategories();
-    getBuildings();
-  }, [navigation]);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -104,34 +67,14 @@ export const Form = () => {
       categoryId: "",
       element: "",
       activity: "",
-      responsible: "",
+      responsible: RESPONSIBLE[0].label,
       users: [],
-      priority: "",
-      executionDate: "",
+      priority: PRIORITY_NAME.find((item) => item.name === "medium")?.name || "",
+      executionDate: new Date().toISOString(),
     },
   });
 
   const buildingId = form.watch("buildingId");
-
-  useEffect(() => {
-    const handleGetUsers = async () => {
-      if (!buildingId) {
-        return;
-      }
-
-      setLoadingUsers(true);
-
-      const users = await getUsers({ buildingId });
-
-      if (users) {
-        setUsers(users.users);
-      }
-
-      setLoadingUsers(false);
-    };
-
-    handleGetUsers();
-  }, [buildingId]);
 
   const handleCreateOccasionalMaintenance = async ({
     inProgress = false,
@@ -193,6 +136,71 @@ export const Form = () => {
     setCreatingInProgress(false);
   };
 
+  useEffect(() => {
+    const handleGetCategories = async () => {
+      setLoadingCategories(true);
+      const categories = await getCategories();
+
+      setCategories(categories);
+      setLoadingCategories(false);
+    };
+
+    const getBuildings = async () => {
+      const storageBuildings = await AsyncStorage.getItem(storageKeys.BUILDING_LIST_KEY);
+
+      if (storageBuildings) {
+        setBuildings(JSON.parse(storageBuildings));
+      }
+    };
+
+    handleGetCategories();
+    getBuildings();
+  }, [navigation]);
+
+  useEffect(() => {
+    const handleGetUsers = async () => {
+      if (!buildingId) return;
+
+      setLoadingUsers(true);
+
+      const users = await getUsers({ buildingId });
+
+      if (users) {
+        setUsers(users.users);
+
+        const userInBuilding = users.users.some((user) => user.id === userId);
+        if (userInBuilding) {
+          form.setValue("users", [userId]);
+        } else {
+          form.setValue("users", []);
+        }
+      }
+
+      setLoadingUsers(false);
+    };
+
+    handleGetUsers();
+  }, [buildingId, userId]);
+
+  useEffect(() => {
+    if (!buildingId) return;
+
+    const selectedBuildingName = buildings.find((building) => building.id === buildingId)?.name;
+    if (!selectedBuildingName) return;
+
+    const normalizedBuildingName = normalizeString(selectedBuildingName);
+
+    categories.forEach((category) => {
+      if (!category.name) return;
+
+      const normalizedCategory = normalizeString(category.name);
+
+      if (normalizedCategory.includes(normalizedBuildingName)) {
+        form.setValue("categoryId", category.id);
+      }
+    });
+  }, [buildingId, categories, buildings]);
+
   return (
     <View style={styles.container}>
       <Controller
@@ -206,10 +214,9 @@ export const Form = () => {
               labelField="name"
               valueField="id"
               value={field.value}
-              onChange={(item) => {
-                field.onChange(item.id);
-              }}
+              onChange={(item) => field.onChange(item.id)}
               disable={form.formState.isSubmitting}
+              loading={loadingUsers}
             />
           </LabelInput>
         )}
@@ -229,9 +236,7 @@ export const Form = () => {
               labelField="name"
               valueField="id"
               value={field.value}
-              onChange={(item) => {
-                field.onChange(item.id);
-              }}
+              onChange={(item) => field.onChange(item.id)}
               loading={loadingCategories}
               disable={form.formState.isSubmitting}
             />
@@ -276,11 +281,11 @@ export const Form = () => {
           <LabelInput label="Responsável *" error={form.formState.errors.responsible?.message}>
             <Dropdown
               placeholder="Selecione o responsável"
-              data={responsibles}
-              labelField="name"
-              valueField="name"
+              data={[...RESPONSIBLE]}
+              labelField="label"
+              valueField="label"
               value={field.value}
-              onChange={(value) => field.onChange(value.name)}
+              onChange={(value) => field.onChange(value.label)}
               disable={form.formState.isSubmitting}
             />
           </LabelInput>
@@ -313,11 +318,14 @@ export const Form = () => {
           <LabelInput label="Prioridade *" error={form.formState.errors.priority?.message}>
             <Dropdown
               placeholder="Selecione a prioridade"
-              data={priorities}
-              labelField="name"
-              valueField="id"
+              data={[...PRIORITY_NAME].map((item) => ({
+                ...item,
+                label: capitalizeFirstLetter(item.label),
+              }))}
+              labelField="label"
+              valueField="name"
               value={field.value}
-              onChange={(value) => field.onChange(value.id)}
+              onChange={(value) => field.onChange(value.name)}
               disable={form.formState.isSubmitting}
             />
           </LabelInput>

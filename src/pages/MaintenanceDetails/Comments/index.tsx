@@ -1,36 +1,53 @@
-import NetInfo from "@react-native-community/netinfo";
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import NetInfo from "@react-native-community/netinfo";
+import { useNavigation } from "@react-navigation/native";
 import { toast } from "sonner-native";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
 import { useOfflineQueue } from "@/contexts/OfflineQueueContext";
+
 import type { ProtectedNavigation } from "@/routes/navigation";
+
 import { createMaintenanceHistoryActivity } from "@/services/mutations/createMaintenanceHistoryActivity";
 import { uploadFile } from "@/services/mutations/uploadFile";
+
+import { alerts } from "@/utils/alerts";
+import { openFilePicker } from "@/utils/openFilePicker";
+
 import { IRemoteFile } from "@/types/api/IRemoteFile";
 import type { LocalFile } from "@/types/utils/LocalFile";
 import type { OfflineQueueItem } from "@/types/utils/OfflineQueueItem";
-import { alerts } from "@/utils/alerts";
-import { openFilePicker } from "@/utils/openFilePicker";
 
 import { styles } from "./styles";
 
 interface CommentsProps {
   maintenanceId: string;
+  enableComments?: boolean;
   setLoading: (loading: boolean) => void;
   getMaintenanceHistoryActivities: () => Promise<void>;
 }
 
-export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActivities }: CommentsProps) => {
+export const Comments = ({
+  maintenanceId,
+  enableComments = true,
+  setLoading,
+  getMaintenanceHistoryActivities,
+}: CommentsProps) => {
   const navigation = useNavigation<ProtectedNavigation>();
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+    hasPermission,
+  } = useRequiredAuth();
   const { addItem } = useOfflineQueue();
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [comment, setComment] = useState("");
+
+  if (!enableComments) {
+    return null;
+  }
 
   const handleCreateMaintenanceActivity = async () => {
     setLoading(true);
@@ -100,7 +117,10 @@ export const Comments = ({ maintenanceId, setLoading, getMaintenanceHistoryActiv
   };
 
   const handleOpenFilePicker = async () => {
-    const localFiles = await openFilePicker({ mode: "request_user_choice" });
+    const localFiles = await openFilePicker({
+      mode: "request_user_choice",
+      forceCamera: hasPermission("maintenances:livePhoto", false),
+    });
 
     if (localFiles.length) {
       setLocalFiles((prev) => [...prev, ...localFiles]);

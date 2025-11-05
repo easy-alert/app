@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
+import { formatDateString } from "@/utils/formatDateString";
+
 import type { IMaintenanceHistoryActivities } from "@/types/api/IMaintenanceHistoryActivities";
-import { formatDate } from "@/utils/formatDate";
 
 import { styles } from "./styles";
 
@@ -50,7 +51,7 @@ export const History = ({ historyActivities }: HistoryProps) => {
 
               <View style={styles.itemContentContainer}>
                 <Text style={styles.itemTitleLabel}>{item.title}</Text>
-                <Text style={styles.itemTimestampLabel}>{formatDate(item.createdAt)}</Text>
+                <Text style={styles.itemTimestampLabel}>{formatDateString(item.createdAt)}</Text>
                 <Text style={styles.itemDescriptionLabel}>{item.content}</Text>
 
                 {item.images && item.images.length > 0 && (

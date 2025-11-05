@@ -23,8 +23,24 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       borderLeftColor: getStatus(columnStatus).color,
       gap: 6,
     },
+    cardHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
     buildingName: {
       fontSize: 18,
+      fontWeight: "bold",
+    },
+    serviceOrder: {
+      fontSize: 12,
+      fontWeight: "bold",
+      color: "#999999",
+    },
+    tagsContainer: {
+      flexDirection: "row",
+      gap: 4,
+      alignItems: "center",
     },
     typeTagContainer: {
       paddingVertical: 2,
@@ -40,10 +56,22 @@ export const createStyle = ({ columnStatus, maintenanceType, maintenanceStatus }
       alignSelf: "flex-start",
       backgroundColor: getStatus(maintenanceStatus).color,
     },
+    futureTagContainer: {
+      paddingVertical: 2,
+      paddingHorizontal: 4,
+      borderRadius: 4,
+      alignSelf: "flex-start",
+      backgroundColor: getStatus("Futura").color,
+    },
     tagText: {
       color: "#ffffff",
       fontSize: 12,
       fontWeight: "bold",
+    },
+    priorityName: {
+      fontSize: 12,
+      fontWeight: "bold",
+      color: "#999999",
     },
     cardTitle: {
       fontSize: 14,

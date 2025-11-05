@@ -1,6 +1,6 @@
-import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import { useNavigation } from "@react-navigation/native";
 
 import type { ProtectedNavigation } from "@/routes/navigation";
 

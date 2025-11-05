@@ -1,6 +1,3 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -13,43 +10,49 @@ import {
   View,
 } from "react-native";
 import { Keyboard } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import * as Application from "expo-application";
+import { StatusBar } from "expo-status-bar";
+
+import { useAuth } from "@/contexts/AuthContext";
+
+import { PublicNavigation, PublicRoutesParams } from "@/routes/navigation";
+
+import { alerts } from "@/utils/alerts";
+import { formatPhoneBR } from "@/utils/formatPhoneBR";
+import { isEmail } from "@/utils/isEmail";
+import { isPhone } from "@/utils/isPhone";
+import { unMaskPhone } from "@/utils/unMask";
 
 import Logo from "@/assets/logo.png";
-import { useAuth } from "@/contexts/AuthContext";
-import { PublicNavigation } from "@/routes/navigation";
-import { alerts } from "@/utils/alerts";
 
 import { styles } from "./styles";
 
-export const Login = () => {
+interface LoginProps {
+  route?: {
+    params?: PublicRoutesParams["Login"];
+  };
+}
+
+export const Login = ({ route }: LoginProps) => {
   const navigation = useNavigation<PublicNavigation>();
   const { signIn } = useAuth();
 
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [login, setLogin] = useState(""); // email or phone
   const [password, setPassword] = useState("");
 
   const [isSigninIn, setIsSigningIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const formatPhoneNumber = (value: string): string => {
-    const onlyNumbers = value.replace(/\D/g, "");
+  // Format as phone if not email, else keep as is
 
-    if (onlyNumbers.length > 10) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(
-        2,
-        3,
-      )} ${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7)}`;
-    } else if (onlyNumbers.length > 6) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2, 6)}-${onlyNumbers.slice(6)}`;
-    } else if (onlyNumbers.length > 2) {
-      return `(${onlyNumbers.slice(0, 2)}) ${onlyNumbers.slice(2)}`;
+  const handleLoginChange = (value: string) => {
+    if (value.includes("@") || /[a-zA-Z]/.test(value)) {
+      setLogin(unMaskPhone(value));
     } else {
-      return onlyNumbers;
+      setLogin(formatPhoneBR(value));
     }
-  };
-
-  const handlePhoneNumberChange = (value: string) => {
-    setPhoneNumber(formatPhoneNumber(value));
   };
 
   const toggleShowPassword = () => {
@@ -59,8 +62,13 @@ export const Login = () => {
   const handleSignIn = async () => {
     Keyboard.dismiss();
 
-    if (!phoneNumber || phoneNumber.length < 11) {
-      alerts.error("Por favor, insira um número de telefone válido.");
+    if (!login) {
+      alerts.error("Por favor, insira seu e-mail ou número de telefone.");
+      return;
+    }
+
+    if (!isEmail(login) && !isPhone(login)) {
+      alerts.error("Por favor, insira um e-mail ou número de telefone válido.");
       return;
     }
 
@@ -69,11 +77,20 @@ export const Login = () => {
       return;
     }
 
-    const cleanedPhone = phoneNumber.replace(/\D/g, "");
+    // If phone, clean it, else send as is
+    const loginValue = isPhone(login) ? login.replace(/\D/g, "") : login;
 
     setIsSigningIn(true);
-    await signIn(cleanedPhone, password);
+    const result = await signIn(loginValue, password, route?.params?.companyId);
     setIsSigningIn(false);
+
+    if (result?.requiresCompanySelection && result.companies) {
+      navigation.navigate("LoginCompanySelection", {
+        companies: result.companies,
+        login: loginValue,
+        password,
+      });
+    }
   };
 
   return (
@@ -88,12 +105,14 @@ export const Login = () => {
 
           <TextInput
             style={styles.input}
-            placeholder="Digite seu número de telefone"
+            placeholder="Digite seu e-mail ou número de telefone"
             placeholderTextColor="#aaa"
-            keyboardType="phone-pad"
-            value={phoneNumber}
-            onChangeText={handlePhoneNumberChange}
-            maxLength={16}
+            keyboardType="email-address"
+            value={login}
+            onChangeText={handleLoginChange}
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={50}
           />
 
           <View style={styles.passwordContainer}>
@@ -130,6 +149,10 @@ export const Login = () => {
             <Text style={styles.forgotPasswordTextLink} onPress={() => navigation.navigate("ForgotPassword")}>
               Recuperar senha
             </Text>
+          </Text>
+
+          <Text style={[styles.versionText]}>
+            Versão {Application.nativeApplicationVersion} - {Application.nativeBuildVersion}
           </Text>
         </View>
       </KeyboardAvoidingView>

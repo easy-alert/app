@@ -3,12 +3,16 @@ import { Modal, Text, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useRequiredAuth } from "@/contexts/AuthContext";
+
 import { PageWithHeaderLayout } from "@/layouts/PageWithHeaderLayout";
+
 import { linkMaintenanceSupplier } from "@/services/mutations/linkMaintenanceSupplier";
 import { getSuppliersForMaintenance } from "@/services/queries/getSuppliersForMaintenance";
-import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
+
 import { alerts } from "@/utils/alerts";
+
+import type { IMaintenanceSuppliers } from "@/types/api/IMaintenanceSuppliers";
 
 import { styles } from "./styles";
 
@@ -19,7 +23,9 @@ interface SupplierModalProps {
 }
 
 export const SupplierModal = ({ maintenanceId, visible, onClose }: SupplierModalProps) => {
-  const { userId } = useAuth();
+  const {
+    user: { id: userId },
+  } = useRequiredAuth();
 
   const [suppliersData, setSuppliersData] = useState<IMaintenanceSuppliers>();
 
